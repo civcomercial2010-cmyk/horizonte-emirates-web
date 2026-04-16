@@ -2,11 +2,11 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Invertir en Dubai desde España y LATAM | Sin comisiones | Horizonte Emirates</title>
-<meta name="description" content="Inversión inmobiliaria en Dubai y UAE en español. 6–9% rentabilidad neta, 0% impuestos. Partner RERA certificado. Sin comisiones al inversor. Análisis personalizado en 24 horas."/>
+<title>Invertir en Dubai desde España | Sin comisiones | Horizonte Emirates</title>
+<meta name="description" content="Inversión inmobiliaria en Dubai y UAE para inversores españoles y latinoamericanos. 6–9% rentabilidad neta, 0% impuestos. Partner RERA certificado. Sin comisiones al inversor. Análisis personalizado en 24 horas."/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
 /* ── TOKENS ─────────────────────────────────────────── */
 :root{
@@ -51,8 +51,8 @@ nav.scrolled{background:var(--navy-m);backdrop-filter:blur(10px);border-color:rg
 #hero{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;position:relative;overflow:hidden}
 .hero-img{position:absolute;inset:0;z-index:0}
 .hero-img img{width:100%;height:100%;object-fit:cover;object-position:center 30%}
-.hero-overlay{position:absolute;inset:0;background:linear-gradient(160deg,rgba(13,27,42,.90) 0%,rgba(13,27,42,.75) 55%,rgba(13,27,42,.85) 100%);z-index:1}
-.hero-inner{position:relative;z-index:2;padding:146px 0 86px}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(160deg,rgba(13,27,42,.92) 0%,rgba(13,27,42,.77) 55%,rgba(13,27,42,.87) 100%);z-index:1}
+.hero-inner{position:relative;z-index:2;padding:116px 0 86px}
 .hero-eyebrow{display:flex;align-items:center;gap:14px;margin-bottom:28px}
 .hero-eyebrow .rule{background:var(--gold)}
 .hero-eyebrow .eyebrow{color:var(--gold)}
@@ -82,12 +82,12 @@ h1 em{font-style:italic;color:var(--gold)}
 .section{padding:96px 0}
 .section.bg2{background:var(--warm2)}
 .sh{margin-bottom:62px;max-width:none}
-.sh .eyebrow{color:var(--gold)}
+.sh .eyebrow{color:var(--gold);font-size:12px;letter-spacing:.18em;font-weight:600}
 .sh .rule{margin:14px 0}
-.sh h2{font-family:var(--serif);font-size:clamp(36px,4.2vw,56px);font-weight:500;line-height:1.15;color:var(--ink)}
+.sh h2{font-family:var(--serif);font-size:clamp(40px,4.8vw,64px);font-weight:500;line-height:1.1;color:var(--ink)}
 .sh p{font-size:19px;font-weight:400;color:#4d4d4d;margin-top:14px;line-height:1.65;max-width:1080px}
 
-/* Why cards — highlighted value module */
+/* Why cards */
 .why-g{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
 .why-c{padding:34px 28px;background:linear-gradient(180deg,#ffffff 0%,#f9f7f1 100%);border:1px solid var(--gold-bd);border-top:4px solid var(--gold);box-shadow:0 14px 36px rgba(13,27,42,.08);transition:transform .2s ease,box-shadow .2s ease;min-height:320px}
 .why-c:hover{transform:translateY(-4px);box-shadow:0 18px 44px rgba(13,27,42,.13)}
@@ -110,20 +110,26 @@ h1 em{font-style:italic;color:var(--gold)}
 .yp-l{font-size:11px;color:var(--muted)}
 .zone-proof{margin-top:14px;font-size:14px;font-weight:500;color:#183047}
 
-/* Process */
-.proc-g{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;position:relative}
-.proc-g::before{display:none}
-.proc-s{text-align:left;padding:28px 24px;background:#fff;border:1px solid var(--border);border-top:3px solid var(--gold);min-height:260px}
-.proc-num{width:42px;height:42px;border-radius:50%;border:1px solid var(--gold-bd);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-family:var(--serif);font-size:18px;color:var(--gold);background:var(--warm2);position:relative;z-index:1}
-.proc-num{margin:0 0 16px 0}
-.proc-s h3{font-family:var(--serif);font-size:24px;font-weight:600;color:var(--ink);margin-bottom:10px}
-.proc-s p{font-size:16px;font-weight:400;color:#555;line-height:1.65;max-width:none;margin:0}
+/* ── PROCESS — redesigned ────────────────────────────── */
+.proc-g{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0}
+.proc-s{padding:0 18px 34px;position:relative;border-right:1px solid #dcd9cf;background:#fcfcfb}
+.proc-s:last-child{border-right:none}
+.proc-s:first-child{border-left:1px solid #dcd9cf}
+.proc-top{display:flex;align-items:center;padding-top:36px;margin-bottom:28px}
+.proc-num{width:56px;height:56px;border-radius:50%;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:22px;font-weight:500;color:var(--gold);background:var(--warm);flex-shrink:0;position:relative;z-index:1}
+.proc-connector{flex:1;height:1px;background:#d7d3c8;margin-left:0}
+.proc-s:last-child .proc-connector{display:none}
+.proc-tag{font-size:8px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:rgba(196,148,42,.92);margin-bottom:9px}
+.proc-s h3{font-family:var(--serif);font-size:34px;font-weight:600;color:var(--ink);margin-bottom:10px;line-height:1.05}
+.proc-s p{font-size:15px;font-weight:400;color:#555;line-height:1.68}
+.proc-s .proc-badge{display:inline-block;margin-top:14px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);background:var(--gold-lt);border:1px solid var(--gold-bd);padding:4px 10px;border-radius:var(--r)}
+.proc-s::after{content:"";position:absolute;left:18px;right:18px;bottom:14px;height:18px;background:#050505}
 
 /* Profile */
-.profile-g{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
-.pi{display:flex;align-items:flex-start;gap:12px;padding:20px 20px;border:1px solid var(--border);background:#fff;border-left:4px solid var(--gold);font-size:17px;font-weight:400;color:#303030;line-height:1.5;box-shadow:0 8px 24px rgba(13,27,42,.06)}
-.pi:nth-last-child(-n+2){border-bottom:1px solid var(--border)}
-.pi-dash{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--gold);color:#fff;font-size:15px;font-weight:700;margin-top:1px;flex-shrink:0}
+.profile-g{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.pi{display:flex;align-items:flex-start;gap:14px;padding:22px 22px;border:1px solid var(--border);background:#fff;border-left:4px solid var(--gold);font-size:17px;font-weight:400;color:#303030;line-height:1.5;box-shadow:0 8px 24px rgba(13,27,42,.06)}
+.pi-dash{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--gold);color:#fff;font-size:14px;font-weight:700;margin-top:1px;flex-shrink:0}
+.pi strong{font-weight:600;color:var(--ink)}
 
 /* ── FORM SECTION ────────────────────────────────────── */
 #form{background:linear-gradient(180deg,#081321 0%,#0d1b2a 100%);padding:108px 0}
@@ -149,44 +155,49 @@ h1 em{font-style:italic;color:var(--gold)}
 .fstep{display:none}
 .fstep.active{display:block}
 
-/* Off-plan note */
-.offplan-note{background:rgba(196,148,42,.12);border:1px solid rgba(196,148,42,.55);border-radius:var(--r);padding:16px 18px;margin-bottom:24px}
-.offplan-note p{font-size:15px;font-weight:400;color:rgba(255,255,255,.92);line-height:1.55}
-.offplan-note strong{color:var(--gold);font-weight:500}
+/* Off-plan caption */
+.offplan-caption{font-size:13px;font-weight:400;color:rgba(255,255,255,.55);margin-top:10px;margin-bottom:0;line-height:1.5;padding-left:2px}
+.offplan-caption strong{color:rgba(196,148,42,.8);font-weight:500}
 
-.fq-label{font-family:var(--serif);font-size:clamp(28px,3.2vw,36px);font-weight:600;color:#fff;margin-bottom:8px;line-height:1.25}
-.fhint{font-size:15px;font-weight:500;color:rgba(255,255,255,.82);margin-bottom:16px;line-height:1.45}
-.fq-spacer{margin-top:24px}
+.fq-label{font-family:var(--serif);font-size:clamp(26px,3vw,34px);font-weight:600;color:#fff;margin-bottom:6px;line-height:1.25}
+.fhint{font-size:14px;font-weight:400;color:rgba(255,255,255,.7);margin-bottom:14px;line-height:1.45}
+.fq-spacer{margin-top:22px}
 
 /* Option cards */
-.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:0}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:0}
 .opts.cols1{grid-template-columns:1fr}
-.opt{border:1px solid rgba(255,255,255,.22);border-radius:6px;padding:18px 18px;cursor:pointer;transition:border-color .2s,background .2s,transform .2s;display:flex;align-items:flex-start;gap:12px;background:rgba(255,255,255,.06)}
+.opt{border:1px solid rgba(255,255,255,.22);border-radius:6px;padding:16px 16px;cursor:pointer;transition:border-color .2s,background .2s,transform .2s;display:flex;align-items:flex-start;gap:12px;background:rgba(255,255,255,.06)}
 .opt:hover{border-color:var(--gold-bd);background:rgba(196,148,42,.07)}
 .opt.sel{border-color:var(--gold);background:rgba(196,148,42,.16);transform:translateY(-2px)}
-.on{font-family:var(--serif);font-size:22px;font-weight:500;color:rgba(196,148,42,.42);line-height:1;flex-shrink:0;min-width:26px;transition:.2s;padding-top:1px}
+.on{font-family:var(--serif);font-size:20px;font-weight:500;color:rgba(196,148,42,.42);line-height:1;flex-shrink:0;min-width:24px;transition:.2s;padding-top:2px}
 .opt.sel .on{color:var(--gold)}
-.ot{font-size:17px;font-weight:600;color:#fff;line-height:1.25;margin-bottom:3px}
-.os{font-size:14px;font-weight:500;color:rgba(255,255,255,.9);line-height:1.4}
+.ot{font-size:16px;font-weight:600;color:#fff;line-height:1.25;margin-bottom:2px}
+.os{font-size:13px;font-weight:400;color:rgba(255,255,255,.82);line-height:1.4}
 
-/* Viaje — 3 horizontal options */
+/* Viaje — 3 horizontal */
 .viaje-opts{display:flex;gap:8px;margin-bottom:0}
-.viaje-opts .opt{flex:1;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:16px 12px}
-.viaje-opts .on{font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);font-family:var(--sans);padding-top:0;min-width:auto}
+.viaje-opts .opt{flex:1;flex-direction:column;align-items:center;text-align:center;gap:5px;padding:14px 10px}
+.viaje-opts .on{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);font-family:var(--sans);padding-top:0;min-width:auto}
 .viaje-opts .opt.sel .on{color:var(--gold)}
 
 /* Fields */
-.ffields{display:flex;flex-direction:column;gap:12px;margin-bottom:16px}
-.frow2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ffields{display:flex;flex-direction:column;gap:11px;margin-bottom:14px}
+.frow2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
 .fg{display:flex;flex-direction:column;gap:4px}
-.fg label{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.9)}
-.fg input,.fg select{padding:14px 14px;border:1px solid rgba(255,255,255,.38);border-radius:6px;background:rgba(255,255,255,.1);font-family:var(--sans);font-size:16px;font-weight:500;color:#fff;outline:none;transition:.2s}
+.fg label{font-size:11px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.9)}
+.fg input,.fg select{padding:13px 14px;border:1px solid rgba(255,255,255,.38);border-radius:6px;background:rgba(255,255,255,.1);font-family:var(--sans);font-size:16px;font-weight:500;color:#fff;outline:none;transition:.2s}
 .fg input:focus,.fg select:focus{border-color:var(--gold);background:rgba(196,148,42,.07)}
 .fg input::placeholder{color:rgba(255,255,255,.22)}
 .fg select option{background:var(--navy);color:#fff}
+/* Phone row */
+.phone-row{display:flex;gap:0}
+.prefix-sel{width:88px;border:1px solid rgba(255,255,255,.38);border-right:none;border-radius:6px 0 0 6px;background:rgba(255,255,255,.08);font-family:var(--sans);font-size:14px;font-weight:500;color:rgba(255,255,255,.8);padding:13px 8px;outline:none;flex-shrink:0;cursor:pointer;transition:.2s;appearance:none;-webkit-appearance:none;text-align:center}
+.prefix-sel:focus{border-color:var(--gold);background:rgba(196,148,42,.07)}
+.prefix-sel option{background:var(--navy);color:#fff}
+.phone-row input{border-radius:0 6px 6px 0;flex:1}
 
 /* Canal */
-.canal-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.canal-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
 .canal-opt{border:1px solid rgba(255,255,255,.1);border-radius:var(--r);padding:12px 8px;cursor:pointer;text-align:center;transition:.2s;background:rgba(255,255,255,.03)}
 .canal-opt:hover{border-color:var(--gold-bd)}
 .canal-opt.sel{border-color:var(--gold);background:rgba(196,148,42,.12)}
@@ -195,37 +206,67 @@ h1 em{font-style:italic;color:var(--gold)}
 .canal-label{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:8px}
 
 /* Deliver */
-.deliver{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:20px 20px;margin-bottom:16px}
-.deliver-t{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.deliver{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.18);border-radius:6px;padding:18px 20px;margin-bottom:14px}
+.deliver-t{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
 .deliver ul{list-style:none;display:flex;flex-direction:column;gap:7px}
-.deliver li{font-size:15px;font-weight:400;color:rgba(255,255,255,.92);display:flex;gap:9px;line-height:1.55}
+.deliver li{font-size:14px;font-weight:400;color:rgba(255,255,255,.92);display:flex;gap:9px;line-height:1.55}
 .deliver li::before{content:'—';color:var(--gold);flex-shrink:0}
 
 /* GDPR */
-.gdpr{display:flex;align-items:flex-start;gap:10px;margin-bottom:16px}
+.gdpr{display:flex;align-items:flex-start;gap:10px;margin-bottom:14px}
 .gdpr input[type=checkbox]{width:16px;height:16px;margin-top:2px;accent-color:var(--gold);flex-shrink:0;cursor:pointer}
 .gdpr label{font-size:13px;font-weight:400;color:rgba(255,255,255,.8);line-height:1.55;cursor:pointer}
 .gdpr a{color:var(--gold);text-decoration:underline}
 
-.priv{font-size:13px;color:rgba(255,255,255,.72);text-align:center;line-height:1.55;margin-bottom:18px}
+.priv{font-size:12px;color:rgba(255,255,255,.55);text-align:center;line-height:1.55;margin-bottom:16px}
 .btn-sub{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;font-size:14px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:var(--gold);color:#fff;padding:19px;border-radius:6px;border:none;cursor:pointer;font-family:var(--sans);transition:.2s;opacity:.4}
 .btn-sub.ready{opacity:1}
 .btn-sub.ready:hover{filter:brightness(1.1)}
-.btn-back{font-size:13px;color:rgba(255,255,255,.72);margin-top:12px;display:none;text-align:center;cursor:pointer;font-family:var(--sans);transition:.2s;width:100%}
+.btn-back{font-size:13px;color:rgba(255,255,255,.55);margin-top:10px;display:none;text-align:center;cursor:pointer;font-family:var(--sans);transition:.2s;width:100%}
 .btn-back:hover{color:rgba(255,255,255,.7)}
-.form-proof{margin-top:18px;padding:16px 18px;border:1px solid rgba(196,148,42,.55);background:rgba(196,148,42,.14);font-size:15px;font-weight:500;line-height:1.55;color:rgba(255,255,255,.96)}
-.form-status{display:none;margin:14px 0 0;padding:12px 14px;border-radius:6px;font-size:14px;line-height:1.45}
+.form-proof{margin-top:16px;padding:15px 17px;border:1px solid rgba(196,148,42,.55);background:rgba(196,148,42,.12);font-size:14px;font-weight:500;line-height:1.55;color:rgba(255,255,255,.96)}
+.form-status{display:none;margin:12px 0 0;padding:12px 14px;border-radius:6px;font-size:14px;line-height:1.45}
 .form-status.show{display:block}
 .form-status.ok{background:rgba(45,106,79,.16);border:1px solid rgba(45,106,79,.5);color:rgba(255,255,255,.95)}
 .form-status.err{background:rgba(196,58,58,.16);border:1px solid rgba(196,58,58,.5);color:rgba(255,255,255,.95)}
 
 /* Success */
-.success{display:none;text-align:center;padding:64px 32px}
+.success{display:none;text-align:center;padding:56px 32px}
 .success.show{display:block}
 .s-icon{width:56px;height:56px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:24px;margin:0 auto 20px;font-weight:500}
 .success h3{font-family:var(--serif);font-size:36px;font-weight:400;color:#fff;margin-bottom:10px}
-.success p{font-size:15px;font-weight:300;color:rgba(255,255,255,.45);max-width:380px;margin:0 auto 24px;line-height:1.65}
-.wa-s{display:inline-flex;align-items:center;gap:10px;background:#25D366;color:#fff;font-size:13px;font-weight:500;padding:13px 24px;border-radius:var(--r)}
+.success p{font-size:16px;font-weight:400;color:rgba(255,255,255,.72);max-width:420px;margin:0 auto 28px;line-height:1.65}
+.wa-s{display:inline-flex;align-items:center;gap:10px;background:#25D366;color:#fff;font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:15px 28px;border-radius:var(--r);transition:.2s}
+.wa-s:hover{filter:brightness(1.08)}
+.wa-hint{margin-top:14px;font-size:12px;color:rgba(255,255,255,.38)}
+
+/* ── WA LEAD MODAL ──────────────────────────────────── */
+#wa-modal-overlay{position:fixed;inset:0;background:rgba(6,15,25,.82);backdrop-filter:blur(4px);z-index:500;display:none;align-items:center;justify-content:center;padding:20px}
+#wa-modal{background:#fff;border-radius:8px;max-width:420px;width:100%;padding:36px 32px;position:relative;box-shadow:0 32px 80px rgba(0,0,0,.35)}
+.wam-close{position:absolute;top:12px;right:16px;font-size:24px;color:var(--muted);cursor:pointer;line-height:1;background:none;border:none;padding:4px 6px;transition:.2s;font-weight:300}
+.wam-close:hover{color:var(--ink)}
+.wam-wa-icon{width:44px;height:44px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 0 16px}
+.wam-wa-icon svg{width:22px;height:22px;fill:#fff}
+#wa-modal h3{font-family:var(--serif);font-size:26px;font-weight:600;color:var(--ink);margin-bottom:6px;line-height:1.2}
+#wa-modal > p{font-size:15px;color:var(--muted);line-height:1.55;margin-bottom:20px}
+.wam-field{display:flex;flex-direction:column;gap:4px;margin-bottom:11px}
+.wam-field label{font-size:11px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--ink)}
+.wam-field input{padding:12px 13px;border:1px solid var(--border);border-radius:6px;font-family:var(--sans);font-size:15px;color:var(--ink);outline:none;transition:.2s;background:#fff}
+.wam-field input:focus{border-color:var(--gold)}
+.wam-field input::placeholder{color:rgba(0,0,0,.28)}
+.wam-phone-row{display:flex;gap:0}
+.wam-pfx{width:80px;border:1px solid var(--border);border-right:none;border-radius:6px 0 0 6px;background:var(--warm2);font-family:var(--sans);font-size:14px;color:var(--ink);padding:12px 6px;outline:none;cursor:pointer;appearance:none;-webkit-appearance:none;text-align:center;transition:.2s}
+.wam-pfx:focus{border-color:var(--gold)}
+.wam-phone-row input{border-radius:0 6px 6px 0;flex:1}
+.wam-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:9px;font-size:13px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;background:#25D366;color:#fff;padding:16px;border-radius:6px;border:none;cursor:pointer;font-family:var(--sans);transition:.2s;margin-top:4px}
+.wam-btn:hover{filter:brightness(1.06)}
+.wam-btn svg{fill:#fff;flex-shrink:0}
+.wam-err{display:none;font-size:13px;color:#c43a3a;margin-bottom:8px;line-height:1.45}
+.wam-err.show{display:block}
+@media(max-width:480px){
+  #wa-modal{padding:28px 20px}
+  #wa-modal h3{font-size:22px}
+}
 
 /* ── FAQ ─────────────────────────────────────────────── */
 #faq{padding:96px 0;background:var(--warm)}
@@ -249,10 +290,9 @@ footer{background:var(--navy-d);padding:64px 0 28px}
 .fc a{font-size:12px;color:rgba(255,255,255,.42);transition:.2s}
 .fc a:hover{color:var(--gold)}
 .ft-bot{padding-top:24px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
-.legal{font-size:11px;color:rgba(255,255,255,.2);line-height:1.65;max-width:620px}
+.legal{font-size:11px;color:rgba(255,255,255,.2);line-height:1.65;max-width:660px}
 .copy{font-size:11px;color:rgba(255,255,255,.2)}
 
-/* Single line desktop titles */
 .single-line-title{white-space:nowrap}
 
 /* ── WA FLOAT ────────────────────────────────────────── */
@@ -262,22 +302,23 @@ footer{background:var(--navy-d);padding:64px 0 28px}
 .wa svg{width:26px;height:26px;fill:#fff}
 
 /* ── RESPONSIVE ──────────────────────────────────────── */
-
-/* ─ Tablet (≤1000px) ─ */
 @media(max-width:1000px){
   .wrap{padding:0 24px}
   .nav-i{padding:0 24px}
   .section{padding:72px 0}
   .sh{margin-bottom:44px}
   .sh p{font-size:17px}
-  .hero-inner{padding:120px 0 72px}
+  .hero-inner{padding:102px 0 72px}
   .hero-sub{font-size:19px}
   .why-g{grid-template-columns:1fr 1fr}
   .why-c{min-height:unset;padding:28px 22px}
   .zones-g{grid-template-columns:1fr}
-  .proc-g{grid-template-columns:1fr 1fr;gap:16px}
-  .proc-g::before{display:none}
-  .proc-s{min-height:unset}
+  .proc-g{grid-template-columns:1fr 1fr;gap:0}
+  .proc-s{border-right:1px solid var(--border);border-bottom:1px solid var(--border)}
+  .proc-s:nth-child(2n){border-right:none}
+  .proc-s:nth-last-child(-n+2){border-bottom:none}
+  .proc-s:first-child{border-left:none}
+  .proc-connector{display:none}
   .kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
   .faq-g{grid-template-columns:1fr}
   .fqitem:nth-child(2){border-top:none}
@@ -287,22 +328,18 @@ footer{background:var(--navy-d);padding:64px 0 28px}
   #faq{padding:72px 0}
 }
 
-/* ─ Móvil (≤700px) ─ */
 @media(max-width:700px){
   body{font-size:16px}
   .wrap{padding:0 18px}
   .nav-i{padding:0 18px;height:56px}
   .nav-links{display:none}
   .nav-cta{display:none}
-
-  /* Secciones */
   .section{padding:52px 0}
   .sh{margin-bottom:30px}
-  .sh h2{font-size:clamp(24px,7vw,36px)}
+  .sh .eyebrow{font-size:11px;letter-spacing:.16em}
+  .sh h2{font-size:clamp(30px,8.2vw,44px)}
   .sh p{font-size:15px;max-width:100%}
-
-  /* Hero */
-  .hero-inner{padding:86px 0 44px}
+  .hero-inner{padding:76px 0 44px}
   .hero-sub{font-size:17px;margin-bottom:24px}
   .hero-ctas{flex-direction:column;align-items:stretch;gap:10px;margin-bottom:28px}
   .btn-gold{justify-content:center;padding:16px 20px;font-size:12px}
@@ -313,39 +350,30 @@ footer{background:var(--navy-d);padding:64px 0 28px}
   .hero-proof{padding:14px 16px;margin-top:16px}
   .hero-proof h3{font-size:18px}
   .hero-proof p{font-size:14px}
-
-  /* KPI — 2×2 en móvil */
   .kpi-grid{grid-template-columns:1fr 1fr}
   .hs{border-right:none;border-bottom:1px solid rgba(255,255,255,.1);padding:22px 12px 26px}
   .hs:nth-child(odd){border-right:1px solid rgba(255,255,255,.1)}
   .hs:nth-last-child(1),.hs:nth-last-child(2){border-bottom:none}
   .hs-n{font-size:clamp(30px,9vw,52px)}
   .hs-l{font-size:13px;line-height:1.35}
-
-  /* Why — columna única */
   .why-g{grid-template-columns:1fr}
   .why-c{padding:22px 18px}
   .why-n{font-size:32px}
   .why-c h3{font-size:20px}
   .why-c p{font-size:15px}
-
-  /* Zones */
   .zone-img{aspect-ratio:16/9;height:auto;width:100%}
   .zone-b{padding:18px 16px 22px}
   .zone-b h3{font-size:22px}
   .zone-b p{font-size:15px}
-
-  /* Process */
   .proc-g{grid-template-columns:1fr}
-  .proc-s{padding:20px 18px;min-height:unset}
-  .proc-s h3{font-size:20px}
+  .proc-s{padding:0 18px 28px;border-right:none;border-left:none;border-top:none;border-bottom:1px solid var(--border)}
+  .proc-s:last-child{border-bottom:none}
+  .proc-s:first-child{border-left:none}
+  .proc-connector{display:none}
+  .proc-s h3{font-size:28px}
   .proc-s p{font-size:15px}
-
-  /* Profile */
   .profile-g{grid-template-columns:1fr}
   .pi{font-size:15px;padding:16px 14px}
-
-  /* Formulario */
   #form{padding:52px 0}
   .form-wrap{padding:24px 18px;border-radius:6px}
   .form-hd h2{font-size:clamp(22px,6.5vw,32px)}
@@ -355,33 +383,27 @@ footer{background:var(--navy-d);padding:64px 0 28px}
   .scircle{width:40px;height:40px;font-size:16px}
   .slabel{font-size:9px;letter-spacing:.05em}
   .opts{grid-template-columns:1fr}
-  .opt{padding:14px 14px}
+  .opt{padding:13px 14px}
   .ot{font-size:15px}
   .os{font-size:13px}
   .frow2{grid-template-columns:1fr}
-  .viaje-opts{flex-direction:column;gap:8px}
-  .viaje-opts .opt{flex-direction:row;text-align:left;align-items:center;gap:12px;padding:13px 14px}
+  .viaje-opts{flex-direction:column;gap:7px}
+  .viaje-opts .opt{flex-direction:row;text-align:left;align-items:center;gap:12px;padding:12px 14px}
   .viaje-opts .on{font-size:11px;font-weight:600;font-family:var(--sans);letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.5);min-width:auto;padding-top:0}
-  .deliver{padding:14px 16px}
+  .deliver{padding:14px 15px}
   .deliver li{font-size:13px}
   .form-proof{font-size:13px;padding:13px 14px}
   .fg input,.fg select{font-size:16px}
-
-  /* FAQ */
+  .prefix-sel{font-size:14px;padding:13px 6px}
   #faq{padding:52px 0}
   .fq-q{font-size:17px;padding:16px 0}
   .fq-a{font-size:14px;line-height:1.7}
-
-  /* Footer */
   footer{padding:44px 0 22px}
   .ft{gap:28px;padding-bottom:28px}
   .ft-bot{flex-direction:column;gap:6px}
-
-  /* Títulos single-line */
   .single-line-title{white-space:normal}
 }
 
-/* ─ Teléfono pequeño (≤400px) ─ */
 @media(max-width:400px){
   h1{font-size:44px}
   .hero-sub{font-size:15px}
@@ -390,13 +412,13 @@ footer{background:var(--navy-d);padding:64px 0 28px}
   .hero-proof p{font-size:13px}
   .hs-n{font-size:28px}
   .hs-l{font-size:12px}
-  .sh h2{font-size:clamp(22px,6.5vw,32px)}
+  .sh .eyebrow{font-size:10px;letter-spacing:.14em}
+  .sh h2{font-size:clamp(26px,7.2vw,36px)}
 }
 </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav id="nav">
 <div class="nav-i">
   <a href="#" class="logo">Horizonte <span>Emirates</span></a>
@@ -420,24 +442,23 @@ footer{background:var(--navy-d);padding:64px 0 28px}
 <div class="wrap hero-inner">
   <div class="fade">
     <div class="hero-eyebrow">
-      <div class="rule"></div>
-      <span class="eyebrow" style="color:var(--gold)">Emiratos Árabes Unidos &nbsp;·&nbsp; Inversión Inmobiliaria</span>
+      <span class="eyebrow" style="color:var(--gold)">Emiratos Árabes Unidos · Inversión inmobiliaria</span>
     </div>
     <h1>Dubai está redefiniendo<br/>la <em>inversión patrimonial.</em></h1>
-    <p class="hero-sub">Mientras Europa sube impuestos y comprime rendimientos, Dubai ofrece 6–9% neto y fiscalidad cero. Le acompañamos desde el análisis hasta la firma — en español y sin coste para usted.</p>
+    <p class="hero-sub">Mientras España sube impuestos y comprime rendimientos, Dubai ofrece 6–9% neto y fiscalidad cero. Le acompañamos desde el análisis hasta la firma — en español y sin coste para usted.</p>
     <div class="hero-ctas">
       <a href="#form" class="btn-gold">Solicitar análisis gratuito &nbsp;→</a>
       <a href="#como" class="btn-outline">Cómo funciona</a>
     </div>
     <div class="hero-trust">
+      <span class="tag-trust">Servicio 100% en español</span>
       <span class="tag-trust">Partners RERA certificados en Dubai</span>
       <span class="tag-trust">Sin comisiones al inversor</span>
       <span class="tag-trust">Acompañamiento presencial en Dubai</span>
-      <span class="tag-trust">Servicio en español</span>
     </div>
     <div class="hero-proof">
       <h3>Visitamos los proyectos con usted. Sin coste.</h3>
-      <p>Organizamos visitas presenciales a los activos en Dubai: se reúne con los promotores, conoce las zonas y valida cada proyecto en persona antes de comprometer ningún capital. Nuestro equipo local le acompaña en cada visita, sin coste.</p>
+      <p>Organizamos visitas presenciales a los activos en Dubai: se reúne con los promotores, conoce las zonas y valida cada proyecto en persona antes de comprometer ningún capital. Nuestro equipo local le acompaña en cada visita, en español y sin coste adicional.</p>
     </div>
   </div>
 </div>
@@ -448,7 +469,7 @@ footer{background:var(--navy-d);padding:64px 0 28px}
   <div class="wrap kpi-grid">
     <div class="hs fade"><div class="hs-n">270.000</div><div class="hs-l">transacciones en Dubai<br/>durante 2025</div></div>
     <div class="hs fade"><div class="hs-n">6–9<sup>%</sup></div><div class="hs-l">rentabilidad neta media<br/>en activos Prime</div></div>
-    <div class="hs fade"><div class="hs-n">0<sup>%</sup></div><div class="hs-l">impuesto sobre la renta<br/>y plusvalías en UAE</div></div>
+    <div class="hs fade"><div class="hs-n">0<sup>%</sup></div><div class="hs-l">impuesto sobre renta<br/>y plusvalías en UAE</div></div>
     <div class="hs fade"><div class="hs-n">24<sup>h</sup></div><div class="hs-l">respuesta con análisis<br/>personalizado</div></div>
   </div>
 </section>
@@ -459,14 +480,30 @@ footer{background:var(--navy-d);padding:64px 0 28px}
   <div class="sh fade">
     <span class="eyebrow">Por qué Dubai</span>
     <div class="rule"></div>
-    <h2>Un mercado sin igual en el contexto global actual</h2>
-    <p>Mientras Europa comprime los rendimientos y endurece la fiscalidad sobre el patrimonio, UAE ofrece un entorno regulado, transparente y con rentabilidades reales.</p>
+    <h2>Lo que España no ofrece.<br/>Dubai sí.</h2>
+    <p>El inversor español lleva años soportando rentabilidades reales del 2–3%, bloqueos legales y una fiscalidad creciente. UAE ofrece un entorno regulado, transparente y con retornos netos que Europa no puede igualar.</p>
   </div>
   <div class="why-g">
-    <div class="why-c fade"><div class="why-n">01</div><h3>Fiscalidad cero</h3><p>Sin impuesto sobre la renta, sin carga sobre plusvalías inmobiliarias, sin imposición sobre alquileres. El beneficio íntegro es suyo.</p></div>
-    <div class="why-c fade"><div class="why-n">02</div><h3>Liquidez y transparencia</h3><p>Dubai opera bajo RERA, el regulador inmobiliario público. Precios auditables, operaciones trazables y proceso legal seguro para el no residente.</p></div>
-    <div class="why-c fade"><div class="why-n">03</div><h3>Golden Visa UAE</h3><p>Si su objetivo incluye la residencia en UAE, nuestros partners le asesoran sobre los requisitos actuales y gestionan la documentación completa. Le acompañamos en todo el proceso, sin coste adicional.</p></div>
-    <div class="why-c fade highlight"><div class="why-n">04</div><h3>Acompañamiento presencial gratuito</h3><p>Más del 45% de los inversores que visitan Dubai en persona cierran operación. Organizamos las visitas a activos y reuniones con promotores — nuestro acompañamiento local no tiene coste.</p></div>
+    <div class="why-c fade">
+      <div class="why-n">01</div>
+      <h3>Sin impuestos. Sin ocupas.</h3>
+      <p>Cero IRPF sobre rentas del alquiler. Cero tributación sobre plusvalías. Y un sistema judicial que protege al propietario frente al inquilino moroso o al ocupante ilegal. El beneficio íntegro es suyo.</p>
+    </div>
+    <div class="why-c fade">
+      <div class="why-n">02</div>
+      <h3>Mercado regulado y transparente</h3>
+      <p>Dubai opera bajo RERA, el regulador inmobiliario público del Gobierno de Dubai. Precios auditables, operaciones trazables y proceso legal seguro para el inversor no residente.</p>
+    </div>
+    <div class="why-c fade">
+      <div class="why-n">03</div>
+      <h3>Golden Visa UAE</h3>
+      <p>Si su objetivo incluye la residencia en UAE, nuestros partners le asesoran sobre los requisitos actuales y gestionan la documentación completa. Un proceso guiado, íntegramente en español.</p>
+    </div>
+    <div class="why-c fade highlight">
+      <div class="why-n">04</div>
+      <h3>Acompañamiento en español, de principio a fin</h3>
+      <p>Todo el proceso — análisis, selección, visita presencial y cierre — lo gestionamos en su idioma. Organizamos las visitas a activos y reuniones con promotores; nuestro acompañamiento local no tiene coste.</p>
+    </div>
   </div>
 </div>
 </section>
@@ -481,7 +518,7 @@ footer{background:var(--navy-d);padding:64px 0 28px}
   </div>
   <div class="zones-g">
     <div class="zone fade">
-      <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=900&q=80&auto=format&fit=crop" alt="Dubai Marina" class="zone-img" loading="lazy"/>
+      <img src="https://images.unsplash.com/photo-1518684079-3c830dcef090?w=900&q=80&auto=format&fit=crop" alt="Dubai skyline" class="zone-img" loading="lazy"/>
       <div class="zone-b">
         <div class="zone-tag">Prime urbano</div>
         <h3>Dubai</h3>
@@ -491,7 +528,7 @@ footer{background:var(--navy-d);padding:64px 0 28px}
       </div>
     </div>
     <div class="zone fade" style="transition-delay:.1s">
-      <img src="https://images.unsplash.com/photo-1580674684081-7617fbf3d745?w=900&q=80&auto=format&fit=crop" alt="Ras Al Khaimah" class="zone-img" loading="lazy"/>
+      <img src="https://images.unsplash.com/photo-1578895101408-1a36b834405b?w=900&q=80&auto=format&fit=crop" alt="Ras Al Khaimah coastline" class="zone-img" loading="lazy"/>
       <div class="zone-b">
         <div class="zone-tag">Emergente · Alta apreciación</div>
         <h3>Ras Al Khaimah</h3>
@@ -501,7 +538,7 @@ footer{background:var(--navy-d);padding:64px 0 28px}
       </div>
     </div>
     <div class="zone fade" style="transition-delay:.2s">
-      <img src="https://images.unsplash.com/photo-1603190287605-e6ade32fa852?w=900&q=80&auto=format&fit=crop" alt="Abu Dhabi" class="zone-img" loading="lazy"/>
+      <img src="https://images.unsplash.com/photo-1593529467220-9d721ceb9a78?w=900&q=80&auto=format&fit=crop" alt="Abu Dhabi skyline" class="zone-img" loading="lazy"/>
       <div class="zone-b">
         <div class="zone-tag">Institucional · Largo plazo</div>
         <h3>Abu Dhabi</h3>
@@ -520,29 +557,46 @@ footer{background:var(--navy-d);padding:64px 0 28px}
   <div class="sh fade">
     <span class="eyebrow">Proceso</span>
     <div class="rule"></div>
-    <h2>Del primer análisis a la firma en cuatro pasos</h2>
-    <p>Coordinamos cada etapa. Usted solo decide.</p>
+    <h2>Del primer contacto a la firma en cuatro pasos</h2>
+    <p>Nos encargamos de cada etapa. Usted solo decide.</p>
   </div>
   <div class="proc-g">
     <div class="proc-s fade">
-      <div class="proc-num">01</div>
-      <h3>Análisis de perfil</h3>
-      <p>Revisamos capital, objetivo y horizonte temporal para identificar las zonas y tipologías que mejor encajan con su situación.</p>
+      <div class="proc-top">
+        <div class="proc-num">01</div>
+        <div class="proc-connector"></div>
+      </div>
+      <div class="proc-tag">Análisis de perfil</div>
+      <h3>Le escuchamos primero</h3>
+      <p>Revisamos capital disponible, objetivo y horizonte temporal. Identificamos las zonas y tipologías que encajan con su situación real — no con una plantilla genérica.</p>
     </div>
     <div class="proc-s fade" style="transition-delay:.1s">
-      <div class="proc-num">02</div>
-      <h3>Selección personalizada</h3>
-      <p>Le presentamos entre 3 y 5 oportunidades verificadas con proyecciones reales de rentabilidad y due diligence legal incluido.</p>
+      <div class="proc-top">
+        <div class="proc-num">02</div>
+        <div class="proc-connector"></div>
+      </div>
+      <div class="proc-tag">Selección personalizada</div>
+      <h3>Oportunidades verificadas</h3>
+      <p>Le presentamos entre 3 y 5 activos con proyecciones reales de rentabilidad y due diligence legal. Sin relleno, sin proyectos genéricos. Solo lo que encaja con su perfil.</p>
     </div>
     <div class="proc-s fade" style="transition-delay:.2s">
-      <div class="proc-num">03</div>
-      <h3>Visita en Dubai</h3>
-      <p>Cuando viaje a Dubai, organizamos la agenda de visitas y reuniones directas con los promotores. Nuestro equipo local le acompaña en cada visita — el acompañamiento no tiene coste.</p>
+      <div class="proc-top">
+        <div class="proc-num">03</div>
+        <div class="proc-connector"></div>
+      </div>
+      <div class="proc-tag">Visita en Dubai</div>
+      <h3>Valídelo en persona</h3>
+      <p>Organizamos la agenda de visitas y reuniones directas con promotores. Nuestro equipo local le acompaña en cada visita en español. El acompañamiento no tiene coste.</p>
+      <div class="proc-badge">Sin coste para el inversor</div>
     </div>
     <div class="proc-s fade" style="transition-delay:.3s">
-      <div class="proc-num">04</div>
-      <h3>Cierre y transferencia</h3>
-      <p>Coordinamos el proceso legal completo. Nuestros honorarios los abona el promotor — no usted. Ni al inicio, ni en el cierre, ni en ningún momento del proceso.</p>
+      <div class="proc-top">
+        <div class="proc-num">04</div>
+      </div>
+      <div class="proc-tag">Cierre y transferencia</div>
+      <h3>Cerramos juntos</h3>
+      <p>Coordinamos el proceso legal completo. Nuestros honorarios los abona el promotor — nunca usted. Ni al inicio, ni durante la visita, ni en el momento del cierre.</p>
+      <div class="proc-badge">0 € de coste para usted</div>
     </div>
   </div>
 </div>
@@ -554,15 +608,15 @@ footer{background:var(--navy-d);padding:64px 0 28px}
   <div class="sh fade">
     <span class="eyebrow">Perfil del inversor</span>
     <div class="rule"></div>
-    <h2>¿Reconoce su perfil en esta lista?</h2>
+    <h2>¿Le suena familiar alguno de estos puntos?</h2>
   </div>
   <div class="profile-g">
-    <div class="pi fade"><span class="pi-dash">✓</span>Capital disponible superior a 150.000 € (o 50.000 € en proyectos off-plan)</div>
-    <div class="pi fade"><span class="pi-dash">✓</span>Residencia en España, México, Argentina u otros países latinoamericanos</div>
-    <div class="pi fade"><span class="pi-dash">✓</span>Busca diversificación geográfica fuera del euro y la Unión Europea</div>
-    <div class="pi fade"><span class="pi-dash">✓</span>Horizonte de inversión entre 2 y 10 años: renta, plusvalía o ambas</div>
-    <div class="pi fade"><span class="pi-dash">✓</span>Interés en activos con alta liquidez y mercado secundario activo</div>
-    <div class="pi fade"><span class="pi-dash">✓</span>Prefiere un asesor de confianza que opere íntegramente en español</div>
+    <div class="pi fade"><span class="pi-dash">✓</span><span>Tiene capital disponible desde <strong>150.000 €</strong> y quiere ponerlo a trabajar fuera de España</span></div>
+    <div class="pi fade"><span class="pi-dash">✓</span><span>Está <strong>harto de inquilinos morosos, ocupaciones</strong> o de una ley de arrendamientos que favorece al que no paga</span></div>
+    <div class="pi fade"><span class="pi-dash">✓</span><span>Busca <strong>6–9% neto real</strong>, no el 2–3% que deja el alquiler en España después de impuestos y gestión</span></div>
+    <div class="pi fade"><span class="pi-dash">✓</span><span>Quiere <strong>diversificar fuera del euro</strong> y proteger su patrimonio de una fiscalidad cada vez más agresiva</span></div>
+    <div class="pi fade"><span class="pi-dash">✓</span><span>Prefiere activos con <strong>mercado secundario líquido</strong>, seguridad jurídica garantizada y derechos reales del propietario</span></div>
+    <div class="pi fade"><span class="pi-dash">✓</span><span>Quiere un asesor que le explique <strong>todo en español</strong>, sin intermediarios ni traducciones, de principio a fin</span></div>
   </div>
 </div>
 </section>
@@ -572,9 +626,8 @@ footer{background:var(--navy-d);padding:64px 0 28px}
 <div class="wrap">
 <div class="form-wrap">
   <div class="form-hd fade">
-    <span class="eyebrow">Análisis personalizado</span>
+    <h2>Análisis personalizado</h2>
     <div class="rule"></div>
-    <h2>Tres preguntas.<br/>Análisis en 24 horas.</h2>
     <p>Sin compromiso. Sin llamadas sin previo aviso.</p>
   </div>
 
@@ -591,6 +644,7 @@ footer{background:var(--navy-d);padding:64px 0 28px}
     <input type="hidden" name="access_key" id="w3f-access-key" value="3861d49c-5f0a-4dc3-a9e9-08b1758a110a"/>
     <input type="hidden" name="subject" id="sub-h" value="Nuevo lead — Horizonte Emirates"/>
     <input type="hidden" name="from_name" value="Horizonte Emirates"/>
+    <input type="hidden" name="replyto" id="h-replyto" value=""/>
     <input type="hidden" name="redirect" value=""/>
     <input type="checkbox" name="botcheck" style="display:none"/>
     <input type="hidden" id="h-cap" name="capital"/>
@@ -599,27 +653,27 @@ footer{background:var(--navy-d);padding:64px 0 28px}
     <input type="hidden" id="h-pla" name="plazo"/>
     <input type="hidden" id="h-via" name="viaje_dubai"/>
     <input type="hidden" id="h-can" name="canal_preferido" value="whatsapp"/>
+    <input type="hidden" id="h-phone-full" name="telefono"/>
 
     <!-- STEP 1 -->
     <div class="fstep active" id="fs1">
-      <div class="offplan-note">
-        <p>En proyectos off-plan solo necesita aportar entre el <strong>10% y el 20% inicialmente</strong>. Con 50.000 € de entrada puede acceder a propiedades desde 150.000 €.</p>
-      </div>
-      <div class="fq-label">1) Capital para invertir</div>
-      <div class="fhint">Seleccione el rango que mejor encaja con su presupuesto actual</div>
+      <div class="fq-label">1) Capital disponible para invertir</div>
+      <div class="fhint">Seleccione el rango que mejor encaja con su situación actual</div>
       <div class="opts" id="opts-cap">
-        <div class="opt" data-dim="capital" data-v="50k-100k" data-sc="1"><div class="on">01</div><div><div class="ot">50.000 – 100.000 €</div><div class="os">Off-plan desde 150k. Mercados emergentes</div></div></div>
-        <div class="opt" data-dim="capital" data-v="100k-300k" data-sc="2"><div class="on">02</div><div><div class="ot">100.000 – 300.000 €</div><div class="os">Portfolio completo Dubai y RAK</div></div></div>
-        <div class="opt" data-dim="capital" data-v="300k-600k" data-sc="3"><div class="on">03</div><div><div class="ot">300.000 – 600.000 €</div><div class="os">Activos Prime. Palm, Marina, Downtown</div></div></div>
-        <div class="opt" data-dim="capital" data-v="mas600k" data-sc="4"><div class="on">04</div><div><div class="ot">Más de 600.000 €</div><div class="os">Cartera multi-activo. Acceso off-market</div></div></div>
+        <div class="opt" data-dim="capital" data-v="150k-300k" data-sc="1"><div class="on">01</div><div><div class="ot">150.000 – 300.000 €</div><div class="os">Off-plan premium y activos residenciales consolidados</div></div></div>
+        <div class="opt" data-dim="capital" data-v="300k-600k" data-sc="2"><div class="on">02</div><div><div class="ot">300.000 – 600.000 €</div><div class="os">Acceso al portfolio completo. Dubai, RAK y Abu Dhabi</div></div></div>
+        <div class="opt" data-dim="capital" data-v="600k-1M" data-sc="3"><div class="on">03</div><div><div class="ot">600.000 – 1.000.000 €</div><div class="os">Activos Prime. Palm, Marina, Downtown</div></div></div>
+        <div class="opt" data-dim="capital" data-v="mas1M" data-sc="4"><div class="on">04</div><div><div class="ot">Más de 1.000.000 €</div><div class="os">Cartera multi-activo y operaciones fuera de mercado</div></div></div>
       </div>
+      <p class="offplan-caption">En proyectos off-plan la entrada inicial es del <strong>10–20%</strong>. Con 30.000 € puede acceder a activos desde 150.000 €.</p>
+
       <div class="fq-spacer">
         <div class="fq-label">2) Objetivo principal</div>
         <div class="fhint">Definimos la estrategia según su prioridad real</div>
         <div class="opts" id="opts-obj">
-          <div class="opt" data-dim="objetivo" data-v="alquiler" data-sc="3"><div class="on">01</div><div><div class="ot">Generar renta pasiva</div><div class="os">Alquiler gestionado. Flujo mensual</div></div></div>
+          <div class="opt" data-dim="objetivo" data-v="alquiler" data-sc="3"><div class="on">01</div><div><div class="ot">Generar renta pasiva</div><div class="os">Alquiler gestionado. Flujo mensual sin ocupas</div></div></div>
           <div class="opt" data-dim="objetivo" data-v="revalorizacion" data-sc="3"><div class="on">02</div><div><div class="ot">Apreciación del capital</div><div class="os">Compra en plano o mercado emergente</div></div></div>
-          <div class="opt" data-dim="objetivo" data-v="diversificacion" data-sc="2"><div class="on">03</div><div><div class="ot">Diversificación geográfica</div><div class="os">Proteger patrimonio fuera del euro</div></div></div>
+          <div class="opt" data-dim="objetivo" data-v="diversificacion" data-sc="2"><div class="on">03</div><div><div class="ot">Diversificación geográfica</div><div class="os">Proteger patrimonio fuera del euro y de España</div></div></div>
           <div class="opt" data-dim="objetivo" data-v="residencia" data-sc="1"><div class="on">04</div><div><div class="ot">Residencia en UAE</div><div class="os">Visa de inversor o residencia fiscal</div></div></div>
         </div>
       </div>
@@ -628,26 +682,28 @@ footer{background:var(--navy-d);padding:64px 0 28px}
     <!-- STEP 2 -->
     <div class="fstep" id="fs2">
       <div class="fq-label">3) Experiencia inversora</div>
-      <div class="fhint">Adaptamos el asesoramiento a su nivel</div>
-      <div class="opts" id="opts-exp">
-        <div class="opt" data-dim="experiencia" data-v="internacional" data-sc="3"><div class="on">01</div><div><div class="ot">Inversiones internacionales</div><div class="os">He invertido fuera de mi país de residencia</div></div></div>
-        <div class="opt" data-dim="experiencia" data-v="espana" data-sc="2"><div class="on">02</div><div><div class="ot">Solo en mi país</div><div class="os">Inmuebles, bolsa o activos nacionales</div></div></div>
-        <div class="opt" data-dim="experiencia" data-v="primera" data-sc="1"><div class="on">03</div><div><div class="ot">Primera inversión</div><div class="os">Busco empezar de forma segura</div></div></div>
+      <div class="fhint">Adaptamos el asesoramiento a su punto de partida</div>
+      <div class="opts cols1" id="opts-exp">
+        <div class="opt" data-dim="experiencia" data-v="primera" data-sc="1"><div class="on">01</div><div><div class="ot">Es mi primera inversión</div><div class="os">Le acompañamos desde cero, paso a paso y en español</div></div></div>
+        <div class="opt" data-dim="experiencia" data-v="previa" data-sc="2"><div class="on">02</div><div><div class="ot">Tengo experiencia previa</div><div class="os">He invertido antes en inmuebles, bolsa u otros activos</div></div></div>
       </div>
+
       <div class="fq-spacer">
-        <div class="fq-label">4) Horizonte de inversión</div>
-        <div class="fhint">Elegimos tipo de activo según plazo y ritmo de decisión</div>
+        <div class="fq-label">4) Horizonte de decisión</div>
+        <div class="fhint">Elegimos el tipo de activo y ritmo según su plazo real</div>
         <div class="opts" id="opts-pla">
-          <div class="opt" data-dim="plazo" data-v="3meses" data-sc="3"><div class="on">01</div><div><div class="ot">Menos de 6 meses</div><div class="os">Quiero cerrar una operación pronto</div></div></div>
-          <div class="opt" data-dim="plazo" data-v="6-12meses" data-sc="2"><div class="on">02</div><div><div class="ot">6 a 18 meses</div><div class="os">Estoy en proceso de decisión</div></div></div>
-          <div class="opt" data-dim="plazo" data-v="explorando" data-sc="1"><div class="on">03</div><div><div class="ot">Explorando opciones</div><div class="os">Quiero información antes de decidir</div></div></div>
+          <div class="opt" data-dim="plazo" data-v="ya" data-sc="4"><div class="on">01</div><div><div class="ot">Cuanto antes</div><div class="os">Estoy listo para moverme. Busco activos disponibles ya</div></div></div>
+          <div class="opt" data-dim="plazo" data-v="6meses" data-sc="3"><div class="on">02</div><div><div class="ot">Menos de 6 meses</div><div class="os">Tengo capital y estoy en proceso de decisión</div></div></div>
+          <div class="opt" data-dim="plazo" data-v="12meses" data-sc="2"><div class="on">03</div><div><div class="ot">Menos de 12 meses</div><div class="os">Estoy analizando opciones y quiero información real</div></div></div>
+          <div class="opt" data-dim="plazo" data-v="indefinido" data-sc="1"><div class="on">04</div><div><div class="ot">Sin plazo definido</div><div class="os">Exploro el mercado antes de decidir</div></div></div>
         </div>
       </div>
+
       <div class="fq-spacer">
         <div class="fq-label">5) Visita presencial en Dubai</div>
-        <div class="fhint">Organizamos acompañamientos presenciales gratuitos para validar proyectos</div>
+        <div class="fhint">Organizamos acompañamientos sin coste para validar proyectos en persona</div>
         <div class="viaje-opts" id="opts-via">
-          <div class="opt" data-dim="viaje" data-v="si"><div class="on">Sí</div><div class="os">Me interesa el viaje</div></div>
+          <div class="opt" data-dim="viaje" data-v="si"><div class="on">Sí</div><div class="os">Me interesa ir</div></div>
           <div class="opt" data-dim="viaje" data-v="quizas"><div class="on">Lo valoro</div><div class="os">Depende del análisis</div></div>
           <div class="opt" data-dim="viaje" data-v="no"><div class="on">No por ahora</div><div class="os">Prefiero gestión remota</div></div>
         </div>
@@ -660,19 +716,46 @@ footer{background:var(--navy-d);padding:64px 0 28px}
       <div class="fhint">Le contactaremos en menos de 24h por el canal que prefiera</div>
       <div class="ffields">
         <div class="frow2">
-          <div class="fg"><label>Nombre</label><input type="text" name="nombre" placeholder="Juan" required/></div>
+          <div class="fg"><label>Nombre *</label><input type="text" name="nombre" placeholder="Juan" required/></div>
           <div class="fg"><label>Apellidos</label><input type="text" name="apellidos" placeholder="García López"/></div>
         </div>
-        <div class="fg"><label>Email</label><input type="email" name="email" placeholder="juan@ejemplo.com" required/></div>
-        <div class="fg"><label>Teléfono (WhatsApp)</label><input type="tel" name="telefono" placeholder="+34 600 000 000"/></div>
+        <div class="fg"><label>Email *</label><input type="email" name="email" placeholder="juan@ejemplo.com" required autocomplete="email"/></div>
         <div class="fg">
-          <label>País de residencia</label>
+          <label>Teléfono (WhatsApp) *</label>
+          <div class="phone-row">
+            <select id="phone-prefix" class="prefix-sel" aria-label="Prefijo de país">
+              <option value="+34">🇪🇸 +34</option>
+              <option value="+376">🇦🇩 +376</option>
+              <option value="+52">🇲🇽 +52</option>
+              <option value="+54">🇦🇷 +54</option>
+              <option value="+57">🇨🇴 +57</option>
+              <option value="+56">🇨🇱 +56</option>
+              <option value="+51">🇵🇪 +51</option>
+              <option value="+58">🇻🇪 +58</option>
+              <option value="+593">🇪🇨 +593</option>
+              <option value="+598">🇺🇾 +598</option>
+              <option value="+44">🇬🇧 +44</option>
+              <option value="+1">🇺🇸 +1</option>
+              <option value="+971">🇦🇪 +971</option>
+            </select>
+            <input type="tel" id="phone-num" placeholder="600 000 000" autocomplete="tel" required/>
+          </div>
+        </div>
+        <div class="fg">
+          <label>País de residencia *</label>
           <select name="pais" required>
             <option value="">Seleccione su país</option>
-            <option>España</option><option>México</option><option>Argentina</option>
-            <option>Colombia</option><option>Chile</option><option>Perú</option>
-            <option>Venezuela</option><option>Ecuador</option><option>Uruguay</option>
-            <option>Andorra</option><option>Otro</option>
+            <option>España</option>
+            <option>Andorra</option>
+            <option>México</option>
+            <option>Argentina</option>
+            <option>Colombia</option>
+            <option>Chile</option>
+            <option>Perú</option>
+            <option>Venezuela</option>
+            <option>Ecuador</option>
+            <option>Uruguay</option>
+            <option>Otro</option>
           </select>
         </div>
       </div>
@@ -687,7 +770,7 @@ footer{background:var(--navy-d);padding:64px 0 28px}
         <ul>
           <li>Mínimo 3 activos seleccionados para su capital y objetivo, con rentabilidades verificadas</li>
           <li>Comparativa neta por zona: Dubai Prime, Ras Al Khaimah y Abu Dhabi</li>
-          <li>Guía fiscal específica para su país de residencia: obligaciones, modelo 720 y optimización</li>
+          <li>Orientación sobre los puntos fiscales y legales clave a revisar con su asesor en su país de residencia</li>
         </ul>
       </div>
       <div class="form-proof">Si su perfil encaja, organizamos las visitas a activos en Dubai con acompañamiento de nuestro equipo local — sin coste. Usted evalúa cada proyecto en persona antes de comprometer ningún capital.</div>
@@ -706,12 +789,13 @@ footer{background:var(--navy-d);padding:64px 0 28px}
   <!-- Success -->
   <div class="success" id="success">
     <div class="s-icon">✓</div>
-    <h3>Su consulta ha sido enviada con éxito</h3>
-    <p>Gracias por confiar en Horizonte Emirates. Nuestro equipo ya está preparando su análisis personalizado con oportunidades alineadas a su perfil y le contactará en menos de 24 horas por el canal elegido.</p>
-    <a href="https://wa.me/971554722025" class="wa-s" target="_blank" rel="noopener">
+    <h3>Su análisis está en camino</h3>
+    <p>Nuestro equipo ya está preparando su análisis personalizado con oportunidades alineadas a su perfil. Le contactaremos en menos de 24 horas por el canal que eligió.</p>
+    <a id="wa-success-btn" href="#" class="wa-s" onclick="openWaModal(savedLeadData);return false;">
       <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-      &nbsp;Contactar por WhatsApp
+      &nbsp;Hablar ahora con un asesor
     </a>
+    <p class="wa-hint">También le contactaremos por el canal que eligió en el formulario.</p>
   </div>
 </div>
 </div>
@@ -727,13 +811,14 @@ footer{background:var(--navy-d);padding:64px 0 28px}
   </div>
   <div class="faq-g">
     <div>
-      <div class="fqitem fade" onclick="toggleFaq(this)"><div class="fq-q">¿Es legal comprar en Dubai siendo residente español? <span class="fq-tog">+</span></div><div class="fq-a">Totalmente legal y habitual entre inversores europeos. El comprador no residente opera bajo el marco regulado por RERA, el organismo oficial del Gobierno de Dubai que supervisa todas las transacciones inmobiliarias. Como residente fiscal en España, deberá declarar el activo en el Modelo 720 a partir de 50.000 €. Le proporcionamos una guía fiscal específica para su situación junto con el análisis.</div></div>
+      <div class="fqitem fade" onclick="toggleFaq(this)"><div class="fq-q">¿Es legal comprar en Dubai siendo residente en España? <span class="fq-tog">+</span></div><div class="fq-a">Totalmente legal y habitual entre inversores españoles. El comprador no residente opera bajo el marco regulado por RERA, el organismo oficial del Gobierno de Dubai que supervisa todas las transacciones inmobiliarias. Como residente fiscal en España, deberá declarar el activo en el Modelo 720 a partir de 50.000 €. Le indicamos los puntos clave a revisar con su asesor fiscal; Horizonte Emirates no presta asesoramiento fiscal ni jurídico.</div></div>
       <div class="fqitem fade" onclick="toggleFaq(this)"><div class="fq-q">¿Cuánto cobra Horizonte Emirates por sus servicios? <span class="fq-tog">+</span></div><div class="fq-a">El inversor no paga nada. Nunca. Nuestros honorarios los abona el promotor, no el comprador. No existe comisión de apertura, fee de análisis, coste de acompañamiento ni cargo de ningún tipo — ni al inicio del proceso, ni durante la visita a Dubai, ni en el momento del cierre.</div></div>
-      <div class="fqitem fade" onclick="toggleFaq(this)"><div class="fq-q">¿Necesito viajar a Dubai para cerrar la operación? <span class="fq-tog">+</span></div><div class="fq-a">No es imprescindible, aunque lo recomendamos. Muchas operaciones sobre plano se cierran de forma remota mediante poder notarial y firma digital. Si decide viajar — y la mayoría de nuestros inversores lo hace —, organizamos la agenda completa de visitas a activos y reuniones con promotores. Nuestro equipo local le acompaña en todo momento sin coste. El vuelo y el alojamiento van por su cuenta.</div></div>
+      <div class="fqitem fade" onclick="toggleFaq(this)"><div class="fq-q">¿Necesito viajar a Dubai para cerrar la operación? <span class="fq-tog">+</span></div><div class="fq-a">No es imprescindible, aunque lo recomendamos. Muchas operaciones sobre plano se cierran de forma remota mediante poder notarial y firma digital. Si decide viajar — y la mayoría de nuestros inversores lo hace —, organizamos la agenda completa de visitas a activos y reuniones con promotores. Nuestro equipo local le acompaña en todo momento en español, sin coste. El vuelo y el alojamiento van por su cuenta.</div></div>
     </div>
     <div>
-      <div class="fqitem fade" onclick="toggleFaq(this)"><div class="fq-q">¿Cuál es el capital mínimo para invertir? <span class="fq-tog">+</span></div><div class="fq-a">En proyectos off-plan, la entrada inicial es del 10–20% del valor del activo. Con 50.000 € puede acceder a propiedades desde 150.000 €. Para mercado secundario recomendamos capital desde 150.000 €. Si su capital supera los 300.000 €, el acceso a activos Prime — Palm Jumeirah, Downtown, Marina — se abre con potencial de rentabilidad neta del 6–9% anual.</div></div>
-      <div class="fqitem fade" onclick="toggleFaq(this)"><div class="fq-q">¿Qué diferencia a Horizonte Emirates de otros portales? <span class="fq-tog">+</span></div><div class="fq-a">Tres diferencias concretas: (1) Operamos íntegramente en español — no somos una agencia de Dubai con Google Translate; todo el proceso, desde el análisis hasta el cierre, lo gestionamos en su idioma. (2) Nuestros partners en Dubai tienen licencia RERA activa y cartera verificada de promotoras. (3) Organizamos visitas presenciales a los activos sin coste para el inversor. Ningún portal generalista hace las tres.</div></div>
+      <div class="fqitem fade" onclick="toggleFaq(this)"><div class="fq-q">¿Qué obligaciones fiscales tengo en España al invertir en Dubai? <span class="fq-tog">+</span></div><div class="fq-a">Como residente fiscal en España, la compra de un inmueble en Dubai puede implicar la obligación de declarar el activo en el Modelo 720 (a partir de 50.000 €), así como tributar en el IRPF las rentas generadas e incrementos patrimoniales en el momento de la venta. Las implicaciones concretas dependen de su situación personal y fiscal. <strong>Horizonte Emirates no presta asesoramiento fiscal ni jurídico.</strong> Le recomendamos consultar con un asesor especializado en fiscalidad internacional antes de tomar cualquier decisión de inversión.</div></div>
+      <div class="fqitem fade" onclick="toggleFaq(this)"><div class="fq-q">¿Cuál es el capital mínimo para invertir? <span class="fq-tog">+</span></div><div class="fq-a">En proyectos off-plan, la entrada inicial es del 10–20% del valor del activo. Con 30.000 € puede acceder a propiedades desde 150.000 €. Para mercado secundario recomendamos capital desde 150.000 €. Si su capital supera los 300.000 €, el acceso a activos Prime — Palm Jumeirah, Downtown, Marina — se abre con potencial de rentabilidad neta del 6–9% anual. Estos datos son orientativos; las condiciones reales dependen del activo y el promotor.</div></div>
+      <div class="fqitem fade" onclick="toggleFaq(this)"><div class="fq-q">¿Qué diferencia a Horizonte Emirates de otras opciones? <span class="fq-tog">+</span></div><div class="fq-a">Tres diferencias concretas: (1) Operamos íntegramente en español — no somos una agencia de Dubai con Google Translate; todo el proceso, desde el análisis hasta el cierre, lo gestionamos en su idioma. (2) Nuestros partners en Dubai tienen licencia RERA activa y cartera verificada de promotoras. (3) Organizamos visitas presenciales a los activos sin coste para el inversor. Ningún portal generalista hace las tres.</div></div>
       <div class="fqitem fade" onclick="toggleFaq(this)"><div class="fq-q">¿Con qué garantías operan vuestros partners en Dubai? <span class="fq-tog">+</span></div><div class="fq-a">Nuestro partner en Dubai opera con licencia RERA activa. RERA — Real Estate Regulatory Authority — es el organismo oficial del Gobierno de Dubai que regula y supervisa todas las transacciones inmobiliarias del emirato. Cada proyecto que presentamos está registrado en RERA y puede verificarse de forma independiente en el portal oficial del Gobierno de Dubai.</div></div>
     </div>
   </div>
@@ -758,14 +843,59 @@ footer{background:var(--navy-d);padding:64px 0 28px}
     </div>
   </div>
   <div class="ft-bot">
-    <div class="legal">Horizonte Emirates es un servicio de Propulse SLU (Andorra). Los datos de rentabilidad son orientativos y no constituyen asesoramiento financiero ni oferta de valores. La inversión inmobiliaria conlleva riesgos. Consulte a un asesor antes de invertir.</div>
+    <div class="legal">Horizonte Emirates es un servicio de Propulse SLU (Andorra). Horizonte Emirates no presta asesoramiento fiscal, jurídico ni financiero. La información facilitada es estrictamente orientativa y no constituye oferta de inversión ni recomendación financiera. Los datos de rentabilidad son estimaciones basadas en información de mercado y no garantizan resultados futuros. La inversión inmobiliaria conlleva riesgos. Consulte a un asesor fiscal y financiero independiente antes de tomar cualquier decisión de inversión.</div>
     <div class="copy">© 2026 Horizonte Emirates</div>
   </div>
 </div>
 </footer>
 
+<!-- WA LEAD MODAL -->
+<div id="wa-modal-overlay">
+  <div id="wa-modal">
+    <button class="wam-close" onclick="closeWaModal()" aria-label="Cerrar">×</button>
+    <div class="wam-wa-icon">
+      <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    </div>
+    <h3>Antes de continuar</h3>
+    <p>Déjenos un dato de contacto y nuestro equipo le atiende en minutos.</p>
+    <form id="wa-lead-form">
+      <div class="wam-field">
+        <label>Nombre *</label>
+        <input type="text" id="wam-nombre" placeholder="Juan García" required autocomplete="name"/>
+      </div>
+      <div class="wam-field">
+        <label>Email *</label>
+        <input type="email" id="wam-email" placeholder="juan@ejemplo.com" required autocomplete="email"/>
+      </div>
+      <div class="wam-field">
+        <label>Teléfono *</label>
+        <div class="wam-phone-row">
+          <select id="wam-pfx" class="wam-pfx">
+            <option value="+34">🇪🇸 +34</option>
+            <option value="+376">🇦🇩 +376</option>
+            <option value="+52">🇲🇽 +52</option>
+            <option value="+54">🇦🇷 +54</option>
+            <option value="+57">🇨🇴 +57</option>
+            <option value="+56">🇨🇱 +56</option>
+            <option value="+51">🇵🇪 +51</option>
+            <option value="+44">🇬🇧 +44</option>
+            <option value="+1">🇺🇸 +1</option>
+            <option value="+971">🇦🇪 +971</option>
+          </select>
+          <input type="tel" id="wam-phone" placeholder="600 000 000" autocomplete="tel" required/>
+        </div>
+      </div>
+      <div class="wam-err" id="wam-err"></div>
+      <button type="submit" class="wam-btn">
+        <svg viewBox="0 0 24 24" width="15" height="15"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Abrir WhatsApp
+      </button>
+    </form>
+  </div>
+</div>
+
 <!-- WA FLOAT -->
-<div class="wa"><a href="https://wa.me/971554722025" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a></div>
+<div class="wa"><a href="#" onclick="openWaModal(null);return false;" aria-label="WhatsApp"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a></div>
 
 <script>
 // ── NAV SCROLL ──
@@ -773,15 +903,73 @@ window.addEventListener('scroll',()=>{
   document.getElementById('nav').classList.toggle('scrolled',window.scrollY>60);
 });
 
+// ── WA MODAL ──
+const WA_URL='https://wa.me/971554722025';
+let savedLeadData={};
+function buildWaLink(data){
+  const nombre=(data?.nombre||'').trim();
+  const saludo=nombre?`Hola, soy ${nombre}.`:'Hola.';
+  const text=`${saludo} He dejado mis datos en Horizonte Emirates para recibir acompañamiento gratuito e invertir en Emiratos.`;
+  return `${WA_URL}?text=${encodeURIComponent(text)}`;
+}
+
+function openWaModal(preData){
+  const overlay=document.getElementById('wa-modal-overlay');
+  if(preData){
+    if(preData.nombre)document.getElementById('wam-nombre').value=preData.nombre;
+    if(preData.email)document.getElementById('wam-email').value=preData.email;
+  }
+  overlay.style.display='flex';
+  document.body.style.overflow='hidden';
+  setTimeout(()=>{try{document.getElementById('wam-nombre').focus();}catch(e){}},120);
+}
+
+function closeWaModal(){
+  document.getElementById('wa-modal-overlay').style.display='none';
+  document.body.style.overflow='';
+  document.getElementById('wam-err').classList.remove('show');
+}
+
+document.getElementById('wa-modal-overlay').addEventListener('click',function(e){
+  if(e.target===this)closeWaModal();
+});
+
+document.getElementById('wa-lead-form').addEventListener('submit',function(e){
+  e.preventDefault();
+  const nombre=(document.getElementById('wam-nombre').value||'').trim();
+  const email=(document.getElementById('wam-email').value||'').trim();
+  const prefix=document.getElementById('wam-pfx').value;
+  const phone=(document.getElementById('wam-phone').value||'').trim();
+  const errEl=document.getElementById('wam-err');
+  if(!nombre){errEl.textContent='Por favor introduce tu nombre.';errEl.classList.add('show');return;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){errEl.textContent='Introduce un email válido.';errEl.classList.add('show');return;}
+  if(phone.replace(/\D/g,'').length<6){errEl.textContent='Introduce un teléfono válido.';errEl.classList.add('show');return;}
+  errEl.classList.remove('show');
+  const fd=new FormData();
+  fd.append('access_key',WEB3FORMS_KEY);
+  fd.append('subject','[WhatsApp directo] '+nombre+' — Horizonte Emirates');
+  fd.append('from_name','Horizonte Emirates');
+  fd.append('nombre',nombre);
+  fd.append('email',email);
+  fd.append('telefono',prefix+' '+phone);
+  fd.append('origen','Botón WhatsApp directo');
+  fd.append('botcheck','');
+  savedLeadData={nombre,email,telefono:prefix+' '+phone};
+  fetch(WEB3FORMS_ENDPOINT,{method:'POST',body:fd}).catch(()=>{});
+  closeWaModal();
+  window.open(buildWaLink(savedLeadData),'_blank','noopener');
+});
+
 // ── FORM STATE ──
 const SCORES={
-  capital:{'50k-100k':1,'100k-300k':2,'300k-600k':3,'mas600k':4},
+  capital:{'150k-300k':1,'300k-600k':2,'600k-1M':3,'mas1M':4},
   objetivo:{'alquiler':3,'revalorizacion':3,'diversificacion':2,'residencia':1},
-  experiencia:{'internacional':3,'espana':2,'primera':1},
-  plazo:{'3meses':3,'6-12meses':2,'explorando':1}
+  experiencia:{'primera':1,'previa':2},
+  plazo:{'ya':4,'6meses':3,'12meses':2,'indefinido':1},
+  viaje:{'si':2,'quizas':1,'no':0}
 };
 let cur=1,sel={capital:null,objetivo:null,experiencia:null,plazo:null,viaje:null};
-const DELAY=400;
+const DELAY=380;
 const WEB3FORMS_KEY='3861d49c-5f0a-4dc3-a9e9-08b1758a110a';
 const WEB3FORMS_ENDPOINT='https://api.web3forms.com/submit';
 
@@ -793,8 +981,9 @@ function setFormStatus(kind,msg){
 
 function classify(){
   const s=(SCORES.capital[sel.capital]||0)+(SCORES.objetivo[sel.objetivo]||0)+
-          (SCORES.experiencia[sel.experiencia]||0)+(SCORES.plazo[sel.plazo]||0);
-  return s>=10?'A':s>=7?'B':'C';
+          (SCORES.experiencia[sel.experiencia]||0)+(SCORES.plazo[sel.plazo]||0)+
+          (SCORES.viaje[sel.viaje]||0);
+  return s>=11?'A':s>=7?'B':'C';
 }
 
 function updInd(step){
@@ -812,11 +1001,11 @@ function goTo(step){
   cur=step;
   document.getElementById('fs'+cur).classList.add('active');
   updInd(cur);
-  document.getElementById('form').scrollIntoView({behavior:'smooth',block:'start'});
+  document.querySelector('.sind').scrollIntoView({behavior:'smooth',block:'start'});
 }
 function goBack(){if(cur>1)goTo(cur-1);}
 
-// Option click handler
+// Option click
 document.querySelectorAll('.opt').forEach(el=>{
   el.addEventListener('click',function(){
     const dim=this.dataset.dim,val=this.dataset.v;
@@ -824,10 +1013,8 @@ document.querySelectorAll('.opt').forEach(el=>{
     document.querySelectorAll(`.opt[data-dim="${dim}"]`).forEach(x=>x.classList.remove('sel'));
     this.classList.add('sel');
     sel[dim]=val;
-    // Set hidden field
     const hidMap={capital:'h-cap',objetivo:'h-obj',experiencia:'h-exp',plazo:'h-pla',viaje:'h-via'};
     if(hidMap[dim])document.getElementById(hidMap[dim]).value=val;
-    // Auto-advance
     if(cur===1&&sel.capital&&sel.objetivo){setTimeout(()=>goTo(2),DELAY);}
     if(cur===2&&sel.experiencia&&sel.plazo&&sel.viaje){setTimeout(()=>goTo(3),DELAY);}
   });
@@ -849,20 +1036,39 @@ function checkGdpr(){
 document.getElementById('mainform').addEventListener('submit',function(e){
   e.preventDefault();
   const btn=document.getElementById('btn-sub');
-  const accessInput=document.getElementById('w3f-access-key');
-  if(WEB3FORMS_KEY==='REPLACE_WITH_WEB3FORMS_ACCESS_KEY'){
-    setFormStatus('err','Falta configurar la clave de Web3Forms. Sustituye REPLACE_WITH_WEB3FORMS_ACCESS_KEY por tu access key real.');
+
+  // Email validation
+  const emailVal=(this.querySelector('[name="email"]')?.value||'').trim();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(emailVal)){
+    setFormStatus('err','Introduce un email válido para continuar.');
     return;
   }
+
+  // Phone validation + assembly
+  const prefix=document.getElementById('phone-prefix').value||'+34';
+  const phoneNum=(document.getElementById('phone-num').value||'').trim();
+  if(phoneNum.replace(/\D/g,'').length<6){
+    setFormStatus('err','Introduce un número de teléfono válido para continuar.');
+    return;
+  }
+  document.getElementById('h-phone-full').value=prefix+' '+phoneNum;
+
+  const accessInput=document.getElementById('w3f-access-key');
   accessInput.value=WEB3FORMS_KEY;
+
   const pais=this.querySelector('[name="pais"]').value||'';
+  const leadEmail=emailVal;
+  const leadNombre=(this.querySelector('[name="nombre"]')?.value||'').trim();
   document.getElementById('sub-h').value=`[${classify()}] Nuevo lead Horizonte Emirates · ${pais}`;
+  document.getElementById('h-replyto').value=leadEmail;
+
   btn.disabled=true;
   btn.textContent='Enviando...';
+
   fetch(WEB3FORMS_ENDPOINT,{method:'POST',body:new FormData(this)})
     .then(r=>r.json()).then(d=>{
       if(d.success){
-        setFormStatus('ok','Su consulta ha sido enviada con éxito. En menos de 24 horas recibirá un análisis personalizado de inversión en UAE.');
+        savedLeadData={nombre:leadNombre,email:leadEmail};
         document.getElementById('mainform').style.display='none';
         document.querySelector('.sind').style.display='none';
         document.getElementById('success').classList.add('show');
@@ -872,7 +1078,7 @@ document.getElementById('mainform').addEventListener('submit',function(e){
         btn.textContent='Solicitar análisis gratuito  →';
       }
     }).catch(()=>{
-      setFormStatus('err','Error de conexión al enviar. Revisa internet o vuelve a intentar en unos minutos.');
+      setFormStatus('err','Error de conexión. Revisa tu conexión a internet e inténtalo de nuevo.');
       btn.disabled=false;
       btn.textContent='Solicitar análisis gratuito  →';
     });
@@ -888,7 +1094,7 @@ function toggleFaq(el){
 }
 
 // ── FADE IN ──
-const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.12});
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.1});
 document.querySelectorAll('.fade').forEach(el=>obs.observe(el));
 updInd(1);
 </script>
