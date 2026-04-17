@@ -487,9 +487,42 @@ function getTemplate(code, lead) {
   const waL  = CONFIG.WA_LINK;
   const cal  = CONFIG.CALENDLY_URL;
 
-  // Bloques reutilizables
-  const waBtn = `<p style="margin:18px 0 0"><a href="${waL}" style="display:inline-block;background:#25D366;color:#ffffff;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:12px 22px;text-decoration:none;border-radius:2px">Escribir por WhatsApp →</a></p>`;
-  const calBtn = `<p style="margin:10px 0 0"><a href="${cal}" style="font-size:14px;color:#C4942A;text-decoration:none;font-weight:600">→ Reservar llamada de 20 minutos</a></p>`;
+  // ── CTAs de email (tabla-based para máxima compatibilidad con clientes de email) ──
+  //
+  // WA  = botón primario sólido verde  (acción inmediata)
+  // CAL = botón secundario contorno dorado (acción alternativa)
+  //
+  // Diseño: botones separados con jerarquía visual clara.
+  // Usar siempre ${waBtn}${calBtn} cuando existan ambas opciones.
+
+  const waBtn = `
+<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="margin:24px 0 8px">
+  <tr>
+    <td style="background:#1DAA61;border-radius:4px;padding:0">
+      <a href="${waL}"
+         style="display:inline-block;padding:15px 30px;color:#ffffff;font-family:'Helvetica Neue',Arial,sans-serif;
+                font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+                text-decoration:none;line-height:1;border-radius:4px">
+        Escribir por WhatsApp &nbsp;&#8250;
+      </a>
+    </td>
+  </tr>
+</table>`;
+
+  const calBtn = `
+<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="margin:0 0 4px">
+  <tr>
+    <td style="border:2px solid #C4942A;border-radius:4px;padding:0">
+      <a href="${cal}"
+         style="display:inline-block;padding:13px 30px;color:#C4942A;font-family:'Helvetica Neue',Arial,sans-serif;
+                font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+                text-decoration:none;line-height:1;border-radius:3px;background:#ffffff">
+        Reservar llamada · 20 min &nbsp;&#8250;
+      </a>
+    </td>
+  </tr>
+</table>`;
+
   const firma  = `<p style="margin:28px 0 0;padding-top:20px;border-top:1px solid #E0DBD1;font-size:14px;color:#646464;line-height:1.6">Un saludo,<br><strong style="color:#1A1A1A">Equipo Horizonte Emirates</strong></p>`;
 
   // ── TIER A — 5 emails ────────────────────────────────────────
