@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Proyectos Inmobiliarios Premium en UAE | Horizonte Emirates</title>
+<meta name="description" content="Selección curada de proyectos inmobiliarios premium en Dubai, Ras Al Khaimah y Abu Dhabi para inversores que buscan rentabilidad neta, seguridad contractual y potencial de revalorización."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --navy:#0D1B2A;--navy-d:#07121F;--navy-m:rgba(13,27,42,.95);
+  --gold:#C4942A;--gold-lt:rgba(196,148,42,.12);--gold-bd:rgba(196,148,42,.35);
+  --warm:#F8F6F1;--warm2:#F0EDE5;
+  --ink:#1A1A1A;--muted:#646464;
+  --border:#E0DBD1;--r:2px;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'Inter',system-ui,sans-serif;
+  --container-max:1280px;
+  --gutter-desktop:32px;--gutter-tablet:24px;--gutter-mobile:20px;
+  --space-md:32px;--space-lg:48px;--space-xl:64px;--space-2xl:96px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--warm);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.65;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+
+.wrap{
+  width:min(100%,calc(var(--container-max) + (var(--gutter-desktop) * 2)));
+  margin:0 auto;padding-inline:var(--gutter-desktop);
+}
+.section{padding-block:var(--space-2xl)}
+.eyebrow{font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+.rule{width:38px;height:1px;background:var(--gold);display:block;margin:12px 0}
+.btn-gold{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;background:var(--gold);color:#fff;padding:15px 28px;border-radius:var(--r);transition:.2s}
+.btn-gold:hover{filter:brightness(1.08)}
+.btn-outline{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;border:1px solid var(--gold-bd);color:#2a3f54;padding:12px 18px;border-radius:var(--r);transition:.2s}
+.btn-outline:hover{border-color:var(--gold);color:var(--ink)}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;transition:background .3s;border-bottom:1px solid transparent}
+nav.scrolled{background:var(--navy-m);backdrop-filter:blur(10px);border-color:rgba(255,255,255,.07)}
+.nav-i{height:64px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:var(--serif);font-size:22px;font-weight:500;color:#fff;letter-spacing:.03em}
+.logo span{color:var(--gold)}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:34px}
+.nav-links{display:flex;gap:28px;justify-content:flex-end}
+.nav-links a{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.64)}
+.nav-links a:hover{color:#fff}
+.nav-cta{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;background:var(--gold);color:#fff;padding:10px 22px;border-radius:var(--r)}
+
+#hero{padding-top:130px;padding-bottom:84px;background:linear-gradient(145deg,#07121f 0%,#0d1b2a 55%,#16263a 100%);color:#fff}
+.hero-inner{max-width:940px}
+.hero-inner h1{font-family:var(--serif);font-size:clamp(44px,6vw,76px);line-height:1.08;font-weight:500;max-width:18ch;margin-bottom:16px}
+.hero-sub{font-size:20px;color:rgba(255,255,255,.85);max-width:58ch;margin-bottom:30px;text-align:justify}
+.hero-ctas{display:flex;gap:12px;flex-wrap:wrap}
+.hero-note{margin-top:16px;font-size:13px;color:rgba(255,255,255,.58)}
+
+.sh{margin-bottom:var(--space-lg)}
+.sh h2{font-family:var(--serif);font-size:clamp(38px,4.2vw,60px);font-weight:500;line-height:1.12;color:var(--ink);margin-bottom:10px}
+.sh p{font-size:18px;color:var(--muted);max-width:72ch;text-align:justify}
+
+.proj-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--border);border:1px solid var(--border)}
+.p-card{background:#fff;display:flex;flex-direction:column}
+.p-media img{width:100%;height:220px;object-fit:cover}
+.p-bd{padding:24px}
+.p-meta{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.p-zone{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.p-tag{font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:#2a3f54;background:var(--gold-lt);border:1px solid var(--gold-bd);padding:4px 8px;border-radius:var(--r)}
+.p-bd h3{font-family:var(--serif);font-size:30px;line-height:1.1;font-weight:500;margin-bottom:6px}
+.p-asset{font-size:13px;color:#2a3f54;font-weight:600;margin-bottom:12px}
+.p-kpis{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.p-k{background:#faf8f3;border:1px solid var(--border);padding:8px 10px}
+.p-k span{display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+.p-k strong{font-family:var(--serif);font-size:20px;color:var(--ink);font-weight:500}
+.p-state{font-size:12px;color:#2a3f54;margin-bottom:10px}
+.p-desc{font-size:14px;color:var(--muted);text-align:justify;margin-bottom:18px}
+.p-cta{display:flex;gap:8px;flex-wrap:wrap}
+
+.mid-cta{background:var(--navy);color:#fff}
+.mid-cta .wrap{display:flex;align-items:center;justify-content:space-between;gap:20px;padding-block:30px}
+.mid-cta p{max-width:60ch;color:rgba(255,255,255,.84);text-align:justify}
+
+.final-cta{background:linear-gradient(180deg,#081321 0%,#0d1b2a 100%);color:#fff}
+.final-box{max-width:920px;margin:0 auto;text-align:center;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.12);padding:56px 40px}
+.final-box h2{font-family:var(--serif);font-size:clamp(36px,4.8vw,58px);font-weight:500;line-height:1.1;margin-bottom:10px}
+.final-box p{font-size:18px;color:rgba(255,255,255,.78);max-width:60ch;margin:0 auto 24px;text-align:justify}
+
+footer{background:var(--navy-d);padding:46px 0 28px}
+.copy{font-size:11px;color:rgba(255,255,255,.2);text-align:center}
+
+@media(max-width:1024px){
+  .wrap{padding-inline:var(--gutter-tablet)}
+  .nav-right{gap:22px}
+  .proj-grid{grid-template-columns:1fr 1fr}
+  .mid-cta .wrap{flex-direction:column;align-items:flex-start}
+}
+@media(max-width:700px){
+  body{font-size:16px}
+  .wrap{padding-inline:var(--gutter-mobile)}
+  .nav-links,.nav-cta{display:none}
+  #hero{padding-top:110px;padding-bottom:64px}
+  .hero-sub,.sh p,.p-desc,.mid-cta p,.final-box p{text-align:left}
+  .hero-sub{font-size:18px}
+  .proj-grid{grid-template-columns:1fr}
+  .p-media img{height:180px}
+  .p-bd h3{font-size:28px}
+  .final-box{padding:40px 22px}
+}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="wrap nav-i">
+    <a href="index-v4.html" class="logo">Horizonte <span>Emirates</span></a>
+    <div class="nav-right">
+      <div class="nav-links">
+        <a href="index-v4.html#para-quien">Para quién</a>
+        <a href="index-v4.html#como">Proceso</a>
+        <a href="proyectos.html">Proyectos</a>
+        <a href="index-v4.html#form">Análisis</a>
+        <a href="index-v4.html#faq">FAQ</a>
+      </div>
+      <a href="index-v4.html#form" class="nav-cta">Solicitar análisis</a>
+    </div>
+  </div>
+</nav>
+
+<section id="hero">
+  <div class="wrap">
+    <div class="hero-inner">
+      <span class="eyebrow">Selección privada · UAE</span>
+      <div class="rule"></div>
+      <h1>Proyectos seleccionados para inversores que buscan rentabilidad, seguridad y revalorización.</h1>
+      <p class="hero-sub">No publicamos un catálogo masivo. Mostramos una selección representativa de oportunidades premium en Dubai, Ras Al Khaimah y Abu Dhabi para ayudarle a identificar dónde encaja mejor su capital.</p>
+      <div class="hero-ctas">
+        <a href="index-v4.html#form" class="btn-gold">Solicitar análisis</a>
+        <a href="#grid-proyectos" class="btn-outline">Ver proyectos</a>
+      </div>
+      <p class="hero-note">Las oportunidades finales se presentan según perfil y objetivo de inversión.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="grid-proyectos">
+  <div class="wrap">
+    <div class="sh">
+      <span class="eyebrow">Escaparate selectivo</span>
+      <div class="rule"></div>
+      <h2>Seis proyectos para entender dónde está el valor real en UAE.</h2>
+      <p>Cada activo combina un posicionamiento distinto en ticket, rentabilidad y potencial de revalorización. Le ayudamos a priorizar según su estrategia, no por moda del mercado.</p>
+    </div>
+    <div class="proj-grid">
+      <article class="p-card">
+        <div class="p-media"><img src="https://images.unsplash.com/photo-1486299267070-83823f5448dd?w=1400&q=90&auto=format&fit=crop" alt="Torre residencial premium en Downtown Dubai" loading="lazy"/></div>
+        <div class="p-bd">
+          <div class="p-meta"><span class="p-zone">Dubai · Downtown</span><span class="p-tag">Prime</span></div>
+          <h3>Downtown Signature Residences</h3>
+          <div class="p-asset">Apartamentos premium · ready to rent</div>
+          <div class="p-kpis">
+            <div class="p-k"><span>Ticket</span><strong>420k€</strong></div>
+            <div class="p-k"><span>Rentabilidad</span><strong>6.8%</strong></div>
+            <div class="p-k"><span>Revalorización</span><strong>+5.9%</strong></div>
+            <div class="p-k"><span>Estado</span><strong>Entregado</strong></div>
+          </div>
+          <p class="p-desc">Activo con demanda sólida en alquiler ejecutivo y liquidez de reventa en uno de los distritos con mayor tracción internacional de Dubai.</p>
+          <div class="p-cta"><a href="index-v4.html#form" class="btn-gold">Solicitar información</a><a href="index-v4.html#form" class="btn-outline">Recibir análisis</a></div>
+        </div>
+      </article>
+
+      <article class="p-card">
+        <div class="p-media"><img src="https://images.unsplash.com/photo-1518005020951-eccb494ad742?w=1400&q=90&auto=format&fit=crop" alt="Proyecto off-plan en Dubai Marina" loading="lazy"/></div>
+        <div class="p-bd">
+          <div class="p-meta"><span class="p-zone">Dubai · Marina</span><span class="p-tag">Off-plan</span></div>
+          <h3>Marina Waterfront Collection</h3>
+          <div class="p-asset">Residencial alto standing · pago escalonado</div>
+          <div class="p-kpis">
+            <div class="p-k"><span>Ticket</span><strong>310k€</strong></div>
+            <div class="p-k"><span>Rentabilidad</span><strong>6.2%</strong></div>
+            <div class="p-k"><span>Revalorización</span><strong>+8.1%</strong></div>
+            <div class="p-k"><span>Estado</span><strong>En obra</strong></div>
+          </div>
+          <p class="p-desc">Proyecto con entrada progresiva y ubicación de alta rotación para alquiler internacional, diseñado para equilibrio entre flujo y apreciación.</p>
+          <div class="p-cta"><a href="index-v4.html#form" class="btn-gold">Solicitar información</a><a href="index-v4.html#form" class="btn-outline">Recibir análisis</a></div>
+        </div>
+      </article>
+
+      <article class="p-card">
+        <div class="p-media"><img src="https://images.unsplash.com/photo-1573578167787-c4f4c9b04370?w=1400&q=90&auto=format&fit=crop" alt="Desarrollo premium en Ras Al Khaimah" loading="lazy"/></div>
+        <div class="p-bd">
+          <div class="p-meta"><span class="p-zone">Ras Al Khaimah</span><span class="p-tag">Revalorización</span></div>
+          <h3>Wynn District Residences</h3>
+          <div class="p-asset">Off-plan premium · entrada anticipada</div>
+          <div class="p-kpis">
+            <div class="p-k"><span>Ticket</span><strong>235k€</strong></div>
+            <div class="p-k"><span>Rentabilidad</span><strong>6.0%</strong></div>
+            <div class="p-k"><span>Revalorización</span><strong>+12.0%</strong></div>
+            <div class="p-k"><span>Estado</span><strong>Pre-entrega</strong></div>
+          </div>
+          <p class="p-desc">Estrategia de entrada temprana en una zona con impulso estructural por turismo premium y desarrollo de infraestructuras de gran escala.</p>
+          <div class="p-cta"><a href="index-v4.html#form" class="btn-gold">Solicitar información</a><a href="index-v4.html#form" class="btn-outline">Recibir análisis</a></div>
+        </div>
+      </article>
+
+      <article class="p-card">
+        <div class="p-media"><img src="https://images.unsplash.com/photo-1526481280695-3c469f548a8e?w=1400&q=90&auto=format&fit=crop" alt="Proyecto residencial frente al mar en Abu Dhabi" loading="lazy"/></div>
+        <div class="p-bd">
+          <div class="p-meta"><span class="p-zone">Abu Dhabi · Saadiyat</span><span class="p-tag">Seguridad</span></div>
+          <h3>Saadiyat Bay Residences</h3>
+          <div class="p-asset">Activo institucional · largo plazo</div>
+          <div class="p-kpis">
+            <div class="p-k"><span>Ticket</span><strong>520k€</strong></div>
+            <div class="p-k"><span>Rentabilidad</span><strong>5.6%</strong></div>
+            <div class="p-k"><span>Revalorización</span><strong>+5.2%</strong></div>
+            <div class="p-k"><span>Estado</span><strong>Entregado</strong></div>
+          </div>
+          <p class="p-desc">Perfil defensivo con demanda estable, alta calidad constructiva y respaldo de promotor institucional en una zona de prestigio consolidado.</p>
+          <div class="p-cta"><a href="index-v4.html#form" class="btn-gold">Solicitar información</a><a href="index-v4.html#form" class="btn-outline">Recibir análisis</a></div>
+        </div>
+      </article>
+
+      <article class="p-card">
+        <div class="p-media"><img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1400&q=90&auto=format&fit=crop" alt="Proyecto con acceso Golden Visa en Dubai" loading="lazy"/></div>
+        <div class="p-bd">
+          <div class="p-meta"><span class="p-zone">Dubai · Business Bay</span><span class="p-tag">Golden Visa</span></div>
+          <h3>Business Bay Executive Lofts</h3>
+          <div class="p-asset">Residencial premium · alquiler corporativo</div>
+          <div class="p-kpis">
+            <div class="p-k"><span>Ticket</span><strong>360k€</strong></div>
+            <div class="p-k"><span>Rentabilidad</span><strong>7.1%</strong></div>
+            <div class="p-k"><span>Revalorización</span><strong>+6.3%</strong></div>
+            <div class="p-k"><span>Estado</span><strong>Entrega próxima</strong></div>
+          </div>
+          <p class="p-desc">Ubicación con fuerte demanda de perfil ejecutivo y estrategia adecuada para inversores que priorizan cashflow con salida flexible.</p>
+          <div class="p-cta"><a href="index-v4.html#form" class="btn-gold">Solicitar información</a><a href="index-v4.html#form" class="btn-outline">Recibir análisis</a></div>
+        </div>
+      </article>
+
+      <article class="p-card">
+        <div class="p-media"><img src="https://images.unsplash.com/photo-1511818966892-d7d671e672a2?w=1400&q=90&auto=format&fit=crop" alt="Proyecto de villas premium en UAE" loading="lazy"/></div>
+        <div class="p-bd">
+          <div class="p-meta"><span class="p-zone">Dubai · Meydan</span><span class="p-tag">Alta rentabilidad</span></div>
+          <h3>Meydan Garden Villas</h3>
+          <div class="p-asset">Villas de lujo · mercado premium</div>
+          <div class="p-kpis">
+            <div class="p-k"><span>Ticket</span><strong>980k€</strong></div>
+            <div class="p-k"><span>Rentabilidad</span><strong>6.4%</strong></div>
+            <div class="p-k"><span>Revalorización</span><strong>+7.5%</strong></div>
+            <div class="p-k"><span>Estado</span><strong>En comercialización</strong></div>
+          </div>
+          <p class="p-desc">Activos de ticket alto con mayor diferencial de valorización potencial en ubicaciones donde la oferta premium sigue limitada.</p>
+          <div class="p-cta"><a href="index-v4.html#form" class="btn-gold">Solicitar información</a><a href="index-v4.html#form" class="btn-outline">Recibir análisis</a></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="mid-cta">
+  <div class="wrap">
+    <p>No todos los proyectos encajan con todos los perfiles. Si lo prefiere, filtramos por capital, objetivo y horizonte para que reciba solo oportunidades alineadas con su estrategia.</p>
+    <a href="index-v4.html#form" class="btn-gold">Solicitar análisis</a>
+  </div>
+</section>
+
+<section class="section final-cta">
+  <div class="wrap">
+    <div class="final-box">
+      <span class="eyebrow">Acceso privado</span>
+      <div class="rule" style="margin-inline:auto"></div>
+      <h2>No publicamos todas las oportunidades en abierto.</h2>
+      <p>Solicite un análisis y le presentaremos solo los activos que encajan con su perfil, con estimaciones de rentabilidad neta, potencial de revalorización y condiciones de entrada.</p>
+      <a href="index-v4.html#form" class="btn-gold">Solicitar análisis personalizado</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p class="copy">© 2026 Horizonte Emirates · Proyectos seleccionados para inversores hispanohablantes</p>
+  </div>
+</footer>
+
+<script>
+window.addEventListener('scroll',()=>{
+  document.getElementById('nav').classList.toggle('scrolled',window.scrollY>24);
+});
+</script>
+</body>
+</html>
