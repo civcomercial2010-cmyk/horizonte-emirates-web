@@ -16,16 +16,20 @@ const CONFIG = {
   SPREADSHEET_ID:  '133X4oyXfvAusuhvme7eYISNPfSZ1N0BkIt3oq1WKxXc',
   ASESOR_NOMBRE:   'Horizonte Emirates',
   REPLY_TO:        'hola@horizonteemirates.com',
+  AGENT_BRIEFING_EMAIL: 'civcomercial2010@gmail.com',
   WA_NUMBER:       '+971 55 472 2025',
   WA_LINK:         'https://wa.me/971554722025',
   CALENDLY_URL:    'https://calendly.com/horizonteemirates',
+  CALENDAR_ID:     'primary', // calendario donde Calendly crea las reuniones
+  CALENDLY_EVENT_KEYWORD: 'Llamada estratégica inversión Dubai',
   UNSUBSCRIBE_URL: 'mailto:hola@horizonteemirates.com?subject=BAJA%20COMUNICACIONES',
   LABEL_PROCESADO: 'HE-procesado',
   LABEL_BAJAS:     'HE-bajas-procesado',
   // Busca todos los emails de Web3Forms no leídos (compatible V1, V2, V3)
-  POLL_QUERY:      'from:noreply@web3forms.com is:unread',
+  POLL_QUERY:          '(from:noreply@web3forms.com OR from:notifications@web3forms.com OR from:api@web3forms.com) is:unread',
+  POLL_QUERY_FALLBACK: '(from:noreply@web3forms.com OR from:notifications@web3forms.com OR from:api@web3forms.com) newer_than:2d',
   // Respuestas de leads que pueden contener solicitud de baja
-  UNSUBSCRIBE_QUERY: 'to:hola@horizonteemirates.com is:unread -from:noreply@web3forms.com',
+  UNSUBSCRIBE_QUERY: 'to:hola@horizonteemirates.com is:unread -from:web3forms.com',
   UNSUBSCRIBE_KEYWORDS: [
     'baja', 'darme de baja', 'darse de baja', 'no me escribas', 'no me escriban',
     'no más correos', 'no mas correos', 'cancelar suscripción', 'cancelar suscripcion',
@@ -110,6 +114,167 @@ function gendered(nombre, masc, fem) {
   return detectGender(nombre) === 'F' ? fem : masc;
 }
 
+function buildCalendlyUrl(baseUrl, lead, emailCode) {
+  if (!baseUrl) return '';
+
+  const params = [];
+  const add = (k, v) => {
+    if (v === null || v === undefined || String(v).trim() === '') return;
+    params.push(encodeURIComponent(k) + '=' + encodeURIComponent(String(v)));
+  };
+
+  // Prefill nativo de Calendly
+  add('name', lead && lead.nombre);
+  add('email', lead && lead.email);
+
+  // Respuestas para preguntas custom del evento (a1, a2, ...)
+  // Configura en Calendly esas preguntas en este orden.
+  add('a1', lead && lead.capital);
+  add('a2', lead && lead.objetivo);
+  add('a3', lead && lead.plazo);
+  add('a4', lead && lead.pais);
+
+  // Trazabilidad de origen
+  add('utm_source', 'he_automation');
+  add('utm_medium', 'email');
+  add('utm_campaign', emailCode || '');
+
+  if (!params.length) return baseUrl;
+  return baseUrl + (baseUrl.indexOf('?') >= 0 ? '&' : '?') + params.join('&');
+}
+
+function buildLeadBriefingText(lead) {
+  if (!lead) return 'Lead no encontrado en CRM.';
+  return [
+    'Nombre: ' + (lead.nombre || ''),
+    'Email: ' + (lead.email || ''),
+    'Teléfono: ' + (lead.telefono || ''),
+    'País: ' + (lead.pais || ''),
+    'Capital: ' + (lead.capital || ''),
+    'Objetivo: ' + (lead.objetivo || ''),
+    'Experiencia: ' + (lead.experiencia || ''),
+    'Plazo: ' + (lead.plazo || ''),
+    'Visita Dubai: ' + (lead.viaje || ''),
+    'Puntuación: ' + (lead.puntuacion || ''),
+    'Tier: ' + (lead.tier || ''),
+    'Canal: ' + (lead.canal || ''),
+    'Origen: ' + (lead.origen || ''),
+    'Estado: ' + (lead.estado || ''),
+    'Notas: ' + (lead.notas || ''),
+  ].join('\n');
+}
+
+function extractMeetingLinkFromEvent(event) {
+  const direct = event.getHangoutLink && event.getHangoutLink();
+  if (direct) return direct;
+
+  const text = String(event.getDescription() || '');
+  const urls = text.match(/https?:\/\/[^\s<>"')]+/g) || [];
+  const meet = urls.find(u => /meet\.google\.com/i.test(u));
+  return meet || urls[0] || '';
+}
+
+function extractLeadEmailFromEvent(event) {
+  const agent = String(CONFIG.AGENT_BRIEFING_EMAIL || '').toLowerCase().trim();
+  const reply = String(CONFIG.REPLY_TO || '').toLowerCase().trim();
+  const guests = event.getGuestList();
+
+  let firstEmail = '';
+  let bestEmail = '';
+  for (let i = 0; i < guests.length; i++) {
+    const mail = String(guests[i].getEmail() || '').toLowerCase().trim();
+    if (!mail) continue;
+    if (!firstEmail) firstEmail = mail;
+    if (mail !== agent && mail !== reply) {
+      bestEmail = mail;
+      break;
+    }
+  }
+
+  // Caso normal: invitado distinto a cuenta interna
+  if (bestEmail) return bestEmail;
+
+  // Caso test: invitado = mismo email del agente
+  if (firstEmail) return firstEmail;
+
+  // Fallback: intentar extraer del cuerpo del evento de Calendly
+  const desc = String(event.getDescription() || '');
+  const match = desc.match(/([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,})/i);
+  return match ? match[1].toLowerCase() : '';
+}
+
+function notifyCalendlyBookings() {
+  const props = PropertiesService.getScriptProperties();
+  const raw = props.getProperty('HE_CALENDLY_NOTIFIED') || '{}';
+  const notified = JSON.parse(raw);
+
+  const now = new Date();
+  const lookback = new Date(now.getTime() - 6 * 60 * 60 * 1000); // últimas 6h
+  const lookahead = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // próximos 30 días
+
+  const calendar = CONFIG.CALENDAR_ID === 'primary'
+    ? CalendarApp.getDefaultCalendar()
+    : CalendarApp.getCalendarById(CONFIG.CALENDAR_ID);
+  if (!calendar) {
+    Logger.log('No se encontró el calendario configurado: ' + CONFIG.CALENDAR_ID);
+    return;
+  }
+
+  const tz = Session.getScriptTimeZone();
+  const events = calendar.getEvents(lookback, lookahead);
+  let sent = 0;
+
+  events.forEach(event => {
+    const title = String(event.getTitle() || '');
+    if (!title.includes(CONFIG.CALENDLY_EVENT_KEYWORD)) return;
+
+    const eventId = event.getId();
+    if (notified[eventId]) return;
+
+    const leadEmail = extractLeadEmailFromEvent(event);
+    if (!leadEmail) return;
+
+    const lead = getLeadByEmail(leadEmail);
+    const start = event.getStartTime();
+    const end = event.getEndTime();
+    const meetingLink = extractMeetingLinkFromEvent(event);
+
+    const subject = '[HE] Nueva reunión agendada: ' + (lead && lead.nombre ? lead.nombre : leadEmail);
+    const body = [
+      'Se ha agendado una nueva reunión desde Calendly.',
+      '',
+      'Fecha inicio: ' + Utilities.formatDate(start, tz, 'yyyy-MM-dd HH:mm'),
+      'Fecha fin: ' + Utilities.formatDate(end, tz, 'yyyy-MM-dd HH:mm'),
+      'Evento: ' + title,
+      'Invitado: ' + leadEmail,
+      'Enlace reunión/Meet: ' + (meetingLink || 'No detectado'),
+      '',
+      '=== BRIEFING LEAD ===',
+      buildLeadBriefingText(lead),
+      '',
+      'ID evento calendario: ' + eventId,
+    ].join('\n');
+
+    GmailApp.sendEmail(CONFIG.AGENT_BRIEFING_EMAIL, subject, body, {
+      name: CONFIG.ASESOR_NOMBRE,
+      replyTo: CONFIG.REPLY_TO,
+    });
+
+    notified[eventId] = now.toISOString();
+    sent++;
+  });
+
+  // Limpieza básica del registro para no crecer indefinidamente
+  const cutoff = now.getTime() - (45 * 24 * 60 * 60 * 1000);
+  Object.keys(notified).forEach(id => {
+    const ts = new Date(notified[id]).getTime();
+    if (!isNaN(ts) && ts < cutoff) delete notified[id];
+  });
+
+  props.setProperty('HE_CALENDLY_NOTIFIED', JSON.stringify(notified));
+  Logger.log('notifyCalendlyBookings: briefings enviados=' + sent);
+}
+
 
 // Secuencias por tier — delay en HORAS desde la creación del lead
 const SEQUENCES = {
@@ -145,9 +310,34 @@ const SEQUENCES = {
 // ══════════════════════════════════════════════════════════════
 // 1. POLL GMAIL — trigger cada 10 minutos
 // ══════════════════════════════════════════════════════════════
+function htmlToPlainForParse(html) {
+  return String(html || '')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<\/(p|div|tr|li|h\d)>/gi, '\n')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/[ \t]+\n/g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .replace(/[ \t]{2,}/g, ' ')
+    .trim();
+}
+
+function getMessageBodyForLeadParse(msg) {
+  let body = String(msg.getPlainBody() || '');
+  if (body.trim().length < 40) {
+    body = htmlToPlainForParse(msg.getBody());
+  }
+  return body;
+}
+
 function pollGmail() {
-  const threads = GmailApp.search(CONFIG.POLL_QUERY, 0, 20);
-  if (!threads.length) return;
+  let threads = GmailApp.search(CONFIG.POLL_QUERY, 0, 20);
+  if (!threads.length && CONFIG.POLL_QUERY_FALLBACK) {
+    threads = GmailApp.search(CONFIG.POLL_QUERY_FALLBACK, 0, 20);
+  }
+  if (!threads.length) {
+    Logger.log('pollGmail: sin correos Web3Forms (principal ni fallback)');
+    return;
+  }
 
   let label;
   try {
@@ -161,7 +351,7 @@ function pollGmail() {
     try {
       const msg     = thread.getMessages().pop();
       const subject = msg.getSubject();
-      const body    = msg.getPlainBody();
+      const body    = getMessageBodyForLeadParse(msg);
 
       // Verificar que es un lead de Horizonte Emirates
       const isHE = CONFIG.POLL_KEYWORDS.some(kw => subject.includes(kw) || body.includes(kw));
@@ -266,7 +456,15 @@ function parseLeadFromEmail(body, subject) {
 
     switch (key) {
       case 'nombre':                        lead.nombre      = val; break;
-      case 'email':                         lead.email       = val.toLowerCase(); break;
+      case 'apellidos':                     lead.apellidos   = val; break;
+      case 'email':
+      case 'e-mail':
+      case 'e_mail':
+      case 'correo':
+      case 'correo_electronico':
+      case 'correo_electrónico':
+      case 'replyto':
+      case 'reply_to':                         lead.email       = val.toLowerCase(); break;
       case 'telefono':                      lead.telefono    = val; break;
       case 'pais':                          lead.pais        = val; break;
       case 'capital':                       lead.capital     = val; break;
@@ -286,6 +484,19 @@ function parseLeadFromEmail(body, subject) {
     }
   });
 
+  if (lead.apellidos && lead.nombre) {
+    lead.nombre = (lead.nombre + ' ' + lead.apellidos).trim();
+  }
+  delete lead.apellidos;
+
+  if (!lead.email) {
+    const hay = (body + '\n' + subject).match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi) || [];
+    const filtered = hay.map(e => e.toLowerCase()).filter(e =>
+      !e.includes('web3forms.com') && !e.startsWith('noreply@') && !e.startsWith('no-reply@')
+    );
+    if (filtered.length) lead.email = filtered[0];
+  }
+
   lead.nombre = lead.nombre || 'Inversor';
   lead.pais   = lead.pais   || 'España';
   lead.canal  = lead.canal  || 'email';
@@ -294,6 +505,24 @@ function parseLeadFromEmail(body, subject) {
   return lead.email ? lead : null;
 }
 
+
+/** Diagnóstico: último correo Web3Forms y parseo (ejecutar manual). */
+function debugPollLatestWeb3Lead() {
+  const q = CONFIG.POLL_QUERY_FALLBACK || CONFIG.POLL_QUERY;
+  const threads = GmailApp.search(q, 0, 3);
+  if (!threads.length) {
+    Logger.log('debugPollLatestWeb3Lead: sin hilos para ' + q);
+    return;
+  }
+  const msg = threads[0].getMessages().pop();
+  const subject = msg.getSubject();
+  const body = getMessageBodyForLeadParse(msg);
+  Logger.log('FROM: ' + msg.getFrom());
+  Logger.log('SUBJECT: ' + subject);
+  Logger.log('BODY (primeros 900 chars):\n' + body.substring(0, 900));
+  const lead = parseLeadFromEmail(body, subject);
+  Logger.log('PARSED: ' + JSON.stringify(lead));
+}
 
 // ══════════════════════════════════════════════════════════════
 // 3. GOOGLE SHEETS — Leads y Cola
@@ -415,6 +644,10 @@ function sendEmail(code, lead) {
 // 6. WRAPPER HTML — envuelve el contenido en plantilla de marca
 // ══════════════════════════════════════════════════════════════
 function wrapHtml(bodyHtml, subject) {
+  // Evita depender del protocolo mailto (que en Windows suele abrir Outlook).
+  const replyUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(CONFIG.REPLY_TO)}`;
+  const unsubscribeUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(CONFIG.REPLY_TO)}&su=${encodeURIComponent('BAJA COMUNICACIONES')}&body=${encodeURIComponent('BAJA')}`;
+
   return `<!DOCTYPE html>
 <html lang="es">
 <head>
@@ -450,7 +683,7 @@ function wrapHtml(bodyHtml, subject) {
         Horizonte <span style="color:#C4942A">Emirates</span>
       </p>
       <p style="margin:0 0 10px;font-size:12px;color:rgba(255,255,255,.55);line-height:1.6">
-        <a href="mailto:${CONFIG.REPLY_TO}" style="color:#C4942A;text-decoration:none">${CONFIG.REPLY_TO}</a>
+        <a href="${replyUrl}" style="color:#C4942A;text-decoration:none">${CONFIG.REPLY_TO}</a>
         &nbsp;·&nbsp;
         <a href="${CONFIG.WA_LINK}" style="color:rgba(255,255,255,.55);text-decoration:none">WhatsApp ${CONFIG.WA_NUMBER}</a>
         &nbsp;·&nbsp;
@@ -460,7 +693,7 @@ function wrapHtml(bodyHtml, subject) {
         Horizonte Emirates es un servicio de Propulse SLU (Andorra). No prestamos asesoramiento fiscal, jurídico ni financiero. La información facilitada es estrictamente orientativa y no constituye oferta de inversión ni recomendación financiera. La inversión inmobiliaria conlleva riesgos. Consulte a un asesor independiente antes de tomar cualquier decisión.
       </p>
       <p style="margin:0;font-size:11px">
-        <a href="${CONFIG.UNSUBSCRIBE_URL}" style="color:rgba(196,148,42,.7);text-decoration:none">Darse de baja de estas comunicaciones</a>
+        <a href="${unsubscribeUrl}" style="color:rgba(196,148,42,.7);text-decoration:none">Darse de baja de estas comunicaciones</a>
       </p>
     </td></tr>
 
@@ -486,6 +719,7 @@ function getTemplate(code, lead) {
   const wa   = CONFIG.WA_NUMBER;
   const waL  = CONFIG.WA_LINK;
   const cal  = CONFIG.CALENDLY_URL;
+  const calL = buildCalendlyUrl(cal, lead, code);
 
   // ── CTAs de email (tabla-based para máxima compatibilidad con clientes de email) ──
   //
@@ -496,29 +730,41 @@ function getTemplate(code, lead) {
   // Usar siempre ${waBtn}${calBtn} cuando existan ambas opciones.
 
   const waBtn = `
-<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="margin:24px 0 8px">
+<table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="margin:24px 0 10px">
   <tr>
-    <td style="background:#1DAA61;border-radius:4px;padding:0">
-      <a href="${waL}"
-         style="display:inline-block;padding:15px 30px;color:#ffffff;font-family:'Helvetica Neue',Arial,sans-serif;
-                font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
-                text-decoration:none;line-height:1;border-radius:4px">
-        Escribir por WhatsApp &nbsp;&#8250;
-      </a>
+    <td align="center">
+      <table cellpadding="0" cellspacing="0" border="0" role="presentation">
+        <tr>
+          <td style="background:#1DAA61;border-radius:50px">
+            <a href="${waL}"
+               style="display:inline-block;padding:14px 38px;color:#ffffff;font-family:'Helvetica Neue',Arial,sans-serif;
+                      font-size:14px;font-weight:600;letter-spacing:.02em;text-decoration:none;line-height:1;
+                      border-radius:50px">
+              Escribir por WhatsApp
+            </a>
+          </td>
+        </tr>
+      </table>
     </td>
   </tr>
 </table>`;
 
   const calBtn = `
-<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="margin:0 0 4px">
+<table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="margin:0 0 4px">
   <tr>
-    <td style="border:2px solid #C4942A;border-radius:4px;padding:0">
-      <a href="${cal}"
-         style="display:inline-block;padding:13px 30px;color:#C4942A;font-family:'Helvetica Neue',Arial,sans-serif;
-                font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
-                text-decoration:none;line-height:1;border-radius:3px;background:#ffffff">
-        Reservar llamada · 20 min &nbsp;&#8250;
-      </a>
+    <td align="center">
+      <table cellpadding="0" cellspacing="0" border="0" role="presentation">
+        <tr>
+          <td style="border:1px solid #C4942A;border-radius:50px">
+            <a href="${calL}"
+               style="display:inline-block;padding:13px 38px;color:#C4942A;font-family:'Helvetica Neue',Arial,sans-serif;
+                      font-size:14px;font-weight:600;letter-spacing:.02em;text-decoration:none;line-height:1;
+                      border-radius:50px;background:#ffffff">
+              Reservar llamada · 20 min
+            </a>
+          </td>
+        </tr>
+      </table>
     </td>
   </tr>
 </table>`;
@@ -563,7 +809,7 @@ ${waBtn}${calBtn}${firma}`,
 </table>
 <p>Para ver las propiedades concretas necesito 20 minutos de llamada. ¿Le va bien hoy o mañana?</p>
 ${calBtn}${waBtn}${firma}`,
-    text: `${sal} ${n},\n\nHemos preseleccionado 3 activos para ${cap} · ${obj}, priorizando equilibrio entre rentabilidad, entrada y riesgo:\n- Dubai Marina/Business Bay: 7-8% neto\n- RAK pre-Wynn: +20-30% plusvalía desde 200k€\n- Abu Dhabi Aldar: 5-7% neto, estable\n\n¿20 min? ${cal} / WhatsApp ${wa}\n\nEquipo Horizonte Emirates`,
+    text: `${sal} ${n},\n\nHemos preseleccionado 3 activos para ${cap} · ${obj}, priorizando equilibrio entre rentabilidad, entrada y riesgo:\n- Dubai Marina/Business Bay: 7-8% neto\n- RAK pre-Wynn: +20-30% plusvalía desde 200k€\n- Abu Dhabi Aldar: 5-7% neto, estable\n\n¿20 min? ${calL} / WhatsApp ${wa}\n\nEquipo Horizonte Emirates`,
   };
 
   if (code === 'A3') return {
@@ -573,7 +819,7 @@ ${calBtn}${waBtn}${firma}`,
 <p>Los activos off-plan que mejor encajan con un perfil como el suyo (<strong>${cap}</strong>, <strong>${obj}</strong>) tienen ventanas de entrada limitadas. No es un recurso de ventas: es la mecánica real del mercado. Cuando se llena el aforo de una fase, el precio sube o la oportunidad desaparece.</p>
 <p>No le pido que decida ahora. Le pido 20 minutos para que tenga toda la información y pueda decidir con criterio, sin presión.</p>
 ${calBtn}${waBtn}${firma}`,
-    text: `${sal} ${n},\n\nLos activos para ${cap} · ${obj} tienen ventanas de entrada limitadas.\nNo le pido decidir ahora. Solo 20 minutos para revisar datos y decidir con criterio, sin presión.\n\n${cal} / WhatsApp ${wa}\n\nEquipo Horizonte Emirates`,
+    text: `${sal} ${n},\n\nLos activos para ${cap} · ${obj} tienen ventanas de entrada limitadas.\nNo le pido decidir ahora. Solo 20 minutos para revisar datos y decidir con criterio, sin presión.\n\n${calL} / WhatsApp ${wa}\n\nEquipo Horizonte Emirates`,
   };
 
   if (code === 'A4') return {
@@ -584,7 +830,7 @@ ${calBtn}${waBtn}${firma}`,
 <p>Por eso organizamos ese viaje: agenda de visitas, reuniones con promotoras RERA y acompañamiento de nuestro equipo local. <strong>Sin coste para el inversor</strong> — solo vuelo y alojamiento de su parte.</p>
 <p>¿Le interesa saber cómo funciona?</p>
 ${waBtn}${calBtn}${firma}`,
-    text: `${sal} ${n},\n\nLa visita presencial acelera decisiones porque reduce incertidumbre: activo, zona y promotor en primera persona.\n\nOrganizamos el viaje (agenda, promotoras y equipo local) sin coste de asesoramiento.\nSolo vuelo y alojamiento por su parte.\n\nWhatsApp ${wa} / ${cal}\n\nEquipo Horizonte Emirates`,
+    text: `${sal} ${n},\n\nLa visita presencial acelera decisiones porque reduce incertidumbre: activo, zona y promotor en primera persona.\n\nOrganizamos el viaje (agenda, promotoras y equipo local) sin coste de asesoramiento.\nSolo vuelo y alojamiento por su parte.\n\nWhatsApp ${wa} / ${calL}\n\nEquipo Horizonte Emirates`,
   };
 
   if (code === 'A5') return {
@@ -623,7 +869,7 @@ ${waBtn}${firma}`,
 <p>Son 20 minutos donde le explico las opciones concretas, las rentabilidades reales y el proceso completo. Sin compromiso. Sin presión. Solo información que le permita decidir con criterio.</p>
 <p>¿Cuándo le va bien esta semana?</p>
 ${calBtn}${waBtn}${firma}`,
-    text: `${sal} ${n},\n\nActivos listos para ${cap} · ${obj}. ¿20 minutos esta semana?\n\n${cal} / WhatsApp ${wa}\n\nEquipo Horizonte Emirates`,
+    text: `${sal} ${n},\n\nActivos listos para ${cap} · ${obj}. ¿20 minutos esta semana?\n\n${calL} / WhatsApp ${wa}\n\nEquipo Horizonte Emirates`,
   };
 
   if (code === 'B3') return {
@@ -650,7 +896,7 @@ ${waBtn}${firma}`,
 <p>Ver el activo en persona, entender el entorno y hablar directamente con el promotor elimina las dudas que ningún PDF puede resolver. Es la diferencia entre analizar una oportunidad y comprenderla de verdad.</p>
 <p>Por eso organizamos ese viaje para nuestros inversores: agenda de visitas, reuniones con promotoras verificadas y acompañamiento de nuestro equipo local en Dubai. <strong>Sin coste para el inversor</strong> — solo vuelo y alojamiento.</p>
 ${waBtn}${calBtn}${firma}`,
-    text: `${sal} ${n},\n\nMuchos inversores aceleran su decisión tras visitar Dubai en persona.\n\nVer el activo, el entorno y al promotor de primera mano reduce dudas que no se resuelven bien a distancia.\n\nOrganizamos el viaje: agenda, promotoras verificadas y equipo local.\n\nWhatsApp ${wa} / ${cal}\n\nEquipo Horizonte Emirates`,
+    text: `${sal} ${n},\n\nMuchos inversores aceleran su decisión tras visitar Dubai en persona.\n\nVer el activo, el entorno y al promotor de primera mano reduce dudas que no se resuelven bien a distancia.\n\nOrganizamos el viaje: agenda, promotoras verificadas y equipo local.\n\nWhatsApp ${wa} / ${calL}\n\nEquipo Horizonte Emirates`,
   };
 
   if (code === 'B5') return {
@@ -682,7 +928,7 @@ ${calBtn}${waBtn}${firma}`,
 <p>Han pasado casi tres semanas desde su consulta y no hemos podido hablar todavía.</p>
 <p>Le propongo algo sin compromiso: una llamada de 15 minutos donde le cuento exactamente cómo funciona el proceso para alguien con su perfil. Sin presentaciones largas, sin presión. Solo información concreta que le ayude a decidir si Dubai tiene sentido para usted ahora.</p>
 ${calBtn}${waBtn}${firma}`,
-    text: `${sal} ${n},\n\nTres semanas sin poder hablar. 15 minutos sin compromiso para su perfil.\n\n${cal} / WhatsApp ${wa}\n\nEquipo Horizonte Emirates`,
+    text: `${sal} ${n},\n\nTres semanas sin poder hablar. 15 minutos sin compromiso para su perfil.\n\n${calL} / WhatsApp ${wa}\n\nEquipo Horizonte Emirates`,
   };
 
   if (code === 'B7') return {
@@ -803,7 +1049,7 @@ ${waBtn}${calBtn}${firma}`,
 </ul>
 <p>Si concluimos que no es el momento, se lo digo directamente. Sin presión ni seguimiento posterior si no lo desea.</p>
 ${calBtn}${waBtn}${firma}`,
-    text: `${sal} ${n},\n\nUn mes desde su consulta. 20 minutos para ${cap} · ${obj} y decirle con honestidad si Dubai tiene sentido ahora.\n\nSin compromiso. ${cal} / WhatsApp ${wa}\n\nEquipo Horizonte Emirates`,
+    text: `${sal} ${n},\n\nUn mes desde su consulta. 20 minutos para ${cap} · ${obj} y decirle con honestidad si Dubai tiene sentido ahora.\n\nSin compromiso. ${calL} / WhatsApp ${wa}\n\nEquipo Horizonte Emirates`,
   };
 
   if (code === 'C7') return {
@@ -903,12 +1149,13 @@ function initSheets() {
 function createTriggers() {
   ScriptApp.getProjectTriggers().forEach(t => {
     const fn = t.getHandlerFunction();
-    if (fn === 'pollGmail' || fn === 'pollUnsubscribes' || fn === 'processQueue') ScriptApp.deleteTrigger(t);
+    if (fn === 'pollGmail' || fn === 'pollUnsubscribes' || fn === 'processQueue' || fn === 'notifyCalendlyBookings') ScriptApp.deleteTrigger(t);
   });
   ScriptApp.newTrigger('pollGmail').timeBased().everyMinutes(10).create();
   ScriptApp.newTrigger('pollUnsubscribes').timeBased().everyMinutes(10).create();
+  ScriptApp.newTrigger('notifyCalendlyBookings').timeBased().everyMinutes(10).create();
   ScriptApp.newTrigger('processQueue').timeBased().everyHours(1).create();
-  Logger.log('✓ Triggers activos: pollGmail + pollUnsubscribes cada 10 min · processQueue cada hora');
+  Logger.log('✓ Triggers activos: pollGmail + pollUnsubscribes + notifyCalendlyBookings cada 10 min · processQueue cada hora');
 }
 
 function getLeadByEmail(email) {
@@ -1065,9 +1312,9 @@ function auditTemplateCopy() {
 
 // Helpers de ejecución manual en Apps Script (desplegable sin parámetros)
 function runSimulationA1() {
-  simulateLeadEmail('TU_EMAIL_AQUI', 'A1', false);
+  simulateLeadEmail('civcomercial2010@gmail.com', 'A1', false);
 }
 
 function runRealSendA1() {
-  simulateLeadEmail('TU_EMAIL_AQUI', 'A1', true);
+  simulateLeadEmail('civcomercial2010@gmail.com', 'A1', true);
 }
