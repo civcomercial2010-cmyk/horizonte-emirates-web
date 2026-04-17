@@ -26,8 +26,10 @@ const CONFIG = {
   LABEL_PROCESADO: 'HE-procesado',
   LABEL_BAJAS:     'HE-bajas-procesado',
   // Busca todos los emails de Web3Forms no leídos (compatible V1, V2, V3)
-  POLL_QUERY:          '(from:noreply@web3forms.com OR from:notifications@web3forms.com OR from:api@web3forms.com) is:unread',
-  POLL_QUERY_FALLBACK: '(from:noreply@web3forms.com OR from:notifications@web3forms.com OR from:api@web3forms.com) newer_than:2d',
+  // Cualquier remitente @web3forms.com (evita perder avisos si cambian la cuenta de envío)
+  POLL_QUERY:          'from:web3forms.com is:unread',
+  // Reintento: últimos días sin etiqueta de procesado (útil si el correo se marcó leído antes del trigger)
+  POLL_QUERY_FALLBACK: 'from:web3forms.com newer_than:3d -label:HE-procesado',
   // Respuestas de leads que pueden contener solicitud de baja
   UNSUBSCRIBE_QUERY: 'to:hola@horizonteemirates.com is:unread -from:web3forms.com',
   UNSUBSCRIBE_KEYWORDS: [
@@ -330,14 +332,23 @@ function getMessageBodyForLeadParse(msg) {
 }
 
 function pollGmail() {
-  let threads = GmailApp.search(CONFIG.POLL_QUERY, 0, 20);
+  let threads = GmailApp.search(CONFIG.POLL_QUERY, 0, 50);
   if (!threads.length && CONFIG.POLL_QUERY_FALLBACK) {
-    threads = GmailApp.search(CONFIG.POLL_QUERY_FALLBACK, 0, 20);
+    threads = GmailApp.search(CONFIG.POLL_QUERY_FALLBACK, 0, 50);
   }
   if (!threads.length) {
     Logger.log('pollGmail: sin correos Web3Forms (principal ni fallback)');
     return;
   }
+
+  // Los más recientes primero (Gmail no garantiza orden; si no, el aviso nuevo puede quedar fuera del lote)
+  threads.sort((a, b) => {
+    const ma = a.getMessages();
+    const mb = b.getMessages();
+    const da = ma.length ? ma[ma.length - 1].getDate().getTime() : 0;
+    const db = mb.length ? mb[mb.length - 1].getDate().getTime() : 0;
+    return db - da;
+  });
 
   let label;
   try {
@@ -347,16 +358,28 @@ function pollGmail() {
     label = GmailApp.createLabel(CONFIG.LABEL_PROCESADO);
   }
 
+  Logger.log('pollGmail: hilos a revisar=' + threads.length + ' | cuenta=' + Session.getActiveUser().getEmail());
+
   threads.forEach(thread => {
     try {
-      const msg     = thread.getMessages().pop();
+      const msgs = thread.getMessages();
+      const msg    = msgs.length ? msgs[msgs.length - 1] : null;
+      if (!msg) return;
+
+      if (thread.getLabels().some(l => l.getName() === CONFIG.LABEL_PROCESADO)) {
+        Logger.log('pollGmail: omitido (ya etiquetado HE-procesado): ' + msg.getSubject());
+        return;
+      }
+
       const subject = msg.getSubject();
       const body    = getMessageBodyForLeadParse(msg);
+      Logger.log('pollGmail: FROM=' + msg.getFrom() + ' | SUBJECT=' + subject);
 
       // Verificar que es un lead de Horizonte Emirates
       const isHE = CONFIG.POLL_KEYWORDS.some(kw => subject.includes(kw) || body.includes(kw));
       if (!isHE) {
         // No es nuestro — marcar leído y saltar sin etiquetar
+        Logger.log('pollGmail: descartado (sin keyword HE): ' + subject);
         msg.markRead();
         return;
       }
@@ -364,6 +387,7 @@ function pollGmail() {
       const lead = parseLeadFromEmail(body, subject);
       if (!lead || !lead.email) {
         Logger.log('No se pudo parsear lead: ' + subject);
+        Logger.log('pollGmail: body snippet=\n' + body.substring(0, 600));
         thread.addLabel(label);
         msg.markRead();
         return;
@@ -376,8 +400,14 @@ function pollGmail() {
         return;
       }
 
-      const leadId = saveLead(lead);
-      scheduleSequence(leadId, lead.tier, new Date());
+      let leadId;
+      try {
+        leadId = saveLead(lead);
+        scheduleSequence(leadId, lead.tier, new Date());
+      } catch (err) {
+        Logger.log('pollGmail: ERROR al guardar en Sheets / cola: ' + err.toString());
+        throw err;
+      }
 
       thread.addLabel(label);
       msg.markRead();
@@ -387,6 +417,43 @@ function pollGmail() {
       Logger.log('Error procesando thread: ' + e.toString());
     }
   });
+}
+
+/** Ejecutar manualmente: muestra cuenta, últimos avisos Web3Forms y si entrarían en HE + parseo. */
+function diagnoseFormPipeline() {
+  const me = Session.getActiveUser().getEmail();
+  Logger.log('=== diagnoseFormPipeline ===');
+  Logger.log('Cuenta Apps Script (debe ser la misma que recibe Web3Forms): ' + me);
+  Logger.log('SPREADSHEET_ID: ' + CONFIG.SPREADSHEET_ID);
+
+  try {
+    const sh = getSheet('Leads');
+    Logger.log('Sheets OK, filas Leads (aprox): ' + sh.getLastRow());
+  } catch (e) {
+    Logger.log('ERROR accediendo a hoja Leads: ' + e.toString());
+  }
+
+  const q = 'from:web3forms.com newer_than:3d';
+  const threads = GmailApp.search(q, 0, 8);
+  Logger.log('Muestra últimos hilos Web3Forms (query=' + q + '): ' + threads.length);
+
+  threads.forEach((thread, idx) => {
+    const msgs = thread.getMessages();
+    const msg = msgs.length ? msgs[msgs.length - 1] : null;
+    if (!msg) return;
+    const subject = msg.getSubject();
+    const body = getMessageBodyForLeadParse(msg);
+    const tagged = thread.getLabels().some(l => l.getName() === CONFIG.LABEL_PROCESADO);
+    const isHE = CONFIG.POLL_KEYWORDS.some(kw => subject.includes(kw) || body.includes(kw));
+    const lead = isHE ? parseLeadFromEmail(body, subject) : null;
+
+    Logger.log('--- #' + idx + ' etiquetado=' + tagged + ' ---');
+    Logger.log('FROM: ' + msg.getFrom());
+    Logger.log('SUBJECT: ' + subject);
+    Logger.log('isHE: ' + isHE);
+    Logger.log('PARSED: ' + JSON.stringify(lead));
+  });
+  Logger.log('=== fin diagnoseFormPipeline ===');
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -508,13 +575,23 @@ function parseLeadFromEmail(body, subject) {
 
 /** Diagnóstico: último correo Web3Forms y parseo (ejecutar manual). */
 function debugPollLatestWeb3Lead() {
-  const q = CONFIG.POLL_QUERY_FALLBACK || CONFIG.POLL_QUERY;
-  const threads = GmailApp.search(q, 0, 3);
+  const q = 'from:web3forms.com newer_than:3d';
+  const threads = GmailApp.search(q, 0, 8);
   if (!threads.length) {
     Logger.log('debugPollLatestWeb3Lead: sin hilos para ' + q);
     return;
   }
-  const msg = threads[0].getMessages().pop();
+  threads.sort((a, b) => {
+    const ma = a.getMessages();
+    const mb = b.getMessages();
+    const da = ma.length ? ma[ma.length - 1].getDate().getTime() : 0;
+    const db = mb.length ? mb[mb.length - 1].getDate().getTime() : 0;
+    return db - da;
+  });
+  const th = threads[0];
+  const msgs = th.getMessages();
+  const msg = msgs.length ? msgs[msgs.length - 1] : null;
+  if (!msg) return;
   const subject = msg.getSubject();
   const body = getMessageBodyForLeadParse(msg);
   Logger.log('FROM: ' + msg.getFrom());
