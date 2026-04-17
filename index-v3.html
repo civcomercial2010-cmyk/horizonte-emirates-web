@@ -20,19 +20,6 @@
   --serif:'Cormorant Garamond',Georgia,serif;
   --sans:'Inter',system-ui,sans-serif;
   --shadow:0 12px 40px rgba(13,27,42,.1);
-  --container-wide:1400px;
-  --container-max:1280px;
-  --container-narrow:920px;
-  --gutter-desktop:32px;
-  --gutter-tablet:24px;
-  --gutter-mobile:20px;
-  --space-xs:8px;
-  --space-sm:16px;
-  --space-md:32px;
-  --space-lg:48px;
-  --space-xl:64px;
-  --space-2xl:96px;
-  --measure:72ch;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -42,30 +29,16 @@ button{cursor:pointer;border:none;background:none;font-family:inherit}
 img{display:block;max-width:100%}
 
 /* ── UTILITIES ────────────────────────────────── */
-.container,.wrap{
-  width:min(100%,calc(var(--container-max) + (var(--gutter-desktop) * 2)));
-  margin:0 auto;
-  padding-inline:var(--gutter-desktop);
-}
-.container-wide{
-  width:min(100%,calc(var(--container-wide) + (var(--gutter-desktop) * 2)));
-  margin:0 auto;
-  padding-inline:var(--gutter-desktop);
-}
-.container-narrow{
-  width:min(100%,calc(var(--container-narrow) + (var(--gutter-desktop) * 2)));
-  margin:0 auto;
-  padding-inline:var(--gutter-desktop);
-}
+.wrap{max-width:1340px;margin:0 auto;padding:0 40px}
 .eyebrow{font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
 .rule{width:38px;height:1px;background:var(--gold);display:block;margin:12px 0}
 .fade{opacity:0;transform:translateY(18px);transition:opacity .65s ease,transform .65s ease}
 .fade.in{opacity:1;transform:none}
-.section{padding-block:var(--space-2xl)}
+.section{padding:96px 0}
 .section.alt{background:var(--warm2)}
-.sh{margin-bottom:var(--space-lg)}
-.sh h2{font-family:var(--serif);font-size:clamp(34px,4.1vw,54px);font-weight:500;line-height:1.1;color:var(--ink);margin-bottom:10px}
-.sh p{font-size:18px;color:var(--muted);max-width:var(--measure);line-height:1.65}
+.sh{margin-bottom:52px}
+.sh h2{font-family:var(--serif);font-size:clamp(38px,4.6vw,60px);font-weight:500;line-height:1.1;color:var(--ink);margin-bottom:10px}
+.sh p{font-size:18px;color:var(--muted);max-width:640px;line-height:1.65}
 .btn-gold{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;background:var(--gold);color:#fff;padding:16px 32px;border-radius:var(--r);transition:.2s;border:none;cursor:pointer;font-family:var(--sans)}
 .btn-gold:hover{filter:brightness(1.08)}
 .btn-outline-w{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;border:1px solid rgba(255,255,255,.5);color:#fff;padding:15px 26px;border-radius:var(--r);transition:.2s}
@@ -74,19 +47,10 @@ img{display:block;max-width:100%}
 /* ── NAV ─────────────────────────────────────── */
 nav{position:fixed;top:0;left:0;right:0;z-index:200;transition:background .3s,border-color .3s;border-bottom:1px solid transparent}
 nav.scrolled{background:var(--navy-m);backdrop-filter:blur(12px);border-color:rgba(255,255,255,.07)}
-.nav-i{
-  width:min(100%,calc(var(--container-max) + (var(--gutter-desktop) * 2)));
-  margin:0 auto;
-  padding-inline:var(--gutter-desktop);
-  height:64px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
-.nav-right{margin-left:auto;display:flex;align-items:center;gap:36px}
+.nav-i{max-width:1340px;margin:0 auto;padding:0 40px;height:64px;display:flex;align-items:center;justify-content:space-between}
 .logo{font-family:var(--serif);font-size:22px;font-weight:500;color:#fff;letter-spacing:.03em}
 .logo span{color:var(--gold)}
-.nav-links{display:flex;gap:30px;justify-content:flex-end}
+.nav-links{display:flex;gap:32px}
 .nav-links a{font-size:11px;font-weight:400;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.6);transition:.2s}
 .nav-links a:hover{color:#fff}
 .nav-cta{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;background:var(--gold);color:#fff;padding:10px 22px;border-radius:var(--r);transition:.2s}
@@ -97,16 +61,11 @@ nav.scrolled{background:var(--navy-m);backdrop-filter:blur(12px);border-color:rg
 .hero-bg{position:absolute;inset:0;z-index:0}
 .hero-bg img{width:100%;height:100%;object-fit:cover;object-position:center 28%}
 .hero-ov{position:absolute;inset:0;background:linear-gradient(155deg,rgba(7,18,31,.93) 0%,rgba(13,27,42,.78) 52%,rgba(7,18,31,.9) 100%);z-index:1}
-.hero-in{
-  position:relative;
-  z-index:2;
-  width:min(100%,calc(var(--container-max) + (var(--gutter-desktop) * 2)));
-  margin:0 auto;
-  padding:88px var(--gutter-desktop) 64px;
-}
+.hero-in{position:relative;z-index:2;padding:88px 0 64px}
 .hero-label{display:flex;align-items:center;gap:12px;margin-bottom:22px}
 .hero-label .eyebrow{color:rgba(196,148,42,.9)}
-h1{font-family:var(--serif);font-size:clamp(46px,5.8vw,80px);font-weight:500;line-height:1.07;letter-spacing:-.01em;color:#fff;margin-bottom:6px;max-width:860px}
+.hero-label::before{content:'';display:block;width:32px;height:1px;background:var(--gold)}
+h1{font-family:var(--serif);font-size:clamp(52px,6.4vw,88px);font-weight:500;line-height:1.07;letter-spacing:-.01em;color:#fff;margin-bottom:6px;max-width:860px}
 h1 em{font-style:italic;color:var(--gold)}
 .hero-sub{font-size:21px;font-weight:300;color:rgba(255,255,255,.9);line-height:1.55;max-width:720px;margin:14px 0 32px}
 .hero-ctas{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:32px}
@@ -128,41 +87,30 @@ h1 em{font-style:italic;color:var(--gold)}
 
 /* ── FILTER SECTION ──────────────────────────── */
 .filter-sect{background:var(--navy)}
-.filter-inner{
-  width:min(100%,calc(var(--container-narrow) + (var(--gutter-desktop) * 2)));
-  margin:0 auto;
-  text-align:center;
-  padding:var(--space-2xl) var(--gutter-desktop);
-}
+.filter-inner{max-width:860px;margin:0 auto;text-align:center;padding:80px 40px}
 .filter-inner .eyebrow{color:var(--gold)}
-.filter-inner h2{font-family:var(--serif);font-size:clamp(34px,4.1vw,52px);font-weight:500;color:#fff;margin:14px 0;line-height:1.1}
+.filter-inner h2{font-family:var(--serif);font-size:clamp(38px,4.6vw,58px);font-weight:500;color:#fff;margin:14px 0;line-height:1.1}
 .filter-inner p{font-size:18px;color:rgba(255,255,255,.75);line-height:1.65;margin-bottom:32px}
 .filter-criteria{display:flex;flex-direction:column;gap:10px;text-align:left;max-width:480px;margin:0 auto 32px}
 .fc-item{display:flex;align-items:center;gap:12px;font-size:15px;color:rgba(255,255,255,.88);font-weight:400}
 .fc-item::before{content:'';width:20px;height:20px;border-radius:50%;background:var(--gold-lt);border:1px solid var(--gold-bd);flex-shrink:0;display:flex;align-items:center;justify-content:center}
-.filter-note{font-size:13px;color:rgba(255,255,255,.4);margin-top:12px;text-align:center}
+.filter-note{font-size:13px;color:rgba(255,255,255,.4);margin-top:12px}
 
 /* ── PAIN SECTION ─────────────────────────────── */
 .pain-g{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--border)}
-.pain-col{padding:var(--space-lg) var(--space-md)}
+.pain-col{padding:48px 44px}
 .pain-col.left{background:#fff;border-right:1px solid var(--border)}
-.pain-col.right{background:linear-gradient(180deg,#0d1b2a 0%,#0b1827 100%)}
-.pain-col h3{font-family:var(--serif);font-size:30px;font-weight:500;line-height:1.15;margin-bottom:24px}
+.pain-col.right{background:var(--navy)}
+.pain-col h3{font-family:var(--serif);font-size:32px;font-weight:500;line-height:1.15;margin-bottom:24px}
 .pain-col.left h3{color:var(--ink)}
 .pain-col.right h3{color:#fff}
 .pain-list{display:flex;flex-direction:column;gap:14px}
-.pain-list{
-  border-top:1px solid var(--border);
-  padding-top:18px;
-}
-.pain-col.right .pain-list{border-top-color:rgba(255,255,255,.16)}
 .pain-item{display:flex;gap:12px;align-items:flex-start}
 .pain-item.negative .dot{background:#b94040}
 .pain-item.positive .dot{background:#2D6A4F}
 .dot{width:8px;height:8px;border-radius:50%;margin-top:7px;flex-shrink:0}
 .pain-item p{font-size:16px;color:#3a3a3a;line-height:1.55}
 .pain-col.right .pain-item p{color:rgba(255,255,255,.88)}
-.compare-wrap{margin-top:18px;border:1px solid var(--border);background:#fff}
 
 /* ── COMPARISON TABLE ─────────────────────────── */
 .compare-table{width:100%;border-collapse:collapse;margin-top:40px;font-size:15px}
@@ -177,7 +125,7 @@ h1 em{font-style:italic;color:var(--gold)}
 
 /* ── STRATEGY BY CAPITAL ──────────────────────── */
 .strategy-g{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--border)}
-.strategy-card{background:#fff;padding:var(--space-md) 26px;display:flex;flex-direction:column;gap:10px;transition:background .2s}
+.strategy-card{background:#fff;padding:32px 26px;display:flex;flex-direction:column;gap:10px;transition:background .2s}
 .strategy-card:hover{background:#fcf9f3}
 .s-range{font-size:11px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--gold)}
 .s-card h3{font-family:var(--serif);font-size:30px;font-weight:500;color:var(--ink);line-height:1.1}
@@ -186,84 +134,20 @@ h1 em{font-style:italic;color:var(--gold)}
 .s-pill{margin-top:auto;padding-top:16px;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);border-top:1px solid var(--border)}
 
 /* ── PROCESS ──────────────────────────────────── */
-.section-process{
-  background:linear-gradient(180deg,#f6f3eb 0%,#f2ede3 100%);
-}
-.proc-g{
-  display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:20px;
-  background:transparent;
-  border:none;
-}
-.proc-s{
-  padding:30px 24px 26px;
-  background:#fff;
-  border:1px solid #d8d2c6;
-  position:relative;
-  display:flex;
-  flex-direction:column;
-  min-height:100%;
-  border-radius:6px;
-  transition:border-color .22s ease,transform .22s ease,box-shadow .22s ease,background .22s ease;
-}
-.proc-s::before{
-  content:"";
-  position:absolute;
-  top:58px;
-  left:24px;
-  width:42px;
-  height:1px;
-  background:rgba(196,148,42,.55);
-}
-.proc-s:hover{
-  border-color:rgba(196,148,42,.4);
-  background:#fffdf9;
-  transform:translateY(-4px);
-  box-shadow:0 14px 30px rgba(13,27,42,.12);
-}
-.proc-num{
-  width:44px;
-  height:44px;
-  border-radius:50%;
-  border:1px solid rgba(196,148,42,.45);
-  background:rgba(196,148,42,.1);
-  font-family:var(--serif);
-  font-size:20px;
-  font-weight:500;
-  color:var(--gold);
-  line-height:1;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  margin-bottom:14px;
-}
+.proc-g{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;border:1px solid var(--border)}
+.proc-s{padding:36px 28px 40px;border-right:1px solid var(--border);background:#fff;position:relative}
+.proc-s:last-child{border-right:none}
+.proc-num{font-family:var(--serif);font-size:56px;font-weight:500;color:rgba(196,148,42,.2);line-height:1;margin-bottom:16px}
 .proc-tag{font-size:10px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
-.proc-s h3{font-family:var(--serif);font-size:24px;font-weight:500;color:var(--ink);margin-bottom:0;line-height:1.15;min-height:2.3em}
-.proc-s p{font-size:15px;color:var(--muted);line-height:1.62;flex:1}
-.proc-badge{
-  margin-top:16px;
-  display:inline-block;
-  align-self:flex-start;
-  font-size:10px;
-  font-weight:600;
-  letter-spacing:.1em;
-  text-transform:uppercase;
-  color:var(--gold);
-  background:var(--gold-lt);
-  border:1px solid var(--gold-bd);
-  padding:5px 10px;
-  border-radius:var(--r);
-}
+.proc-s h3{font-family:var(--serif);font-size:28px;font-weight:500;color:var(--ink);margin-bottom:10px;line-height:1.15}
+.proc-s p{font-size:15px;color:var(--muted);line-height:1.65}
+.proc-badge{margin-top:16px;display:inline-block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);background:var(--gold-lt);border:1px solid var(--gold-bd);padding:4px 10px;border-radius:var(--r)}
 
 /* ── ZONES ────────────────────────────────────── */
 .zones-g{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--border);border:1px solid var(--border)}
-.zone-c{background:#fff;padding:36px var(--space-md)}
-.zone-media{margin:-36px calc(var(--space-md) * -1) 24px}
-.zone-media img{width:100%;height:260px;object-fit:cover}
-.zone-media img.zone-img-abu{object-position:center 42%}
+.zone-c{background:#fff;padding:36px 30px}
 .zone-tag{font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
-.zone-c h3{font-family:var(--serif);font-size:30px;font-weight:500;color:var(--ink);margin-bottom:10px}
+.zone-c h3{font-family:var(--serif);font-size:34px;font-weight:500;color:var(--ink);margin-bottom:10px}
 .zone-c p{font-size:15px;color:var(--muted);line-height:1.65;margin-bottom:18px}
 .yield-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .yield-pill{display:inline-flex;align-items:baseline;gap:4px;background:var(--gold-lt);border:1px solid var(--gold-bd);padding:5px 11px;border-radius:var(--r)}
@@ -272,22 +156,12 @@ h1 em{font-style:italic;color:var(--gold)}
 .zone-note{font-size:13px;font-weight:500;color:#2a3f54}
 
 /* ── FORM SECTION ─────────────────────────────── */
-#form{background:linear-gradient(180deg,#081321 0%,#0d1b2a 100%);padding-block:var(--space-2xl)}
-.form-wrap{
-  width:min(100%,var(--container-narrow));
-  margin:0 auto;
-  background:rgba(255,255,255,.03);
-  border:1px solid rgba(255,255,255,.13);
-  padding:var(--space-lg) var(--space-md);
-  border-radius:4px;
-  box-shadow:0 24px 72px rgba(0,0,0,.3);
-}
+#form{background:linear-gradient(180deg,#081321 0%,#0d1b2a 100%);padding:104px 0}
+.form-wrap{max-width:940px;margin:0 auto;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.13);padding:48px 44px;border-radius:4px;box-shadow:0 24px 72px rgba(0,0,0,.3)}
 .form-hd{margin-bottom:36px}
-.form-hd{text-align:center}
 .form-hd .eyebrow{color:var(--gold)}
-.form-hd .rule{margin-inline:auto}
-.form-hd h2{font-family:var(--serif);font-size:clamp(32px,4vw,48px);font-weight:500;color:#fff;line-height:1.12;margin:10px 0 8px}
-.form-hd p{font-size:16px;color:rgba(255,255,255,.72);line-height:1.5;max-width:60ch;margin-inline:auto}
+.form-hd h2{font-family:var(--serif);font-size:clamp(36px,4.4vw,54px);font-weight:500;color:#fff;line-height:1.12;margin:10px 0 8px}
+.form-hd p{font-size:16px;color:rgba(255,255,255,.72);line-height:1.5}
 .form-scarcity{margin-top:8px;font-size:13px;color:rgba(196,148,42,.85);font-weight:500}
 
 /* Step indicator */
@@ -414,17 +288,6 @@ h1 em{font-style:italic;color:var(--gold)}
 .fq-a{font-size:15px;color:var(--muted);line-height:1.7;display:none;padding:0 24px 20px}
 .fq-a.open{display:block}
 
-/* Body text alignment (desktop/tablet) */
-.sh p,
-.filter-inner p,
-.pain-item p,
-.s-desc,
-.proc-s p,
-.zone-c p,
-.fq-a{ text-align:justify; text-wrap:pretty; }
-
-.sh.sh-wide p{max-width:none;white-space:nowrap;font-size:17px}
-
 /* ── FOOTER ───────────────────────────────────── */
 footer{background:var(--navy-d);padding:60px 0 24px}
 .ft{display:grid;grid-template-columns:2fr 1fr 1fr;gap:48px;padding-bottom:44px;border-bottom:1px solid rgba(255,255,255,.06)}
@@ -450,30 +313,27 @@ footer{background:var(--navy-d);padding:60px 0 24px}
 
 /* ── RESPONSIVE ───────────────────────────────── */
 @media(max-width:1024px){
-  .hero-in{padding-inline:var(--gutter-tablet)}
-  .nav-right{gap:24px}
-  .container,.wrap,.container-wide,.container-narrow{padding-inline:var(--gutter-tablet)}
-  .nav-i{padding-inline:var(--gutter-tablet)}
+  .wrap{padding:0 24px}
+  .nav-i{padding:0 24px}
   .pain-col{padding:36px 30px}
   .strategy-g{grid-template-columns:1fr 1fr}
   .proc-g{grid-template-columns:1fr 1fr}
-  .proc-g{gap:16px}
+  .proc-s:nth-child(2n){border-right:none}
+  .proc-s{border-bottom:1px solid var(--border)}
+  .proc-s:nth-last-child(-n+2){border-bottom:none}
   .zones-g{grid-template-columns:1fr}
   .kpi-g{grid-template-columns:1fr 1fr}
   .faq-g{grid-template-columns:1fr}
 }
 @media(max-width:700px){
-  .hero-in{padding-inline:var(--gutter-mobile)}
   body{font-size:16px}
-  .container,.wrap,.container-wide,.container-narrow,.nav-i{padding-inline:var(--gutter-mobile)}
+  .wrap,.nav-i{padding:0 18px}
   .nav-links{display:none}
   .nav-cta{display:none}
-  .nav-right{display:none}
   .sticky-cta{display:block}
-  .section{padding-block:var(--space-xl)}
-  .sh{margin-bottom:var(--space-md)}
+  .section{padding:60px 0}
+  .sh{margin-bottom:32px}
   .sh p{font-size:16px}
-  .sh.sh-wide p{white-space:normal}
   .hero-in{padding:72px 0 52px}
   h1{font-size:clamp(44px,10vw,70px)}
   .hero-sub{font-size:18px;margin-bottom:22px}
@@ -485,20 +345,16 @@ footer{background:var(--navy-d);padding:60px 0 24px}
   .kpi{padding:22px 12px 26px;border-right:none;border-bottom:1px solid rgba(255,255,255,.08)}
   .kpi:nth-child(odd){border-right:1px solid rgba(255,255,255,.08)}
   .kpi:nth-last-child(1),.kpi:nth-last-child(2){border-bottom:none}
-  .filter-inner{padding:var(--space-xl) var(--gutter-mobile)}
+  .filter-inner{padding:56px 18px}
   .pain-g{grid-template-columns:1fr}
   .pain-col.left{border-right:none;border-bottom:1px solid var(--border)}
   .pain-col{padding:28px 22px}
-  .compare-wrap{margin-top:14px}
   .strategy-g,.proc-g{grid-template-columns:1fr}
-  .proc-g{gap:12px}
-  .proc-s{padding:28px 22px 24px}
-  .proc-s::before{top:54px;left:22px;width:36px}
-  .proc-s h3{min-height:auto}
-  .zone-media{margin:-28px -22px 20px}
-  .zone-media img{height:200px}
-  #form{padding-block:var(--space-xl)}
-  .form-wrap{padding:24px var(--gutter-mobile);border-radius:4px}
+  .proc-s{border-right:none}
+  .proc-s:nth-last-child(-n+2){border-bottom:1px solid var(--border)}
+  .proc-s:last-child{border-bottom:none}
+  #form{padding:60px 0}
+  .form-wrap{padding:24px 18px;border-radius:4px}
   .opts{grid-template-columns:1fr}
   .viaje-opts{grid-template-columns:1fr}
   .viaje-opts .opt{flex-direction:row;text-align:left;align-items:center;gap:12px}
@@ -509,13 +365,6 @@ footer{background:var(--navy-d);padding:60px 0 24px}
   footer{padding:44px 0 88px}
   .ft{grid-template-columns:1fr;gap:28px;padding-bottom:28px}
   .ft-bot{flex-direction:column;gap:6px}
-  .sh p,
-  .filter-inner p,
-  .pain-item p,
-  .s-desc,
-  .proc-s p,
-  .zone-c p,
-  .fq-a{ text-align:left; }
 }
 @media(max-width:400px){
   h1{font-size:40px}
@@ -528,16 +377,14 @@ footer{background:var(--navy-d);padding:60px 0 24px}
 <!-- NAV -->
 <nav id="nav">
   <div class="nav-i">
-    <a href="index-v4.html" class="logo">Horizonte <span>Emirates</span></a>
-    <div class="nav-right">
-      <div class="nav-links">
-        <a href="#para-quien">Para quién</a>
-        <a href="#como">Proceso</a>
-        <a href="#form">Análisis</a>
-        <a href="#faq">FAQ</a>
-      </div>
-      <a href="#form" class="nav-cta">Solicitar análisis</a>
+    <a href="#" class="logo">Horizonte <span>Emirates</span></a>
+    <div class="nav-links">
+      <a href="#para-quien">Para quién</a>
+      <a href="#como">Proceso</a>
+      <a href="#form">Análisis</a>
+      <a href="#faq">FAQ</a>
     </div>
+    <a href="#form" class="nav-cta">Solicitar análisis</a>
   </div>
 </nav>
 
@@ -547,7 +394,7 @@ footer{background:var(--navy-d);padding:60px 0 24px}
     <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1800&q=90&auto=format&fit=crop" alt="Dubai skyline" loading="eager"/>
   </div>
   <div class="hero-ov"></div>
-  <div class="hero-in">
+  <div class="wrap hero-in">
     <div class="fade">
       <div class="hero-label">
         <span class="eyebrow">Inversión inmobiliaria · UAE</span>
@@ -560,11 +407,11 @@ footer{background:var(--navy-d);padding:60px 0 24px}
       </div>
       <div class="hero-badge">
         <span class="badge">Servicio íntegro en español</span>
-        <span class="badge">Partners RERA certificados en Dubai</span>
+        <span class="badge">Partner RERA certificado en Dubai</span>
         <span class="badge">0€ de coste para el inversor</span>
       </div>
       <div class="hero-filter">
-        <p><strong>Trabajamos con un número limitado de inversores cada mes</strong> para garantizar la calidad del acompañamiento.</p>
+        <p>No analizamos todos los perfiles. <strong>Trabajamos con un número limitado de inversores cada mes</strong> para garantizar la calidad del acompañamiento.</p>
       </div>
     </div>
   </div>
@@ -573,10 +420,10 @@ footer{background:var(--navy-d);padding:60px 0 24px}
 <!-- KPI STRIP -->
 <div class="kpi-strip">
   <div class="wrap kpi-g">
-    <div class="kpi fade"><div class="kpi-n">+334.000</div><div class="kpi-l">transacciones en UAE<br/>en 2025</div></div>
+    <div class="kpi fade"><div class="kpi-n">270.000</div><div class="kpi-l">transacciones en Dubai<br/>en 2024</div></div>
     <div class="kpi fade"><div class="kpi-n">6–9<sup>%</sup></div><div class="kpi-l">rentabilidad neta media<br/>en activos prime</div></div>
     <div class="kpi fade"><div class="kpi-n">0<sup>%</sup></div><div class="kpi-l">impuesto sobre rentas<br/>de alquiler y plusvalías en UAE</div></div>
-    <div class="kpi fade"><div class="kpi-n">48<sup>h</sup></div><div class="kpi-l">tiempo máximo para recibir<br/>su análisis personalizado</div></div>
+    <div class="kpi fade"><div class="kpi-n">24<sup>h</sup></div><div class="kpi-l">tiempo máximo para recibir<br/>su análisis personalizado</div></div>
   </div>
 </div>
 
@@ -585,7 +432,7 @@ footer{background:var(--navy-d);padding:60px 0 24px}
   <div class="filter-inner fade">
     <span class="eyebrow">Para quién es esto</span>
     <div class="rule" style="margin:14px auto"></div>
-      <h2 style="color:#fff">No trabajamos con todos los perfiles.</h2>
+    <h2 style="color:#fff">No trabajamos con todos los perfiles.</h2>
     <p>Seleccionamos inversores cuyo capital y objetivos encajan con las oportunidades reales disponibles en UAE. Si encaja, el proceso es guiado, en español y sin coste.</p>
     <div class="filter-criteria">
       <div class="fc-item">Capital disponible desde 150.000€</div>
@@ -593,17 +440,18 @@ footer{background:var(--navy-d);padding:60px 0 24px}
       <div class="fc-item">Horizonte de decisión definido</div>
       <div class="fc-item">Quiere acompañamiento experto, no información genérica</div>
     </div>
-    <a href="#form" class="btn-gold">Solicitar análisis</a>
+    <a href="#form" class="btn-gold">Solicitar análisis — Comprobar si encajo</a>
+    <p class="filter-note">Solo avanzamos si su perfil encaja con el tipo de oportunidad disponible.</p>
   </div>
 </div>
 
 <!-- PAIN — ESPAÑA vs DUBAI -->
 <section class="section" id="para-quien">
   <div class="wrap">
-    <div class="sh sh-wide fade">
+    <div class="sh fade">
       <span class="eyebrow">Por qué Dubai</span>
       <div class="rule"></div>
-      <h2>Lo que España limita, Dubai lo resuelve.</h2>
+      <h2>Lo que España limita,<br/>Dubai lo resuelve.</h2>
       <p>Un análisis directo de lo que está cambiando para el inversor inmobiliario en España y lo que Dubai ofrece como alternativa real.</p>
     </div>
     <div class="pain-g fade">
@@ -615,9 +463,24 @@ footer{background:var(--navy-d);padding:60px 0 24px}
           <div class="pain-item negative"><div class="dot"></div><p>Rendimiento neto real del <strong>2–3%</strong> después de impuestos, gestión, periodos vacíos y derramas.</p></div>
           <div class="pain-item negative"><div class="dot"></div><p>Fiscalidad cada vez más agresiva sobre rentas del alquiler e incrementos patrimoniales.</p></div>
         </div>
+        <table class="compare-table" style="margin-top:32px">
+          <thead>
+            <tr>
+              <th>Concepto</th>
+              <th>España</th>
+              <th class="dubai-h">Dubai</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Rentabilidad neta</td><td class="es">2–3%</td><td class="du"><span class="badge-good">6–9%</span></td></tr>
+            <tr><td>Impuesto sobre alquiler</td><td class="es">Hasta 45%</td><td class="du"><span class="badge-good">0%</span></td></tr>
+            <tr><td>Impuesto sobre plusvalías</td><td class="es">19–28%</td><td class="du"><span class="badge-good">0%</span></td></tr>
+            <tr><td>Riesgo de ocupación</td><td class="es">Alto / Lento</td><td class="du"><span class="badge-good">Nulo</span></td></tr>
+          </tbody>
+        </table>
       </div>
       <div class="pain-col right">
-        <h3 style="color:#fff">Invertir en Emiratos con Horizonte Emirates</h3>
+        <h3 style="color:#fff">Invertir en Dubai con Horizonte Emirates</h3>
         <div class="pain-list">
           <div class="pain-item positive"><div class="dot"></div><p style="color:rgba(255,255,255,.88)"><strong style="color:#fff">Propiedad 100% protegida</strong>: derechos reales garantizados bajo regulación RERA. Sin riesgo de impago no recuperable ni ocupación.</p></div>
           <div class="pain-item positive"><div class="dot"></div><p style="color:rgba(255,255,255,.88)"><strong style="color:#fff">6–9% neto real</strong>, sin impuestos sobre rentas ni plusvalías. El rendimiento es íntegramente suyo.</p></div>
@@ -625,24 +488,6 @@ footer{background:var(--navy-d);padding:60px 0 24px}
           <div class="pain-item positive"><div class="dot"></div><p style="color:rgba(255,255,255,.88)">Todo el proceso <strong style="color:#fff">en español</strong>: análisis, selección, visita en destino y cierre. Con acompañamiento local de nuestro equipo. Sin coste para usted.</p></div>
         </div>
       </div>
-    </div>
-    <div class="compare-wrap fade">
-      <table class="compare-table" style="margin-top:0">
-        <thead>
-          <tr>
-            <th>Concepto</th>
-            <th>España</th>
-            <th class="dubai-h">Dubai</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>Rentabilidad neta</td><td class="es">2–3%</td><td class="du"><span class="badge-good">6–9%</span></td></tr>
-          <tr><td>Revalorización del activo</td><td class="es">±2%</td><td class="du"><span class="badge-good">±6%</span></td></tr>
-          <tr><td>Impuesto sobre alquiler</td><td class="es">Hasta 45%</td><td class="du"><span class="badge-good">0%</span></td></tr>
-          <tr><td>Impuesto sobre plusvalías</td><td class="es">19–28%</td><td class="du"><span class="badge-good">0%</span></td></tr>
-          <tr><td>Riesgo de ocupación</td><td class="es">Alto / Lento</td><td class="du"><span class="badge-good">Nulo</span></td></tr>
-        </tbody>
-      </table>
     </div>
   </div>
 </section>
@@ -653,7 +498,7 @@ footer{background:var(--navy-d);padding:60px 0 24px}
     <div class="sh fade">
       <span class="eyebrow">Perfil de inversión</span>
       <div class="rule"></div>
-      <h2>Una estrategia distinta según su capital.</h2>
+      <h2>Una estrategia distinta<br/>según su capital.</h2>
       <p>No todos los activos encajan con todos los perfiles. Definimos la estrategia antes de presentar oportunidades.</p>
     </div>
     <div class="strategy-g fade">
@@ -690,12 +535,12 @@ footer{background:var(--navy-d);padding:60px 0 24px}
 </section>
 
 <!-- PROCESO -->
-<section class="section section-process" id="como">
+<section class="section" id="como">
   <div class="wrap">
     <div class="sh fade">
       <span class="eyebrow">Proceso</span>
       <div class="rule"></div>
-      <h2>Del primer contacto a la firma en cuatro pasos.</h2>
+      <h2>Del primer contacto a la firma<br/>en cuatro pasos.</h2>
       <p>Gestionamos cada etapa. Usted solo decide.</p>
     </div>
     <div class="proc-g fade">
@@ -708,7 +553,7 @@ footer{background:var(--navy-d);padding:60px 0 24px}
       <div class="proc-s">
         <div class="proc-num">02</div>
         <div class="proc-tag">Selección verificada</div>
-        <h3>Oportunidades reales</h3>
+        <h3>Oportunidades filtradas</h3>
         <p>Le presentamos entre 3 y 5 activos con proyecciones reales y due diligence legal. Sin relleno. Solo lo que encaja con su capital y objetivo.</p>
       </div>
       <div class="proc-s">
@@ -735,13 +580,10 @@ footer{background:var(--navy-d);padding:60px 0 24px}
     <div class="sh fade">
       <span class="eyebrow">Zonas de inversión</span>
       <div class="rule"></div>
-      <h2>Tres mercados. Tres perfiles de inversor.</h2>
+      <h2>Tres mercados.<br/>Tres perfiles de inversor.</h2>
     </div>
     <div class="zones-g fade">
       <div class="zone-c">
-        <div class="zone-media">
-          <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1800&q=90&auto=format&fit=crop" alt="Skyline de Dubai" loading="lazy"/>
-        </div>
         <div class="zone-tag">Prime urbano</div>
         <h3>Dubai</h3>
         <p>Marina, Palm Jumeirah, Downtown y Business Bay. Alta liquidez de reventa y demanda de alquiler permanente por parte de expatriados de alta renta.</p>
@@ -751,9 +593,6 @@ footer{background:var(--navy-d);padding:60px 0 24px}
         </div>
       </div>
       <div class="zone-c">
-        <div class="zone-media">
-          <img src="https://mma.prnewswire.com/media/2404885/WynnAlMarjan_Aerial.jpg" alt="Proyecto Wynn en Ras Al Khaimah" loading="lazy"/>
-        </div>
         <div class="zone-tag">Emergente · Alta apreciación</div>
         <h3>Ras Al Khaimah</h3>
         <p>Primer casino de UAE (Wynn, 2027). Ventana de apreciación estimada del 20–35% antes de la apertura. Ticket más accesible que Dubai Prime.</p>
@@ -763,9 +602,6 @@ footer{background:var(--navy-d);padding:60px 0 24px}
         </div>
       </div>
       <div class="zone-c">
-        <div class="zone-media">
-          <img src="Abu Dhabi.jpg" alt="Skyline de Abu Dhabi" loading="lazy" class="zone-img-abu"/>
-        </div>
         <div class="zone-tag">Institucional · Largo plazo</div>
         <h3>Abu Dhabi</h3>
         <p>Proyectos con respaldo soberano (Aldar Properties, Saadiyat). Menor volatilidad, horizontes 5+ años y máxima seguridad contractual para capital conservador.</p>
@@ -785,7 +621,7 @@ footer{background:var(--navy-d);padding:60px 0 24px}
       <div class="form-hd fade">
         <span class="eyebrow">Análisis personalizado</span>
         <div class="rule"></div>
-        <h2>Solicite su análisis. Sin compromiso.</h2>
+        <h2>Solicite su análisis.<br/>Sin compromiso.</h2>
         <p>Filtramos las oportunidades que encajan con su perfil real. Respuesta en menos de 24 horas.</p>
         <p class="form-scarcity">Capacidad de análisis limitada cada mes.</p>
       </div>
@@ -967,9 +803,9 @@ footer{background:var(--navy-d);padding:60px 0 24px}
         <div class="s-icon">✓</div>
         <h3>Su análisis está en camino</h3>
         <p>Nuestro equipo ya está preparando las oportunidades alineadas con su perfil. Le contactaremos en menos de 24 horas por el canal que eligió.</p>
-        <a id="wa-success-link" href="#" class="wa-s-btn" onclick="return openWaDirect(savedLead)">
+        <a id="wa-success-link" href="#" class="wa-s-btn" onclick="return openWaModal(savedLead)">
           <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-          Abrir WhatsApp con mis datos
+          Hablar con un asesor ahora
         </a>
         <p class="wa-hint">También le contactamos por el canal que eligió en el formulario.</p>
       </div>
@@ -983,7 +819,7 @@ footer{background:var(--navy-d);padding:60px 0 24px}
     <div class="sh fade">
       <span class="eyebrow">Preguntas frecuentes</span>
       <div class="rule"></div>
-      <h2>Lo que nos preguntan antes de empezar.</h2>
+      <h2>Lo que nos preguntan<br/>antes de empezar.</h2>
     </div>
     <div class="faq-g fade">
       <div class="fqitem" onclick="toggleFaq(this)">
@@ -1179,18 +1015,7 @@ document.getElementById('mainform').addEventListener('submit',function(e){
   btn.disabled=true;btn.textContent='Enviando...';
   fetch(W3F_EP,{method:'POST',body:new FormData(this)}).then(r=>r.json()).then(d=>{
     if(d.success){
-      savedLead={
-        nombre,
-        email:emailVal,
-        telefono:document.getElementById('h-phone').value,
-        pais,
-        capital:sel.capital||'',
-        objetivo:sel.objetivo||'',
-        plazo:sel.plazo||'',
-        viaje:sel.viaje||'',
-        tier,
-        score
-      };
+      savedLead={nombre,email:emailVal};
       document.getElementById('mainform').style.display='none';
       document.querySelector('.sind').style.display='none';
       document.getElementById('success').classList.add('show');
@@ -1212,17 +1037,8 @@ function showStatus(kind,msg){
 // ── WA MODAL
 function buildWaMsg(data){
   const n=(data?.nombre||'').trim();
-  const cap=data?.capital?`\n- Capital: ${data.capital}`:'';
-  const obj=data?.objetivo?`\n- Objetivo: ${data.objetivo}`:'';
-  const txt=n
-    ?`Hola, soy ${n}. He dejado mis datos en Horizonte Emirates para recibir acompañamiento gratuito e invertir en Emiratos.${cap}${obj}`
-    :'Hola. He visto Horizonte Emirates y me interesa recibir información sobre inversión inmobiliaria en UAE.';
+  const txt=n?`Hola, soy ${n}. He dejado mis datos en Horizonte Emirates para recibir acompañamiento gratuito e invertir en Emiratos.`:'Hola. He visto Horizonte Emirates y me interesa recibir información sobre inversión inmobiliaria en UAE.';
   return`${WA_URL}?text=${encodeURIComponent(txt)}`;
-}
-
-function openWaDirect(preData){
-  window.open(buildWaMsg(preData||savedLead),'_blank','noopener');
-  return false;
 }
 
 function openWaModal(preData){
