@@ -735,6 +735,7 @@ function sendEmail(code, lead) {
 
   GmailApp.sendEmail(lead.email, tpl.subject, buildEmailPlainBody(tpl.text), {
     name:     displayName,
+    from:     CONFIG.REPLY_TO,
     htmlBody: wrapHtml(tpl.html, tpl.subject),
     replyTo:  CONFIG.REPLY_TO,
   });
@@ -1280,10 +1281,14 @@ function getLeadByEmail(email) {
 }
 
 function simulateLeadEmail(leadEmail, emailCode, forceSend) {
+  if (leadEmail == null || String(leadEmail).trim() === '') {
+    Logger.log('simulateLeadEmail: falta leadEmail (ejecución sin parámetros). Use runSimulationA1() desde el desplegable, o simulateLeadEmail("email@existente-en-hoja-Leads", "A1", false).');
+    return;
+  }
   const code = emailCode || 'A1';
   const lead = getLeadByEmail(leadEmail);
   if (!lead) {
-    Logger.log('Lead no encontrado: ' + leadEmail);
+    Logger.log('Lead no encontrado en hoja Leads (columna Email): ' + leadEmail);
     return;
   }
   if (lead.estado === 'baja' || lead.estado === 'cerrado') {

@@ -32,7 +32,7 @@ _Actualizado: 18 de abril de 2026_
 **Qué hacer:**
 1. En el panel del registrador del dominio → activar reenvío de email: `hola@horizonteemirates.com` → `civcomercial2010@gmail.com`
 2. En Gmail → Configuración → Cuentas → "Enviar correo como" → Añadir `hola@horizonteemirates.com` → verificar con el código que llegará a civcomercial
-3. En `horizonte-emails.gs`, dentro de `sendEmail()`, añadir `from: CONFIG.REPLY_TO` a las opciones del `GmailApp.sendEmail()`
+3. **Repo:** `sendEmail()` ya incluye `from: CONFIG.REPLY_TO` (fallará hasta completar pasos 1–2 y verificar la identidad en Gmail).
 
 ---
 
