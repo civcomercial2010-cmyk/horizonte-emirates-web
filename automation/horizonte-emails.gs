@@ -38,8 +38,14 @@ const CONFIG = {
     'stop', 'unsubscribe',
   ],
   // Palabras clave para confirmar que el email es de Horizonte Emirates
-  POLL_KEYWORDS:   ['Horizonte Emirates', 'HE V3', 'HE V2'],
+  POLL_KEYWORDS:   ['Horizonte Emirates', 'HE V5', 'HE V3', 'HE V2'],
   TEST_MODE:       false, // true → simula sin enviar emails reales
+  /**
+   * Nombre mostrado como remitente (Gmail «De:»). Vacío → se usa ASESOR_NOMBRE.
+   * Para tono 1:1 suele ayudar un nombre de persona + marca, p. ej. "Laura · Horizonte Emirates"
+   * (requiere que la cuenta de envío sea coherente con vuestro dominio/reputación).
+   */
+  EMAIL_SENDER_NAME: '',
 };
 
 // Etiquetas legibles para variables del email
@@ -55,13 +61,6 @@ const OBJETIVO_LABELS = {
   'diversificacion':'diversificación geográfica del patrimonio',
   'residencia':     'obtener residencia en UAE',
 };
-const PLAZO_LABELS = {
-  'ya':        'cuanto antes',
-  '6meses':    'menos de 6 meses',
-  '12meses':   'menos de 12 meses',
-  'indefinido':'sin plazo definido',
-};
-
 // ── DETECCIÓN DE GÉNERO POR NOMBRE ────────────────────────────
 // Lista de nombres femeninos comunes en español (España + LATAM).
 // Se normalizan sin tilde para comparar.
@@ -95,7 +94,7 @@ const FEMALE_NAMES = new Set([
   // Genéricos reconocibles como femeninos
   'nadia','rakel','leila','layla','fatou','yasmin','jasmine','pamela','jennifer',
   'jessica','ashley','kelly','britney','whitney','madison','savannah','amber',
-  'crystal','destiny','tiffany','brittany','holly','amber','heather',
+  'crystal','destiny','tiffany','brittany','holly','heather',
 ]);
 
 function detectGender(nombre) {
@@ -136,10 +135,9 @@ function buildCalendlyUrl(baseUrl, lead, emailCode) {
   add('a3', lead && lead.plazo);
   add('a4', lead && lead.pais);
 
-  // Trazabilidad de origen
-  add('utm_source', 'he_automation');
-  add('utm_medium', 'email');
-  add('utm_campaign', emailCode || '');
+  // UTM mínimo (menos parámetros = URL más corta; evita cadena tipo «campaña masiva» en filtros heurísticos).
+  add('utm_source', 'horizonte_emirates');
+  if (emailCode) add('utm_content', emailCode);
 
   if (!params.length) return baseUrl;
   return baseUrl + (baseUrl.indexOf('?') >= 0 ? '&' : '?') + params.join('&');
@@ -331,6 +329,32 @@ function getMessageBodyForLeadParse(msg) {
   return body;
 }
 
+/** Último mensaje del hilo (sin mutar el array devuelto por getMessages). */
+function getLatestThreadMessage(thread) {
+  const msgs = thread.getMessages();
+  return msgs.length ? msgs[msgs.length - 1] : null;
+}
+
+/** Orden descendente por fecha del último mensaje (Gmail no garantiza orden de hilos). */
+function sortThreadsByLatestMessage(threads) {
+  threads.sort((a, b) => {
+    const ma = getLatestThreadMessage(a);
+    const mb = getLatestThreadMessage(b);
+    const ta = ma ? ma.getDate().getTime() : 0;
+    const tb = mb ? mb.getDate().getTime() : 0;
+    return tb - ta;
+  });
+  return threads;
+}
+
+function ensureGmailLabel(labelName) {
+  try {
+    return GmailApp.getUserLabelByName(labelName) || GmailApp.createLabel(labelName);
+  } catch (e) {
+    return GmailApp.createLabel(labelName);
+  }
+}
+
 function pollGmail() {
   let threads = GmailApp.search(CONFIG.POLL_QUERY, 0, 50);
   if (!threads.length && CONFIG.POLL_QUERY_FALLBACK) {
@@ -342,28 +366,15 @@ function pollGmail() {
   }
 
   // Los más recientes primero (Gmail no garantiza orden; si no, el aviso nuevo puede quedar fuera del lote)
-  threads.sort((a, b) => {
-    const ma = a.getMessages();
-    const mb = b.getMessages();
-    const da = ma.length ? ma[ma.length - 1].getDate().getTime() : 0;
-    const db = mb.length ? mb[mb.length - 1].getDate().getTime() : 0;
-    return db - da;
-  });
+  sortThreadsByLatestMessage(threads);
 
-  let label;
-  try {
-    label = GmailApp.getUserLabelByName(CONFIG.LABEL_PROCESADO)
-         || GmailApp.createLabel(CONFIG.LABEL_PROCESADO);
-  } catch(e) {
-    label = GmailApp.createLabel(CONFIG.LABEL_PROCESADO);
-  }
+  const label = ensureGmailLabel(CONFIG.LABEL_PROCESADO);
 
   Logger.log('pollGmail: hilos a revisar=' + threads.length + ' | cuenta=' + Session.getActiveUser().getEmail());
 
   threads.forEach(thread => {
     try {
-      const msgs = thread.getMessages();
-      const msg    = msgs.length ? msgs[msgs.length - 1] : null;
+      const msg = getLatestThreadMessage(thread);
       if (!msg) return;
 
       if (thread.getLabels().some(l => l.getName() === CONFIG.LABEL_PROCESADO)) {
@@ -404,6 +415,7 @@ function pollGmail() {
       try {
         leadId = saveLead(lead);
         scheduleSequence(leadId, lead.tier, new Date());
+        processQueue();
       } catch (err) {
         Logger.log('pollGmail: ERROR al guardar en Sheets / cola: ' + err.toString());
         throw err;
@@ -438,8 +450,7 @@ function diagnoseFormPipeline() {
   Logger.log('Muestra últimos hilos Web3Forms (query=' + q + '): ' + threads.length);
 
   threads.forEach((thread, idx) => {
-    const msgs = thread.getMessages();
-    const msg = msgs.length ? msgs[msgs.length - 1] : null;
+    const msg = getLatestThreadMessage(thread);
     if (!msg) return;
     const subject = msg.getSubject();
     const body = getMessageBodyForLeadParse(msg);
@@ -463,17 +474,12 @@ function pollUnsubscribes() {
   const threads = GmailApp.search(CONFIG.UNSUBSCRIBE_QUERY, 0, 30);
   if (!threads.length) return;
 
-  let label;
-  try {
-    label = GmailApp.getUserLabelByName(CONFIG.LABEL_BAJAS)
-         || GmailApp.createLabel(CONFIG.LABEL_BAJAS);
-  } catch(e) {
-    label = GmailApp.createLabel(CONFIG.LABEL_BAJAS);
-  }
+  const label = ensureGmailLabel(CONFIG.LABEL_BAJAS);
 
   threads.forEach(thread => {
     try {
-      const msg = thread.getMessages().pop();
+      const msg = getLatestThreadMessage(thread);
+      if (!msg) return;
       const from = String(msg.getFrom() || '');
       const emailMatch = from.match(/<([^>]+)>/) || from.match(/([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,})/i);
       const senderEmail = emailMatch ? emailMatch[1].toLowerCase() : '';
@@ -581,16 +587,9 @@ function debugPollLatestWeb3Lead() {
     Logger.log('debugPollLatestWeb3Lead: sin hilos para ' + q);
     return;
   }
-  threads.sort((a, b) => {
-    const ma = a.getMessages();
-    const mb = b.getMessages();
-    const da = ma.length ? ma[ma.length - 1].getDate().getTime() : 0;
-    const db = mb.length ? mb[mb.length - 1].getDate().getTime() : 0;
-    return db - da;
-  });
+  sortThreadsByLatestMessage(threads);
   const th = threads[0];
-  const msgs = th.getMessages();
-  const msg = msgs.length ? msgs[msgs.length - 1] : null;
+  const msg = getLatestThreadMessage(th);
   if (!msg) return;
   const subject = msg.getSubject();
   const body = getMessageBodyForLeadParse(msg);
@@ -616,6 +615,15 @@ function leadExists(email) {
   return false;
 }
 
+/** Compacta el teléfono para Sheets: quita espacios y separadores (+34 600 123 456 → +34600123456). */
+function normalizeTelefono(raw) {
+  let s = String(raw || '').trim();
+  if (!s) return '';
+  s = s.replace(/[\s\u00A0\u200B\uFEFF]/g, '');
+  s = s.replace(/[\-\.\(\)]/g, '');
+  return s;
+}
+
 function saveLead(data) {
   const id  = 'L' + new Date().getTime().toString().slice(-8);
   const now = new Date();
@@ -623,7 +631,7 @@ function saveLead(data) {
     id,
     data.nombre,
     data.email,
-    data.telefono    || '',
+    normalizeTelefono(data.telefono) || '',
     data.pais        || '',
     data.capital     || '',
     data.objetivo    || '',
@@ -652,7 +660,7 @@ function scheduleSequence(leadId, tier, createdAt) {
 
 
 // ══════════════════════════════════════════════════════════════
-// 4. PROCESAR COLA — trigger cada hora
+// 4. PROCESAR COLA — trigger cada hora; pollGmail llama processQueue tras nuevo lead (A1 sin esperar 1h)
 // ══════════════════════════════════════════════════════════════
 function processQueue() {
   const qSheet = getSheet('Cola');
@@ -705,12 +713,28 @@ function processQueue() {
 // ══════════════════════════════════════════════════════════════
 // 5. ENVIAR EMAIL
 // ══════════════════════════════════════════════════════════════
+/** Cuerpo texto plano final: plantilla + firma breve y vía de baja (multipart coherente con HTML). */
+function buildEmailPlainBody(tplText) {
+  const base = String(tplText || '').replace(/\r\n/g, '\n').trimEnd();
+  const footer = [
+    '',
+    '---',
+    'Responder: ' + CONFIG.REPLY_TO,
+    'Si no desea seguir recibiendo estos correos, responda con la palabra BAJA.',
+  ].join('\n');
+  return base + footer;
+}
+
 function sendEmail(code, lead) {
   const tpl = getTemplate(code, lead);
   if (!tpl) throw new Error('Template no encontrado: ' + code);
 
-  GmailApp.sendEmail(lead.email, tpl.subject, tpl.text, {
-    name:     CONFIG.ASESOR_NOMBRE,
+  const displayName = (CONFIG.EMAIL_SENDER_NAME && String(CONFIG.EMAIL_SENDER_NAME).trim())
+    ? String(CONFIG.EMAIL_SENDER_NAME).trim()
+    : CONFIG.ASESOR_NOMBRE;
+
+  GmailApp.sendEmail(lead.email, tpl.subject, buildEmailPlainBody(tpl.text), {
+    name:     displayName,
     htmlBody: wrapHtml(tpl.html, tpl.subject),
     replyTo:  CONFIG.REPLY_TO,
   });
@@ -721,15 +745,16 @@ function sendEmail(code, lead) {
 // 6. WRAPPER HTML — envuelve el contenido en plantilla de marca
 // ══════════════════════════════════════════════════════════════
 function wrapHtml(bodyHtml, subject) {
-  // Evita depender del protocolo mailto (que en Windows suele abrir Outlook).
+  // compose en Gmail (evita mailto en Windows); texto del enlace más neutro que «marketing masivo».
   const replyUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(CONFIG.REPLY_TO)}`;
-  const unsubscribeUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(CONFIG.REPLY_TO)}&su=${encodeURIComponent('BAJA COMUNICACIONES')}&body=${encodeURIComponent('BAJA')}`;
+  const unsubscribeUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(CONFIG.REPLY_TO)}&su=${encodeURIComponent('BAJA')}&body=${encodeURIComponent('BAJA')}`;
 
   return `<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="format-detection" content="telephone=no"/>
 <title>${subject}</title>
 </head>
 <body style="margin:0;padding:0;background:#F0EDE5;font-family:'Helvetica Neue',Arial,sans-serif;">
@@ -738,39 +763,35 @@ function wrapHtml(bodyHtml, subject) {
 
   <table width="600" cellpadding="0" cellspacing="0" border="0" role="presentation" style="max-width:600px;width:100%">
 
-    <!-- HEADER -->
     <tr><td style="background:#0D1B2A;padding:20px 32px;border-radius:4px 4px 0 0">
       <span style="font-family:Georgia,'Times New Roman',serif;font-size:22px;font-weight:500;color:#ffffff;letter-spacing:.03em;line-height:1">
         Horizonte <span style="color:#C4942A">Emirates</span>
       </span>
     </td></tr>
 
-    <!-- SEPARADOR DORADO -->
     <tr><td style="background:#C4942A;height:2px;font-size:0;line-height:0">&nbsp;</td></tr>
 
-    <!-- CUERPO -->
     <tr><td style="background:#ffffff;padding:36px 32px 32px;font-size:16px;color:#1A1A1A;line-height:1.7;
-                   border-left:1px solid #E0DBD1;border-right:1px solid #E0DBD1">
+                   border-left:1px solid #E0DBD1;border-right:1px solid #E0DBD1;text-align:left">
       ${bodyHtml}
     </td></tr>
 
-    <!-- FOOTER -->
     <tr><td style="background:#07121F;padding:22px 32px 24px;border-radius:0 0 4px 4px">
       <p style="margin:0 0 6px;font-size:13px;font-weight:600;color:#ffffff;font-family:Georgia,serif;letter-spacing:.02em">
         Horizonte <span style="color:#C4942A">Emirates</span>
       </p>
       <p style="margin:0 0 10px;font-size:12px;color:rgba(255,255,255,.55);line-height:1.6">
-        <a href="${replyUrl}" style="color:#C4942A;text-decoration:none">${CONFIG.REPLY_TO}</a>
-        &nbsp;·&nbsp;
-        <a href="${CONFIG.WA_LINK}" style="color:rgba(255,255,255,.55);text-decoration:none">WhatsApp ${CONFIG.WA_NUMBER}</a>
-        &nbsp;·&nbsp;
-        <a href="https://horizonteemirates.com" style="color:rgba(255,255,255,.55);text-decoration:none">horizonteemirates.com</a>
+        <a href="${replyUrl}" rel="noopener noreferrer" style="color:#C4942A;text-decoration:none">${CONFIG.REPLY_TO}</a>
+        <span style="color:rgba(255,255,255,.35)"> | </span>
+        <a href="${CONFIG.WA_LINK}" rel="noopener noreferrer" style="color:rgba(255,255,255,.55);text-decoration:none">WhatsApp ${CONFIG.WA_NUMBER}</a>
+        <span style="color:rgba(255,255,255,.35)"> | </span>
+        <a href="https://horizonteemirates.com" rel="noopener noreferrer" style="color:rgba(255,255,255,.55);text-decoration:none">horizonteemirates.com</a>
       </p>
       <p style="margin:0 0 8px;font-size:10px;color:rgba(255,255,255,.28);line-height:1.6">
         Horizonte Emirates es un servicio de Propulse SLU (Andorra). No prestamos asesoramiento fiscal, jurídico ni financiero. La información facilitada es estrictamente orientativa y no constituye oferta de inversión ni recomendación financiera. La inversión inmobiliaria conlleva riesgos. Consulte a un asesor independiente antes de tomar cualquier decisión.
       </p>
       <p style="margin:0;font-size:11px">
-        <a href="${unsubscribeUrl}" style="color:rgba(196,148,42,.7);text-decoration:none">Darse de baja de estas comunicaciones</a>
+        <a href="${unsubscribeUrl}" rel="noopener noreferrer" style="color:rgba(196,148,42,.7);text-decoration:none">Responder «BAJA» para no recibir más correos</a>
       </p>
     </td></tr>
 
@@ -789,7 +810,9 @@ function wrapHtml(bodyHtml, subject) {
 // ══════════════════════════════════════════════════════════════
 function getTemplate(code, lead) {
   const n    = lead.nombre  || 'Inversor';
-  const sal  = getSalutation(n);  // 'Estimado' o 'Estimada' según el nombre
+  const g    = detectGender(n);
+  const sal  = g === 'F' ? 'Estimada' : 'Estimado';
+  const listoOLista = g === 'F' ? 'lista' : 'listo';
   const cap  = CAPITAL_LABELS[lead.capital]   || lead.capital  || 'su capital disponible';
   const obj  = OBJETIVO_LABELS[lead.objetivo] || lead.objetivo || 'su objetivo de inversión';
   const pais = lead.pais || 'España';
@@ -813,7 +836,7 @@ function getTemplate(code, lead) {
       <table cellpadding="0" cellspacing="0" border="0" role="presentation">
         <tr>
           <td style="background:#1DAA61;border-radius:50px">
-            <a href="${waL}"
+            <a href="${waL}" rel="noopener noreferrer"
                style="display:inline-block;padding:14px 38px;color:#ffffff;font-family:'Helvetica Neue',Arial,sans-serif;
                       font-size:14px;font-weight:600;letter-spacing:.02em;text-decoration:none;line-height:1;
                       border-radius:50px">
@@ -833,7 +856,7 @@ function getTemplate(code, lead) {
       <table cellpadding="0" cellspacing="0" border="0" role="presentation">
         <tr>
           <td style="border:1px solid #C4942A;border-radius:50px">
-            <a href="${calL}"
+            <a href="${calL}" rel="noopener noreferrer"
                style="display:inline-block;padding:13px 38px;color:#C4942A;font-family:'Helvetica Neue',Arial,sans-serif;
                       font-size:14px;font-weight:600;letter-spacing:.02em;text-decoration:none;line-height:1;
                       border-radius:50px;background:#ffffff">
@@ -1031,13 +1054,13 @@ ${waBtn}${firma}`,
   <li>Conocer las implicaciones fiscales para residentes en ${pais}</li>
   <li>Comparar la rentabilidad real de Dubai frente a mercados europeos</li>
 </ul>
-<p>Sin prisa. Cuando esté ${gendered(n, 'listo', 'lista')} para dar un paso más, aquí estaremos.</p>
+<p>Sin prisa. Cuando esté ${listoOLista} para dar un paso más, aquí estaremos.</p>
 ${waBtn}${firma}`,
-    text: `${sal} ${n},\n\nConsulta recibida. Le enviaremos contenido claro sobre mercado UAE, fiscalidad para ${pais} y comparativas de rentabilidad.\n\nSin prisa. Cuando esté ${gendered(n, 'listo', 'lista')}, aquí estaremos.\n\nWhatsApp: ${wa}\n\nEquipo Horizonte Emirates`,
+    text: `${sal} ${n},\n\nConsulta recibida. Le enviaremos contenido claro sobre mercado UAE, fiscalidad para ${pais} y comparativas de rentabilidad.\n\nSin prisa. Cuando esté ${listoOLista}, aquí estaremos.\n\nWhatsApp: ${wa}\n\nEquipo Horizonte Emirates`,
   };
 
   if (code === 'C2') return {
-    subject: `España vs Dubai: comparativa rápida para inversores`,
+    subject: `${n}, comparativa España vs Dubai`,
     html: `<p>${sal} ${n},</p>
 <table width="100%" cellpadding="14" cellspacing="0" border="0" style="margin:0 0 20px;border-collapse:collapse;font-size:14px">
   <tr>
@@ -1073,7 +1096,7 @@ ${firma}`,
   };
 
   if (code === 'C3') return {
-    subject: `El proceso real de compra en Dubai, paso a paso`,
+    subject: `${n}, proceso de compra en Dubai (pasos)`,
     html: `<p>${sal} ${n},</p>
 <p>Uno de los mayores frenos es no entender cómo funciona el proceso de compra desde ${pais}. Hoy se lo explico en cinco pasos concretos:</p>
 <ol style="margin:16px 0;padding-left:20px;color:#3a3a3a;line-height:2">
@@ -1105,7 +1128,7 @@ ${waBtn}${firma}`,
   };
 
   if (code === 'C5') return {
-    subject: `La oportunidad en Ras Al Khaimah que tiene fecha de caducidad`,
+    subject: `${n}, nota sobre Ras Al Khaimah y el calendario del mercado`,
     html: `<p>${sal} ${n},</p>
 <p>En 2027 abre en Ras Al Khaimah el <strong>primer resort-casino de la región MENA</strong>, desarrollado por Wynn Resorts. Los activos comprados hoy —antes del evento— tienen proyecciones de apreciación del <strong>20–35%</strong> antes de la apertura.</p>
 <p>La ventana de entrada a precios actuales se está cerrando de forma progresiva e irreversible.</p>
@@ -1166,31 +1189,29 @@ ${waBtn}${firma}`,
 // ══════════════════════════════════════════════════════════════
 // 8. GESTIÓN DE BAJAS
 // ══════════════════════════════════════════════════════════════
-function markUnsubscribed(email) {
+/** Columna «Estado» (1-based) en hoja Leads — debe coincidir con initSheets. */
+function updateLeadEstadoInSheet(email, estado, logLine) {
   const sheet = getSheet('Leads');
   const data  = sheet.getDataRange().getValues();
+  if (!email) return false;
+  const needle = email.toLowerCase();
   for (let i = 1; i < data.length; i++) {
-    if ((data[i][2] || '').toLowerCase() === email.toLowerCase()) {
-      sheet.getRange(i + 1, 16).setValue('baja');
-      Logger.log('Baja registrada: ' + email);
+    if ((data[i][2] || '').toLowerCase() === needle) {
+      sheet.getRange(i + 1, 16).setValue(estado);
+      Logger.log(logLine + email);
       return true;
     }
   }
   return false;
 }
+
+function markUnsubscribed(email) {
+  return updateLeadEstadoInSheet(email, 'baja', 'Baja registrada: ');
+}
 // Uso manual: markUnsubscribed('email@ejemplo.com')
 
 function markClosed(email) {
-  const sheet = getSheet('Leads');
-  const data  = sheet.getDataRange().getValues();
-  for (let i = 1; i < data.length; i++) {
-    if ((data[i][2] || '').toLowerCase() === email.toLowerCase()) {
-      sheet.getRange(i + 1, 16).setValue('cerrado');
-      Logger.log('Lead cerrado/ganado: ' + email);
-      return true;
-    }
-  }
-  return false;
+  return updateLeadEstadoInSheet(email, 'cerrado', 'Lead cerrado/ganado: ');
 }
 // Uso manual cuando se cierra una operación: markClosed('email@ejemplo.com')
 
@@ -1224,9 +1245,10 @@ function initSheets() {
 }
 
 function createTriggers() {
+  const timeTriggerHandlers = ['pollGmail', 'pollUnsubscribes', 'processQueue', 'notifyCalendlyBookings'];
   ScriptApp.getProjectTriggers().forEach(t => {
     const fn = t.getHandlerFunction();
-    if (fn === 'pollGmail' || fn === 'pollUnsubscribes' || fn === 'processQueue' || fn === 'notifyCalendlyBookings') ScriptApp.deleteTrigger(t);
+    if (timeTriggerHandlers.indexOf(fn) !== -1) ScriptApp.deleteTrigger(t);
   });
   ScriptApp.newTrigger('pollGmail').timeBased().everyMinutes(10).create();
   ScriptApp.newTrigger('pollUnsubscribes').timeBased().everyMinutes(10).create();
@@ -1283,7 +1305,8 @@ function simulateLeadEmail(leadEmail, emailCode, forceSend) {
   }
   Logger.log('[SIMULACION] ' + code + ' → ' + lead.email);
   Logger.log('Asunto: ' + tpl.subject);
-  Logger.log('Texto preview: ' + (tpl.text || '').substring(0, 220) + '...');
+  const plainOut = buildEmailPlainBody(tpl.text);
+  Logger.log('Texto plano (inicio): ' + plainOut.substring(0, 280) + (plainOut.length > 280 ? '...' : ''));
   Logger.log('Para envío real: simulateLeadEmail("' + lead.email + '", "' + code + '", true) con TEST_MODE=false');
 }
 
