@@ -46,6 +46,19 @@ const CONFIG = {
    * (requiere que la cuenta de envío sea coherente con vuestro dominio/reputación).
    */
   EMAIL_SENDER_NAME: '',
+  /**
+   * Secuencia a leads (processQueue): solo envía en ventana laboral. Fuera de ella los ítems siguen «pendiente».
+   * false = permitir 24/7 (solo si necesitáis excepción puntual).
+   */
+  BUSINESS_HOURS_ONLY: true,
+  /** Zona horaria IANA para interpretar hora y día laborable (p. ej. Andorra / Madrid). */
+  BUSINESS_TIMEZONE: 'Europe/Andorra',
+  /** Hora local inclusive (0–23), ej. 9 = desde las 09:00. */
+  BUSINESS_HOUR_START: 9,
+  /** Hora local exclusiva (0–23), ej. 19 = hasta 18:59 (no envía a partir de las 19:00). */
+  BUSINESS_HOUR_END: 19,
+  /** Si true, sábado y domingo no hay envíos de secuencia. */
+  BUSINESS_WEEKDAYS_ONLY: true,
 };
 
 // Etiquetas legibles para variables del email
@@ -658,14 +671,48 @@ function scheduleSequence(leadId, tier, createdAt) {
   });
 }
 
+/** Fin de semana por nombre localizado (respaldo si «u» ISO no está disponible en el runtime). */
+function isWeekendByLocaleName(date, tz) {
+  const w = Utilities.formatDate(date, tz, 'EEEE')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+  return w.indexOf('sabado') >= 0 || w.indexOf('saturday') >= 0 || w.indexOf('dissabte') >= 0 ||
+    w.indexOf('domingo') >= 0 || w.indexOf('sunday') >= 0 || w.indexOf('diumenge') >= 0;
+}
+
+/** true = se permite enviar email de secuencia ahora (hora + día en BUSINESS_TIMEZONE). */
+function isWithinBusinessSendWindow(date) {
+  if (CONFIG.BUSINESS_HOURS_ONLY === false) return true;
+  const tz = CONFIG.BUSINESS_TIMEZONE || Session.getScriptTimeZone();
+  const hour = parseInt(Utilities.formatDate(date, tz, 'HH'), 10);
+  const start = Number(CONFIG.BUSINESS_HOUR_START);
+  const end = Number(CONFIG.BUSINESS_HOUR_END);
+  if (isNaN(hour) || isNaN(start) || isNaN(end)) return true;
+  if (hour < start || hour >= end) return false;
+  if (CONFIG.BUSINESS_WEEKDAYS_ONLY) {
+    const isoDay = parseInt(Utilities.formatDate(date, tz, 'u'), 10);
+    if (!isNaN(isoDay)) return isoDay >= 1 && isoDay <= 5;
+    return !isWeekendByLocaleName(date, tz);
+  }
+  return true;
+}
+
 
 // ══════════════════════════════════════════════════════════════
-// 4. PROCESAR COLA — trigger cada hora; pollGmail llama processQueue tras nuevo lead (A1 sin esperar 1h)
+// 4. PROCESAR COLA — trigger cada hora; pollGmail llama processQueue tras nuevo lead (A1 sale en la primera pasada dentro de horario laboral)
 // ══════════════════════════════════════════════════════════════
 function processQueue() {
   const qSheet = getSheet('Cola');
   const lSheet = getSheet('Leads');
   const now    = new Date();
+
+  if (CONFIG.BUSINESS_HOURS_ONLY !== false && !isWithinBusinessSendWindow(now)) {
+    Logger.log('processQueue: fuera de ventana laboral (' + (CONFIG.BUSINESS_TIMEZONE || Session.getScriptTimeZone()) +
+      ' ' + CONFIG.BUSINESS_HOUR_START + '–' + (Number(CONFIG.BUSINESS_HOUR_END) - 1) + 'h' +
+      (CONFIG.BUSINESS_WEEKDAYS_ONLY ? ', lun–vie' : '') + '); sin envíos en esta pasada.');
+    return;
+  }
 
   const qData = qSheet.getDataRange().getValues();
   const lData = lSheet.getDataRange().getValues();
@@ -694,7 +741,7 @@ function processQueue() {
 
     try {
       if (!CONFIG.TEST_MODE) {
-        sendEmail(emailCode, lead);
+        sendEmail(emailCode, lead, {});
       } else {
         Logger.log('[TEST] ' + emailCode + ' → ' + lead.email);
       }
@@ -725,7 +772,16 @@ function buildEmailPlainBody(tplText) {
   return base + footer;
 }
 
-function sendEmail(code, lead) {
+/**
+ * @param {Object} [opts]
+ * @param {boolean} [opts.bypassBusinessHours] — true solo para pruebas manuales fuera de ventana (p. ej. simulateLeadEmail real).
+ */
+function sendEmail(code, lead, opts) {
+  opts = opts || {};
+  if (!opts.bypassBusinessHours && CONFIG.BUSINESS_HOURS_ONLY !== false && !isWithinBusinessSendWindow(new Date())) {
+    throw new Error('sendEmail fuera de ventana laboral (no debería ocurrir si processQueue filtra antes)');
+  }
+
   const tpl = getTemplate(code, lead);
   if (!tpl) throw new Error('Template no encontrado: ' + code);
 
@@ -1298,7 +1354,7 @@ function simulateLeadEmail(leadEmail, emailCode, forceSend) {
 
   const shouldSend = Boolean(forceSend) && !CONFIG.TEST_MODE;
   if (shouldSend) {
-    sendEmail(code, lead);
+    sendEmail(code, lead, { bypassBusinessHours: true });
     Logger.log('✓ Envío real: ' + code + ' → ' + lead.email);
     return;
   }
