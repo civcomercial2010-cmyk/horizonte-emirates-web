@@ -19,7 +19,7 @@ const CONFIG = {
   AGENT_BRIEFING_EMAIL: 'civcomercial2010@gmail.com',
   WA_NUMBER:       '+971 55 472 2025',
   WA_LINK:         'https://wa.me/971554722025',
-  CALENDLY_URL:    'https://calendly.com/horizonteemirates',
+  CALENDLY_URL:    'https://calendly.com/hola-horizonteemirates/30min',
   CALENDAR_ID:     'primary', // calendario donde Calendly crea las reuniones
   CALENDLY_EVENT_KEYWORD: 'Llamada estratégica inversión Dubai',
   UNSUBSCRIBE_URL: 'mailto:hola@horizonteemirates.com?subject=BAJA%20COMUNICACIONES',
