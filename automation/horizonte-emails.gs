@@ -651,14 +651,23 @@ function normalizeTelefono(raw) {
   return s;
 }
 
+/** Columna D (Teléfono) como texto forzado para que +376… no se convierta en número ni en fórmula. */
+function ensureLeadsTelefonoColumnTextFormat(leadsSheet) {
+  const sh = leadsSheet || getSheet('Leads');
+  const maxR = sh.getMaxRows();
+  sh.getRange(2, 4, maxR, 4).setNumberFormat('@');
+}
+
 function saveLead(data) {
-  const id  = 'L' + new Date().getTime().toString().slice(-8);
-  const now = new Date();
-  getSheet('Leads').appendRow([
+  const id    = 'L' + new Date().getTime().toString().slice(-8);
+  const now   = new Date();
+  const phone = normalizeTelefono(data.telefono) || '';
+  const sh    = getSheet('Leads');
+  sh.appendRow([
     id,
     data.nombre,
     data.email,
-    normalizeTelefono(data.telefono) || '',
+    phone,
     data.pais        || '',
     data.capital     || '',
     data.objetivo    || '',
@@ -673,6 +682,9 @@ function saveLead(data) {
     'activo',
     '',
   ]);
+  const r = sh.getLastRow();
+  sh.getRange(r, 4).setNumberFormat('@');
+  sh.getRange(r, 4).setValue(phone);
   return id;
 }
 
@@ -1322,6 +1334,7 @@ function initSheets() {
     sh.setColumnWidth(4,130);sh.setColumnWidth(5,90);sh.setColumnWidth(11,80);
     sh.setColumnWidth(12,50);sh.setColumnWidth(15,140);sh.setColumnWidth(16,80);
   }
+  ensureLeadsTelefonoColumnTextFormat(sh);
 
   let qsh = ss.getSheetByName('Cola') || ss.insertSheet('Cola');
   if (qsh.getLastRow() === 0) {
