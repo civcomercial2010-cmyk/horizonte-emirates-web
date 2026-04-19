@@ -1246,6 +1246,7 @@ footer{background:var(--navy-d);padding:60px 0 24px}
         <input type="hidden" id="h-phone" name="telefono"/>
         <input type="hidden" id="h-tier" name="tier"/>
         <input type="hidden" id="h-score" name="puntuacion"/>
+        <input type="hidden" id="h-fecha" name="fecha_registro"/>
 
         <!-- PASO 1: Capital + Objetivo -->
         <div class="fstep active" id="fs1">
@@ -1663,6 +1664,7 @@ document.getElementById('mainform').addEventListener('submit',function(e){
   const nombre=(this.querySelector('[name="nombre"]')?.value||'').trim();
   document.getElementById('f-sub').value=`[${tier}|${score}pts] Lead HE V6 · ${pais}`;
   document.getElementById('f-reply').value=emailVal;
+  document.getElementById('h-fecha').value=new Date().toLocaleString('es-ES',{timeZone:'Europe/Madrid'});
   const btn=document.getElementById('btn-sub');
   btn.disabled=true;btn.textContent='Enviando...';
   fetch(W3F_EP,{method:'POST',body:new FormData(this)}).then(r=>r.json()).then(d=>{
@@ -1750,6 +1752,7 @@ document.getElementById('waf').addEventListener('submit',function(e){
   fd.append('nombre',n);fd.append('email',em);
   fd.append('telefono',pfx+' '+ph);
   fd.append('origen','Botón WhatsApp flotante');
+  fd.append('fecha_registro',new Date().toLocaleString('es-ES',{timeZone:'Europe/Madrid'}));
   fd.append('botcheck','');
   fetch(W3F_EP,{method:'POST',body:fd}).catch(()=>{});
   savedLead={nombre:n,email:em};
