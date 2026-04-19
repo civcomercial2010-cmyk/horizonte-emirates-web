@@ -627,6 +627,56 @@ function debugPollLatestWeb3Lead() {
   Logger.log('PARSED: ' + JSON.stringify(lead));
 }
 
+/**
+ * Fuerza reprocesar un lead ya registrado (por si llegó con la versión rota del alias).
+ * Uso: reprocesarLeadYaRegistrado('sara.perez7@gmail.com')
+ */
+function reprocesarLeadYaRegistrado(email) {
+  const lead = getLeadByEmail(email);
+  if (!lead) {
+    Logger.log('reprocesarLeadYaRegistrado: lead no encontrado en Sheets: ' + email);
+    return;
+  }
+  Logger.log('Lead encontrado: ' + JSON.stringify(lead));
+
+  // ¿Hay emails pendientes en Cola?
+  const qSheet = getSheet('Cola');
+  const qData = qSheet.getDataRange().getValues();
+  let pendientes = 0;
+  for (let i = 1; i < qData.length; i++) {
+    if (qData[i][0] === lead.id && qData[i][3] === 'pendiente') pendientes++;
+  }
+  Logger.log('Emails pendientes en Cola para este lead: ' + pendientes);
+
+  // Enviar el primer email (A1/B1/C1) de forma inmediata
+  const welcomeCode = lead.tier + '1';
+  try {
+    sendEmail(welcomeCode, lead, { bypassBusinessHours: true });
+    Logger.log('✓ Email ' + welcomeCode + ' enviado a: ' + lead.email);
+
+    // Marcar el item de Cola como enviado
+    for (let i = 1; i < qData.length; i++) {
+      if (qData[i][0] === lead.id && qData[i][1] === welcomeCode && qData[i][3] === 'pendiente') {
+        qSheet.getRange(i+1, 4).setValue('enviado');
+        qSheet.getRange(i+1, 5).setValue(new Date());
+        break;
+      }
+    }
+  } catch(e) {
+    Logger.log('✗ Error enviando ' + welcomeCode + ': ' + e.toString());
+  }
+}
+
+/**
+ * Fuerza pollGmail de forma manual (útil si el trigger no disparó).
+ * Omite la comprobación de etiqueta → reprocesa aunque ya esté etiquetado.
+ */
+function forzarPollGmail() {
+  Logger.log('forzarPollGmail: ejecutando pollGmail ahora...');
+  pollGmail();
+  Logger.log('forzarPollGmail: completado. Revisar logs arriba.');
+}
+
 // ══════════════════════════════════════════════════════════════
 // 3. GOOGLE SHEETS — Leads y Cola
 // ══════════════════════════════════════════════════════════════
@@ -833,12 +883,27 @@ function sendEmail(code, lead, opts) {
     ? String(CONFIG.EMAIL_SENDER_NAME).trim()
     : CONFIG.ASESOR_NOMBRE;
 
-  GmailApp.sendEmail(lead.email, tpl.subject, buildEmailPlainBody(tpl.text), {
+  const plainBody = buildEmailPlainBody(tpl.text);
+  const baseOpts = {
     name:     displayName,
-    from:     CONFIG.REPLY_TO,
     htmlBody: wrapHtml(tpl.html, tpl.subject),
     replyTo:  CONFIG.REPLY_TO,
-  });
+  };
+
+  // Intentar con alias hola@... Si no está verificado en Gmail, caer en cuenta principal.
+  const aliasEmail = CONFIG.REPLY_TO;
+  const accountEmail = Session.getActiveUser().getEmail();
+  if (aliasEmail && aliasEmail !== accountEmail) {
+    try {
+      GmailApp.sendEmail(lead.email, tpl.subject, plainBody,
+        Object.assign({}, baseOpts, { from: aliasEmail }));
+      return;
+    } catch (aliasErr) {
+      Logger.log('sendEmail: alias «' + aliasEmail + '» no disponible (¿verificado en Gmail?). ' +
+        'Enviando desde cuenta principal. Error: ' + aliasErr.message);
+    }
+  }
+  GmailApp.sendEmail(lead.email, tpl.subject, plainBody, baseOpts);
 }
 
 
