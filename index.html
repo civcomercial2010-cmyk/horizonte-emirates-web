@@ -1,16 +1,2056 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Horizonte Emirates</title>
-  <meta http-equiv="refresh" content="0; url=index-v6.html"/>
-  <link rel="canonical" href="index-v6.html"/>
-  <script>
-    window.location.replace("index-v6.html");
-  </script>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Invertir en Dubai desde España | Acceso guiado y sin coste | Horizonte Emirates · V6</title>
+<meta name="description" content="Acceso guiado a inversión inmobiliaria en Dubai y UAE para inversores hispanohablantes. 6–9% neto, 0% impuestos. Partner RERA certificado. Análisis personalizado en 48h. Sin coste para el inversor."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+/* ── TOKENS ─────────────────────────────────────── */
+:root{
+  --navy:#0D1B2A;--navy-d:#07121F;--navy-m:rgba(13,27,42,.95);
+  --gold:#C4942A;--gold-lt:rgba(196,148,42,.12);--gold-bd:rgba(196,148,42,.35);
+  --warm:#F8F6F1;--warm2:#F0EDE5;
+  --ink:#1A1A1A;--muted:#646464;
+  --trust:#2D6A4F;
+  --border:#E0DBD1;--r:2px;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'Inter',system-ui,sans-serif;
+  --shadow:0 12px 40px rgba(13,27,42,.1);
+  --container-wide:1400px;
+  --container-max:1280px;
+  --container-narrow:920px;
+  --gutter-desktop:32px;
+  --gutter-tablet:24px;
+  --gutter-mobile:20px;
+  --space-xs:8px;
+  --space-sm:16px;
+  --space-md:32px;
+  --space-lg:48px;
+  --space-xl:64px;
+  --space-2xl:96px;
+  --measure:72ch;
+  --ease-out-expo:cubic-bezier(0.16,1,0.3,1);
+  --ease-out-soft:cubic-bezier(0.22,1,0.36,1);
+  --reveal-duration:1.05s;
+  --reveal-shift:28px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--warm);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.65;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;border:none;background:none;font-family:inherit}
+img{display:block;max-width:100%}
+
+/* ── UTILITIES ────────────────────────────────── */
+.container,.wrap{
+  width:min(100%,calc(var(--container-max) + (var(--gutter-desktop) * 2)));
+  margin:0 auto;
+  padding-inline:var(--gutter-desktop);
+}
+.container-wide{
+  width:min(100%,calc(var(--container-wide) + (var(--gutter-desktop) * 2)));
+  margin:0 auto;
+  padding-inline:var(--gutter-desktop);
+}
+.container-narrow{
+  width:min(100%,calc(var(--container-narrow) + (var(--gutter-desktop) * 2)));
+  margin:0 auto;
+  padding-inline:var(--gutter-desktop);
+}
+.eyebrow{font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+.rule{width:38px;height:1px;background:var(--gold);display:block;margin:12px 0}
+.fade{
+  --reveal-delay:0ms;
+  opacity:0;
+  transform:translate3d(0,var(--reveal-shift),0) scale(.988);
+  filter:blur(8px);
+  transition:
+    opacity var(--reveal-duration) var(--ease-out-expo) var(--reveal-delay),
+    transform var(--reveal-duration) var(--ease-out-expo) var(--reveal-delay),
+    filter 0.75s var(--ease-out-soft) var(--reveal-delay);
+}
+.fade.in{
+  opacity:1;
+  transform:translate3d(0,0,0) scale(1);
+  filter:blur(0);
+}
+@media (max-width:767px){
+  .fade{filter:none}
+}
+.fade .rule{
+  transform:scaleX(0);
+  transform-origin:0 50%;
+  opacity:0;
+  transition:
+    transform 0.95s var(--ease-out-expo) calc(var(--reveal-delay) + 0.18s),
+    opacity 0.6s var(--ease-out-soft) calc(var(--reveal-delay) + 0.12s);
+}
+.fade.in .rule{
+  transform:scaleX(1);
+  opacity:1;
+}
+.filter-inner.fade .rule,
+.form-hd.fade .rule{margin-inline:auto;transform-origin:50% 50%}
+.reveal-stagger{
+  opacity:0;
+  transform:translate3d(0,22px,0);
+  transition:opacity 0.01s;
+}
+.reveal-stagger.in{
+  opacity:1;
+  transform:none;
+  transition:opacity 0.01s;
+}
+.reveal-stagger > *{
+  opacity:0;
+  transform:translate3d(0,26px,0);
+  transition:
+    opacity 0.9s var(--ease-out-expo),
+    transform 0.9s var(--ease-out-expo);
+}
+.reveal-stagger.in > *:nth-child(1){transition-delay:0.04s}
+.reveal-stagger.in > *:nth-child(2){transition-delay:0.12s}
+.reveal-stagger.in > *:nth-child(3){transition-delay:0.2s}
+.reveal-stagger.in > *:nth-child(4){transition-delay:0.28s}
+.reveal-stagger.in > *:nth-child(5){transition-delay:0.36s}
+.reveal-stagger.in > *:nth-child(6){transition-delay:0.44s}
+.reveal-stagger.in > *:nth-child(7){transition-delay:0.52s}
+.reveal-stagger.in > *:nth-child(8){transition-delay:0.6s}
+.reveal-stagger.in > *{
+  opacity:1;
+  transform:translate3d(0,0,0);
+}
+@media (prefers-reduced-motion:reduce){
+  .fade,.fade .rule,.reveal-stagger,.reveal-stagger > *{
+    opacity:1!important;
+    transform:none!important;
+    filter:none!important;
+    transition:none!important;
+  }
+  .reveal-stagger.in > *{transition-delay:0s!important}
+}
+html.reduce-motion .fade,
+html.reduce-motion .fade .rule,
+html.reduce-motion .reveal-stagger,
+html.reduce-motion .reveal-stagger > *{
+  opacity:1!important;
+  transform:none!important;
+  filter:none!important;
+  transition:none!important;
+}
+html.reduce-motion .ticker-inner{animation:none!important}
+.section{padding-block:var(--space-2xl)}
+.section.alt{background:var(--warm2)}
+.sh{margin-bottom:var(--space-lg)}
+.sh h2{font-family:var(--serif);font-size:clamp(34px,4.1vw,54px);font-weight:500;line-height:1.1;color:var(--ink);margin-bottom:10px}
+.sh p{font-size:18px;color:var(--muted);max-width:var(--measure);line-height:1.65}
+.btn-gold{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;background:var(--gold);color:#fff;padding:16px 32px;border-radius:var(--r);transition:.2s;border:none;cursor:pointer;font-family:var(--sans)}
+.btn-gold:hover{filter:brightness(1.08)}
+.btn-outline-w{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;border:1px solid rgba(255,255,255,.5);color:#fff;padding:15px 26px;border-radius:var(--r);transition:.2s}
+.btn-outline-w:hover{border-color:rgba(255,255,255,.75)}
+
+/* ── NAV ─────────────────────────────────────── */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;transition:background .3s,border-color .3s;border-bottom:1px solid transparent}
+nav.scrolled{background:var(--navy-m);backdrop-filter:blur(12px);border-color:rgba(255,255,255,.07)}
+.nav-i{
+  width:min(100%,calc(var(--container-max) + (var(--gutter-desktop) * 2)));
+  margin:0 auto;
+  padding-inline:var(--gutter-desktop);
+  height:64px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:36px}
+.logo{font-family:var(--serif);font-size:22px;font-weight:500;color:#fff;letter-spacing:.03em}
+.logo span{color:var(--gold)}
+.nav-links{display:flex;gap:30px;justify-content:flex-end}
+.nav-links a{font-size:11px;font-weight:400;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.6);transition:.2s}
+.nav-links a:hover{color:#fff}
+.nav-cta{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;background:var(--gold);color:#fff;padding:10px 22px;border-radius:var(--r);transition:.2s}
+.nav-cta:hover{filter:brightness(1.08)}
+
+/* ── HERO ─────────────────────────────────────── */
+#hero{min-height:82vh;display:flex;flex-direction:column;justify-content:flex-end;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;z-index:0}
+.hero-bg img{width:100%;height:100%;object-fit:cover;object-position:center 28%}
+.hero-ov{position:absolute;inset:0;background:linear-gradient(155deg,rgba(7,18,31,.93) 0%,rgba(13,27,42,.78) 52%,rgba(7,18,31,.9) 100%);z-index:1}
+.hero-in{
+  position:relative;
+  z-index:2;
+  width:min(100%,calc(var(--container-max) + (var(--gutter-desktop) * 2)));
+  margin:0 auto;
+  padding:88px var(--gutter-desktop) 64px;
+}
+.hero-label{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+.hero-label .eyebrow{color:rgba(196,148,42,.9)}
+h1{font-family:var(--serif);font-size:clamp(46px,5.8vw,80px);font-weight:500;line-height:1.07;letter-spacing:-.01em;color:#fff;margin-bottom:6px;max-width:860px}
+h1 em{font-style:italic;color:var(--gold)}
+.hero-sub{font-size:21px;font-weight:300;color:rgba(255,255,255,.9);line-height:1.55;max-width:720px;margin:14px 0 32px}
+.hero-ctas{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:32px}
+.hero-badge{display:flex;flex-wrap:wrap;gap:9px}
+.badge{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:100px;padding:7px 13px;font-size:12px;font-weight:500;color:#fff}
+.badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--gold);flex-shrink:0}
+.hero-filter{margin-top:20px;padding:16px 20px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-left:3px solid var(--gold);max-width:640px}
+.hero-filter p{font-size:14px;font-weight:400;color:rgba(255,255,255,.88);line-height:1.55}
+.hero-filter strong{color:var(--gold);font-weight:600}
+
+/* ── KPI STRIP ────────────────────────────────── */
+.kpi-strip{background:#07121F;border-top:1px solid rgba(255,255,255,.07);border-bottom:1px solid rgba(255,255,255,.07)}
+.kpi-g{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
+.kpi{padding:32px 20px 36px;border-right:1px solid rgba(255,255,255,.08);text-align:center}
+.kpi:last-child{border-right:none}
+.kpi-n{font-family:var(--serif);font-size:clamp(38px,4.2vw,60px);font-weight:600;color:var(--gold);line-height:1;margin-bottom:8px}
+.kpi-n.kpi-n--slot{line-height:1.18}
+.kpi-n--slot{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:0;
+  font-variant-numeric:tabular-nums;
+  font-feature-settings:"tnum" 1;
+  min-height:1.15em;
+}
+.kpi-n--slot .slot-plus{margin-right:0.06em;line-height:1;align-self:center}
+.kpi-n--slot .slot-dot{
+  align-self:center;
+  width:0.22em;
+  text-align:center;
+  line-height:1;
+  margin:0 0.02em;
+  opacity:.95;
+}
+.slot-reel{
+  display:inline-block;
+  height:1.12em;
+  min-height:1em;
+  overflow:hidden;
+  overflow:clip;
+  vertical-align:middle;
+  margin:0 0.015em;
+  flex-shrink:0;
+  box-sizing:content-box;
+  transform:translateZ(0);
+  contain:paint;
+}
+.slot-track{
+  display:block;
+  will-change:transform;
+  transition-property:transform;
+  transition-timing-function:cubic-bezier(0.14,0.9,0.2,1);
+  transform:translateZ(0);
+}
+.slot-cell{
+  display:block;
+  height:1.12em;
+  min-height:1em;
+  flex-shrink:0;
+  box-sizing:border-box;
+  text-align:center;
+  font-weight:600;
+  line-height:1.12em;
+  overflow:hidden;
+}
+.kpi-n sup{font-size:.4em;vertical-align:super}
+.kpi-l{font-size:14px;font-weight:400;color:rgba(255,255,255,.78);line-height:1.4}
+
+/* ── TICKER (V6) ─────────────────────────────── */
+.ticker-wrap{overflow:hidden;background:var(--gold);color:var(--navy);border-top:1px solid rgba(13,27,42,.08);border-bottom:1px solid rgba(13,27,42,.08)}
+.ticker{overflow:hidden}
+.ticker-inner{display:flex;width:max-content;animation:ticker-marquee 38s linear infinite;will-change:transform}
+.ticker-inner:hover{animation-play-state:paused}
+.ticker-line{display:inline-block;padding:11px 56px;font-size:15px;font-weight:600;letter-spacing:.04em;white-space:nowrap}
+@keyframes ticker-marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){
+  .ticker-inner{animation:none;justify-content:center;flex-wrap:wrap;width:auto;margin:0 auto}
+}
+
+/* ── FILTER SECTION ──────────────────────────── */
+.filter-sect{background:var(--navy)}
+.filter-inner{
+  width:min(100%,calc(var(--container-narrow) + (var(--gutter-desktop) * 2)));
+  margin:0 auto;
+  text-align:center;
+  padding:var(--space-2xl) var(--gutter-desktop);
+}
+.filter-inner .eyebrow{color:var(--gold)}
+.filter-inner h2{font-family:var(--serif);font-size:clamp(34px,4.1vw,52px);font-weight:500;color:#fff;margin:14px 0;line-height:1.1}
+.filter-inner p{font-size:18px;color:rgba(255,255,255,.75);line-height:1.65;margin-bottom:32px}
+.filter-criteria{display:flex;flex-direction:column;gap:10px;text-align:left;max-width:480px;margin:0 auto 32px}
+.fc-item{display:flex;align-items:center;gap:12px;font-size:15px;color:rgba(255,255,255,.88);font-weight:400}
+.fc-item::before{content:'';width:20px;height:20px;border-radius:50%;background:var(--gold-lt);border:1px solid var(--gold-bd);flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.filter-note{font-size:13px;color:rgba(255,255,255,.4);margin-top:12px;text-align:center}
+
+/* ── PAIN SECTION ─────────────────────────────── */
+.pain-g{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--border)}
+.pain-col{padding:var(--space-lg) var(--space-md)}
+.pain-col.left{background:#fff;border-right:1px solid var(--border)}
+.pain-col.right{background:linear-gradient(180deg,#0d1b2a 0%,#0b1827 100%)}
+.pain-col h3{font-family:var(--serif);font-size:30px;font-weight:500;line-height:1.15;margin-bottom:24px}
+.pain-col.left h3{color:var(--ink)}
+.pain-col.right h3{color:#fff}
+.pain-list{display:flex;flex-direction:column;gap:14px}
+.pain-list{
+  border-top:1px solid var(--border);
+  padding-top:18px;
+}
+.pain-col.right .pain-list{border-top-color:rgba(255,255,255,.16)}
+.pain-item{display:flex;gap:12px;align-items:flex-start}
+.pain-item.negative .dot{background:#b94040}
+.pain-item.positive .dot{background:#2D6A4F}
+.dot{width:8px;height:8px;border-radius:50%;margin-top:7px;flex-shrink:0}
+.pain-item p{font-size:16px;color:#3a3a3a;line-height:1.55}
+.pain-col.right .pain-item p{color:rgba(255,255,255,.88)}
+.compare-wrap{margin-top:18px;border:1px solid var(--border);background:#fff}
+
+/* ── COMPARISON TABLE ─────────────────────────── */
+.compare-table{width:100%;border-collapse:collapse;margin-top:40px;font-size:15px}
+.compare-table th{padding:12px 16px;font-size:10px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;text-align:left;border-bottom:2px solid var(--border);color:var(--muted)}
+.compare-table th.dubai-h{color:var(--gold);border-bottom-color:var(--gold)}
+.compare-table td{padding:14px 16px;border-bottom:1px solid var(--border);vertical-align:middle}
+.compare-table tr:last-child td{border-bottom:none}
+.compare-table td:nth-child(2){font-weight:500;font-size:14px;color:var(--muted)}
+.compare-table td.cmp-bad,.compare-table td.cmp-good,.compare-table td.cmp-neutral,.compare-table td.cmp-good-es{font-size:14px;font-weight:500}
+.badge-good{display:inline-flex;align-items:center;gap:5px;background:rgba(45,106,79,.08);border:1px solid rgba(45,106,79,.3);color:#1e5235;font-size:12px;font-weight:600;padding:3px 9px;border-radius:var(--r)}
+.compare-table th.th-es{color:#7f1d1d;border-bottom-color:rgba(127,29,29,.45);background:rgba(127,29,29,.06)}
+.compare-table td.num{width:36px;text-align:center;font-weight:600;color:var(--muted);font-size:13px}
+.cmp-bad{background:rgba(185,64,64,.1);color:#7f1d1d}
+.cmp-good{background:rgba(45,106,79,.1);color:#14532d}
+.cmp-neutral{background:transparent;color:var(--ink)}
+.cmp-good-es{background:rgba(45,106,79,.12);color:#14532d}
+
+/* ── STRATEGY BY CAPITAL ──────────────────────── */
+.strategy-g{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--border)}
+.strategy-card{background:#fff;padding:var(--space-md) 26px;display:flex;flex-direction:column;gap:10px;transition:background .2s}
+.strategy-card:hover{background:#fcf9f3}
+.s-range{font-size:11px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--gold)}
+.s-card h3{font-family:var(--serif);font-size:30px;font-weight:500;color:var(--ink);line-height:1.1}
+.s-focus{font-size:13px;font-weight:600;color:#2a3f54;margin-bottom:4px}
+.s-desc{font-size:14px;color:var(--muted);line-height:1.6}
+.s-pill{margin-top:auto;padding-top:16px;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);border-top:1px solid var(--border)}
+
+/* ── PROCESS ──────────────────────────────────── */
+.section-process{
+  background:linear-gradient(180deg,#f6f3eb 0%,#f2ede3 100%);
+}
+.proc-g{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:20px;
+  background:transparent;
+  border:none;
+}
+.proc-s{
+  padding:30px 24px 26px;
+  background:#fff;
+  border:1px solid #d8d2c6;
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  min-height:100%;
+  border-radius:6px;
+  transition:border-color .22s ease,transform .22s ease,box-shadow .22s ease,background .22s ease;
+}
+.proc-s::before{
+  content:"";
+  position:absolute;
+  top:58px;
+  left:24px;
+  width:42px;
+  height:1px;
+  background:rgba(196,148,42,.55);
+}
+.proc-s:hover{
+  border-color:rgba(196,148,42,.4);
+  background:#fffdf9;
+  transform:translateY(-4px);
+  box-shadow:0 14px 30px rgba(13,27,42,.12);
+}
+.proc-num{
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  border:1px solid rgba(196,148,42,.45);
+  background:rgba(196,148,42,.1);
+  font-family:var(--serif);
+  font-size:20px;
+  font-weight:500;
+  color:var(--gold);
+  line-height:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:14px;
+}
+.proc-tag{font-size:10px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.proc-s h3{font-family:var(--serif);font-size:24px;font-weight:500;color:var(--ink);margin-bottom:0;line-height:1.15;min-height:2.3em}
+.proc-s p{font-size:15px;color:var(--muted);line-height:1.62;flex:1}
+.proc-badge{
+  margin-top:16px;
+  display:inline-block;
+  align-self:flex-start;
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--gold);
+  background:var(--gold-lt);
+  border:1px solid var(--gold-bd);
+  padding:5px 10px;
+  border-radius:var(--r);
+}
+
+/* ── ZONES ────────────────────────────────────── */
+.zones-g{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--border);border:1px solid var(--border)}
+.zone-c{background:#fff;padding:36px var(--space-md)}
+.zone-media{margin:-36px calc(var(--space-md) * -1) 24px}
+.zone-media img{width:100%;height:260px;object-fit:cover}
+.zone-media img.zone-img-abu{object-position:center 42%}
+.zone-tag{font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.zone-c h3{font-family:var(--serif);font-size:30px;font-weight:500;color:var(--ink);margin-bottom:10px}
+.zone-c p{font-size:15px;color:var(--muted);line-height:1.65;margin-bottom:18px}
+.yield-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.yield-pill{display:inline-flex;align-items:baseline;gap:4px;background:var(--gold-lt);border:1px solid var(--gold-bd);padding:5px 11px;border-radius:var(--r)}
+.yp-n{font-family:var(--serif);font-size:17px;font-weight:500;color:var(--gold)}
+.yp-l{font-size:11px;color:var(--muted)}
+.zone-note{font-size:13px;font-weight:500;color:#2a3f54}
+
+/* ── METRICS DASHBOARD (V6) ──────────────────── */
+.metrics-sect{background:var(--navy);padding-block:var(--space-2xl);border-top:1px solid rgba(255,255,255,.06)}
+.metrics-g{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;max-width:1100px;margin:0 auto}
+.metric-tile{
+  background:var(--navy-d);
+  border:1px solid rgba(196,148,42,.25);
+  border-radius:4px;
+  padding:28px 22px 26px;
+  text-align:center;
+  transition:transform .2s ease,border-color .2s;
+}
+.metric-tile:hover{transform:translateY(-2px);border-color:rgba(196,148,42,.4)}
+.metric-val{font-family:var(--serif);font-size:clamp(36px,5vw,52px);font-weight:600;color:var(--gold);line-height:1.05;display:flex;align-items:baseline;justify-content:center;gap:4px;font-variant-numeric:tabular-nums}
+.metric-range-sep{font-weight:600;opacity:.85;padding:0 2px}
+.metric-suf{font-size:clamp(22px,3vw,30px);font-weight:600;color:var(--gold);opacity:.95}
+.metric-lbl{margin-top:10px;font-size:14px;color:rgba(255,255,255,.78);line-height:1.4}
+@media(min-width:900px){
+  .metrics-g{grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+}
+
+/* ── ROI CALCULATOR (V6) ─────────────────────── */
+.roi-sect{background:var(--warm);padding-block:var(--space-2xl)}
+.roi-g{
+  display:grid;
+  gap:32px;
+  align-items:start;
+  max-width:1100px;
+  margin:0 auto;
+}
+@media(min-width:960px){
+  .roi-g{grid-template-columns:1fr 1fr;gap:48px}
+}
+.roi-controls{display:flex;flex-direction:column;gap:22px}
+.slider-group label{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;font-weight:600;color:var(--ink);margin-bottom:8px}
+.slider-group label span{font-weight:500;color:var(--muted);font-size:12px}
+.slider-group input[type=range]{width:100%;accent-color:var(--gold);height:6px}
+.roi-boxes{display:grid;gap:10px;margin-top:8px}
+.roi-box{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:4px;
+  padding:14px 16px;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.roi-box .rk{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.roi-box .rv{font-family:var(--serif);font-size:26px;font-weight:600;color:var(--gold)}
+.roi-disclaimer{margin-top:14px;font-size:12px;color:var(--muted);line-height:1.5}
+.compare-bars{display:flex;flex-direction:column;gap:18px}
+.bar-row{display:flex;flex-direction:column;gap:6px}
+.bar-lbl{display:flex;justify-content:space-between;font-size:13px;font-weight:600;color:var(--ink)}
+.bar-lbl small{font-weight:500;color:var(--muted)}
+.bar-track{height:14px;background:var(--warm2);border-radius:999px;overflow:hidden;border:1px solid var(--border)}
+.bar-fill-es{height:100%;background:linear-gradient(90deg,#94a3b8,#64748b);border-radius:999px;transition:width .25s ease;width:0}
+.bar-fill-ae{height:100%;background:linear-gradient(90deg,var(--gold),#d4a84a);border-radius:999px;transition:width .25s ease;width:0}
+
+/* ── FORM SECTION (V6) ────────────────────────── */
+#form{
+  background:linear-gradient(180deg,var(--warm2) 0%,#ede9df 100%);
+  padding-block:var(--space-2xl);
+}
+.form-wrap{
+  width:min(100%,var(--container-narrow));
+  margin:0 auto;
+  background:#fff;
+  border:1px solid var(--border);
+  padding:var(--space-lg) var(--space-md);
+  border-radius:6px;
+  box-shadow:var(--shadow);
+}
+.form-hd{margin-bottom:36px;text-align:center}
+.form-hd .eyebrow{color:var(--gold)}
+.form-hd .rule{margin-inline:auto}
+.form-hd h2{font-family:var(--serif);font-size:clamp(32px,4vw,48px);font-weight:500;color:var(--ink);line-height:1.12;margin:10px 0 8px}
+.form-hd p{font-size:16px;color:var(--muted);line-height:1.5;max-width:60ch;margin-inline:auto}
+.form-scarcity{margin-top:8px;font-size:13px;color:var(--gold);font-weight:500}
+
+/* Progress bar */
+.form-progress-wrap{margin-bottom:32px}
+.form-progress-meta{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.form-progress-bar-outer{
+  flex:1;
+  min-width:140px;
+  height:8px;
+  background:var(--warm2);
+  border-radius:999px;
+  overflow:hidden;
+  border:1px solid var(--border);
+}
+.form-progress-fill{
+  display:block;
+  height:100%;
+  width:33.33%;
+  min-width:0;
+  background:linear-gradient(90deg,var(--gold),#d4a84a);
+  border-radius:999px;
+  transition:width .45s var(--ease-out-expo);
+}
+.form-step-label{
+  font-size:12px;
+  font-weight:600;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-left:auto;
+}
+
+/* Steps */
+.fstep{display:none}.fstep.active{display:block}
+.fq-label{font-family:var(--serif);font-size:clamp(24px,2.8vw,32px);font-weight:500;color:var(--ink);margin-bottom:5px;line-height:1.2}
+.fhint{font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.45}
+.fq-gap{margin-top:24px}
+
+/* Option cards (V6) */
+.opt-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.viaje-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:700px){
+  .viaje-cards{grid-template-columns:1fr}
+}
+.opt-card{
+  border:1px solid var(--border);
+  border-radius:6px;
+  padding:18px 14px 16px;
+  cursor:pointer;
+  transition:border-color .2s,background .2s,transform .2s,box-shadow .2s;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+  gap:8px;
+  background:#fff;
+}
+.opt-card:hover{border-color:rgba(196,148,42,.45);box-shadow:0 4px 14px rgba(13,27,42,.06)}
+.opt-card.sel{border-color:var(--gold);background:var(--gold-lt);transform:translateY(-1px);box-shadow:0 6px 18px rgba(13,27,42,.08)}
+.opt-icon{font-size:28px;line-height:1}
+.opt-label{font-size:15px;font-weight:600;color:var(--ink);line-height:1.2}
+.opt-sub{font-size:13px;color:var(--muted);line-height:1.45;max-width:22ch}
+
+/* Contact fields */
+.ffields{display:flex;flex-direction:column;gap:11px;margin-bottom:14px}
+.frow2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.fg{display:flex;flex-direction:column;gap:5px}
+.fg label{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink)}
+.fg input,.fg select{padding:13px 14px;border:1px solid var(--border);border-radius:4px;background:#fff;font-family:var(--sans);font-size:15px;font-weight:400;color:var(--ink);outline:none;transition:.2s}
+.fg input:focus,.fg select:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-lt)}
+.fg input::placeholder{color:rgba(0,0,0,.28)}
+.fg select option{background:#fff;color:var(--ink)}
+.phone-row{display:flex}
+.prefix-sel{width:88px;border:1px solid var(--border);border-right:none;border-radius:4px 0 0 4px;background:var(--warm2);font-size:13px;font-weight:500;color:var(--ink);padding:13px 8px;outline:none;flex-shrink:0;cursor:pointer;appearance:none;text-align:center;transition:.2s}
+.prefix-sel:focus{border-color:var(--gold)}
+.prefix-sel option{background:var(--warm2);color:var(--ink)}
+.phone-row input{border-radius:0 4px 4px 0;flex:1}
+
+/* Canal */
+.canal-g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.canal-lbl{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.canal-o{border:1px solid var(--border);border-radius:var(--r);padding:11px 8px;cursor:pointer;text-align:center;background:var(--warm);transition:.2s}
+.canal-o:hover{border-color:var(--gold-bd)}
+.canal-o.sel{border-color:var(--gold);background:var(--gold-lt)}
+.canal-o span{font-size:13px;font-weight:500;color:var(--ink)}
+
+/* Deliverables box */
+.deliver{background:var(--warm);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:4px;padding:18px 20px;margin-bottom:14px}
+.deliver-t{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.deliver ul{list-style:none;display:flex;flex-direction:column;gap:7px}
+.deliver li{font-size:14px;color:var(--ink);display:flex;gap:9px;line-height:1.5}
+.deliver li::before{content:'✓';color:var(--gold);font-weight:600;flex-shrink:0}
+
+/* GDPR */
+.gdpr{display:flex;align-items:flex-start;gap:10px;margin-bottom:14px}
+.gdpr input[type=checkbox]{width:16px;height:16px;margin-top:2px;accent-color:var(--gold);flex-shrink:0;cursor:pointer}
+.gdpr label{font-size:12px;color:var(--muted);line-height:1.55;cursor:pointer}
+.gdpr a{color:var(--gold);text-decoration:underline}
+
+.priv{font-size:12px;color:var(--muted);text-align:center;margin-bottom:14px;line-height:1.5}
+.btn-sub{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:var(--gold);color:#fff;padding:18px;border-radius:4px;transition:.2s;opacity:.4;font-family:var(--sans)}
+.btn-sub.ready{opacity:1}
+.btn-sub.ready:hover{filter:brightness(1.08)}
+.btn-back{font-size:13px;color:var(--muted);margin-top:10px;display:none;text-align:center;cursor:pointer;width:100%;font-family:var(--sans);transition:.2s;background:none;border:none}
+.btn-back:hover{color:var(--ink)}
+.form-status{display:none;margin:10px 0 0;padding:12px 14px;border-radius:4px;font-size:14px;line-height:1.45}
+.form-status.show{display:block}
+.form-status.ok{background:rgba(45,106,79,.12);border:1px solid rgba(45,106,79,.35);color:#14532d}
+.form-status.err{background:rgba(196,58,58,.1);border:1px solid rgba(196,58,58,.35);color:#7f1d1d}
+
+/* Success screen (V6) */
+.success{display:none;padding:48px 20px 56px}
+.success.show{display:flex;flex-direction:column;align-items:center}
+.suc-card{
+  max-width:480px;width:100%;
+  background:#fff;
+  border:1px solid var(--border);
+  border-top:3px solid var(--gold);
+  border-radius:8px;
+  padding:44px 40px 40px;
+  text-align:center;
+  box-shadow:0 4px 32px rgba(26,31,41,.06);
+}
+.suc-check{margin:0 auto 28px;width:64px;height:64px}
+.suc-svg{width:64px;height:64px;overflow:visible}
+.suc-circle{
+  stroke-dasharray:201;
+  stroke-dashoffset:201;
+  animation:drawCircle .6s ease forwards;
+}
+.suc-tick{
+  stroke-dasharray:38;
+  stroke-dashoffset:38;
+  animation:drawTick .4s ease forwards .55s;
+}
+@keyframes drawCircle{to{stroke-dashoffset:0}}
+@keyframes drawTick{to{stroke-dashoffset:0}}
+.suc-title{
+  font-family:var(--serif);
+  font-size:clamp(22px,3.5vw,28px);
+  font-weight:500;
+  color:var(--ink);
+  margin:0 0 14px;
+  line-height:1.2;
+}
+.suc-sub{
+  font-size:15px;
+  color:var(--muted);
+  line-height:1.7;
+  margin:0 0 28px;
+  max-width:380px;
+}
+.suc-divider{width:40px;height:1px;background:var(--gold);margin:0 auto 24px;opacity:.6}
+.suc-cta-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 14px;font-weight:600}
+.suc-cal-btn{
+  display:inline-block;
+  background:var(--ink);
+  color:#fff;
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  padding:14px 28px;
+  border-radius:var(--r);
+  transition:.2s;
+  margin-bottom:16px;
+  width:100%;
+}
+.suc-cal-btn:hover{background:var(--gold);color:var(--ink)}
+.wa-s-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  background:transparent;
+  border:1px solid #25D366;
+  color:#1a7a3f;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  padding:12px 24px;
+  border-radius:var(--r);
+  transition:.2s;
+  width:100%;
+}
+.wa-s-btn:hover{background:#25D366;color:#fff}
+
+/* ── WA MODAL ─────────────────────────────────── */
+#wao{position:fixed;inset:0;background:rgba(6,15,25,.82);backdrop-filter:blur(4px);z-index:500;display:none;align-items:center;justify-content:center;padding:20px}
+#wam{background:#fff;border-radius:6px;max-width:400px;width:100%;padding:34px 30px;position:relative;box-shadow:0 28px 72px rgba(0,0,0,.3)}
+.wam-close{position:absolute;top:10px;right:14px;font-size:22px;color:var(--muted);cursor:pointer;line-height:1;background:none;border:none;padding:4px;transition:.2s;font-weight:300}
+.wam-close:hover{color:var(--ink)}
+.wam-icon{width:40px;height:40px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+.wam-icon svg{width:20px;height:20px;fill:#fff}
+#wam h3{font-family:var(--serif);font-size:24px;font-weight:600;color:var(--ink);margin-bottom:5px}
+#wam > p{font-size:14px;color:var(--muted);line-height:1.5;margin-bottom:18px}
+.wam-f{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+.wam-f label{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink)}
+.wam-f input{padding:11px 12px;border:1px solid var(--border);border-radius:4px;font-family:var(--sans);font-size:14px;color:var(--ink);outline:none;transition:.2s}
+.wam-f input:focus{border-color:var(--gold)}
+.wam-f input::placeholder{color:rgba(0,0,0,.25)}
+.wam-prow{display:flex}
+.wam-pfx{width:76px;border:1px solid var(--border);border-right:none;border-radius:4px 0 0 4px;background:var(--warm2);font-size:13px;color:var(--ink);padding:11px 6px;outline:none;cursor:pointer;appearance:none;text-align:center;transition:.2s}
+.wam-prow input{border-radius:0 4px 4px 0;flex:1}
+.wam-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;background:#25D366;color:#fff;padding:14px;border-radius:4px;border:none;cursor:pointer;font-family:var(--sans);transition:.2s;margin-top:6px}
+.wam-btn:hover{filter:brightness(1.05)}
+.wam-btn svg{fill:#fff}
+.wam-err{display:none;font-size:13px;color:#c43a3a;margin-bottom:8px;line-height:1.4}
+.wam-err.show{display:block}
+
+/* ── FAQ (V6 accordion) ───────────────────────── */
+#faq{background:var(--warm)}
+.faq-list{
+  max-width:760px;
+  margin:0 auto;
+  border-top:1px solid var(--border);
+}
+.faq-item{border-bottom:1px solid var(--border)}
+.faq-q{
+  width:100%;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:14px;
+  text-align:left;
+  padding:20px 4px 20px 0;
+  background:none;
+  border:none;
+  cursor:pointer;
+  font-family:var(--serif);
+  font-size:20px;
+  font-weight:500;
+  color:var(--ink);
+  line-height:1.3;
+}
+.faq-q > span:first-of-type{flex:1;padding-right:12px}
+.faq-q:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.faq-icon{
+  flex-shrink:0;
+  width:28px;
+  height:28px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:var(--sans);
+  font-size:22px;
+  font-weight:300;
+  color:var(--gold);
+  transition:transform .35s ease;
+  line-height:1;
+}
+.faq-item.open .faq-icon{transform:rotate(45deg)}
+.faq-a{
+  max-height:0;
+  overflow:hidden;
+  transition:max-height .45s ease;
+}
+.faq-a-inner{
+  font-size:15px;
+  color:var(--muted);
+  line-height:1.7;
+  padding:0 32px 22px 0;
+}
+
+/* Body text alignment (desktop/tablet) */
+.sh p,
+.filter-inner p,
+.pain-item p,
+.s-desc,
+.proc-s p,
+.zone-c p,
+.faq-a-inner{ text-align:justify; text-wrap:pretty; }
+
+.sh.sh-wide p{max-width:none;white-space:nowrap;font-size:17px}
+
+/* ── FOOTER ───────────────────────────────────── */
+footer{background:var(--navy-d);padding:60px 0 24px}
+.ft{display:grid;grid-template-columns:2fr 1fr 1fr;gap:48px;padding-bottom:44px;border-bottom:1px solid rgba(255,255,255,.06)}
+.fb .logo{display:block;margin-bottom:10px;font-size:20px}
+.fb p{font-size:12px;color:rgba(255,255,255,.3);line-height:1.7;max-width:240px}
+.fc h4{font-size:10px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:14px}
+.fc ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+.fc a{font-size:12px;color:rgba(255,255,255,.4);transition:.2s}
+.fc a:hover{color:var(--gold)}
+.ft-bot{padding-top:20px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.legal{font-size:11px;color:rgba(255,255,255,.18);line-height:1.7;max-width:680px}
+.copy{font-size:11px;color:rgba(255,255,255,.18);white-space:nowrap}
+
+/* ── WA FLOAT ─────────────────────────────────── */
+.wa-float{position:fixed;bottom:24px;right:24px;z-index:300}
+.wa-float a{display:flex;align-items:center;justify-content:center;width:52px;height:52px;background:#25D366;border-radius:50%;box-shadow:0 4px 16px rgba(37,211,102,.28);transition:.2s}
+.wa-float a:hover{transform:scale(1.07)}
+.wa-float svg{width:24px;height:24px;fill:#fff}
+
+/* ── MOBILE STICKY CTA ────────────────────────── */
+.sticky-cta{display:none;position:fixed;bottom:0;left:0;right:0;z-index:190;padding:12px 18px;background:var(--navy-m);backdrop-filter:blur(8px);border-top:1px solid rgba(255,255,255,.08)}
+.sticky-cta a{display:flex;align-items:center;justify-content:center;background:var(--gold);color:#fff;font-size:13px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;padding:14px;border-radius:var(--r);width:100%}
+
+/* ── RESPONSIVE ───────────────────────────────── */
+@media(max-width:1024px){
+  .hero-in{padding-inline:var(--gutter-tablet)}
+  .nav-right{gap:24px}
+  .container,.wrap,.container-wide,.container-narrow{padding-inline:var(--gutter-tablet)}
+  .nav-i{padding-inline:var(--gutter-tablet)}
+  .pain-col{padding:36px 30px}
+  .strategy-g{grid-template-columns:1fr 1fr}
+  .proc-g{grid-template-columns:1fr 1fr}
+  .proc-g{gap:16px}
+  .zones-g{grid-template-columns:1fr}
+  .kpi-g{grid-template-columns:1fr 1fr}
+}
+@media(max-width:700px){
+  .hero-in{padding-inline:var(--gutter-mobile)}
+  body{font-size:16px}
+  .container,.wrap,.container-wide,.container-narrow,.nav-i{padding-inline:var(--gutter-mobile)}
+  .nav-links{display:none}
+  .nav-cta{display:none}
+  .nav-right{display:none}
+  .sticky-cta{display:block}
+  .section{padding-block:var(--space-xl)}
+  .sh{margin-bottom:var(--space-md)}
+  .sh p{font-size:16px}
+  .sh.sh-wide p{white-space:normal}
+  .hero-in{padding:72px 0 52px}
+  h1{font-size:clamp(44px,10vw,70px)}
+  .hero-sub{font-size:18px;margin-bottom:22px}
+  .hero-ctas{flex-direction:column;align-items:stretch;gap:10px}
+  .btn-gold,.btn-outline-w{justify-content:center}
+  .hero-badge{gap:7px}
+  .badge{font-size:11px;padding:6px 10px}
+  .kpi-g{grid-template-columns:1fr 1fr}
+  .kpi{padding:22px 12px 26px;border-right:none;border-bottom:1px solid rgba(255,255,255,.08)}
+  .kpi:nth-child(odd){border-right:1px solid rgba(255,255,255,.08)}
+  .kpi:nth-last-child(1),.kpi:nth-last-child(2){border-bottom:none}
+  .filter-inner{padding:var(--space-xl) var(--gutter-mobile)}
+  .pain-g{grid-template-columns:1fr}
+  .pain-col.left{border-right:none;border-bottom:1px solid var(--border)}
+  .pain-col{padding:28px 22px}
+  .compare-wrap{margin-top:14px}
+  .strategy-g,.proc-g{grid-template-columns:1fr}
+  .proc-g{gap:12px}
+  .proc-s{padding:28px 22px 24px}
+  .proc-s::before{top:54px;left:22px;width:36px}
+  .proc-s h3{min-height:auto}
+  .zone-media{margin:-28px -22px 20px}
+  .zone-media img{height:200px}
+  #form{padding-block:var(--space-xl)}
+  .form-wrap{padding:24px var(--gutter-mobile);border-radius:4px}
+  .opt-cards{grid-template-columns:1fr}
+  .frow2{grid-template-columns:1fr}
+  .compare-table{font-size:13px}
+  .compare-table td,.compare-table th{padding:10px 12px}
+  #faq{padding:60px 0}
+  footer{padding:44px 0 88px}
+  .ft{grid-template-columns:1fr;gap:28px;padding-bottom:28px}
+  .ft-bot{flex-direction:column;gap:6px}
+  .sh p,
+  .filter-inner p,
+  .pain-item p,
+  .s-desc,
+  .proc-s p,
+  .zone-c p,
+  .faq-a-inner{ text-align:left; }
+}
+@media(max-width:400px){
+  h1{font-size:40px}
+  .hero-sub{font-size:16px}
+}
+</style>
 </head>
 <body>
-  <p>Redirigiendo a la versión actual...</p>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-i">
+    <a href="index-v6.html" class="logo">Horizonte <span>Emirates</span></a>
+    <div class="nav-right">
+      <div class="nav-links">
+        <a href="#para-quien">Por qué</a>
+        <a href="#como">Proceso</a>
+        <a href="#form">Análisis</a>
+        <a href="#faq">FAQ</a>
+      </div>
+      <a href="#form" class="nav-cta">Solicitar análisis</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg">
+    <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1800&q=90&auto=format&fit=crop" alt="Dubai skyline" loading="eager"/>
+  </div>
+  <div class="hero-ov"></div>
+  <div class="hero-in">
+    <div class="hero-label">
+      <span class="eyebrow">Inversión inmobiliaria · UAE</span>
+    </div>
+    <h1>Dubai.<br/><em>Lo que España</em><br/>ya no ofrece.</h1>
+    <p class="hero-sub">6–9% neto, sin impuestos sobre rentas ni plusvalías, sin riesgo de ocupación. En español, con acompañamiento local y sin coste para el inversor.</p>
+    <div class="hero-ctas">
+      <a href="#form" class="btn-gold">Solicitar análisis personalizado &nbsp;→</a>
+      <a href="#como" class="btn-outline-w">Cómo funciona</a>
+    </div>
+    <div class="hero-badge">
+      <span class="badge">Servicio íntegro en español</span>
+      <span class="badge">Partners RERA certificados en Dubai</span>
+      <span class="badge">0€ de coste para el inversor</span>
+    </div>
+    <div class="hero-filter">
+      <p><strong>Trabajamos con un número limitado de inversores cada mes</strong> para garantizar la calidad del acompañamiento.</p>
+    </div>
+  </div>
+</section>
+
+<!-- KPI STRIP -->
+<div class="kpi-strip" id="kpi-strip">
+  <div class="wrap kpi-g reveal-stagger">
+    <div class="kpi"><div class="kpi-n kpi-n--slot" id="kpi-slot-wrap" data-target="334000" aria-label="Más de 334 mil transacciones en los Emiratos en 2025"></div><div class="kpi-l">transacciones en UAE<br/>en 2025</div></div>
+    <div class="kpi"><div class="kpi-n">6–9<sup>%</sup></div><div class="kpi-l">rentabilidad neta media<br/>en activos prime</div></div>
+    <div class="kpi"><div class="kpi-n">0<sup>%</sup></div><div class="kpi-l">impuesto sobre rentas<br/>de alquiler y plusvalías en UAE</div></div>
+    <div class="kpi"><div class="kpi-n">48<sup>h</sup></div><div class="kpi-l">tiempo máximo para recibir<br/>su análisis personalizado</div></div>
+  </div>
+</div>
+
+<!-- TICKER (V6) -->
+<div class="ticker-wrap" aria-hidden="true">
+  <div class="ticker">
+    <div class="ticker-inner" id="ticker-inner">
+      <span class="ticker-line">+334.000 transacciones inmobiliarias en UAE (2025)</span>
+      <span class="ticker-line">6–9% rentabilidad neta anual estimada</span>
+      <span class="ticker-line">0% impuesto sobre plusvalías en UAE</span>
+      <span class="ticker-line">Golden Visa UAE · Inversión total de 2M AED</span>
+      <span class="ticker-line">Regulación RERA · Dubai</span>
+      <span class="ticker-line">Partners certificados RERA</span>
+      <span class="ticker-line">Servicio íntegro en español</span>
+      <span class="ticker-line">Sin coste para el inversor</span>
+    </div>
+  </div>
+</div>
+
+<!-- FILTER / EXCLUSIVIDAD -->
+<div class="filter-sect">
+  <div class="filter-inner fade">
+    <span class="eyebrow">Para quién es esto</span>
+    <div class="rule" style="margin:14px auto"></div>
+      <h2 style="color:#fff">No trabajamos con todos los perfiles.</h2>
+    <p>Seleccionamos inversores cuyo capital y objetivos encajan con las oportunidades reales disponibles en UAE. Si encaja, el proceso es guiado, en español y sin coste.</p>
+    <div class="filter-criteria">
+      <div class="fc-item">Capital disponible desde 150.000€</div>
+      <div class="fc-item">Objetivo claro: renta, apreciación o diversificación</div>
+      <div class="fc-item">Horizonte de decisión definido</div>
+      <div class="fc-item">Quiere acompañamiento experto, no información genérica</div>
+    </div>
+    <a href="#form" class="btn-gold">Solicitar análisis</a>
+  </div>
+</div>
+
+<!-- PAIN — ESPAÑA vs DUBAI -->
+<section class="section" id="para-quien">
+  <div class="wrap">
+    <div class="sh sh-wide fade">
+      <span class="eyebrow">Por qué Dubai</span>
+      <div class="rule"></div>
+      <h2>Lo que España limita, Dubai lo resuelve.</h2>
+      <p>El marco regulatorio español lleva años endureciéndose para el propietario privado. Esto es lo que están haciendo los inversores que deciden diversificar.</p>
+    </div>
+    <div class="pain-g">
+      <div class="pain-col left fade" style="--reveal-delay:0ms">
+        <h3>Invertir en España hoy</h3>
+        <div class="pain-list">
+          <div class="pain-item negative"><div class="dot"></div><p>Riesgo de <strong>ocupación</strong> con desahucios que duran 12 a 24 meses y sin garantía de recuperar el inmueble en condiciones.</p></div>
+          <div class="pain-item negative"><div class="dot"></div><p><strong>Morosidad creciente</strong>: impagos que se acumulan mientras la ley obliga a mantener al inquilino.</p></div>
+          <div class="pain-item negative"><div class="dot"></div><p>Rendimiento neto real del <strong>2–3%</strong> después de impuestos, gestión, periodos vacíos y derramas.</p></div>
+          <div class="pain-item negative"><div class="dot"></div><p>Fiscalidad cada vez más agresiva sobre rentas del alquiler e incrementos patrimoniales.</p></div>
+          <div class="pain-item negative"><div class="dot"></div><p>Ley de Vivienda 2023: <strong>limitación de rentas, ampliación de obligaciones</strong> del propietario y reducción de deducciones fiscales aplicables.</p></div>
+        </div>
+      </div>
+      <div class="pain-col right fade" style="--reveal-delay:120ms">
+        <h3 style="color:#fff">Invertir en Emiratos con Horizonte Emirates</h3>
+        <div class="pain-list">
+          <div class="pain-item positive"><div class="dot"></div><p style="color:rgba(255,255,255,.88)"><strong style="color:#fff">Propiedad 100% protegida</strong>: derechos reales garantizados bajo regulación RERA. Sin riesgo de impago no recuperable ni ocupación.</p></div>
+          <div class="pain-item positive"><div class="dot"></div><p style="color:rgba(255,255,255,.88)"><strong style="color:#fff">6–9% de rentabilidad bruta estimada</strong>, sin impuestos sobre rentas ni plusvalías. El rendimiento trabaja íntegramente para usted.</p></div>
+          <div class="pain-item positive"><div class="dot"></div><p style="color:rgba(255,255,255,.88)"><strong style="color:#fff">Acceso a la Golden Visa</strong> UAE a través de la inversión inmobiliaria. Le guiamos en todo el proceso.</p></div>
+          <div class="pain-item positive"><div class="dot"></div><p style="color:rgba(255,255,255,.88)"><strong style="color:#fff">Planes de pago off-plan desde el 10–20%</strong> de entrada. Acceso a activos de alto valor sin inmovilizar el capital completo desde el primer día.</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="compare-wrap fade">
+      <table class="compare-table" style="margin-top:0">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Concepto</th>
+            <th class="th-es">España</th>
+            <th class="dubai-h">Dubai</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="num">1</td><td>Rentabilidad neta (alquiler)</td><td class="cmp-bad">🔴 2–3%</td><td class="cmp-good"><span class="badge-good">🟢 6–9%</span></td></tr>
+          <tr><td class="num">2</td><td>Revalorización anual media</td><td class="cmp-bad">🔴 ±2%</td><td class="cmp-good"><span class="badge-good">🟢 ±6%</span></td></tr>
+          <tr><td class="num">3</td><td>Impuesto sobre alquiler</td><td class="cmp-bad">🔴 Hasta 45% IRPF</td><td class="cmp-good"><span class="badge-good">🟢 0%</span></td></tr>
+          <tr><td class="num">4</td><td>Impuesto sobre plusvalías</td><td class="cmp-bad">🔴 19–28%</td><td class="cmp-good"><span class="badge-good">🟢 0%</span></td></tr>
+          <tr><td class="num">5</td><td>Riesgo de ocupación ilegal</td><td class="cmp-bad">🔴 Alto · proceso lento</td><td class="cmp-good"><span class="badge-good">🟢 Nulo</span></td></tr>
+          <tr><td class="num">6</td><td>Cuentas escrow off-plan</td><td class="cmp-bad">🔴 No siempre obligatorio</td><td class="cmp-good"><span class="badge-good">🟢 Regulado RERA</span></td></tr>
+          <tr><td class="num">7</td><td>Visa por inversión inmobiliaria</td><td class="cmp-neutral">⚪ Golden Visa (reqs distintos)</td><td class="cmp-good"><span class="badge-good">🟢 Golden Visa UAE desde 2M AED</span></td></tr>
+          <tr><td class="num">8</td><td>Volumen de mercado</td><td class="cmp-neutral">⚪ Mercado maduro</td><td class="cmp-good"><span class="badge-good">🟢 +334.000 trans. 2025</span></td></tr>
+          <tr><td class="num">9</td><td>Divisa del activo</td><td class="cmp-good-es">🟢 EUR (sin riesgo cambio)</td><td class="cmp-neutral">⚪ AED (riesgo EUR/AED)</td></tr>
+          <tr><td class="num">10</td><td>Acompañamiento en español</td><td class="cmp-neutral">⚪ Agencias locales</td><td class="cmp-good"><span class="badge-good">🟢 Partner RERA hispanohablante</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ESTRATEGIA POR CAPITAL -->
+<section class="section alt">
+  <div class="wrap">
+    <div class="sh fade">
+      <span class="eyebrow">Perfil de inversión</span>
+      <div class="rule"></div>
+      <h2>Una estrategia distinta según su capital.</h2>
+      <p>No todos los activos encajan con todos los perfiles. Definimos la estrategia antes de presentar oportunidades.</p>
+    </div>
+    <div class="strategy-g reveal-stagger">
+      <div class="strategy-card">
+        <div class="s-range">150.000 – 300.000€</div>
+        <h3>Entrada estratégica</h3>
+        <div class="s-focus">Primer posicionamiento en UAE</div>
+        <p class="s-desc">Off-plan premium con pago escalonado desde el 10–20%. Acceso al mercado sin inmovilizar capital completo.</p>
+        <div class="s-pill">Off-plan · RAK · secundario</div>
+      </div>
+      <div class="strategy-card">
+        <div class="s-range">300.000 – 600.000€</div>
+        <h3>Cartera equilibrada</h3>
+        <div class="s-focus">Renta + apreciación</div>
+        <p class="s-desc">Acceso al portfolio completo: Dubai, RAK y Abu Dhabi. Combinación óptima de flujo mensual y revalorización.</p>
+        <div class="s-pill">Dubai · Marina · Downtown</div>
+      </div>
+      <div class="strategy-card">
+        <div class="s-range">600.000 – 1.000.000€</div>
+        <h3>Prime selectivo</h3>
+        <div class="s-focus">Ubicaciones de alta demanda</div>
+        <p class="s-desc">Palm Jumeirah, Downtown, Business Bay. Alta liquidez de reventa y alquiler sostenido por demanda expatriada.</p>
+        <div class="s-pill">Palm · Downtown · Marina</div>
+      </div>
+      <div class="strategy-card">
+        <div class="s-range">+1.000.000€</div>
+        <h3>Acceso prioritario</h3>
+        <div class="s-focus">Estrategia personalizada</div>
+        <p class="s-desc">Carteras multi-activo, operaciones fuera de mercado y acceso a oportunidades de promotora no disponibles en canal abierto.</p>
+        <div class="s-pill">Exclusivo · Multi-activo</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESO -->
+<section class="section section-process" id="como">
+  <div class="wrap">
+    <div class="sh fade">
+      <span class="eyebrow">Proceso</span>
+      <div class="rule"></div>
+      <h2>Del primer contacto a la firma en cuatro pasos.</h2>
+      <p>Gestionamos cada etapa. Usted solo decide.</p>
+    </div>
+    <div class="proc-g reveal-stagger">
+      <div class="proc-s">
+        <div class="proc-num">01</div>
+        <div class="proc-tag">Análisis de perfil</div>
+        <h3>Le escuchamos primero</h3>
+        <p>Revisamos su capital, objetivo y horizonte temporal. No con una plantilla genérica — con criterio real sobre lo que UAE ofrece para su perfil específico.</p>
+      </div>
+      <div class="proc-s">
+        <div class="proc-num">02</div>
+        <div class="proc-tag">Selección verificada</div>
+        <h3>Oportunidades reales</h3>
+        <p>Le presentamos entre 3 y 5 activos con proyecciones reales y due diligence legal. Sin relleno. Solo lo que encaja con su capital y objetivo.</p>
+      </div>
+      <div class="proc-s">
+        <div class="proc-num">03</div>
+        <div class="proc-tag">Visita en Dubai</div>
+        <h3>Valídelo en persona</h3>
+        <p>Organizamos visitas presenciales a los activos con nuestro equipo local. Se reúne con los promotores y evalúa cada proyecto antes de comprometer capital.</p>
+        <div class="proc-badge">Sin coste para el inversor</div>
+      </div>
+      <div class="proc-s">
+        <div class="proc-num">04</div>
+        <div class="proc-tag">Cierre y transferencia</div>
+        <h3>Cerramos juntos</h3>
+        <p>Coordinamos el proceso legal completo en español. Nuestros honorarios los abona el promotor, nunca usted. Ni al inicio, ni durante, ni al cierre.</p>
+        <div class="proc-badge">0€ de coste para el inversor</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ZONAS -->
+<section class="section alt">
+  <div class="wrap">
+    <div class="sh fade">
+      <span class="eyebrow">Zonas de inversión</span>
+      <div class="rule"></div>
+      <h2>Tres mercados. Tres perfiles de inversor.</h2>
+    </div>
+    <div class="zones-g reveal-stagger">
+      <div class="zone-c">
+        <div class="zone-media">
+          <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1800&q=90&auto=format&fit=crop" alt="Skyline de Dubai" loading="lazy"/>
+        </div>
+        <div class="zone-tag">Prime urbano</div>
+        <h3>Dubai</h3>
+        <p>Marina, Palm Jumeirah, Downtown y Business Bay. Alta liquidez de reventa y demanda de alquiler permanente por parte de expatriados de alta renta.</p>
+        <div class="yield-row">
+          <div class="yield-pill"><span class="yp-n">6–9%</span><span class="yp-l">neto anual</span></div>
+          <span class="zone-note">Alta liquidez de reventa</span>
+        </div>
+      </div>
+      <div class="zone-c">
+        <div class="zone-media">
+          <img src="https://mma.prnewswire.com/media/2404885/WynnAlMarjan_Aerial.jpg" alt="Proyecto Wynn en Ras Al Khaimah" loading="lazy"/>
+        </div>
+        <div class="zone-tag">Emergente · Alta apreciación</div>
+        <h3>Ras Al Khaimah</h3>
+        <p>Primer casino de UAE (Wynn, 2027). Ventana de apreciación estimada del 20–35% antes de la apertura. Ticket más accesible que Dubai Prime.</p>
+        <div class="yield-row">
+          <div class="yield-pill"><span class="yp-n">+25%</span><span class="yp-l">plusvalía est. pre-2027</span></div>
+          <span class="zone-note">Entrada temprana</span>
+        </div>
+      </div>
+      <div class="zone-c">
+        <div class="zone-media">
+          <img src="Abu Dhabi.jpg" alt="Skyline de Abu Dhabi" loading="lazy" class="zone-img-abu"/>
+        </div>
+        <div class="zone-tag">Institucional · Largo plazo</div>
+        <h3>Abu Dhabi</h3>
+        <p>Proyectos con respaldo soberano (Aldar Properties, Saadiyat). Menor volatilidad, horizontes 5+ años y máxima seguridad contractual para capital conservador.</p>
+        <div class="yield-row">
+          <div class="yield-pill"><span class="yp-n">5–7%</span><span class="yp-l">neto anual estable</span></div>
+          <span class="zone-note">Perfil conservador</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MÉTRICAS DASHBOARD (V6) -->
+<section class="metrics-sect" id="metricas" aria-label="Indicadores clave">
+  <div class="wrap">
+    <div class="metrics-g reveal-stagger">
+      <div class="metric-tile" data-metric="num" data-target="334" data-suffix="K+" data-label="Transacciones UAE 2025">
+        <div class="metric-val"><span class="metric-num">0</span><span class="metric-suf">K+</span></div>
+        <div class="metric-lbl">Transacciones UAE 2025</div>
+      </div>
+      <div class="metric-tile" data-metric="dual" data-a="6" data-b="9" data-label="Rentabilidad neta anual">
+        <div class="metric-val"><span class="metric-num m-a">0</span><span class="metric-range-sep">–</span><span class="metric-num m-b">0</span><span class="metric-suf">%</span></div>
+        <div class="metric-lbl">Rentabilidad neta anual</div>
+      </div>
+      <div class="metric-tile" data-metric="num" data-target="0" data-suffix="%" data-label="Impuesto sobre plusvalías UAE">
+        <div class="metric-val"><span class="metric-num">0</span><span class="metric-suf">%</span></div>
+        <div class="metric-lbl">Impuesto sobre plusvalías UAE</div>
+      </div>
+      <div class="metric-tile" data-metric="num" data-target="48" data-suffix="h" data-label="Tiempo máximo análisis">
+        <div class="metric-val"><span class="metric-num">0</span><span class="metric-suf">h</span></div>
+        <div class="metric-lbl">Tiempo máximo análisis</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CALCULADORA ROI (V6) -->
+<section class="roi-sect" id="roi" aria-label="Calculadora orientativa de retorno">
+  <div class="wrap">
+    <div class="sh fade" style="margin-bottom:var(--space-md)">
+      <span class="eyebrow">Simulación</span>
+      <div class="rule"></div>
+      <h2>Estime su retorno anual orientativo.</h2>
+      <p>Ajuste precio, yield bruto y revalorización esperada. Compare con una referencia simplificada España vs UAE.</p>
+    </div>
+    <div class="roi-g">
+      <div class="roi-controls fade">
+        <div class="slider-group">
+          <label>Precio de compra <span id="roi-price-lbl">500.000 €</span></label>
+          <input type="range" id="roi-price" min="150000" max="1000000" step="5000" value="500000"/>
+        </div>
+        <div class="slider-group">
+          <label>Yield bruto estimado <span id="roi-yield-lbl">7,5%</span></label>
+          <input type="range" id="roi-yield" min="5" max="10" step="0.5" value="7.5"/>
+        </div>
+        <div class="slider-group">
+          <label>Revalorización anual estimada <span id="roi-appr-lbl">5,5%</span></label>
+          <input type="range" id="roi-appr" min="2" max="15" step="0.5" value="5.5"/>
+        </div>
+        <div class="roi-boxes">
+          <div class="roi-box"><span class="rk">Ingreso alquiler / año</span><span class="rv" id="roi-rent-out">—</span></div>
+          <div class="roi-box"><span class="rk">Revalorización / año</span><span class="rv" id="roi-appr-out">—</span></div>
+          <div class="roi-box"><span class="rk">Retorno total estimado / año</span><span class="rv" id="roi-total-out">—</span></div>
+        </div>
+        <p class="roi-disclaimer">No es recomendación de inversión. Cifras ilustrativas basadas en sus supuestos.</p>
+      </div>
+      <div class="compare-bars fade" style="--reveal-delay:80ms">
+        <div class="bar-row">
+          <div class="bar-lbl"><span>España (referencia)</span><small>~4% yield + ~2% reval. ≈ 6%</small></div>
+          <div class="bar-track"><div class="bar-fill-es" id="bar-es"></div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-lbl"><span>UAE (sus supuestos)</span><small id="bar-ae-lbl">—</small></div>
+          <div class="bar-track"><div class="bar-fill-ae" id="bar-ae"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FORM -->
+<section id="form">
+  <div class="wrap">
+    <div class="form-wrap">
+      <div class="form-hd fade">
+        <span class="eyebrow">Análisis personalizado</span>
+        <div class="rule"></div>
+        <h2>Solicite su análisis. Sin compromiso.</h2>
+        <p>Filtramos las oportunidades que encajan con su perfil real. Respuesta en menos de 48 horas.</p>
+        <p class="form-scarcity">Capacidad de análisis limitada cada mes.</p>
+      </div>
+
+      <!-- Barra de progreso (V6) -->
+      <div class="form-progress-wrap" id="form-progress-wrap">
+        <div class="form-progress-meta">
+          <div class="form-progress-bar-outer" aria-hidden="true"><span class="form-progress-fill" id="form-progress-fill"></span></div>
+          <span class="form-step-label" id="form-step-label">Paso 1 de 3</span>
+        </div>
+      </div>
+
+      <form id="mainform" action="https://api.web3forms.com/submit" method="POST">
+        <input type="hidden" name="access_key" value="3861d49c-5f0a-4dc3-a9e9-08b1758a110a"/>
+        <input type="hidden" name="subject" id="f-sub" value="Nuevo lead · Horizonte Emirates V6"/>
+        <input type="hidden" name="from_name" value="Horizonte Emirates"/>
+        <input type="hidden" name="replyto" id="f-reply" value=""/>
+        <input type="hidden" name="redirect" value=""/>
+        <input type="checkbox" name="botcheck" style="display:none"/>
+        <input type="hidden" id="h-cap" name="capital"/>
+        <input type="hidden" id="h-obj" name="objetivo"/>
+        <input type="hidden" id="h-pla" name="plazo"/>
+        <input type="hidden" id="h-via" name="visita_dubai"/>
+        <input type="hidden" id="h-can" name="canal" value="whatsapp"/>
+        <input type="hidden" id="h-phone" name="telefono"/>
+        <input type="hidden" id="h-tier" name="tier"/>
+        <input type="hidden" id="h-score" name="puntuacion"/>
+        <input type="hidden" id="h-fecha" name="fecha_registro"/>
+
+        <!-- PASO 1: Capital + Objetivo -->
+        <div class="fstep active" id="fs1">
+          <div class="fq-label">1) Capital disponible para invertir</div>
+          <div class="fhint">Seleccione el rango que mejor representa su situación actual</div>
+          <div class="opt-cards" id="opts-cap">
+            <div class="opt-card" data-dim="capital" data-v="150k-300k" data-sc="1">
+              <span class="opt-label">150.000 – 300.000€</span>
+              <span class="opt-sub">Off-plan premium y residencial consolidado</span>
+            </div>
+            <div class="opt-card" data-dim="capital" data-v="300k-600k" data-sc="2">
+              <span class="opt-label">300.000 – 600.000€</span>
+              <span class="opt-sub">Portfolio completo. Dubai, RAK y Abu Dhabi</span>
+            </div>
+            <div class="opt-card" data-dim="capital" data-v="600k-1M" data-sc="3">
+              <span class="opt-label">600.000 – 1.000.000€</span>
+              <span class="opt-sub">Activos Prime. Palm, Marina, Downtown</span>
+            </div>
+            <div class="opt-card" data-dim="capital" data-v="mas1M" data-sc="4">
+              <span class="opt-label">Más de 1.000.000€</span>
+              <span class="opt-sub">Cartera multi-activo y operaciones exclusivas</span>
+            </div>
+          </div>
+          <div class="fq-gap">
+            <div class="fq-label">2) Objetivo principal</div>
+            <div class="fhint">Definimos la estrategia según su prioridad real</div>
+            <div class="opt-cards" id="opts-obj">
+              <div class="opt-card" data-dim="objetivo" data-v="alquiler" data-sc="3">
+                <span class="opt-label">Renta pasiva</span>
+                <span class="opt-sub">Alquiler gestionado, flujo mensual sin ocupas</span>
+              </div>
+              <div class="opt-card" data-dim="objetivo" data-v="revalorizacion" data-sc="3">
+                <span class="opt-label">Apreciación del capital</span>
+                <span class="opt-sub">Compra en plano o mercado emergente</span>
+              </div>
+              <div class="opt-card" data-dim="objetivo" data-v="diversificacion" data-sc="2">
+                <span class="opt-label">Diversificación geográfica</span>
+                <span class="opt-sub">Proteger patrimonio fuera del euro</span>
+              </div>
+              <div class="opt-card" data-dim="objetivo" data-v="residencia" data-sc="1">
+                <span class="opt-label">Residencia en UAE</span>
+                <span class="opt-sub">Golden Visa a través de la inversión</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PASO 2: Plazo + Visita -->
+        <div class="fstep" id="fs2">
+          <div class="fq-label">3) Horizonte de decisión</div>
+          <div class="fhint">Elegimos el activo y ritmo según su plazo real</div>
+          <div class="opt-cards" id="opts-pla">
+            <div class="opt-card" data-dim="plazo" data-v="ya" data-sc="4">
+              <span class="opt-label">Cuanto antes</span>
+              <span class="opt-sub">Tengo capital listo. Busco activos disponibles ya</span>
+            </div>
+            <div class="opt-card" data-dim="plazo" data-v="6meses" data-sc="3">
+              <span class="opt-label">Menos de 6 meses</span>
+              <span class="opt-sub">Estoy en proceso de decisión activo</span>
+            </div>
+            <div class="opt-card" data-dim="plazo" data-v="12meses" data-sc="2">
+              <span class="opt-label">Menos de 12 meses</span>
+              <span class="opt-sub">Analizo opciones y quiero información real</span>
+            </div>
+            <div class="opt-card" data-dim="plazo" data-v="indefinido" data-sc="1">
+              <span class="opt-label">Sin plazo definido</span>
+              <span class="opt-sub">Exploro el mercado antes de decidir</span>
+            </div>
+          </div>
+          <div class="fq-gap">
+            <div class="fq-label">4) Visita presencial en Dubai</div>
+            <div class="fhint">Organizamos acompañamientos sin coste para validar proyectos en persona</div>
+            <div class="viaje-cards" id="opts-via">
+              <div class="opt-card" data-dim="viaje" data-v="si" data-sc="2">
+                <span class="opt-label">Sí, me interesa</span>
+                <span class="opt-sub">Quiero visitar Dubai con su equipo</span>
+              </div>
+              <div class="opt-card" data-dim="viaje" data-v="quizas" data-sc="1">
+                <span class="opt-label">Lo valoro</span>
+                <span class="opt-sub">Depende del análisis</span>
+              </div>
+              <div class="opt-card" data-dim="viaje" data-v="no" data-sc="0">
+                <span class="opt-label">No por ahora</span>
+                <span class="opt-sub">Prefiero gestión remota</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PASO 3: Contacto -->
+        <div class="fstep" id="fs3">
+          <div class="fq-label">5) Datos de contacto</div>
+          <div class="fhint">Le contactaremos en menos de 48h por el canal que prefiera</div>
+          <div class="ffields">
+            <div class="frow2">
+              <div class="fg"><label>Nombre *</label><input type="text" name="nombre" placeholder="Juan" required/></div>
+              <div class="fg"><label>Apellidos</label><input type="text" name="apellidos" placeholder="García López"/></div>
+            </div>
+            <div class="fg"><label>Email *</label><input type="email" name="email" placeholder="juan@ejemplo.com" required autocomplete="email"/></div>
+            <div class="fg">
+              <label>Teléfono (WhatsApp) *</label>
+              <div class="phone-row">
+                <select id="phone-pfx" class="prefix-sel" aria-label="Prefijo">
+                  <option value="+34">🇪🇸 +34</option>
+                  <option value="+376">🇦🇩 +376</option>
+                  <option value="+52">🇲🇽 +52</option>
+                  <option value="+54">🇦🇷 +54</option>
+                  <option value="+57">🇨🇴 +57</option>
+                  <option value="+56">🇨🇱 +56</option>
+                  <option value="+51">🇵🇪 +51</option>
+                  <option value="+58">🇻🇪 +58</option>
+                  <option value="+593">🇪🇨 +593</option>
+                  <option value="+598">🇺🇾 +598</option>
+                  <option value="+44">🇬🇧 +44</option>
+                  <option value="+1">🇺🇸 +1</option>
+                  <option value="+971">🇦🇪 +971</option>
+                </select>
+                <input type="tel" id="phone-num" placeholder="600 000 000" autocomplete="tel" required/>
+              </div>
+            </div>
+            <div class="fg">
+              <label>País de residencia *</label>
+              <select name="pais" required>
+                <option value="">Seleccione su país</option>
+                <option>España</option>
+                <option>Andorra</option>
+                <option>México</option>
+                <option>Argentina</option>
+                <option>Colombia</option>
+                <option>Chile</option>
+                <option>Perú</option>
+                <option>Venezuela</option>
+                <option>Ecuador</option>
+                <option>Uruguay</option>
+                <option>Otro</option>
+              </select>
+            </div>
+          </div>
+          <div class="canal-lbl">Canal de contacto preferido</div>
+          <div class="canal-g">
+            <div class="canal-o sel" data-canal="whatsapp" onclick="setCanal(this)"><span>WhatsApp</span></div>
+            <div class="canal-o" data-canal="llamada" onclick="setCanal(this)"><span>Llamada</span></div>
+            <div class="canal-o" data-canal="email" onclick="setCanal(this)"><span>Email</span></div>
+          </div>
+          <div class="deliver">
+            <div class="deliver-t">Recibirá en menos de 48 horas</div>
+            <ul>
+              <li>Mínimo 3 activos seleccionados para su capital y objetivo, con rentabilidades verificadas</li>
+              <li>Comparativa neta por zona: Dubai Prime, Ras Al Khaimah y Abu Dhabi</li>
+              <li>Orientación sobre los puntos fiscales clave a revisar con su asesor en España</li>
+            </ul>
+          </div>
+          <div class="gdpr">
+            <input type="checkbox" id="gdpr-cb" onchange="checkGdpr()"/>
+            <label for="gdpr-cb">He leído y acepto la <a href="#">política de privacidad</a>. Autorizo a Horizonte Emirates a contactarme con información sobre inversión inmobiliaria en UAE.</label>
+          </div>
+          <p class="priv">Sin llamadas sin previo aviso. Solo el canal que usted elija.</p>
+          <button type="submit" class="btn-sub" id="btn-sub" disabled>Solicitar análisis personalizado &nbsp;→</button>
+          <button type="button" class="btn-back" id="btn-back" onclick="goBack()">← Paso anterior</button>
+          <div class="form-status" id="form-status" role="status" aria-live="polite"></div>
+        </div>
+      </form>
+
+      <!-- Success -->
+      <div class="success" id="success">
+        <div class="suc-card">
+          <div class="suc-check">
+            <svg class="suc-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle class="suc-circle" cx="32" cy="32" r="30" stroke="var(--gold)" stroke-width="2"/>
+              <path class="suc-tick" d="M19 32l9 9 17-17" stroke="var(--gold)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3 class="suc-title">Su análisis está en camino</h3>
+          <p class="suc-sub">En menos de 48 horas recibirá una selección de activos calibrada para su capital y objetivo, con rentabilidades verificadas y comparativa de zonas.</p>
+          <div class="suc-divider"></div>
+          <p class="suc-cta-label">¿Quiere avanzar antes?</p>
+          <a id="suc-cal-btn" href="https://calendly.com/hola-horizonteemirates/30min" target="_blank" rel="noopener" class="suc-cal-btn">
+            Reservar llamada gratuita &nbsp;→
+          </a>
+          <a id="wa-success-link" href="#" class="wa-s-btn" onclick="return openWaDirect(savedLead)">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            Escribir por WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="section">
+  <div class="wrap">
+    <div class="sh fade">
+      <span class="eyebrow">Preguntas frecuentes</span>
+      <div class="rule"></div>
+      <h2>Lo que nos preguntan antes de empezar.</h2>
+    </div>
+    <div class="faq-list reveal-stagger">
+      <div class="faq-item">
+        <button type="button" class="faq-q" aria-expanded="false" id="faq-b0" aria-controls="faq-p0">
+          <span>¿Es legal comprar en Dubai siendo residente en España?</span>
+          <span class="faq-icon" aria-hidden="true">+</span>
+        </button>
+        <div class="faq-a" id="faq-p0" role="region" aria-labelledby="faq-b0">
+          <div class="faq-a-inner">Totalmente legal y habitual entre inversores españoles. El comprador no residente opera bajo el marco regulado por RERA, el organismo oficial del Gobierno de Dubai que supervisa todas las transacciones inmobiliarias. Como residente fiscal en España, deberá declarar el activo en el Modelo 720 a partir de 50.000€. Le indicamos los puntos clave a revisar con su asesor fiscal. Horizonte Emirates no presta asesoramiento fiscal ni jurídico.</div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button type="button" class="faq-q" aria-expanded="false" id="faq-b1" aria-controls="faq-p1">
+          <span>¿Cuánto cuesta el servicio?</span>
+          <span class="faq-icon" aria-hidden="true">+</span>
+        </button>
+        <div class="faq-a" id="faq-p1" role="region" aria-labelledby="faq-b1">
+          <div class="faq-a-inner">El inversor no paga nada. Nunca. Nuestros honorarios los abona el promotor, no el comprador. No existe comisión de apertura, fee de análisis, coste de acompañamiento ni cargo de ningún tipo. Ni al inicio, ni durante la visita a Dubai, ni en el momento del cierre.</div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button type="button" class="faq-q" aria-expanded="false" id="faq-b2" aria-controls="faq-p2">
+          <span>¿Necesito viajar a Dubai para cerrar la operación?</span>
+          <span class="faq-icon" aria-hidden="true">+</span>
+        </button>
+        <div class="faq-a" id="faq-p2" role="region" aria-labelledby="faq-b2">
+          <div class="faq-a-inner">No es imprescindible, aunque lo recomendamos para activos de mayor ticket. Muchas operaciones sobre plano se cierran de forma remota mediante poder notarial. Si decide viajar, organizamos la agenda completa con nuestro equipo local, en español y sin coste adicional. El vuelo y alojamiento van por su cuenta.</div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button type="button" class="faq-q" aria-expanded="false" id="faq-b3" aria-controls="faq-p3">
+          <span>¿Qué obligaciones fiscales tengo en España?</span>
+          <span class="faq-icon" aria-hidden="true">+</span>
+        </button>
+        <div class="faq-a" id="faq-p3" role="region" aria-labelledby="faq-b3">
+          <div class="faq-a-inner">Como residente fiscal en España, la compra de un inmueble en Dubai puede implicar la obligación de declarar el activo en el Modelo 720 (a partir de 50.000€), así como tributar en el IRPF las rentas generadas e incrementos patrimoniales al vender. Las implicaciones concretas dependen de su situación personal. <strong>Horizonte Emirates no presta asesoramiento fiscal ni jurídico.</strong> Consulte con un asesor especializado en fiscalidad internacional antes de decidir.</div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button type="button" class="faq-q" aria-expanded="false" id="faq-b4" aria-controls="faq-p4">
+          <span>¿Cuál es el capital mínimo para invertir?</span>
+          <span class="faq-icon" aria-hidden="true">+</span>
+        </button>
+        <div class="faq-a" id="faq-p4" role="region" aria-labelledby="faq-b4">
+          <div class="faq-a-inner">En proyectos off-plan, la entrada inicial es del 10–20% del valor del activo. Con 30.000€ puede acceder a propiedades desde 150.000€. Para mercado secundario recomendamos capital desde 150.000€. Estos datos son orientativos — las condiciones reales dependen del activo y el promotor.</div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button type="button" class="faq-q" aria-expanded="false" id="faq-b5" aria-controls="faq-p5">
+          <span>¿Con qué garantías operan sus partners en Dubai?</span>
+          <span class="faq-icon" aria-hidden="true">+</span>
+        </button>
+        <div class="faq-a" id="faq-p5" role="region" aria-labelledby="faq-b5">
+          <div class="faq-a-inner">Nuestro partner en Dubai opera con licencia RERA activa. RERA (Real Estate Regulatory Authority) es el organismo oficial del Gobierno de Dubai que regula y supervisa todas las transacciones inmobiliarias. Cada proyecto que presentamos está registrado en RERA y puede verificarse de forma independiente en el portal oficial del Gobierno de Dubai.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="ft">
+      <div class="fb">
+        <a href="#" class="logo">Horizonte <span>Emirates</span></a>
+        <p>Portal especializado en inversión inmobiliaria en UAE para inversores de habla hispana. Operado bajo Propulse SLU, Andorra.</p>
+      </div>
+      <div class="fc">
+        <h4>Zonas</h4>
+        <ul><li><a href="#">Dubai</a></li><li><a href="#">Ras Al Khaimah</a></li><li><a href="#">Abu Dhabi</a></li></ul>
+      </div>
+      <div class="fc">
+        <h4>Legal</h4>
+        <ul><li><a href="#">Política de privacidad</a></li><li><a href="#">Aviso legal</a></li><li><a href="#">Cookies</a></li></ul>
+      </div>
+    </div>
+    <div class="ft-bot">
+      <p class="legal">Horizonte Emirates es un servicio de Propulse SLU (Andorra). Horizonte Emirates no presta asesoramiento fiscal, jurídico ni financiero. La información facilitada es estrictamente orientativa y no constituye oferta de inversión ni recomendación financiera. Los datos de rentabilidad son estimaciones basadas en información de mercado y no garantizan resultados futuros. La inversión inmobiliaria conlleva riesgos. Consulte a un asesor fiscal y financiero independiente antes de tomar cualquier decisión de inversión.</p>
+      <p class="copy">© 2026 Horizonte Emirates</p>
+    </div>
+  </div>
+</footer>
+
+<!-- WA MODAL -->
+<div id="wao">
+  <div id="wam">
+    <button class="wam-close" onclick="closeWaModal()" aria-label="Cerrar">×</button>
+    <div class="wam-icon">
+      <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    </div>
+    <h3>Un asesor le atiende ahora</h3>
+    <p>Déjenos un dato de contacto y le atendemos en minutos por WhatsApp.</p>
+    <form id="waf">
+      <div class="wam-f"><label>Nombre *</label><input type="text" id="wam-n" placeholder="Juan García" required autocomplete="name"/></div>
+      <div class="wam-f"><label>Email *</label><input type="email" id="wam-e" placeholder="juan@ejemplo.com" required autocomplete="email"/></div>
+      <div class="wam-f">
+        <label>Teléfono *</label>
+        <div class="wam-prow">
+          <select id="wam-pfx" class="wam-pfx">
+            <option value="+34">🇪🇸 +34</option>
+            <option value="+376">🇦🇩 +376</option>
+            <option value="+52">🇲🇽 +52</option>
+            <option value="+54">🇦🇷 +54</option>
+            <option value="+57">🇨🇴 +57</option>
+            <option value="+56">🇨🇱 +56</option>
+            <option value="+51">🇵🇪 +51</option>
+            <option value="+44">🇬🇧 +44</option>
+            <option value="+1">🇺🇸 +1</option>
+            <option value="+971">🇦🇪 +971</option>
+          </select>
+          <input type="tel" id="wam-ph" placeholder="600 000 000" autocomplete="tel" required/>
+        </div>
+      </div>
+      <div class="wam-err" id="wam-err"></div>
+      <button type="submit" class="wam-btn">
+        <svg viewBox="0 0 24 24" width="14" height="14"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Abrir WhatsApp
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- WA FLOAT -->
+<div class="wa-float"><a href="#" onclick="openWaModal(null);return false;" aria-label="WhatsApp"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a></div>
+
+<!-- MOBILE STICKY CTA -->
+<div class="sticky-cta"><a href="#form">Solicitar análisis gratuito →</a></div>
+
+<script>
+const WA_URL='https://wa.me/971554722025';
+const W3F_KEY='3861d49c-5f0a-4dc3-a9e9-08b1758a110a';
+const W3F_EP='https://api.web3forms.com/submit';
+let savedLead={};
+
+// ── NAV SCROLL
+window.addEventListener('scroll',()=>{
+  document.getElementById('nav').classList.toggle('scrolled',window.scrollY>60);
+});
+
+// ── FORM STATE
+const SCORES={
+  capital:{'150k-300k':1,'300k-600k':2,'600k-1M':3,'mas1M':4},
+  objetivo:{'alquiler':3,'revalorizacion':3,'diversificacion':2,'residencia':1},
+  plazo:{'ya':4,'6meses':3,'12meses':2,'indefinido':1},
+  viaje:{'si':2,'quizas':1,'no':0}
+};
+let cur=1,sel={capital:null,objetivo:null,plazo:null,viaje:null};
+const DELAY=340;
+
+function classify(){
+  const s=(SCORES.capital[sel.capital]||0)+(SCORES.objetivo[sel.objetivo]||0)+
+          (SCORES.plazo[sel.plazo]||0)+(SCORES.viaje[sel.viaje]||0);
+  return{score:s,tier:s>=9?'A':s>=6?'B':'C'};
+}
+
+function updProg(step){
+  const fill=document.getElementById('form-progress-fill');
+  const lab=document.getElementById('form-step-label');
+  const pct=step<=1?33.33:step===2?66.66:100;
+  if(fill)fill.style.width=pct+'%';
+  if(lab)lab.textContent='Paso '+step+' de 3';
+  document.getElementById('btn-back').style.display=step>1?'block':'none';
+}
+
+function goTo(step){
+  document.getElementById('fs'+cur).classList.remove('active');
+  cur=step;
+  document.getElementById('fs'+cur).classList.add('active');
+  updProg(cur);
+  const anchor=document.querySelector('.form-progress-wrap');
+  if(anchor)anchor.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function goBack(){if(cur>1)goTo(cur-1);}
+
+document.querySelectorAll('.opt-card').forEach(el=>{
+  el.addEventListener('click',function(){
+    const dim=this.dataset.dim,v=this.dataset.v;
+    if(!dim)return;
+    document.querySelectorAll(`.opt-card[data-dim="${dim}"]`).forEach(x=>x.classList.remove('sel'));
+    this.classList.add('sel');
+    sel[dim]=v;
+    const map={capital:'h-cap',objetivo:'h-obj',plazo:'h-pla',viaje:'h-via'};
+    if(map[dim])document.getElementById(map[dim]).value=v;
+    if(cur===1&&sel.capital&&sel.objetivo)setTimeout(()=>goTo(2),DELAY);
+    if(cur===2&&sel.plazo&&sel.viaje)setTimeout(()=>goTo(3),DELAY);
+  });
+});
+
+function setCanal(el){
+  document.querySelectorAll('.canal-o').forEach(x=>x.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('h-can').value=el.dataset.canal;
+}
+
+function checkGdpr(){
+  const ok=document.getElementById('gdpr-cb').checked;
+  const btn=document.getElementById('btn-sub');
+  btn.disabled=!ok;
+  btn.classList.toggle('ready',ok);
+}
+
+document.getElementById('mainform').addEventListener('submit',function(e){
+  e.preventDefault();
+  const emailVal=(this.querySelector('[name="email"]')?.value||'').trim();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(emailVal)){
+    showStatus('err','Introduce un email válido para continuar.');return;
+  }
+  const pfx=document.getElementById('phone-pfx').value||'+34';
+  const pnum=(document.getElementById('phone-num').value||'').trim();
+  if(pnum.replace(/\D/g,'').length<6){
+    showStatus('err','Introduce un número de teléfono válido para continuar.');return;
+  }
+  document.getElementById('h-phone').value=pfx+' '+pnum;
+  const{score,tier}=classify();
+  document.getElementById('h-tier').value=tier;
+  document.getElementById('h-score').value=score;
+  const pais=this.querySelector('[name="pais"]').value||'';
+  const nombre=(this.querySelector('[name="nombre"]')?.value||'').trim();
+  document.getElementById('f-sub').value=`[${tier}|${score}pts] Lead HE V6 · ${pais}`;
+  document.getElementById('f-reply').value=emailVal;
+  document.getElementById('h-fecha').value=new Date().toLocaleString('es-ES',{timeZone:'Europe/Madrid'});
+  const btn=document.getElementById('btn-sub');
+  btn.disabled=true;btn.textContent='Enviando...';
+  fetch(W3F_EP,{method:'POST',body:new FormData(this)}).then(r=>r.json()).then(d=>{
+    if(d.success){
+      savedLead={
+        nombre,
+        email:emailVal,
+        telefono:document.getElementById('h-phone').value,
+        pais,
+        capital:sel.capital||'',
+        objetivo:sel.objetivo||'',
+        plazo:sel.plazo||'',
+        viaje:sel.viaje||'',
+        tier,
+        score
+      };
+      document.getElementById('mainform').style.display='none';
+      const pw=document.querySelector('.form-progress-wrap');
+      if(pw)pw.style.display='none';
+      const fhd=document.querySelector('.form-hd');
+      if(fhd)fhd.style.display='none';
+      const calBtn=document.getElementById('suc-cal-btn');
+      if(calBtn){
+        const cp=new URLSearchParams();
+        if(nombre)cp.set('name',nombre);
+        if(emailVal)cp.set('email',emailVal);
+        calBtn.href='https://calendly.com/hola-horizonteemirates/30min?'+cp.toString();
+      }
+      document.getElementById('success').classList.add('show');
+    }else{
+      showStatus('err',d.message||'No se pudo enviar el formulario. Inténtalo de nuevo.');
+      btn.disabled=false;btn.textContent='Solicitar análisis personalizado →';
+    }
+  }).catch(()=>{
+    showStatus('err','Error de conexión. Revisa tu conexión e inténtalo de nuevo.');
+    btn.disabled=false;btn.textContent='Solicitar análisis personalizado →';
+  });
+});
+
+function showStatus(kind,msg){
+  const box=document.getElementById('form-status');
+  box.className=`form-status show ${kind}`;box.textContent=msg;
+}
+
+// ── WA MODAL
+function buildWaMsg(data){
+  const n=(data?.nombre||'').trim();
+  const cap=data?.capital?`\n- Capital: ${data.capital}`:'';
+  const obj=data?.objetivo?`\n- Objetivo: ${data.objetivo}`:'';
+  const txt=n
+    ?`Hola, soy ${n}. He dejado mis datos en Horizonte Emirates para recibir acompañamiento gratuito e invertir en Emiratos.${cap}${obj}`
+    :'Hola. He visto Horizonte Emirates y me interesa recibir información sobre inversión inmobiliaria en UAE.';
+  return`${WA_URL}?text=${encodeURIComponent(txt)}`;
+}
+
+function openWaDirect(preData){
+  window.open(buildWaMsg(preData||savedLead),'_blank','noopener');
+  return false;
+}
+
+function openWaModal(preData){
+  const ov=document.getElementById('wao');
+  if(preData?.nombre)document.getElementById('wam-n').value=preData.nombre;
+  if(preData?.email)document.getElementById('wam-e').value=preData.email;
+  ov.style.display='flex';
+  document.body.style.overflow='hidden';
+  setTimeout(()=>{try{document.getElementById('wam-n').focus();}catch(e){}},100);
+  return false;
+}
+function closeWaModal(){
+  document.getElementById('wao').style.display='none';
+  document.body.style.overflow='';
+  document.getElementById('wam-err').classList.remove('show');
+}
+document.getElementById('wao').addEventListener('click',function(e){if(e.target===this)closeWaModal();});
+
+document.getElementById('waf').addEventListener('submit',function(e){
+  e.preventDefault();
+  const n=(document.getElementById('wam-n').value||'').trim();
+  const em=(document.getElementById('wam-e').value||'').trim();
+  const pfx=document.getElementById('wam-pfx').value;
+  const ph=(document.getElementById('wam-ph').value||'').trim();
+  const err=document.getElementById('wam-err');
+  if(!n){err.textContent='Por favor introduce tu nombre.';err.classList.add('show');return;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)){err.textContent='Introduce un email válido.';err.classList.add('show');return;}
+  if(ph.replace(/\D/g,'').length<6){err.textContent='Introduce un teléfono válido.';err.classList.add('show');return;}
+  err.classList.remove('show');
+  const fd=new FormData();
+  fd.append('access_key',W3F_KEY);
+  fd.append('subject','[WhatsApp directo] '+n+' · Horizonte Emirates V6');
+  fd.append('from_name','Horizonte Emirates');
+  fd.append('nombre',n);fd.append('email',em);
+  fd.append('telefono',pfx+' '+ph);
+  fd.append('origen','Botón WhatsApp flotante');
+  fd.append('fecha_registro',new Date().toLocaleString('es-ES',{timeZone:'Europe/Madrid'}));
+  fd.append('botcheck','');
+  fetch(W3F_EP,{method:'POST',body:fd}).catch(()=>{});
+  savedLead={nombre:n,email:em};
+  closeWaModal();
+  window.open(buildWaMsg(savedLead),'_blank','noopener');
+});
+
+// ── FAQ (V6 accordion)
+(function initFaqAccordion(){
+  const items=[...document.querySelectorAll('.faq-item')];
+  items.forEach(item=>{
+    const btn=item.querySelector('.faq-q');
+    const panel=item.querySelector('.faq-a');
+    const inner=panel&&panel.querySelector('.faq-a-inner');
+    if(!btn||!panel||!inner)return;
+    btn.addEventListener('click',()=>{
+      const willOpen=!item.classList.contains('open');
+      items.forEach(i=>{
+        i.classList.remove('open');
+        const p=i.querySelector('.faq-a');
+        const b=i.querySelector('.faq-q');
+        if(p)p.style.maxHeight='0';
+        if(b)b.setAttribute('aria-expanded','false');
+      });
+      if(willOpen){
+        item.classList.add('open');
+        btn.setAttribute('aria-expanded','true');
+        panel.style.maxHeight=inner.scrollHeight+'px';
+      }
+    });
+  });
+  window.addEventListener('resize',()=>{
+    const open=document.querySelector('.faq-item.open .faq-a');
+    const inner=open&&open.querySelector('.faq-a-inner');
+    if(open&&inner)open.style.maxHeight=inner.scrollHeight+'px';
+  });
+})();
+
+function initTicker(){
+  const inner=document.getElementById('ticker-inner');
+  if(!inner||inner.dataset.cloned)return;
+  const lines=Array.from(inner.querySelectorAll('.ticker-line'));
+  if(!lines.length)return;
+  lines.forEach(function(l){inner.appendChild(l.cloneNode(true));});
+  inner.dataset.cloned='1';
+}
+
+function initMetricsCounter(){
+  const root=document.querySelector('.metrics-sect');
+  if(!root)return;
+  const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let ran=false;
+  function tickNum(el,to,dur){
+    const start=performance.now();
+    const from=0;
+    function frame(t){
+      const p=Math.min(1,(t-start)/dur);
+      const eased=1-Math.pow(1-p,3);
+      el.textContent=Math.round(from+(to-from)*eased);
+      if(p<1)requestAnimationFrame(frame);
+      else el.textContent=String(to);
+    }
+    requestAnimationFrame(frame);
+  }
+  function run(){
+    if(ran)return;
+    ran=true;
+    root.querySelectorAll('.metric-tile').forEach(tile=>{
+      const m=tile.getAttribute('data-metric');
+      if(m==='num'){
+        const tgt=Number(tile.getAttribute('data-target'))||0;
+        const numEl=tile.querySelector('.metric-num');
+        if(numEl){
+          if(reduce)numEl.textContent=String(tgt);
+          else tickNum(numEl,tgt,tgt===334?1400:900);
+        }
+      }else if(m==='dual'){
+        const a=Number(tile.getAttribute('data-a'))||0;
+        const b=Number(tile.getAttribute('data-b'))||0;
+        const elA=tile.querySelector('.m-a');
+        const elB=tile.querySelector('.m-b');
+        if(reduce){if(elA)elA.textContent=String(a);if(elB)elB.textContent=String(b);return;}
+        if(elA)tickNum(elA,a,700);
+        if(elB)setTimeout(()=>tickNum(elB,b,700),180);
+      }
+    });
+  }
+  if(reduce)run();
+  else{
+    const io=new IntersectionObserver(entries=>{
+      entries.forEach(e=>{
+        if(!e.isIntersecting)return;
+        io.disconnect();
+        run();
+      });
+    },{threshold:0.2,rootMargin:'0px'});
+    io.observe(root);
+  }
+}
+
+function fmtEUR(n){
+  return new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n);
+}
+function fmtPct(x){
+  return new Intl.NumberFormat('es-ES',{minimumFractionDigits:1,maximumFractionDigits:1}).format(x)+'%';
+}
+function calcROI(){
+  const priceEl=document.getElementById('roi-price');
+  const yEl=document.getElementById('roi-yield');
+  const aEl=document.getElementById('roi-appr');
+  if(!priceEl||!yEl||!aEl)return;
+  const price=Number(priceEl.value)||0;
+  const y=Number(yEl.value)||0;
+  const ap=Number(aEl.value)||0;
+  const rent=price*(y/100);
+  const appr=price*(ap/100);
+  const total=rent+appr;
+  const totalPct=price>0?((total/price)*100):0;
+  const esRef=6;
+  const aePct=y+ap;
+  document.getElementById('roi-price-lbl').textContent=fmtEUR(price);
+  document.getElementById('roi-yield-lbl').textContent=fmtPct(y);
+  document.getElementById('roi-appr-lbl').textContent=fmtPct(ap);
+  document.getElementById('roi-rent-out').textContent=fmtEUR(rent);
+  document.getElementById('roi-appr-out').textContent=fmtEUR(appr);
+  document.getElementById('roi-total-out').textContent=fmtEUR(total)+' · '+fmtPct(totalPct);
+  const max=Math.max(esRef,aePct,0.001);
+  document.getElementById('bar-es').style.width=(esRef/max*100)+'%';
+  document.getElementById('bar-ae').style.width=(aePct/max*100)+'%';
+  document.getElementById('bar-ae-lbl').textContent=fmtPct(y)+' + '+fmtPct(ap)+' = '+fmtPct(aePct);
+}
+
+// ── Scroll reveals: easing premium, escalonado (hero sin animación: fijo al cargar)
+(function(){
+  const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce)document.documentElement.classList.add('reduce-motion');
+  const revealEase=(entries,obs)=>{
+    entries.forEach(entry=>{
+      if(!entry.isIntersecting)return;
+      const t=entry.target;
+      t.classList.add('in');
+      obs.unobserve(t);
+    });
+  };
+  const io=new IntersectionObserver(revealEase,{
+    root:null,
+    rootMargin:'0px 0px -11% 0px',
+    threshold:[0,0.1],
+  });
+  document.querySelectorAll('.fade, .reveal-stagger').forEach(el=>io.observe(el));
+})();
+
+// ── KPI +334.000 — rodillos verticales (tragaperras)
+(function(){
+  const strip=document.getElementById('kpi-strip');
+  const wrap=document.getElementById('kpi-slot-wrap');
+  if(!strip||!wrap)return;
+  const target=Number(wrap.getAttribute('data-target'))||334000;
+  const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let played=false;
+
+  function run(){
+    if(played)return;
+    played=true;
+    const finalTxt='+'+target.toLocaleString('es-ES');
+    if(reduce){
+      wrap.textContent=finalTxt;
+      return;
+    }
+    const digits=String(Math.max(0,Math.min(999999,target))).padStart(6,'0').split('').map(Number);
+    wrap.textContent='';
+    const plus=document.createElement('span');
+    plus.className='slot-plus';
+    plus.textContent='+';
+    wrap.appendChild(plus);
+
+    function makeReel(d,j){
+      const reel=document.createElement('span');
+      reel.className='slot-reel';
+      const track=document.createElement('span');
+      track.className='slot-track';
+      const spinRows=54+j*10+Math.floor(Math.random()*8);
+      const endRow=spinRows*10+d;
+      const startRow=Math.max(0,endRow-(42+j*7+Math.floor(Math.random()*8)));
+      for(let r=0;r<=endRow+3;r++){
+        const cell=document.createElement('span');
+        cell.className='slot-cell';
+        cell.textContent=String(r%10);
+        track.appendChild(cell);
+      }
+      reel.appendChild(track);
+      return{reel,track,startRow,endRow,j};
+    }
+
+    const reels=[];
+    for(let j=0;j<3;j++){
+      const r=makeReel(digits[j],j);
+      reels.push(r);
+      wrap.appendChild(r.reel);
+    }
+    const dot=document.createElement('span');
+    dot.className='slot-dot';
+    dot.textContent='.';
+    wrap.appendChild(dot);
+    for(let j=0;j<3;j++){
+      const r=makeReel(digits[3+j],3+j);
+      reels.push(r);
+      wrap.appendChild(r.reel);
+    }
+
+    void wrap.offsetHeight;
+    const t0=reels[0].track;
+    const c0=t0.children[0];
+    const c1=t0.children[1];
+    let cellPx=c1?c1.offsetTop-c0.offsetTop:0;
+    if(!cellPx||cellPx<4){
+      const br=c0.getBoundingClientRect();
+      cellPx=Math.ceil(br.height||c0.offsetHeight)+6;
+    }else{
+      cellPx=Math.ceil(cellPx)+4;
+    }
+    reels.forEach(({reel,track})=>{
+      reel.style.height=cellPx+'px';
+      reel.style.lineHeight=cellPx+'px';
+      track.querySelectorAll('.slot-cell').forEach(function(cell){
+        cell.style.height=cellPx+'px';
+        cell.style.minHeight=cellPx+'px';
+        cell.style.lineHeight=cellPx+'px';
+      });
+    });
+    void wrap.offsetHeight;
+    const step=Math.ceil(t0.children[1].offsetTop-t0.children[0].offsetTop);
+    if(step>=4&&step!==cellPx){
+      cellPx=step;
+      reels.forEach(({reel,track})=>{
+        reel.style.height=cellPx+'px';
+        reel.style.lineHeight=cellPx+'px';
+        track.querySelectorAll('.slot-cell').forEach(function(cell){
+          cell.style.height=cellPx+'px';
+          cell.style.minHeight=cellPx+'px';
+          cell.style.lineHeight=cellPx+'px';
+        });
+      });
+      void wrap.offsetHeight;
+    }
+
+    reels.forEach(({track,startRow})=>{
+      track.style.transition='none';
+      track.style.transform='translate3d(0,-'+(startRow*cellPx)+'px,0)';
+    });
+    void wrap.offsetHeight;
+
+    requestAnimationFrame(()=>{
+      requestAnimationFrame(()=>{
+        reels.forEach(({track,startRow,endRow,j})=>{
+          const fromRight=5-j;
+          const durS=1.12+fromRight*0.36;
+          track.style.transitionProperty='transform';
+          track.style.transitionDuration=durS+'s';
+          track.style.transitionTimingFunction='cubic-bezier(0.12,0.88,0.18,1)';
+          track.style.transform='translate3d(0,-'+(endRow*cellPx)+'px,0)';
+        });
+      });
+    });
+
+    reels.forEach(({track})=>{
+      track.addEventListener('transitionend',function te(ev){
+        if(ev.propertyName!=='transform')return;
+        track.removeEventListener('transitionend',te);
+        track.style.willChange='auto';
+      });
+    });
+  }
+
+  const counterObs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(!e.isIntersecting)return;
+      counterObs.disconnect();
+      run();
+    });
+  },{rootMargin:'0px 0px -5% 0px',threshold:0.12});
+  counterObs.observe(strip);
+})();
+initTicker();
+initMetricsCounter();
+['roi-price','roi-yield','roi-appr'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(el)el.addEventListener('input',calcROI);
+});
+calcROI();
+updProg(1);
+</script>
 </body>
 </html>
