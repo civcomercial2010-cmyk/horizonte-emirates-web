@@ -1423,7 +1423,7 @@ footer{background:var(--navy-d);padding:60px 0 24px}
           <p class="suc-sub">En menos de 48 horas recibirá una selección de activos calibrada para su capital y objetivo, con rentabilidades verificadas y comparativa de zonas.</p>
           <div class="suc-divider"></div>
           <p class="suc-cta-label">¿Quiere avanzar antes?</p>
-          <a href="https://calendly.com/hola-horizonteemirates/30min" target="_blank" rel="noopener" class="suc-cal-btn">
+          <a id="suc-cal-btn" href="https://calendly.com/hola-horizonteemirates/30min" target="_blank" rel="noopener" class="suc-cal-btn">
             Reservar llamada gratuita &nbsp;→
           </a>
           <a id="wa-success-link" href="#" class="wa-s-btn" onclick="return openWaDirect(savedLead)">
@@ -1686,6 +1686,13 @@ document.getElementById('mainform').addEventListener('submit',function(e){
       if(pw)pw.style.display='none';
       const fhd=document.querySelector('.form-hd');
       if(fhd)fhd.style.display='none';
+      const calBtn=document.getElementById('suc-cal-btn');
+      if(calBtn){
+        const cp=new URLSearchParams();
+        if(nombre)cp.set('name',nombre);
+        if(emailVal)cp.set('email',emailVal);
+        calBtn.href='https://calendly.com/hola-horizonteemirates/30min?'+cp.toString();
+      }
       document.getElementById('success').classList.add('show');
     }else{
       showStatus('err',d.message||'No se pudo enviar el formulario. Inténtalo de nuevo.');
