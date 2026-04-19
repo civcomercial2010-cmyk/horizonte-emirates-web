@@ -442,7 +442,7 @@ function pollGmail() {
       try {
         leadId = saveLead(lead);
         scheduleSequence(leadId, lead.tier, new Date());
-        processQueue();
+        processQueue({ immediateWelcomeAfterPoll: true });
       } catch (err) {
         Logger.log('pollGmail: ERROR al guardar en Sheets / cola: ' + err.toString());
         throw err;
@@ -712,16 +712,27 @@ function isWithinBusinessSendWindow(date) {
   return true;
 }
 
+/** Primer email de cada tier (tras registro en web). Puede enviarse fuera de horario solo cuando processQueue viene de pollGmail. */
+function isWelcomeSequenceEmail(code) {
+  return code === 'A1' || code === 'B1' || code === 'C1';
+}
+
 
 // ══════════════════════════════════════════════════════════════
-// 4. PROCESAR COLA — trigger cada hora; pollGmail llama processQueue tras nuevo lead (A1 sale en la primera pasada dentro de horario laboral)
+// 4. PROCESAR COLA — trigger cada hora; pollGmail pasa { immediateWelcomeAfterPoll: true } para enviar A1/B1/C1 al instante
 // ══════════════════════════════════════════════════════════════
-function processQueue() {
+/**
+ * @param {Object} [opts]
+ * @param {boolean} [opts.immediateWelcomeAfterPoll] — true solo desde pollGmail tras nuevo lead: A1/B1/C1 ignoran ventana laboral.
+ */
+function processQueue(opts) {
+  opts = opts || {};
   const qSheet = getSheet('Cola');
   const lSheet = getSheet('Leads');
   const now    = new Date();
+  const inWin  = isWithinBusinessSendWindow(now);
 
-  if (CONFIG.BUSINESS_HOURS_ONLY !== false && !isWithinBusinessSendWindow(now)) {
+  if (CONFIG.BUSINESS_HOURS_ONLY !== false && !inWin && !opts.immediateWelcomeAfterPoll) {
     Logger.log('processQueue: fuera de ventana laboral (' + (CONFIG.BUSINESS_TIMEZONE || Session.getScriptTimeZone()) +
       ' ' + CONFIG.BUSINESS_HOUR_START + '–' + (Number(CONFIG.BUSINESS_HOUR_END) - 1) + 'h' +
       (CONFIG.BUSINESS_WEEKDAYS_ONLY ? ', lun–vie' : '') + '); sin envíos en esta pasada.');
@@ -753,9 +764,16 @@ function processQueue() {
       qSheet.getRange(i+1,4).setValue('cancelado'); continue;
     }
 
+    const isWelcome = isWelcomeSequenceEmail(emailCode);
+    if (CONFIG.BUSINESS_HOURS_ONLY !== false && !inWin && !(opts.immediateWelcomeAfterPoll && isWelcome)) {
+      continue;
+    }
+
     try {
       if (!CONFIG.TEST_MODE) {
-        sendEmail(emailCode, lead, {});
+        const bypassHours = CONFIG.BUSINESS_HOURS_ONLY !== false && !inWin &&
+          Boolean(opts.immediateWelcomeAfterPoll) && isWelcome;
+        sendEmail(emailCode, lead, { bypassBusinessHours: bypassHours });
       } else {
         Logger.log('[TEST] ' + emailCode + ' → ' + lead.email);
       }
@@ -788,7 +806,7 @@ function buildEmailPlainBody(tplText) {
 
 /**
  * @param {Object} [opts]
- * @param {boolean} [opts.bypassBusinessHours] — true solo para pruebas manuales fuera de ventana (p. ej. simulateLeadEmail real).
+ * @param {boolean} [opts.bypassBusinessHours] — true: prueba manual (simulateLeadEmail) o bienvenida inmediata tras form (pollGmail).
  */
 function sendEmail(code, lead, opts) {
   opts = opts || {};
