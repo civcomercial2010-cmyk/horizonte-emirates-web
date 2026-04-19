@@ -264,7 +264,7 @@ h1 em{font-style:italic;color:var(--gold)}
 .ticker{overflow:hidden}
 .ticker-inner{display:flex;width:max-content;animation:ticker-marquee 38s linear infinite;will-change:transform}
 .ticker-inner:hover{animation-play-state:paused}
-.ticker-line{display:inline-block;padding:12px 48px 12px 0;font-size:13px;font-weight:600;letter-spacing:.04em;white-space:nowrap}
+.ticker-line{display:inline-block;padding:11px 56px;font-size:15px;font-weight:600;letter-spacing:.04em;white-space:nowrap}
 @keyframes ticker-marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 @media (prefers-reduced-motion:reduce){
   .ticker-inner{animation:none;justify-content:center;flex-wrap:wrap;width:auto;margin:0 auto}
@@ -883,7 +883,14 @@ footer{background:var(--navy-d);padding:60px 0 24px}
 <div class="ticker-wrap" aria-hidden="true">
   <div class="ticker">
     <div class="ticker-inner" id="ticker-inner">
-      <span class="ticker-line">+334.000 transacciones UAE 2025 · 6–9% neto anual · 0% impuesto sobre plusvalías UAE · 0% IRPF federal sobre rentas alquiler · Golden Visa UAE desde 2M AED · Regulación RERA Dubai · Partner certificado RERA · Servicio íntegro en español · Sin coste para el inversor</span>
+      <span class="ticker-line">+334.000 transacciones inmobiliarias en UAE (2025)</span>
+      <span class="ticker-line">6–9% rentabilidad neta anual estimada</span>
+      <span class="ticker-line">0% impuesto sobre plusvalías en UAE</span>
+      <span class="ticker-line">Golden Visa UAE · Inversión total de 2M AED</span>
+      <span class="ticker-line">Regulación RERA · Dubai</span>
+      <span class="ticker-line">Partners certificados RERA</span>
+      <span class="ticker-line">Servicio íntegro en español</span>
+      <span class="ticker-line">Sin coste para el inversor</span>
     </div>
   </div>
 </div>
@@ -1747,9 +1754,11 @@ document.getElementById('waf').addEventListener('submit',function(e){
 
 function initTicker(){
   const inner=document.getElementById('ticker-inner');
-  const line=inner&&inner.querySelector('.ticker-line');
-  if(!inner||!line||inner.querySelectorAll('.ticker-line').length>1)return;
-  inner.appendChild(line.cloneNode(true));
+  if(!inner||inner.dataset.cloned)return;
+  const lines=Array.from(inner.querySelectorAll('.ticker-line'));
+  if(!lines.length)return;
+  lines.forEach(function(l){inner.appendChild(l.cloneNode(true));});
+  inner.dataset.cloned='1';
 }
 
 function initMetricsCounter(){
