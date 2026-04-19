@@ -1493,3 +1493,5 @@ function runSimulationA1() {
 function runRealSendA1() {
   simulateLeadEmail('civcomercial2010@gmail.com', 'A1', true);
 }
+
+// HE_EMAILS_GS_EOF — Si no ves esta línea al final de Código.gs, el pegado está truncado (provoca «Unexpected end of input»).
