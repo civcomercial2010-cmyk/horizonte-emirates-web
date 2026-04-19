@@ -669,12 +669,69 @@ function reprocesarLeadYaRegistrado(email) {
 
 /**
  * Fuerza pollGmail de forma manual (útil si el trigger no disparó).
- * Omite la comprobación de etiqueta → reprocesa aunque ya esté etiquetado.
  */
 function forzarPollGmail() {
   Logger.log('forzarPollGmail: ejecutando pollGmail ahora...');
   pollGmail();
   Logger.log('forzarPollGmail: completado. Revisar logs arriba.');
+}
+
+/**
+ * RECUPERACIÓN: procesa TODOS los threads Web3Forms de los últimos 7 días,
+ * incluyendo los ya etiquetados. Guarda en Sheets cualquier lead que no exista aún.
+ * Usar una sola vez después de actualizar el script en Apps Script.
+ */
+function recuperarLeadsPerdidos() {
+  const q = 'from:web3forms.com newer_than:7d';
+  let threads = GmailApp.search(q, 0, 50);
+  if (!threads.length) {
+    Logger.log('recuperarLeadsPerdidos: sin hilos Web3Forms en los últimos 7 días');
+    return;
+  }
+  sortThreadsByLatestMessage(threads);
+
+  const label = ensureGmailLabel(CONFIG.LABEL_PROCESADO);
+  let guardados = 0, yaExistian = 0, saltados = 0;
+
+  threads.forEach((thread, idx) => {
+    const msg = getLatestThreadMessage(thread);
+    if (!msg) return;
+
+    const subject = msg.getSubject();
+    const body    = getMessageBodyForLeadParse(msg);
+
+    if (!isHorizonteWeb3Lead(subject, body)) { saltados++; return; }
+
+    const lead = parseLeadFromEmail(body, subject);
+    if (!lead || !lead.email) {
+      Logger.log('recuperarLeadsPerdidos: no parseable hilo #' + idx + ' · ' + subject);
+      saltados++;
+      return;
+    }
+
+    if (leadExists(lead.email)) {
+      Logger.log('recuperarLeadsPerdidos: ya existe → ' + lead.email);
+      thread.addLabel(label);
+      msg.markRead();
+      yaExistian++;
+      return;
+    }
+
+    try {
+      const leadId = saveLead(lead);
+      scheduleSequence(leadId, lead.tier, new Date());
+      processQueue({ immediateWelcomeAfterPoll: true });
+      thread.addLabel(label);
+      msg.markRead();
+      Logger.log('✓ recuperado: ' + lead.nombre + ' [Tier ' + lead.tier + '|' + lead.puntuacion + 'pts] → ' + lead.email);
+      guardados++;
+    } catch(e) {
+      Logger.log('✗ error guardando ' + lead.email + ': ' + e.toString());
+    }
+  });
+
+  Logger.log('recuperarLeadsPerdidos RESUMEN → guardados=' + guardados +
+    ' | ya existían=' + yaExistian + ' | saltados=' + saltados);
 }
 
 // ══════════════════════════════════════════════════════════════
