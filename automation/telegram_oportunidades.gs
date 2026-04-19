@@ -7,10 +7,9 @@
 // Trigger: cada hora; solo ejecuta envío en “día sí”, ventana laboral y cuando la hora actual = slot de esa ronda.
 // Cada envío: 2 proyectos; perfil rota con TG_THEME_INDEX (mismo índice que elige la hora del slot).
 // Estructura de cada publicación:
-//   1. Primera ficha: cabecera de la entrega + proyecto 1 (mismo mensaje; sin cabecera suelta)
-//   2. Segunda ficha: proyecto 2
-//   3. Cierre CTA
-//   WhatsApp: mismo enlace base wa.me que TG_CONFIG.WA_LINK (sin ?text=; chat vacío como el CTA final).
+//   Un solo sendMessage HTML: cabecera + 2 proyectos + CTA Calendly y WhatsApp.
+//   Enlaces wa.me con ?text= precargado: uno por proyecto y otro genérico en el cierre
+//   (texto corto, sin paréntesis raros, para que el popup de Telegram sea legible).
 //
 // Columnas en projects_master (foto estilo “Dubai Club”):
 //   foto_url       → URL HTTPS de la IMAGEN (archivo .jpg/.png/.webp o CDN), no la página HTML.
@@ -197,15 +196,12 @@ function sendWeeklyOportunidades(forzar, pruebaSinAvanzarTema) {
     selected = _shuffleArray(projects).slice(0, TG_CONFIG.NUM_PROYECTOS);
   }
 
-  const issueContext = { theme: theme, publicacionNum: themeRound + 1 };
-
-  selected.forEach((p, i) => {
-    const ctx = (i === 0) ? issueContext : null;
-    _sendProjectCard(p, i + 1, ctx);
-    Utilities.sleep(600);
-  });
-
-  _sendTelegramMessage(_buildCtaMessage(), 'HTML');
+  const unified = _buildUnifiedOportunidadesPost(theme, themeRound + 1, selected);
+  const sent    = _sendTelegramMessage(unified, 'HTML');
+  if (!sent.ok) {
+    Logger.log('❌ Fallo envío Telegram unificado: ' + JSON.stringify(sent));
+    return;
+  }
 
   if (!force) {
     _markOportunidadesSentToday(tz);
@@ -238,11 +234,16 @@ function sendProjectAlert(projectId) {
     Logger.log('❌ Proyecto no encontrado: ' + projectId);
     return;
   }
-  _sendTelegramMessage('🚨 <b>ALERTA OPORTUNIDAD — Horizonte Emirates</b>', 'HTML');
-  Utilities.sleep(500);
-  _sendProjectCard(project, 1, null);
-  Utilities.sleep(500);
-  _sendTelegramMessage(_buildCtaMessage(), 'HTML');
+  const html = [
+    '🚨 <b>ALERTA OPORTUNIDAD — Horizonte Emirates</b>',
+    '',
+    '────────────',
+    _buildProjectBlockHtml(project),
+    '',
+    _buildCtaMessage(),
+  ].join('\n');
+  const sent = _sendTelegramMessage(_truncateTelegramHtml(html, 4090), 'HTML');
+  if (!sent.ok) Logger.log('❌ Fallo alerta Telegram: ' + JSON.stringify(sent));
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -300,40 +301,80 @@ function _hrefForTelegramHtml(url) {
   return String(url || '').replace(/&/g, '&amp;');
 }
 
+/** Nombre para el texto precargado de WhatsApp */
+function _projectNameForWa(project) {
+  const n = _investorDisplay(project.nombre_proyecto, false);
+  if (n && n !== '—') return n.length <= 100 ? n : n.substring(0, 99) + '…';
+  return 'el proyecto de este mensaje';
+}
+
+/** wa.me con saludo y pedido de dossier del proyecto concreto — texto breve para el aviso de Telegram */
+function _waPrefillHrefForProject(project) {
+  const nombre = _projectNameForWa(project);
+  const body = [
+    'Hola,',
+    '',
+    'Os escribo desde el canal Horizonte Emirates en Telegram.',
+    '',
+    'Quiero información y el dossier de este proyecto:',
+    nombre,
+    '',
+    'Gracias.',
+  ].join('\n');
+  return TG_CONFIG.WA_LINK + '?text=' + encodeURIComponent(body);
+}
+
+/** wa.me para el CTA general del pie — sin proyecto concreto */
+function _waPrefillHrefTeamGeneral() {
+  const body = [
+    'Hola,',
+    '',
+    'Os escribo desde el canal Horizonte Emirates – Oportunidades.',
+    'Quiero hablar con el equipo para orientación general.',
+    '',
+    'Gracias.',
+  ].join('\n');
+  return TG_CONFIG.WA_LINK + '?text=' + encodeURIComponent(body);
+}
+
 /**
  * Cabecera de la entrega fusionada con la 1ª ficha (o compacta si va en caption de foto).
  * @param {boolean} compact — menos líneas para caber en caption 1024 junto al proyecto
  */
 function _buildIssueLeadIn(theme, publicacionNum, compact) {
-  const label = _escapeHtmlText(theme.label);
+  const INTRO_BY_THEME = {
+    'entrada_baja':      'Esta semana nos centramos en proyectos con entrada accesible — los que permiten entrar al mercado de Dubai con menos capital inicial sin renunciar a calidad de promotora.',
+    'alta_rentabilidad': 'Esta semana, proyectos con mayor potencial de rentabilidad por alquiler. Zonas con demanda real, promotoras fiables y planes de pago que encajan con un perfil de renta pasiva.',
+    'revalorizacion':    'Esta semana priorizamos proyectos en zonas con fuerte recorrido de revalorización. Off-plan en áreas de expansión donde el precio de compra todavía tiene margen.',
+    'lujo':              'Esta semana, producto premium. Proyectos de promotoras de primer nivel, en ubicaciones consolidadas, para perfiles que buscan activos de alta gama en Dubai.',
+  };
+  const intro = _escapeHtmlText(INTRO_BY_THEME[theme.id] || 'Dos proyectos seleccionados esta semana para inversores hispanohablantes en Dubai y UAE.');
+
   if (compact) {
     return [
-      '🏙️ <b>Horizonte Emirates</b> · <i>Oportunidades Dubai / UAE</i>',
-      '📌 <b>Selección #' + publicacionNum + '</b> · foco <i>' + label + '</i>',
-      'Primera de <b>dos propuestas</b> para inversores hispanohablantes.',
+      '🏙️ <b>Horizonte Emirates</b>',
+      '<i>' + _escapeHtmlText(theme.label) + '</i>',
       '────────────',
     ].join('\n');
   }
   return [
     '🏙️ <b>Horizonte Emirates</b>',
-    '<b>Oportunidades off-plan y stock en Dubai / UAE</b>',
     '',
-    '📌 <b>Selección #' + publicacionNum + '</b> · priorizamos hoy oportunidades con perfil <i>' + label + '</i>.',
-    '',
-    'Te dejamos <b>dos proyectos</b> con lo esencial: zona, tipologías, plan de pago y enlace para pedir dossier por WhatsApp. Si encajan con tu capital y tu objetivo, te respondemos con condiciones y documentación reales.',
+    intro,
     '',
     '────────────',
-    '🔹 <b>Propuesta 1 de 2</b>',
   ].join('\n');
 }
 
 function _buildCtaMessage() {
   return [
     '────────────',
-    '<b>¿Quieres profundizar o ver más stock?</b>',
-    'Reserva una llamada con el equipo y te orientamos sin compromiso.',
-    '📞 <a href="' + _hrefForTelegramHtml(TG_CONFIG.CALENDLY_URL) + '">Reservar llamada estratégica</a>',
-    '💬 <a href="' + _hrefForTelegramHtml(TG_CONFIG.WA_LINK) + '">WhatsApp con el equipo</a>',
+    '¿Alguno encaja con lo que buscas?',
+    '',
+    'Cuéntanos tu presupuesto y objetivo — te preparamos una selección personalizada y te explicamos las condiciones reales. Sin compromiso.',
+    '',
+    '📞 <a href="' + _hrefForTelegramHtml(TG_CONFIG.CALENDLY_URL) + '">Reservar llamada con el equipo</a>',
+    '💬 <a href="' + _hrefForTelegramHtml(_waPrefillHrefTeamGeneral()) + '">Escribirnos por WhatsApp</a>',
   ].join('\n');
 }
 
@@ -364,30 +405,100 @@ function _sendProjectCard(project, rank, issueContext) {
   }
 }
 
+/** Una línea que explica por qué este proyecto está en la selección */
+function _buildWhyLine(project) {
+  const perfil    = String(project.perfil_inversor || '');
+  const promotora = String(project.promotora || '');
+  const postHO    = project.post_handover === 'Sí';
+  const gv        = project.golden_visa_fit === 'Sí';
+  const devScore  = parseInt(project.developer_score) || 5;
+  const isPremium = devScore >= 8;
+
+  if (perfil === 'Alta rentabilidad') {
+    if (isPremium) return 'Zona con alta demanda de alquiler y promotora con historial sólido de entrega.';
+    if (postHO)    return 'Buena rentabilidad estimada por alquiler con pago post-entrega que facilita la operación.';
+    return 'Zona con demanda real de alquiler — encaja bien con estrategia de renta pasiva.';
+  }
+  if (perfil === 'Revalorización') {
+    if (isPremium) return 'Promotora de primer nivel en zona con fuerte recorrido de revalorización a medio plazo.';
+    return 'Zona en expansión con precio de entrada todavía competitivo y buen potencial de revalorización.';
+  }
+  if (perfil === 'Lujo') {
+    if (gv)       return 'Producto premium con perfil óptimo para Golden Visa UAE y activo de alta gama en Dubai.';
+    if (isPremium) return 'Producto de alta gama de una de las promotoras más reconocidas del mercado de Dubai.';
+    return 'Segmento lujo con buena ubicación y acabados que sostienen el valor a largo plazo.';
+  }
+  if (perfil === 'Entrada baja') {
+    if (postHO) return 'Acceso al mercado de Dubai con entrada reducida y pago post-entrega — menor exposición inicial.';
+    return 'Precio de entrada competitivo con promotora activa — buen punto de inicio para diversificar.';
+  }
+  return 'Seleccionado por su equilibrio entre zona, promotora y condiciones de pago.';
+}
+
+/** Bloque HTML de un proyecto — post unificado, alerta y pruebas */
+function _buildProjectBlockHtml(project) {
+  const precio = _formatPrice(project);
+  const lines  = [];
+
+  lines.push('<b>' + _investorDisplay(project.nombre_proyecto, true) + '</b>');
+  lines.push('🏢 ' + _investorDisplay(project.promotora, true));
+  lines.push('📍 ' + _formatZona(project));
+  lines.push('🔑 ' + _formatTipos(project.tipo_unidades));
+  if (precio) lines.push('💰 Desde <b>' + precio + '</b>');
+  lines.push('💳 Plan de pago: <code>' + _investorDisplay(project.plan_pago_raw, true) + '</code>');
+  if (project.post_handover === 'Sí') lines.push('✅ Pago post-entrega disponible');
+  if (project.golden_visa_fit === 'Sí') lines.push('🛂 Perfil Golden Visa UAE');
+  lines.push('');
+  lines.push('<i>' + _escapeHtmlText(_buildWhyLine(project)) + '</i>');
+  lines.push('');
+  const rawFoto = project.foto_url;
+  if (!_isSheetDate(rawFoto) && /^https?:\/\//i.test(String(rawFoto || '').trim())) {
+    lines.push('🖼 <a href="' + _hrefForTelegramHtml(String(rawFoto).trim()) + '">Imagen del proyecto</a>');
+  }
+  const ficha = _safeUrl(project.fuente_url);
+  if (ficha) lines.push('🔗 <a href="' + _hrefForTelegramHtml(ficha) + '">Proyecto oficial</a>');
+  lines.push('📄 <a href="' + _hrefForTelegramHtml(_waPrefillHrefForProject(project)) + '">Solicitar dossier completo por WhatsApp</a>');
+  return lines.join('\n');
+}
+
+/** Un solo mensaje: intro + N proyectos + CTA (máx. ~4096 Telegram) */
+function _buildUnifiedOportunidadesPost(theme, publicacionNum, projects) {
+  const chunks = [];
+  chunks.push(_buildIssueLeadIn(theme, publicacionNum, false));
+  chunks.push('');
+  chunks.push('📌 <b>Selección #' + publicacionNum + '</b> · foco <i>' + _escapeHtmlText(theme.label) + '</i>.');
+  chunks.push('');
+  const n = Math.min(projects.length, TG_CONFIG.NUM_PROYECTOS);
+  for (let i = 0; i < n; i++) {
+    chunks.push('────────────');
+    chunks.push('🔹 <b>Oportunidad ' + (i + 1) + ' de ' + n + '</b>');
+    chunks.push('');
+    chunks.push(_buildProjectBlockHtml(projects[i]));
+    if (i < n - 1) chunks.push('');
+  }
+  chunks.push('');
+  chunks.push(_buildCtaMessage());
+  return _truncateTelegramHtml(chunks.join('\n'), 4090);
+}
+
 // Caption sendPhoto (Telegram máx. 1024 caracteres HTML)
 function _buildProjectCaption(project, rank, leadIn) {
   leadIn = leadIn || '';
   const precio = _formatPrice(project);
   const lines  = [];
 
-  if (rank === 2) {
-    lines.push('🔹 <b>Segunda propuesta de esta entrega</b> <i>(2 de 2)</i>');
-    lines.push('');
-  }
-
-  lines.push('<b>' + rank + '. ' + _investorDisplay(project.nombre_proyecto, true) + '</b>');
-  lines.push('🏢 ' + _investorDisplay(project.promotora, true));
-  lines.push('📍 ' + _formatZona(project));
+  lines.push('<b>' + _investorDisplay(project.nombre_proyecto, true) + '</b>');
+  lines.push('🏢 ' + _investorDisplay(project.promotora, true) + ' · 📍 ' + _formatZona(project));
   lines.push('🔑 ' + _formatTipos(project.tipo_unidades));
   if (precio) lines.push('💰 Desde ' + precio);
-  lines.push('💳 <code>' + _investorDisplay(project.plan_pago_raw, true) + '</code>');
+  lines.push('💳 Plan de pago: <code>' + _investorDisplay(project.plan_pago_raw, true) + '</code>');
   if (project.post_handover === 'Sí') lines.push('✅ Pago post-entrega');
   if (project.golden_visa_fit === 'Sí') lines.push('🛂 Perfil Golden Visa UAE');
-  const ficha = _safeUrl(project.fuente_url);
-  if (ficha) lines.push('🔗 <a href="' + _hrefForTelegramHtml(ficha) + '">Página oficial del proyecto</a>');
   lines.push('');
-  lines.push('📌 <i>' + _investorDisplay(project.perfil_inversor, false) + '</i>');
-  lines.push('📄 <a href="' + _hrefForTelegramHtml(TG_CONFIG.WA_LINK) + '">Solicitar dossier completo por WhatsApp</a>');
+  lines.push('<i>' + _escapeHtmlText(_buildWhyLine(project)) + '</i>');
+  const ficha = _safeUrl(project.fuente_url);
+  if (ficha) lines.push('🔗 <a href="' + _hrefForTelegramHtml(ficha) + '">Proyecto oficial</a>');
+  lines.push('📄 <a href="' + _hrefForTelegramHtml(_waPrefillHrefForProject(project)) + '">Solicitar dossier completo por WhatsApp</a>');
 
   const body = lines.join('\n');
   const merged = leadIn ? (leadIn + '\n\n' + body) : body;
@@ -400,24 +511,20 @@ function _buildProjectText(project, rank, leadIn) {
   const precio = _formatPrice(project);
   const lines  = [];
 
-  if (rank === 2) {
-    lines.push('🔹 <b>Segunda propuesta de esta entrega</b> <i>(2 de 2)</i>');
-    lines.push('');
-  }
-
-  lines.push('<b>' + rank + '. ' + _investorDisplay(project.nombre_proyecto, true) + '</b>');
+  lines.push('<b>' + _investorDisplay(project.nombre_proyecto, true) + '</b>');
   lines.push('🏢 ' + _investorDisplay(project.promotora, true));
   lines.push('📍 ' + _formatZona(project));
-  lines.push('🔑 Tipologías: ' + _formatTipos(project.tipo_unidades));
-  if (precio) lines.push('💰 Precio desde: <b>' + precio + '</b>');
+  lines.push('🔑 ' + _formatTipos(project.tipo_unidades));
+  if (precio) lines.push('💰 Desde <b>' + precio + '</b>');
   lines.push('💳 Plan de pago: <code>' + _investorDisplay(project.plan_pago_raw, true) + '</code>');
-  if (project.post_handover === 'Sí') lines.push('✅ <i>Pago post-entrega disponible</i>');
-  if (project.golden_visa_fit === 'Sí') lines.push('🛂 <i>Perfil Golden Visa UAE</i>');
-  const ficha = _safeUrl(project.fuente_url);
-  if (ficha) lines.push('🔗 <a href="' + _hrefForTelegramHtml(ficha) + '">Página oficial del proyecto</a>');
+  if (project.post_handover === 'Sí') lines.push('✅ Pago post-entrega disponible');
+  if (project.golden_visa_fit === 'Sí') lines.push('🛂 Perfil Golden Visa UAE');
   lines.push('');
-  lines.push('📌 Perfil: <i>' + _investorDisplay(project.perfil_inversor, true) + '</i>');
-  lines.push('📄 <a href="' + _hrefForTelegramHtml(TG_CONFIG.WA_LINK) + '">Solicitar dossier completo por WhatsApp</a>');
+  lines.push('<i>' + _escapeHtmlText(_buildWhyLine(project)) + '</i>');
+  lines.push('');
+  const ficha = _safeUrl(project.fuente_url);
+  if (ficha) lines.push('🔗 <a href="' + _hrefForTelegramHtml(ficha) + '">Proyecto oficial</a>');
+  lines.push('📄 <a href="' + _hrefForTelegramHtml(_waPrefillHrefForProject(project)) + '">Solicitar dossier completo por WhatsApp</a>');
 
   const body = lines.join('\n');
   const merged = leadIn ? (leadIn + '\n\n' + body) : body;
@@ -630,20 +737,8 @@ function testWeeklyMessagePreview() {
   const theme      = MESSAGE_THEMES[themeRound % MESSAGE_THEMES.length];
   const selected   = _selectProjectsForTheme(projects, theme);
 
-  Logger.log('=== PREVIEW — Cabecera fusionada (1ª ficha, texto / sin foto) · TG_THEME_INDEX=' + themeRound + ' ===');
-  Logger.log(_buildIssueLeadIn(theme, themeRound + 1, false));
-
-  selected.forEach((p, i) => {
-    const hasFoto = p.foto_url && String(p.foto_url).trim().match(/^https?:\/\//i);
-    const lead = (i === 0) ? _buildIssueLeadIn(theme, themeRound + 1, !!hasFoto) : '';
-    Logger.log('\n=== PROYECTO ' + (i + 1) + ' — ' + (hasFoto ? 'CON FOTO (caption)' : 'SIN FOTO (mensaje)') + ' ===');
-    Logger.log('foto_url: ' + (p.foto_url || '(vacío)'));
-    Logger.log('precio_desde_aed: ' + (p.precio_desde_aed || '(vacío)'));
-    Logger.log(hasFoto ? _buildProjectCaption(p, i + 1, lead) : _buildProjectText(p, i + 1, lead));
-  });
-
-  Logger.log('\n=== CIERRE CTA ===');
-  Logger.log(_buildCtaMessage());
+  Logger.log('=== PREVIEW — MENSAJE ÚNICO (HTML) · TG_THEME_INDEX=' + themeRound + ' ===');
+  Logger.log(_buildUnifiedOportunidadesPost(theme, themeRound + 1, selected));
 }
 
 // Probar foto con una URL concreta sin tocar el Sheet
