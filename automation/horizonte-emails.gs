@@ -239,7 +239,8 @@ function notifyCalendlyBookings() {
 
   events.forEach(event => {
     const title = String(event.getTitle() || '');
-    if (!title.includes(CONFIG.CALENDLY_EVENT_KEYWORD)) return;
+    const desc  = String(event.getDescription() || '');
+    if (!title.includes(CONFIG.CALENDLY_EVENT_KEYWORD) && !desc.includes(CONFIG.CALENDLY_EVENT_KEYWORD)) return;
 
     const eventId = event.getId();
     if (notified[eventId]) return;
