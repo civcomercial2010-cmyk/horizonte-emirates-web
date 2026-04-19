@@ -1,5 +1,5 @@
 # Horizonte Emirates — Tareas Pendientes
-_Actualizado: 18 de abril de 2026_
+_Actualizado: referencias de landing pasadas a index-v6.html (tareas T12–T15)_
 
 ---
 
@@ -14,8 +14,8 @@ _Actualizado: 18 de abril de 2026_
 
 ## ACTIVAS — Por orden de ejecución
 
-### 1. `index.html` → redirigir a V5 + commit script emails
-**Estado:** ✅ Completada 18/04/2026 — commit 16dc8cf
+### 1. `index.html` → publicar landing V6 + motor emails
+**Estado:** ✅ Completada — `index.html` redirige a `index-v6.html` (commit 9fc36b3); script en `automation/horizonte-emails.gs` en repo
 
 ---
 
@@ -49,7 +49,7 @@ _Actualizado: 18 de abril de 2026_
 **Qué hacer:**
 1. Ir a [analytics.google.com](https://analytics.google.com) → crear propiedad "Horizonte Emirates" → dominio `horizonteemirates.com`
 2. Copiar el ID de medición (formato `G-XXXXXXXXXX`)
-3. Añadir el snippet de GA4 en el `<head>` de `index-v5.html`
+3. Añadir el snippet de GA4 en el `<head>` de `index-v6.html`
 4. Añadir eventos en el código JS: `form_submit`, `wa_click`, `calendly_click`
 5. Verificar que los eventos llegan en GA4 → DebugView
 
@@ -59,7 +59,7 @@ _Actualizado: 18 de abril de 2026_
 **Qué hacer:**
 1. Crear cuenta en [ads.google.com](https://ads.google.com) con `civcomercial2010@gmail.com`
 2. Vincular con GA4 e importar conversión `form_submit` como "Formulario cualificado"
-3. Instalar Google Tag en `index-v5.html`
+3. Instalar Google Tag en `index-v6.html`
 4. Crear campaña de Búsqueda en **BORRADOR** (no activar):
    - Presupuesto: 15€/día
    - Zona: Madrid, Barcelona, Marbella, Valencia, Sevilla, Bilbao
@@ -72,7 +72,7 @@ _Actualizado: 18 de abril de 2026_
 ### 7. Instalar Meta Pixel + campaña en borrador (T14)
 **Qué hacer:**
 1. Crear cuenta en [business.facebook.com](https://business.facebook.com) → Pixel → "Horizonte Emirates"
-2. Instalar el código base del Pixel en el `<head>` de `index-v5.html`
+2. Instalar el código base del Pixel en el `<head>` de `index-v6.html`
 3. Añadir `fbq('track', 'Lead')` al submit del formulario
 4. Crear campaña en **BORRADOR**: objetivo Leads, público 35–60 años, intereses inversión/bienes raíces, zona España
 5. Dejar en PAUSA — lista para activar
@@ -81,7 +81,7 @@ _Actualizado: 18 de abril de 2026_
 
 ### 8. Añadir UTM tracking al formulario (T15)
 **Qué hacer:**
-1. En `index-v5.html`, antes del submit del formulario, capturar parámetros UTM de la URL con JS y rellenar campos ocultos
+1. En `index-v6.html`, antes del submit del formulario, capturar parámetros UTM de la URL con JS y rellenar campos ocultos
 2. Añadir al formulario Web3Forms: `<input type="hidden" name="utm_source">`, `utm_medium`, `utm_campaign`
 3. En `horizonte-emails.gs`, actualizar `parseLeadFromEmail()` para que lea los campos UTM y los guarde en Sheets
 4. Añadir columnas UTM a la hoja "Leads" del Google Sheet
