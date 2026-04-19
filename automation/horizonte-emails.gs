@@ -37,8 +37,8 @@ const CONFIG = {
     'no más correos', 'no mas correos', 'cancelar suscripción', 'cancelar suscripcion',
     'stop', 'unsubscribe',
   ],
-  // Palabras clave para confirmar que el email es de Horizonte Emirates
-  POLL_KEYWORDS:   ['Horizonte Emirates', 'HE V5', 'HE V3', 'HE V2'],
+  // Palabras clave para confirmar que el email es de Horizonte Emirates (además, isHorizonteWeb3Lead detecta «Lead HE Vn» en asunto).
+  POLL_KEYWORDS:   ['Horizonte Emirates', 'HE V6', 'HE V5', 'HE V3', 'HE V2'],
   TEST_MODE:       false, // true → simula sin enviar emails reales
   /**
    * Nombre mostrado como remitente (Gmail «De:»). Vacío → se usa ASESOR_NOMBRE.
@@ -368,6 +368,20 @@ function ensureGmailLabel(labelName) {
   }
 }
 
+/**
+ * true si el aviso Web3Forms corresponde al embudo HE (no correos genéricos de Web3Forms).
+ * Incluye asuntos tipo «[A|11pts] Lead HE V6 · País» que no llevan la cadena literal «Horizonte Emirates».
+ */
+function isHorizonteWeb3Lead(subject, body) {
+  const s = String(subject || '');
+  const b = String(body || '');
+  const blob = s + '\n' + b;
+  if (CONFIG.POLL_KEYWORDS.some(kw => s.includes(kw) || b.includes(kw))) return true;
+  if (/Horizonte\s+Emirates/i.test(blob)) return true;
+  if (/\bLead\s+HE\s+V\d+\b/i.test(s)) return true;
+  return false;
+}
+
 function pollGmail() {
   let threads = GmailApp.search(CONFIG.POLL_QUERY, 0, 50);
   if (!threads.length && CONFIG.POLL_QUERY_FALLBACK) {
@@ -400,7 +414,7 @@ function pollGmail() {
       Logger.log('pollGmail: FROM=' + msg.getFrom() + ' | SUBJECT=' + subject);
 
       // Verificar que es un lead de Horizonte Emirates
-      const isHE = CONFIG.POLL_KEYWORDS.some(kw => subject.includes(kw) || body.includes(kw));
+      const isHE = isHorizonteWeb3Lead(subject, body);
       if (!isHE) {
         // No es nuestro — marcar leído y saltar sin etiquetar
         Logger.log('pollGmail: descartado (sin keyword HE): ' + subject);
@@ -468,7 +482,7 @@ function diagnoseFormPipeline() {
     const subject = msg.getSubject();
     const body = getMessageBodyForLeadParse(msg);
     const tagged = thread.getLabels().some(l => l.getName() === CONFIG.LABEL_PROCESADO);
-    const isHE = CONFIG.POLL_KEYWORDS.some(kw => subject.includes(kw) || body.includes(kw));
+    const isHE = isHorizonteWeb3Lead(subject, body);
     const lead = isHE ? parseLeadFromEmail(body, subject) : null;
 
     Logger.log('--- #' + idx + ' etiquetado=' + tagged + ' ---');
