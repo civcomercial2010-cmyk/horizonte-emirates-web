@@ -844,16 +844,19 @@ footer{background:var(--navy-d);padding:60px 0 24px}
   .pain-col{padding:28px 22px}
   .compare-wrap{margin-top:14px;overflow-x:auto;-webkit-overflow-scrolling:touch}
   .compare-table th:first-child,.compare-table td:first-child{display:none}
-  .strategy-g,.proc-g{grid-template-columns:1fr}
-  .proc-g{gap:12px}
+  .strategy-g{grid-template-columns:1fr 1fr}
+  .proc-g{grid-template-columns:1fr;gap:12px}
   .proc-s{padding:28px 22px 24px}
   .proc-s::before{top:54px;left:22px;width:36px}
   .proc-s h3{min-height:auto}
   .zone-media{margin:-28px -22px 20px}
   .zone-media img{height:200px}
+  #roi{display:none}
   #form{padding-block:var(--space-xl)}
   .form-wrap{padding:24px var(--gutter-mobile);border-radius:4px}
-  .opt-cards{grid-template-columns:1fr}
+  .opt-cards{grid-template-columns:1fr 1fr}
+  .opt-card{padding:14px 10px 12px}
+  .opt-sub{font-size:12px;max-width:none}
   .frow2{grid-template-columns:1fr}
   .compare-table{font-size:12px}
   .compare-table td,.compare-table th{padding:8px 10px}
@@ -1351,10 +1354,7 @@ footer{background:var(--navy-d);padding:60px 0 24px}
           <div class="fq-label">5) Datos de contacto</div>
           <div class="fhint">Le contactaremos en menos de 48h por el canal que prefiera</div>
           <div class="ffields">
-            <div class="frow2">
-              <div class="fg"><label>Nombre *</label><input type="text" name="nombre" placeholder="Juan" required/></div>
-              <div class="fg"><label>Apellidos</label><input type="text" name="apellidos" placeholder="García López"/></div>
-            </div>
+            <div class="fg"><label>Nombre *</label><input type="text" name="nombre" placeholder="Nombre completo" required/></div>
             <div class="fg"><label>Email *</label><input type="email" name="email" placeholder="juan@ejemplo.com" required autocomplete="email"/></div>
             <div class="fg">
               <label>Teléfono (WhatsApp) *</label>
