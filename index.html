@@ -809,7 +809,6 @@ footer{background:var(--navy-d);padding:60px 0 24px}
   .kpi-g{grid-template-columns:1fr 1fr}
 }
 @media(max-width:700px){
-  .hero-in{padding-inline:var(--gutter-mobile)}
   body{font-size:16px}
   .container,.wrap,.container-wide,.container-narrow,.nav-i{padding-inline:var(--gutter-mobile)}
   .nav-links{display:none}
@@ -820,7 +819,8 @@ footer{background:var(--navy-d);padding:60px 0 24px}
   .sh{margin-bottom:var(--space-md)}
   .sh p{font-size:16px}
   .sh.sh-wide p{white-space:normal}
-  .hero-in{padding:72px 0 52px}
+  .ticker-wrap{display:none}
+  .hero-in{padding:72px var(--gutter-mobile) 52px}
   h1{font-size:clamp(44px,10vw,70px)}
   .hero-sub{font-size:18px;margin-bottom:22px}
   .hero-ctas{flex-direction:column;align-items:stretch;gap:10px}
@@ -835,7 +835,8 @@ footer{background:var(--navy-d);padding:60px 0 24px}
   .pain-g{grid-template-columns:1fr}
   .pain-col.left{border-right:none;border-bottom:1px solid var(--border)}
   .pain-col{padding:28px 22px}
-  .compare-wrap{margin-top:14px}
+  .compare-wrap{margin-top:14px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .compare-table th:first-child,.compare-table td:first-child{display:none}
   .strategy-g,.proc-g{grid-template-columns:1fr}
   .proc-g{gap:12px}
   .proc-s{padding:28px 22px 24px}
@@ -847,8 +848,10 @@ footer{background:var(--navy-d);padding:60px 0 24px}
   .form-wrap{padding:24px var(--gutter-mobile);border-radius:4px}
   .opt-cards{grid-template-columns:1fr}
   .frow2{grid-template-columns:1fr}
-  .compare-table{font-size:13px}
-  .compare-table td,.compare-table th{padding:10px 12px}
+  .compare-table{font-size:12px}
+  .compare-table td,.compare-table th{padding:8px 10px}
+  .wa-float{bottom:80px}
+  .suc-card{padding:28px 20px 24px}
   #faq{padding:60px 0}
   footer{padding:44px 0 88px}
   .ft{grid-template-columns:1fr;gap:28px;padding-bottom:28px}
@@ -872,7 +875,7 @@ footer{background:var(--navy-d);padding:60px 0 24px}
 <!-- NAV -->
 <nav id="nav">
   <div class="nav-i">
-    <a href="index-v6.html" class="logo">Horizonte <span>Emirates</span></a>
+    <a href="/" class="logo">Horizonte <span>Emirates</span></a>
     <div class="nav-right">
       <div class="nav-links">
         <a href="#para-quien">Por qué</a>
@@ -1105,7 +1108,7 @@ footer{background:var(--navy-d);padding:60px 0 24px}
     <div class="zones-g reveal-stagger">
       <div class="zone-c">
         <div class="zone-media">
-          <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1800&q=90&auto=format&fit=crop" alt="Skyline de Dubai" loading="lazy"/>
+          <img src="https://images.unsplash.com/photo-1518684079-3c830dcef090?w=800&q=85&auto=format&fit=crop" alt="Dubai Marina" loading="lazy"/>
         </div>
         <div class="zone-tag">Prime urbano</div>
         <h3>Dubai</h3>
