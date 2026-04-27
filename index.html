@@ -195,7 +195,7 @@ h1 em{font-style:italic;color:var(--gold)}
 .hero-badge{display:flex;flex-wrap:wrap;gap:9px}
 .badge{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:100px;padding:7px 13px;font-size:12px;font-weight:500;color:#fff}
 .badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--gold);flex-shrink:0}
-.hero-filter{margin-top:20px;padding:16px 20px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-left:3px solid var(--gold);max-width:640px}
+.hero-filter{margin-top:20px;padding:16px 20px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-left:3px solid var(--gold);max-width:860px}
 .hero-filter p{font-size:14px;font-weight:400;color:rgba(255,255,255,.88);line-height:1.55}
 .hero-filter strong{color:var(--gold);font-weight:600}
 
@@ -276,7 +276,7 @@ h1 em{font-style:italic;color:var(--gold)}
   width:min(100%,calc(var(--container-narrow) + (var(--gutter-desktop) * 2)));
   margin:0 auto;
   text-align:center;
-  padding:var(--space-2xl) var(--gutter-desktop);
+  padding:var(--space-xl) var(--gutter-desktop);
 }
 .filter-inner .eyebrow{color:var(--gold)}
 .filter-inner h2{font-family:var(--serif);font-size:clamp(34px,4.1vw,52px);font-weight:500;color:#fff;margin:14px 0;line-height:1.1}
@@ -287,9 +287,9 @@ h1 em{font-style:italic;color:var(--gold)}
 .filter-note{font-size:13px;color:rgba(255,255,255,.4);margin-top:12px;text-align:center}
 
 /* ── PAIN SECTION ─────────────────────────────── */
-.pain-g{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--border)}
+.pain-g{display:grid;grid-template-columns:1fr;gap:0;border:1px solid var(--border)}
 .pain-col{padding:var(--space-lg) var(--space-md)}
-.pain-col.left{background:#fff;border-right:1px solid var(--border)}
+.pain-col.left{background:#fff;border-right:none}
 .pain-col.right{background:linear-gradient(180deg,#0d1b2a 0%,#0b1827 100%)}
 .pain-col h3{font-family:var(--serif);font-size:30px;font-weight:500;line-height:1.15;margin-bottom:24px}
 .pain-col.left h3{color:var(--ink)}
@@ -311,10 +311,10 @@ h1 em{font-style:italic;color:var(--gold)}
 /* ── COMPARISON TABLE ─────────────────────────── */
 .compare-table{width:100%;border-collapse:collapse;margin-top:40px;font-size:15px}
 .compare-table th{padding:12px 16px;font-size:10px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;text-align:left;border-bottom:2px solid var(--border);color:var(--muted)}
-.compare-table th.dubai-h{color:var(--gold);border-bottom-color:var(--gold)}
+.compare-table th.dubai-h{color:#2d6a4f;border-bottom-color:#2d6a4f;background:rgba(45,106,79,.1)}
 .compare-table td{padding:14px 16px;border-bottom:1px solid var(--border);vertical-align:middle}
 .compare-table tr:last-child td{border-bottom:none}
-.compare-table td:nth-child(2){font-weight:500;font-size:14px;color:var(--muted)}
+.compare-table td:nth-child(1){font-weight:500;font-size:14px;color:var(--muted)}
 .compare-table td.cmp-bad,.compare-table td.cmp-good,.compare-table td.cmp-neutral,.compare-table td.cmp-good-es{font-size:14px;font-weight:500}
 .badge-good{display:inline-flex;align-items:center;gap:5px;background:rgba(45,106,79,.08);border:1px solid rgba(45,106,79,.3);color:#1e5235;font-size:12px;font-weight:600;padding:3px 9px;border-radius:var(--r)}
 .compare-table th.th-es{color:#7f1d1d;border-bottom-color:rgba(127,29,29,.45);background:rgba(127,29,29,.06)}
@@ -322,7 +322,9 @@ h1 em{font-style:italic;color:var(--gold)}
 .cmp-bad{background:rgba(185,64,64,.1);color:#7f1d1d}
 .cmp-good{background:rgba(45,106,79,.1);color:#14532d}
 .cmp-neutral{background:transparent;color:var(--ink)}
-.cmp-good-es{background:rgba(45,106,79,.12);color:#14532d}
+.cmp-good-es{background:rgba(45,106,79,.1);color:#2d6a4f}
+.compare-table td.cmp-dubai{background:rgba(45,106,79,.12);color:#2d6a4f;font-weight:600}
+.compare-table td.cmp-dubai-risk{background:rgba(185,64,64,.12);color:#7f1d1d;font-weight:600}
 
 /* ── STRATEGY BY CAPITAL ──────────────────────── */
 .strategy-g{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--border)}
@@ -338,6 +340,8 @@ h1 em{font-style:italic;color:var(--gold)}
 .section-process{
   background:linear-gradient(180deg,#f6f3eb 0%,#f2ede3 100%);
 }
+#como{padding-bottom:var(--space-lg)}
+#zonas-inversion{padding-top:var(--space-lg)}
 .proc-g{
   display:grid;
   grid-template-columns:repeat(4,minmax(0,1fr));
@@ -407,18 +411,18 @@ h1 em{font-style:italic;color:var(--gold)}
 
 /* ── ZONES ────────────────────────────────────── */
 .zones-g{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--border);border:1px solid var(--border)}
-.zone-c{background:#fff;padding:36px var(--space-md)}
+.zone-c{background:#fff;padding:36px var(--space-md);display:flex;flex-direction:column;height:100%}
 .zone-media{margin:-36px calc(var(--space-md) * -1) 24px}
 .zone-media img{width:100%;height:260px;object-fit:cover}
 .zone-media img.zone-img-abu{object-position:center 42%}
 .zone-tag{font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
 .zone-c h3{font-family:var(--serif);font-size:30px;font-weight:500;color:var(--ink);margin-bottom:10px}
 .zone-c p{font-size:15px;color:var(--muted);line-height:1.65;margin-bottom:18px}
-.yield-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.yield-pill{display:inline-flex;align-items:baseline;gap:4px;background:var(--gold-lt);border:1px solid var(--gold-bd);padding:5px 11px;border-radius:var(--r)}
-.yp-n{font-family:var(--serif);font-size:17px;font-weight:500;color:var(--gold)}
-.yp-l{font-size:11px;color:var(--muted)}
-.zone-note{font-size:13px;font-weight:500;color:#2a3f54}
+.yield-row{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-top:auto;padding-top:14px;border-top:1px solid var(--border)}
+.yield-pill{display:inline-flex;align-items:baseline;gap:6px;background:transparent;border:none;padding:0}
+.yp-n{font-family:var(--serif);font-size:25px;font-weight:600;color:#0d1b2a;line-height:1}
+.yp-l{font-size:11px;color:#415469;text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+.zone-note{font-size:12px;font-weight:700;color:#2d6a4f;letter-spacing:.05em;text-transform:uppercase;line-height:1.2}
 
 /* ── METRICS DASHBOARD (V6) ──────────────────── */
 .metrics-sect{background:var(--navy);padding-block:var(--space-2xl);border-top:1px solid rgba(255,255,255,.06)}
@@ -453,6 +457,7 @@ h1 em{font-style:italic;color:var(--gold)}
   .roi-g{grid-template-columns:1fr 1fr;gap:48px}
 }
 .roi-controls{display:flex;flex-direction:column;gap:22px}
+.roi-results{display:flex;flex-direction:column;gap:14px}
 .slider-group label{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;font-weight:600;color:var(--ink);margin-bottom:8px}
 .slider-group label span{font-weight:500;color:var(--muted);font-size:12px}
 .slider-group input[type=range]{width:100%;accent-color:var(--gold);height:6px}
@@ -479,7 +484,7 @@ h1 em{font-style:italic;color:var(--gold)}
 
 /* ── FORM SECTION (V6) ────────────────────────── */
 #form{
-  background:linear-gradient(180deg,var(--warm2) 0%,#ede9df 100%);
+  background:linear-gradient(180deg,#0d1b2a 0%,#0b1827 100%);
   padding-block:var(--space-2xl);
 }
 .form-wrap{
@@ -838,12 +843,11 @@ footer{background:var(--navy-d);padding:60px 0 24px}
   .kpi{padding:22px 12px 26px;border-right:none;border-bottom:1px solid rgba(255,255,255,.08)}
   .kpi:nth-child(odd){border-right:1px solid rgba(255,255,255,.08)}
   .kpi:nth-last-child(1),.kpi:nth-last-child(2){border-bottom:none}
-  .filter-inner{padding:var(--space-xl) var(--gutter-mobile)}
+  .filter-inner{padding:var(--space-lg) var(--gutter-mobile)}
   .pain-g{grid-template-columns:1fr}
   .pain-col.left{border-right:none;border-bottom:1px solid var(--border)}
   .pain-col{padding:28px 22px}
   .compare-wrap{margin-top:14px;overflow-x:auto;-webkit-overflow-scrolling:touch}
-  .compare-table th:first-child,.compare-table td:first-child{display:none}
   .strategy-g{grid-template-columns:1fr 1fr}
   .proc-g{grid-template-columns:1fr;gap:12px}
   .proc-s{padding:28px 22px 24px}
@@ -889,6 +893,7 @@ footer{background:var(--navy-d);padding:60px 0 24px}
       <div class="nav-links">
         <a href="#para-quien">Por qué</a>
         <a href="#como">Proceso</a>
+        <a href="proyectos.html">Proyectos</a>
         <a href="#form">Análisis</a>
         <a href="#faq">FAQ</a>
       </div>
@@ -957,12 +962,6 @@ footer{background:var(--navy-d);padding:60px 0 24px}
     <div class="rule" style="margin:14px auto"></div>
       <h2 style="color:#fff">No trabajamos con todos los perfiles.</h2>
     <p>Seleccionamos inversores cuyo capital y objetivos encajan con las oportunidades reales disponibles en UAE. Si encaja, el proceso es guiado, en español y sin coste.</p>
-    <div class="filter-criteria">
-      <div class="fc-item">Capital disponible desde 150.000€</div>
-      <div class="fc-item">Objetivo claro: renta, apreciación o diversificación</div>
-      <div class="fc-item">Horizonte de decisión definido</div>
-      <div class="fc-item">Quiere acompañamiento experto, no información genérica</div>
-    </div>
     <a href="#form" class="btn-gold">Solicitar análisis</a>
   </div>
 </div>
@@ -987,37 +986,26 @@ footer{background:var(--navy-d);padding:60px 0 24px}
           <div class="pain-item negative"><div class="dot"></div><p>Ley de Vivienda 2023: <strong>limitación de rentas, ampliación de obligaciones</strong> del propietario y reducción de deducciones fiscales aplicables.</p></div>
         </div>
       </div>
-      <div class="pain-col right fade" style="--reveal-delay:120ms">
-        <h3 style="color:#fff">Invertir en Emiratos con Horizonte Emirates</h3>
-        <div class="pain-list">
-          <div class="pain-item positive"><div class="dot"></div><p style="color:rgba(255,255,255,.88)"><strong style="color:#fff">Propiedad 100% protegida</strong>: derechos reales garantizados bajo regulación RERA. Sin riesgo de impago no recuperable ni ocupación.</p></div>
-          <div class="pain-item positive"><div class="dot"></div><p style="color:rgba(255,255,255,.88)"><strong style="color:#fff">6–9% de rentabilidad bruta estimada</strong>, sin impuestos sobre rentas ni plusvalías. El rendimiento trabaja íntegramente para usted.</p></div>
-          <div class="pain-item positive"><div class="dot"></div><p style="color:rgba(255,255,255,.88)"><strong style="color:#fff">Acceso a la Golden Visa</strong> UAE a través de la inversión inmobiliaria. Le guiamos en todo el proceso.</p></div>
-          <div class="pain-item positive"><div class="dot"></div><p style="color:rgba(255,255,255,.88)"><strong style="color:#fff">Planes de pago off-plan desde el 10–20%</strong> de entrada. Acceso a activos de alto valor sin inmovilizar el capital completo desde el primer día.</p></div>
-        </div>
-      </div>
     </div>
     <div class="compare-wrap fade">
       <table class="compare-table" style="margin-top:0">
         <thead>
           <tr>
-            <th>#</th>
             <th>Concepto</th>
             <th class="th-es">España</th>
             <th class="dubai-h">Dubai</th>
           </tr>
         </thead>
         <tbody>
-          <tr><td class="num">1</td><td>Rentabilidad neta (alquiler)</td><td class="cmp-bad">🔴 2–3%</td><td class="cmp-good"><span class="badge-good">🟢 6–9%</span></td></tr>
-          <tr><td class="num">2</td><td>Revalorización anual media</td><td class="cmp-bad">🔴 ±2%</td><td class="cmp-good"><span class="badge-good">🟢 ±6%</span></td></tr>
-          <tr><td class="num">3</td><td>Impuesto sobre alquiler</td><td class="cmp-bad">🔴 Hasta 45% IRPF</td><td class="cmp-good"><span class="badge-good">🟢 0%</span></td></tr>
-          <tr><td class="num">4</td><td>Impuesto sobre plusvalías</td><td class="cmp-bad">🔴 19–28%</td><td class="cmp-good"><span class="badge-good">🟢 0%</span></td></tr>
-          <tr><td class="num">5</td><td>Riesgo de ocupación ilegal</td><td class="cmp-bad">🔴 Alto · proceso lento</td><td class="cmp-good"><span class="badge-good">🟢 Nulo</span></td></tr>
-          <tr><td class="num">6</td><td>Cuentas escrow off-plan</td><td class="cmp-bad">🔴 No siempre obligatorio</td><td class="cmp-good"><span class="badge-good">🟢 Regulado RERA</span></td></tr>
-          <tr><td class="num">7</td><td>Visa por inversión inmobiliaria</td><td class="cmp-neutral">⚪ Golden Visa (reqs distintos)</td><td class="cmp-good"><span class="badge-good">🟢 Golden Visa UAE desde 2M AED</span></td></tr>
-          <tr><td class="num">8</td><td>Volumen de mercado</td><td class="cmp-neutral">⚪ Mercado maduro</td><td class="cmp-good"><span class="badge-good">🟢 +334.000 trans. 2025</span></td></tr>
-          <tr><td class="num">9</td><td>Divisa del activo</td><td class="cmp-good-es">🟢 EUR (sin riesgo cambio)</td><td class="cmp-neutral">⚪ AED (riesgo EUR/AED)</td></tr>
-          <tr><td class="num">10</td><td>Acompañamiento en español</td><td class="cmp-neutral">⚪ Agencias locales</td><td class="cmp-good"><span class="badge-good">🟢 Partner RERA hispanohablante</span></td></tr>
+          <tr><td>Rentabilidad neta (alquiler)</td><td class="cmp-bad">2–3%</td><td class="cmp-dubai">6–9%</td></tr>
+          <tr><td>Revalorización anual media</td><td class="cmp-bad">Aproximadamente 2%</td><td class="cmp-dubai">Aproximadamente 6%</td></tr>
+          <tr><td>Impuesto sobre alquiler</td><td class="cmp-bad">Hasta 45% del impuesto sobre la renta</td><td class="cmp-dubai">0%</td></tr>
+          <tr><td>Impuesto sobre plusvalías</td><td class="cmp-bad">19–28%</td><td class="cmp-dubai">0%</td></tr>
+          <tr><td>Riesgo de ocupación ilegal</td><td class="cmp-bad">Alto, con procesos lentos</td><td class="cmp-dubai">Nulo</td></tr>
+          <tr><td>Visa por inversión inmobiliaria</td><td class="cmp-bad">Golden Visa con requisitos distintos</td><td class="cmp-dubai">Golden Visa de Emiratos desde 2 millones de dírhams</td></tr>
+          <tr><td>Volumen de mercado</td><td class="cmp-bad">Mercado maduro</td><td class="cmp-dubai">Más de 334.000 transacciones en 2025</td></tr>
+          <tr><td>Divisa del activo</td><td class="cmp-good-es">Euro, sin riesgo de tipo de cambio</td><td class="cmp-dubai-risk">Dírham de Emiratos, con riesgo de tipo de cambio frente al euro</td></tr>
+          <tr><td>Acompañamiento en español</td><td class="cmp-bad">Agencias locales</td><td class="cmp-dubai">Equipo hispanohablante con partner regulado por RERA</td></tr>
         </tbody>
       </table>
     </div>
@@ -1039,7 +1027,7 @@ footer{background:var(--navy-d);padding:60px 0 24px}
         <h3>Entrada estratégica</h3>
         <div class="s-focus">Primer posicionamiento en UAE</div>
         <p class="s-desc">Off-plan premium con pago escalonado desde el 10–20%. Acceso al mercado sin inmovilizar capital completo.</p>
-        <div class="s-pill">Off-plan · RAK · secundario</div>
+        <div class="s-pill">Off-plan</div>
       </div>
       <div class="strategy-card">
         <div class="s-range">300.000 – 600.000€</div>
@@ -1081,12 +1069,14 @@ footer{background:var(--navy-d);padding:60px 0 24px}
         <div class="proc-tag">Análisis de perfil</div>
         <h3>Le escuchamos primero</h3>
         <p>Revisamos su capital, objetivo y horizonte temporal. No con una plantilla genérica — con criterio real sobre lo que UAE ofrece para su perfil específico.</p>
+        <div class="proc-badge">SIN COMPROMISO</div>
       </div>
       <div class="proc-s">
         <div class="proc-num">02</div>
         <div class="proc-tag">Selección verificada</div>
         <h3>Oportunidades reales</h3>
         <p>Le presentamos entre 3 y 5 activos con proyecciones reales y due diligence legal. Sin relleno. Solo lo que encaja con su capital y objetivo.</p>
+        <div class="proc-badge">VALIDACION REAL</div>
       </div>
       <div class="proc-s">
         <div class="proc-num">03</div>
@@ -1107,7 +1097,7 @@ footer{background:var(--navy-d);padding:60px 0 24px}
 </section>
 
 <!-- ZONAS -->
-<section class="section alt">
+<section class="section alt" id="zonas-inversion">
   <div class="wrap">
     <div class="sh fade">
       <span class="eyebrow">Zonas de inversión</span>
@@ -1115,6 +1105,18 @@ footer{background:var(--navy-d);padding:60px 0 24px}
       <h2>Tres mercados. Tres perfiles de inversor.</h2>
     </div>
     <div class="zones-g reveal-stagger">
+      <div class="zone-c">
+        <div class="zone-media">
+          <img src="Abu Dhabi.jpg" alt="Skyline de Abu Dhabi" loading="lazy" class="zone-img-abu"/>
+        </div>
+        <div class="zone-tag">Institucional · Largo plazo</div>
+        <h3>Abu Dhabi</h3>
+        <p>Proyectos con respaldo soberano (Aldar Properties, Saadiyat). Menor volatilidad, horizontes de cinco años o más y máxima seguridad contractual para capital conservador.</p>
+        <div class="yield-row">
+          <div class="yield-pill"><span class="yp-n">5–7%</span><span class="yp-l">neto anual estable</span></div>
+          <span class="zone-note">Perfil conservador</span>
+        </div>
+      </div>
       <div class="zone-c">
         <div class="zone-media">
           <img src="https://images.unsplash.com/photo-1518684079-3c830dcef090?w=800&q=85&auto=format&fit=crop" alt="Dubai Marina" loading="lazy"/>
@@ -1137,18 +1139,6 @@ footer{background:var(--navy-d);padding:60px 0 24px}
         <div class="yield-row">
           <div class="yield-pill"><span class="yp-n">+25%</span><span class="yp-l">plusvalía est. pre-2027</span></div>
           <span class="zone-note">Entrada temprana</span>
-        </div>
-      </div>
-      <div class="zone-c">
-        <div class="zone-media">
-          <img src="Abu Dhabi.jpg" alt="Skyline de Abu Dhabi" loading="lazy" class="zone-img-abu"/>
-        </div>
-        <div class="zone-tag">Institucional · Largo plazo</div>
-        <h3>Abu Dhabi</h3>
-        <p>Proyectos con respaldo soberano (Aldar Properties, Saadiyat). Menor volatilidad, horizontes 5+ años y máxima seguridad contractual para capital conservador.</p>
-        <div class="yield-row">
-          <div class="yield-pill"><span class="yp-n">5–7%</span><span class="yp-l">neto anual estable</span></div>
-          <span class="zone-note">Perfil conservador</span>
         </div>
       </div>
     </div>
@@ -1178,22 +1168,24 @@ footer{background:var(--navy-d);padding:60px 0 24px}
           <label>Revalorización anual estimada <span id="roi-appr-lbl">5,5%</span></label>
           <input type="range" id="roi-appr" min="2" max="15" step="0.5" value="5.5"/>
         </div>
+        <div class="compare-bars fade" style="--reveal-delay:80ms">
+          <div class="bar-row">
+            <div class="bar-lbl"><span>España (referencia)</span><small>~4% yield + ~2% reval. ≈ 6%</small></div>
+            <div class="bar-track"><div class="bar-fill-es" id="bar-es"></div></div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-lbl"><span>UAE (sus supuestos)</span><small id="bar-ae-lbl">—</small></div>
+            <div class="bar-track"><div class="bar-fill-ae" id="bar-ae"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="roi-results fade" style="--reveal-delay:120ms">
         <div class="roi-boxes">
           <div class="roi-box"><span class="rk">Ingreso alquiler / año</span><span class="rv" id="roi-rent-out">—</span></div>
           <div class="roi-box"><span class="rk">Revalorización / año</span><span class="rv" id="roi-appr-out">—</span></div>
           <div class="roi-box"><span class="rk">Retorno total estimado / año</span><span class="rv" id="roi-total-out">—</span></div>
         </div>
         <p class="roi-disclaimer">No es recomendación de inversión. Cifras ilustrativas basadas en sus supuestos.</p>
-      </div>
-      <div class="compare-bars fade" style="--reveal-delay:80ms">
-        <div class="bar-row">
-          <div class="bar-lbl"><span>España (referencia)</span><small>~4% yield + ~2% reval. ≈ 6%</small></div>
-          <div class="bar-track"><div class="bar-fill-es" id="bar-es"></div></div>
-        </div>
-        <div class="bar-row">
-          <div class="bar-lbl"><span>UAE (sus supuestos)</span><small id="bar-ae-lbl">—</small></div>
-          <div class="bar-track"><div class="bar-fill-ae" id="bar-ae"></div></div>
-        </div>
       </div>
     </div>
   </div>
@@ -1498,11 +1490,11 @@ footer{background:var(--navy-d);padding:60px 0 24px}
       </div>
       <div class="fc">
         <h4>Zonas</h4>
-        <ul><li><a href="#">Dubai</a></li><li><a href="#">Ras Al Khaimah</a></li><li><a href="#">Abu Dhabi</a></li></ul>
+        <ul><li><a href="#zonas-inversion">Zonas de inversión</a></li><li><a href="#zonas-inversion">Tres mercados. Tres perfiles de inversor.</a></li></ul>
       </div>
       <div class="fc">
         <h4>Legal</h4>
-        <ul><li><a href="#">Política de privacidad</a></li><li><a href="#">Aviso legal</a></li><li><a href="#">Cookies</a></li></ul>
+        <ul><li><a href="legal.html#politica-privacidad">Política de privacidad</a></li><li><a href="legal.html#aviso-legal">Aviso legal</a></li><li><a href="legal.html#cookies">Cookies</a></li></ul>
       </div>
     </div>
     <div class="ft-bot">
@@ -1614,6 +1606,14 @@ document.querySelectorAll('.opt-card').forEach(el=>{
     if(map[dim])document.getElementById(map[dim]).value=v;
     if(cur===1&&sel.capital&&sel.objetivo)setTimeout(()=>goTo(2),DELAY);
     if(cur===2&&sel.plazo&&sel.viaje)setTimeout(()=>goTo(3),DELAY);
+  });
+});
+
+document.querySelectorAll('.strategy-card').forEach(card=>{
+  card.style.cursor='pointer';
+  card.addEventListener('click',()=>{
+    const form=document.getElementById('form');
+    if(form)form.scrollIntoView({behavior:'smooth',block:'start'});
   });
 });
 

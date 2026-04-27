@@ -60,9 +60,22 @@ nav.scrolled{background:var(--navy-m);backdrop-filter:blur(10px);border-color:rg
 .sh h2{font-family:var(--serif);font-size:clamp(38px,4.2vw,60px);font-weight:500;line-height:1.12;color:var(--ink);margin-bottom:10px}
 .sh p{font-size:18px;color:var(--muted);max-width:72ch;text-align:justify}
 
-.proj-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--border);border:1px solid var(--border)}
+.proj-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--border);border:1px solid var(--border)}
 .p-card{background:#fff;display:flex;flex-direction:column}
-.p-media img{width:100%;height:220px;object-fit:cover}
+.p-media{position:relative;overflow:hidden;background:#dfe5ec}
+.carousel-img{width:100%;height:380px;object-fit:cover;display:none;cursor:zoom-in}
+.carousel-img.active{display:block}
+.car-nav{
+  position:absolute;top:50%;transform:translateY(-50%);z-index:2;
+  width:34px;height:34px;border:none;border-radius:50%;
+  background:rgba(13,27,42,.55);color:#fff;font-size:18px;line-height:1;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+}
+.car-nav.prev{left:10px}
+.car-nav.next{right:10px}
+.car-dots{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);display:flex;gap:7px;z-index:2}
+.car-dot{width:8px;height:8px;border-radius:50%;border:none;background:rgba(255,255,255,.45);cursor:pointer}
+.car-dot.active{background:#fff}
 .p-bd{padding:24px}
 .p-meta{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
 .p-zone{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--gold);font-weight:600}
@@ -89,6 +102,25 @@ nav.scrolled{background:var(--navy-m);backdrop-filter:blur(10px);border-color:rg
 footer{background:var(--navy-d);padding:46px 0 28px}
 .copy{font-size:11px;color:rgba(255,255,255,.2);text-align:center}
 
+.img-modal{
+  position:fixed;inset:0;z-index:1200;background:rgba(7,18,31,.9);
+  display:none;align-items:center;justify-content:center;padding:26px;
+}
+.img-modal.open{display:flex}
+.img-modal img{max-width:min(1200px,96vw);max-height:90vh;object-fit:contain}
+.img-close{
+  position:absolute;top:16px;right:16px;border:none;background:rgba(255,255,255,.12);
+  color:#fff;width:36px;height:36px;border-radius:50%;font-size:22px;cursor:pointer;
+}
+.img-nav{
+  position:absolute;top:50%;transform:translateY(-50%);z-index:1202;
+  width:42px;height:42px;border:none;border-radius:50%;
+  background:rgba(255,255,255,.16);color:#fff;font-size:26px;line-height:1;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+}
+.img-nav.prev{left:18px}
+.img-nav.next{right:18px}
+
 @media(max-width:1024px){
   .wrap{padding-inline:var(--gutter-tablet)}
   .nav-right{gap:22px}
@@ -103,7 +135,7 @@ footer{background:var(--navy-d);padding:46px 0 28px}
   .hero-sub,.sh p,.p-desc,.mid-cta p,.final-box p{text-align:left}
   .hero-sub{font-size:18px}
   .proj-grid{grid-template-columns:1fr}
-  .p-media img{height:180px}
+  .carousel-img{height:280px}
   .p-bd h3{font-size:28px}
   .final-box{padding:40px 22px}
 }
@@ -113,16 +145,16 @@ footer{background:var(--navy-d);padding:46px 0 28px}
 
 <nav id="nav">
   <div class="wrap nav-i">
-    <a href="index-v4.html" class="logo">Horizonte <span>Emirates</span></a>
+    <a href="index.html" class="logo">Horizonte <span>Emirates</span></a>
     <div class="nav-right">
       <div class="nav-links">
-        <a href="index-v4.html#para-quien">Para quién</a>
-        <a href="index-v4.html#como">Proceso</a>
+        <a href="index.html#para-quien">Para quién</a>
+        <a href="index.html#como">Proceso</a>
         <a href="proyectos.html">Proyectos</a>
-        <a href="index-v4.html#form">Análisis</a>
-        <a href="index-v4.html#faq">FAQ</a>
+        <a href="index.html#form">Análisis</a>
+        <a href="index.html#faq">FAQ</a>
       </div>
-      <a href="index-v4.html#form" class="nav-cta">Solicitar análisis</a>
+      <a href="index.html#form" class="nav-cta">Solicitar análisis</a>
     </div>
   </div>
 </nav>
@@ -132,13 +164,13 @@ footer{background:var(--navy-d);padding:46px 0 28px}
     <div class="hero-inner">
       <span class="eyebrow">Selección privada · UAE</span>
       <div class="rule"></div>
-      <h1>Proyectos seleccionados para inversores que buscan rentabilidad, seguridad y revalorización.</h1>
-      <p class="hero-sub">No publicamos un catálogo masivo. Mostramos una selección representativa de oportunidades premium en Dubai, Ras Al Khaimah y Abu Dhabi para ayudarle a identificar dónde encaja mejor su capital.</p>
+      <h1>Dos proyectos concretos para avanzar con decisión.</h1>
+      <p class="hero-sub">En esta fase trabajaremos sobre dos activos concretos: NH Collection en Ras Al Khaimah y Mira Bentley Villas en Dubai. Si encajan con su perfil, avanzamos con análisis, validación y siguiente paso operativo.</p>
       <div class="hero-ctas">
-        <a href="index-v4.html#form" class="btn-gold">Solicitar análisis</a>
+        <a href="index.html#form" class="btn-gold">Solicitar análisis</a>
         <a href="#grid-proyectos" class="btn-outline">Ver proyectos</a>
       </div>
-      <p class="hero-note">Las oportunidades finales se presentan según perfil y objetivo de inversión.</p>
+      <p class="hero-note">Selección activa centrada en oportunidades ya priorizadas.</p>
     </div>
   </div>
 </section>
@@ -148,109 +180,58 @@ footer{background:var(--navy-d);padding:46px 0 28px}
     <div class="sh">
       <span class="eyebrow">Escaparate selectivo</span>
       <div class="rule"></div>
-      <h2>Seis proyectos para entender dónde está el valor real en UAE.</h2>
-      <p>Cada activo combina un posicionamiento distinto en ticket, rentabilidad y potencial de revalorización. Le ayudamos a priorizar según su estrategia, no por moda del mercado.</p>
+      <h2>Proyectos activos en seguimiento.</h2>
+      <p>Estos son los dos proyectos exactos en los que estamos trabajando ahora mismo para evaluación y cierre.</p>
     </div>
     <div class="proj-grid">
       <article class="p-card">
-        <div class="p-media"><img src="https://images.unsplash.com/photo-1486299267070-83823f5448dd?w=1400&q=90&auto=format&fit=crop" alt="Torre residencial premium en Downtown Dubai" loading="lazy"/></div>
+        <div class="p-media js-carousel" data-autoplay="true">
+          <img class="carousel-img active" src="assets/projects/nh-collection-rak/c01.jpg" alt="NH Collection en Ras Al Khaimah" loading="lazy"/>
+          <img class="carousel-img" src="assets/projects/nh-collection-rak/PI89_R00.01_GF_Entrance%20Lobby-REV03.jpg" alt="NH Collection lobby" loading="lazy"/>
+          <img class="carousel-img" src="assets/projects/nh-collection-rak/PI89_R00.04_GF_Entrance%20Lobby-REV03.jpg" alt="NH Collection lobby premium" loading="lazy"/>
+          <button class="car-nav prev" type="button" aria-label="Imagen anterior">‹</button>
+          <button class="car-nav next" type="button" aria-label="Imagen siguiente">›</button>
+          <div class="car-dots" aria-hidden="true"></div>
+        </div>
         <div class="p-bd">
-          <div class="p-meta"><span class="p-zone">Dubai · Downtown</span><span class="p-tag">Prime</span></div>
-          <h3>Downtown Signature Residences</h3>
-          <div class="p-asset">Apartamentos premium · ready to rent</div>
+          <div class="p-meta"><span class="p-zone">Ras Al Khaimah</span><span class="p-tag">NH Collection</span></div>
+          <h3>NH Collection RAK</h3>
+          <div class="p-asset">Hospitality branded residences · frente al mar</div>
           <div class="p-kpis">
-            <div class="p-k"><span>Ticket</span><strong>420k€</strong></div>
-            <div class="p-k"><span>Rentabilidad</span><strong>6.8%</strong></div>
-            <div class="p-k"><span>Revalorización</span><strong>+5.9%</strong></div>
-            <div class="p-k"><span>Estado</span><strong>Entregado</strong></div>
+            <div class="p-k"><span>Zona</span><strong>RAK</strong></div>
+            <div class="p-k"><span>Tipología</span><strong>Branded</strong></div>
+            <div class="p-k"><span>Enfoque</span><strong>Apreciación</strong></div>
+            <div class="p-k"><span>Estado</span><strong>Activo</strong></div>
           </div>
-          <p class="p-desc">Activo con demanda sólida en alquiler ejecutivo y liquidez de reventa en uno de los distritos con mayor tracción internacional de Dubai.</p>
-          <div class="p-cta"><a href="index-v4.html#form" class="btn-gold">Solicitar información</a><a href="index-v4.html#form" class="btn-outline">Recibir análisis</a></div>
+          <p class="p-desc">Proyecto seleccionado para estrategia de entrada en Ras Al Khaimah con enfoque en posicionamiento de marca, demanda internacional y potencial de revalorización.</p>
+          <div class="p-cta"><a href="index.html#form" class="btn-gold">Solicitar información</a><a href="index.html#form" class="btn-outline">Recibir análisis</a></div>
         </div>
       </article>
 
       <article class="p-card">
-        <div class="p-media"><img src="https://images.unsplash.com/photo-1518005020951-eccb494ad742?w=1400&q=90&auto=format&fit=crop" alt="Proyecto off-plan en Dubai Marina" loading="lazy"/></div>
-        <div class="p-bd">
-          <div class="p-meta"><span class="p-zone">Dubai · Marina</span><span class="p-tag">Off-plan</span></div>
-          <h3>Marina Waterfront Collection</h3>
-          <div class="p-asset">Residencial alto standing · pago escalonado</div>
-          <div class="p-kpis">
-            <div class="p-k"><span>Ticket</span><strong>310k€</strong></div>
-            <div class="p-k"><span>Rentabilidad</span><strong>6.2%</strong></div>
-            <div class="p-k"><span>Revalorización</span><strong>+8.1%</strong></div>
-            <div class="p-k"><span>Estado</span><strong>En obra</strong></div>
-          </div>
-          <p class="p-desc">Proyecto con entrada progresiva y ubicación de alta rotación para alquiler internacional, diseñado para equilibrio entre flujo y apreciación.</p>
-          <div class="p-cta"><a href="index-v4.html#form" class="btn-gold">Solicitar información</a><a href="index-v4.html#form" class="btn-outline">Recibir análisis</a></div>
+        <div class="p-media js-carousel" data-autoplay="true">
+          <img class="carousel-img active" src="assets/projects/mira-bentley-villas-dubai/1_aecb205a1d.webp" alt="Mira Bentley Villas en Dubai" loading="lazy"/>
+          <img class="carousel-img" src="assets/projects/mira-bentley-villas-dubai/2_2289ed444c.webp" alt="Mira Bentley Villas exterior" loading="lazy"/>
+          <img class="carousel-img" src="assets/projects/mira-bentley-villas-dubai/06_9adb0f3786.webp" alt="Mira Bentley Villas detalle arquitectonico" loading="lazy"/>
+          <img class="carousel-img" src="assets/projects/mira-bentley-villas-dubai/006_626a92225b.webp" alt="Mira Bentley Villas interior premium" loading="lazy"/>
+          <img class="carousel-img" src="assets/projects/mira-bentley-villas-dubai/GYM_01_b2d1bcdf3a.webp" alt="Mira Bentley Villas gimnasio" loading="lazy"/>
+          <img class="carousel-img" src="assets/projects/mira-bentley-villas-dubai/fc5abbf2eed5500a99cbc7edc1c446c5bf76b5fa_432cdae6da.jpg" alt="Mira Bentley Villas amenidades" loading="lazy"/>
+          <button class="car-nav prev" type="button" aria-label="Imagen anterior">‹</button>
+          <button class="car-nav next" type="button" aria-label="Imagen siguiente">›</button>
+          <div class="car-dots" aria-hidden="true"></div>
         </div>
-      </article>
-
-      <article class="p-card">
-        <div class="p-media"><img src="https://images.unsplash.com/photo-1573578167787-c4f4c9b04370?w=1400&q=90&auto=format&fit=crop" alt="Desarrollo premium en Ras Al Khaimah" loading="lazy"/></div>
         <div class="p-bd">
-          <div class="p-meta"><span class="p-zone">Ras Al Khaimah</span><span class="p-tag">Revalorización</span></div>
-          <h3>Wynn District Residences</h3>
-          <div class="p-asset">Off-plan premium · entrada anticipada</div>
+          <div class="p-meta"><span class="p-zone">Dubai</span><span class="p-tag">Mira Bentley Villas</span></div>
+          <h3>Mira Bentley Villas</h3>
+          <div class="p-asset">Villas de lujo · segmento prime</div>
           <div class="p-kpis">
-            <div class="p-k"><span>Ticket</span><strong>235k€</strong></div>
-            <div class="p-k"><span>Rentabilidad</span><strong>6.0%</strong></div>
-            <div class="p-k"><span>Revalorización</span><strong>+12.0%</strong></div>
-            <div class="p-k"><span>Estado</span><strong>Pre-entrega</strong></div>
+            <div class="p-k"><span>Zona</span><strong>Dubai</strong></div>
+            <div class="p-k"><span>Tipología</span><strong>Villa</strong></div>
+            <div class="p-k"><span>Enfoque</span><strong>Prime</strong></div>
+            <div class="p-k"><span>Estado</span><strong>Activo</strong></div>
           </div>
-          <p class="p-desc">Estrategia de entrada temprana en una zona con impulso estructural por turismo premium y desarrollo de infraestructuras de gran escala.</p>
-          <div class="p-cta"><a href="index-v4.html#form" class="btn-gold">Solicitar información</a><a href="index-v4.html#form" class="btn-outline">Recibir análisis</a></div>
-        </div>
-      </article>
-
-      <article class="p-card">
-        <div class="p-media"><img src="https://images.unsplash.com/photo-1526481280695-3c469f548a8e?w=1400&q=90&auto=format&fit=crop" alt="Proyecto residencial frente al mar en Abu Dhabi" loading="lazy"/></div>
-        <div class="p-bd">
-          <div class="p-meta"><span class="p-zone">Abu Dhabi · Saadiyat</span><span class="p-tag">Seguridad</span></div>
-          <h3>Saadiyat Bay Residences</h3>
-          <div class="p-asset">Activo institucional · largo plazo</div>
-          <div class="p-kpis">
-            <div class="p-k"><span>Ticket</span><strong>520k€</strong></div>
-            <div class="p-k"><span>Rentabilidad</span><strong>5.6%</strong></div>
-            <div class="p-k"><span>Revalorización</span><strong>+5.2%</strong></div>
-            <div class="p-k"><span>Estado</span><strong>Entregado</strong></div>
-          </div>
-          <p class="p-desc">Perfil defensivo con demanda estable, alta calidad constructiva y respaldo de promotor institucional en una zona de prestigio consolidado.</p>
-          <div class="p-cta"><a href="index-v4.html#form" class="btn-gold">Solicitar información</a><a href="index-v4.html#form" class="btn-outline">Recibir análisis</a></div>
-        </div>
-      </article>
-
-      <article class="p-card">
-        <div class="p-media"><img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1400&q=90&auto=format&fit=crop" alt="Proyecto con acceso Golden Visa en Dubai" loading="lazy"/></div>
-        <div class="p-bd">
-          <div class="p-meta"><span class="p-zone">Dubai · Business Bay</span><span class="p-tag">Golden Visa</span></div>
-          <h3>Business Bay Executive Lofts</h3>
-          <div class="p-asset">Residencial premium · alquiler corporativo</div>
-          <div class="p-kpis">
-            <div class="p-k"><span>Ticket</span><strong>360k€</strong></div>
-            <div class="p-k"><span>Rentabilidad</span><strong>7.1%</strong></div>
-            <div class="p-k"><span>Revalorización</span><strong>+6.3%</strong></div>
-            <div class="p-k"><span>Estado</span><strong>Entrega próxima</strong></div>
-          </div>
-          <p class="p-desc">Ubicación con fuerte demanda de perfil ejecutivo y estrategia adecuada para inversores que priorizan cashflow con salida flexible.</p>
-          <div class="p-cta"><a href="index-v4.html#form" class="btn-gold">Solicitar información</a><a href="index-v4.html#form" class="btn-outline">Recibir análisis</a></div>
-        </div>
-      </article>
-
-      <article class="p-card">
-        <div class="p-media"><img src="https://images.unsplash.com/photo-1511818966892-d7d671e672a2?w=1400&q=90&auto=format&fit=crop" alt="Proyecto de villas premium en UAE" loading="lazy"/></div>
-        <div class="p-bd">
-          <div class="p-meta"><span class="p-zone">Dubai · Meydan</span><span class="p-tag">Alta rentabilidad</span></div>
-          <h3>Meydan Garden Villas</h3>
-          <div class="p-asset">Villas de lujo · mercado premium</div>
-          <div class="p-kpis">
-            <div class="p-k"><span>Ticket</span><strong>980k€</strong></div>
-            <div class="p-k"><span>Rentabilidad</span><strong>6.4%</strong></div>
-            <div class="p-k"><span>Revalorización</span><strong>+7.5%</strong></div>
-            <div class="p-k"><span>Estado</span><strong>En comercialización</strong></div>
-          </div>
-          <p class="p-desc">Activos de ticket alto con mayor diferencial de valorización potencial en ubicaciones donde la oferta premium sigue limitada.</p>
-          <div class="p-cta"><a href="index-v4.html#form" class="btn-gold">Solicitar información</a><a href="index-v4.html#form" class="btn-outline">Recibir análisis</a></div>
+          <p class="p-desc">Proyecto priorizado en Dubai para perfil patrimonial que busca producto diferencial en villa premium y potencial de valorización en el segmento alto.</p>
+          <div class="p-cta"><a href="index.html#form" class="btn-gold">Solicitar información</a><a href="index.html#form" class="btn-outline">Recibir análisis</a></div>
         </div>
       </article>
     </div>
@@ -260,7 +241,7 @@ footer{background:var(--navy-d);padding:46px 0 28px}
 <section class="mid-cta">
   <div class="wrap">
     <p>No todos los proyectos encajan con todos los perfiles. Si lo prefiere, filtramos por capital, objetivo y horizonte para que reciba solo oportunidades alineadas con su estrategia.</p>
-    <a href="index-v4.html#form" class="btn-gold">Solicitar análisis</a>
+    <a href="index.html#form" class="btn-gold">Solicitar análisis</a>
   </div>
 </section>
 
@@ -271,7 +252,7 @@ footer{background:var(--navy-d);padding:46px 0 28px}
       <div class="rule" style="margin-inline:auto"></div>
       <h2>No publicamos todas las oportunidades en abierto.</h2>
       <p>Solicite un análisis y le presentaremos solo los activos que encajan con su perfil, con estimaciones de rentabilidad neta, potencial de revalorización y condiciones de entrada.</p>
-      <a href="index-v4.html#form" class="btn-gold">Solicitar análisis personalizado</a>
+      <a href="index.html#form" class="btn-gold">Solicitar análisis personalizado</a>
     </div>
   </div>
 </section>
@@ -282,10 +263,116 @@ footer{background:var(--navy-d);padding:46px 0 28px}
   </div>
 </footer>
 
+<div class="img-modal" id="img-modal" aria-hidden="true">
+  <button class="img-nav prev" id="img-prev" aria-label="Imagen anterior">‹</button>
+  <button class="img-nav next" id="img-next" aria-label="Imagen siguiente">›</button>
+  <button class="img-close" id="img-close" aria-label="Cerrar imagen">×</button>
+  <img id="img-modal-src" src="" alt="Imagen ampliada del proyecto"/>
+</div>
+
 <script>
 window.addEventListener('scroll',()=>{
   document.getElementById('nav').classList.toggle('scrolled',window.scrollY>24);
 });
+
+(function initProjectCarousels(){
+  const modal=document.getElementById('img-modal');
+  const modalImg=document.getElementById('img-modal-src');
+  const closeBtn=document.getElementById('img-close');
+  const prevBtn=document.getElementById('img-prev');
+  const nextBtn=document.getElementById('img-next');
+  let modalImages=[];
+  let modalIndex=0;
+
+  function renderModalImage(){
+    const current=modalImages[modalIndex];
+    if(!current)return;
+    modalImg.src=current.src;
+    modalImg.alt=current.alt||'Imagen ampliada del proyecto';
+    const showNav=modalImages.length>1;
+    prevBtn.style.display=showNav?'flex':'none';
+    nextBtn.style.display=showNav?'flex':'none';
+  }
+  function openModal(images,startIdx){
+    modalImages=images;
+    modalIndex=startIdx||0;
+    renderModalImage();
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden','false');
+  }
+  function closeModal(){
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden','true');
+    modalImg.src='';
+  }
+  closeBtn.addEventListener('click',closeModal);
+  modal.addEventListener('click',(e)=>{ if(e.target===modal)closeModal(); });
+  prevBtn.addEventListener('click',()=>{
+    if(!modalImages.length)return;
+    modalIndex=(modalIndex-1+modalImages.length)%modalImages.length;
+    renderModalImage();
+  });
+  nextBtn.addEventListener('click',()=>{
+    if(!modalImages.length)return;
+    modalIndex=(modalIndex+1)%modalImages.length;
+    renderModalImage();
+  });
+  document.addEventListener('keydown',(e)=>{
+    if(!modal.classList.contains('open'))return;
+    if(e.key==='Escape')closeModal();
+    if(e.key==='ArrowLeft')prevBtn.click();
+    if(e.key==='ArrowRight')nextBtn.click();
+  });
+
+  document.querySelectorAll('.js-carousel').forEach((car)=>{
+    const imgs=[...car.querySelectorAll('.carousel-img')];
+    const prev=car.querySelector('.car-nav.prev');
+    const next=car.querySelector('.car-nav.next');
+    const dotsWrap=car.querySelector('.car-dots');
+    let idx=0;
+    let timer=null;
+
+    if(imgs.length<=1){
+      prev.style.display='none';
+      next.style.display='none';
+      dotsWrap.style.display='none';
+    }
+
+    const dots=imgs.map((_,i)=>{
+      const b=document.createElement('button');
+      b.className='car-dot'+(i===0?' active':'');
+      b.type='button';
+      b.setAttribute('aria-label','Ir a imagen '+(i+1));
+      b.addEventListener('click',()=>goTo(i,true));
+      dotsWrap.appendChild(b);
+      return b;
+    });
+
+    function render(){
+      imgs.forEach((im,i)=>im.classList.toggle('active',i===idx));
+      dots.forEach((d,i)=>d.classList.toggle('active',i===idx));
+    }
+    function goTo(i,resetTimer){
+      idx=(i+imgs.length)%imgs.length;
+      render();
+      if(resetTimer)restartTimer();
+    }
+    function restartTimer(){
+      if(timer)clearInterval(timer);
+      if(imgs.length>1)timer=setInterval(()=>goTo(idx+1,false),4200);
+    }
+
+    prev.addEventListener('click',()=>goTo(idx-1,true));
+    next.addEventListener('click',()=>goTo(idx+1,true));
+    car.addEventListener('mouseenter',()=>{ if(timer)clearInterval(timer); });
+    car.addEventListener('mouseleave',restartTimer);
+    const modalSet=imgs.map((im)=>({src:im.src,alt:im.alt}));
+    imgs.forEach((im,i)=>im.addEventListener('click',()=>openModal(modalSet,i)));
+
+    render();
+    restartTimer();
+  });
+})();
 </script>
 </body>
 </html>
