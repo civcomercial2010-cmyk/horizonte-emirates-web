@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Proyectos Inmobiliarios Premium en UAE | Horizonte Emirates</title>
-<meta name="description" content="Selección curada de proyectos inmobiliarios premium en Dubai, Ras Al Khaimah y Abu Dhabi para inversores que buscan rentabilidad neta, seguridad contractual y potencial de revalorización."/>
+<title>Proyectos de Inversión en UAE · Dubai y Ras Al Khaimah | Horizonte Emirates</title>
+<meta name="description" content="Tres proyectos activos en Dubai y Ras Al Khaimah: NH Collection, Mira Bentley Villas y Gianfranco Ferré Residence. Análisis personalizado para inversores hispanohablantes desde 150.000 €."/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
@@ -60,10 +60,10 @@ nav.scrolled{background:var(--navy-m);backdrop-filter:blur(10px);border-color:rg
 .sh h2{font-family:var(--serif);font-size:clamp(38px,4.2vw,60px);font-weight:500;line-height:1.12;color:var(--ink);margin-bottom:10px}
 .sh p{font-size:18px;color:var(--muted);max-width:72ch;text-align:justify}
 
-.proj-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--border);border:1px solid var(--border)}
+.proj-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--border);border:1px solid var(--border)}
 .p-card{background:#fff;display:flex;flex-direction:column}
 .p-media{position:relative;overflow:hidden;background:#dfe5ec}
-.carousel-img{width:100%;height:380px;object-fit:cover;display:none;cursor:zoom-in}
+.carousel-img{width:100%;height:318px;object-fit:contain;object-position:center center;display:none;cursor:zoom-in;background:#f2f4f7}
 .carousel-img.active{display:block}
 .car-nav{
   position:absolute;top:50%;transform:translateY(-50%);z-index:2;
@@ -76,7 +76,7 @@ nav.scrolled{background:var(--navy-m);backdrop-filter:blur(10px);border-color:rg
 .car-dots{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);display:flex;gap:7px;z-index:2}
 .car-dot{width:8px;height:8px;border-radius:50%;border:none;background:rgba(255,255,255,.45);cursor:pointer}
 .car-dot.active{background:#fff}
-.p-bd{padding:24px}
+.p-bd{padding:24px;display:flex;flex-direction:column;flex:1}
 .p-meta{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
 .p-zone{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--gold);font-weight:600}
 .p-tag{font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:#2a3f54;background:var(--gold-lt);border:1px solid var(--gold-bd);padding:4px 8px;border-radius:var(--r)}
@@ -87,12 +87,32 @@ nav.scrolled{background:var(--navy-m);backdrop-filter:blur(10px);border-color:rg
 .p-k span{display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
 .p-k strong{font-family:var(--serif);font-size:20px;color:var(--ink);font-weight:500}
 .p-state{font-size:12px;color:#2a3f54;margin-bottom:10px}
-.p-desc{font-size:14px;color:var(--muted);text-align:justify;margin-bottom:18px}
-.p-cta{display:flex;gap:8px;flex-wrap:wrap}
+.p-desc{font-size:14px;color:var(--muted);text-align:justify;margin-bottom:0;flex:1}
+.p-desc .who{display:block;margin-top:16px}
+.p-desc .who-nh{margin-top:28px}
+.p-desc em{display:block;margin-top:12px}
+
+.locked-strip{
+  display:flex;
+  align-items:stretch;
+  border:1px solid #d3c8b6;
+  border-top:none;
+  background:linear-gradient(180deg,#f5efe3 0%,#f1e8d9 100%);
+  border-radius:0 0 6px 6px;
+  overflow:hidden;
+}
+.locked-lft{display:flex;align-items:center;gap:14px;padding:20px 24px;flex-shrink:0;background:rgba(255,255,255,.35);width:calc((100% - 2px) / 3)}
+.lock-icon{flex-shrink:0;width:36px;height:36px;border-radius:50%;background:var(--gold-lt);border:1px solid var(--gold-bd);display:flex;align-items:center;justify-content:center}
+.lock-icon svg{width:16px;height:16px;stroke:var(--gold);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.locked-lft-txt strong{display:block;font-size:13px;font-weight:600;color:#253447;letter-spacing:.02em;margin-bottom:2px}
+.locked-lft-txt span{font-size:12px;color:#4a5b6f}
+.locked-rgt{flex:1;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:20px 0 20px 24px;border-left:1px solid rgba(13,27,42,.12)}
+.locked-rgt p{font-size:13px;color:#3a4a5d;margin:0;max-width:58ch;line-height:1.55}
+.locked-rgt p strong{color:#1f2f42}
 
 .mid-cta{background:var(--navy);color:#fff}
-.mid-cta .wrap{display:flex;align-items:center;justify-content:space-between;gap:20px;padding-block:30px}
-.mid-cta p{max-width:60ch;color:rgba(255,255,255,.84);text-align:justify}
+.mid-cta .wrap{display:grid;grid-template-columns:minmax(0,calc((100% - 2px) * 0.6667)) auto;align-items:center;justify-content:space-between;column-gap:32px;padding-block:30px}
+.mid-cta p{max-width:none;width:100%;color:rgba(255,255,255,.84)}
 
 .final-cta{background:linear-gradient(180deg,#081321 0%,#0d1b2a 100%);color:#fff}
 .final-box{max-width:920px;margin:0 auto;text-align:center;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.12);padding:56px 40px}
@@ -100,6 +120,9 @@ nav.scrolled{background:var(--navy-m);backdrop-filter:blur(10px);border-color:rg
 .final-box p{font-size:18px;color:rgba(255,255,255,.78);max-width:60ch;margin:0 auto 24px;text-align:justify}
 
 footer{background:var(--navy-d);padding:46px 0 28px}
+.footer-nav{display:flex;justify-content:center;gap:24px;margin-bottom:20px;flex-wrap:wrap}
+.footer-nav a{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.42);transition:.2s}
+.footer-nav a:hover{color:rgba(255,255,255,.8)}
 .copy{font-size:11px;color:rgba(255,255,255,.2);text-align:center}
 
 .img-modal{
@@ -125,7 +148,8 @@ footer{background:var(--navy-d);padding:46px 0 28px}
   .wrap{padding-inline:var(--gutter-tablet)}
   .nav-right{gap:22px}
   .proj-grid{grid-template-columns:1fr 1fr}
-  .mid-cta .wrap{flex-direction:column;align-items:flex-start}
+  .locked-lft{width:calc((100% - 1px) / 2)}
+  .mid-cta .wrap{display:flex;flex-direction:column;align-items:flex-start}
 }
 @media(max-width:700px){
   body{font-size:16px}
@@ -135,7 +159,10 @@ footer{background:var(--navy-d);padding:46px 0 28px}
   .hero-sub,.sh p,.p-desc,.mid-cta p,.final-box p{text-align:left}
   .hero-sub{font-size:18px}
   .proj-grid{grid-template-columns:1fr}
-  .carousel-img{height:280px}
+  .locked-lft{width:100%}
+  .locked-strip{flex-direction:column}
+  .locked-rgt{border-left:none;border-top:1px solid var(--border);flex-direction:column;align-items:flex-start}
+  .carousel-img{height:229px;object-fit:contain;object-position:center center}
   .p-bd h3{font-size:28px}
   .final-box{padding:40px 22px}
 }
@@ -162,15 +189,13 @@ footer{background:var(--navy-d);padding:46px 0 28px}
 <section id="hero">
   <div class="wrap">
     <div class="hero-inner">
-      <span class="eyebrow">Selección privada · UAE</span>
+      <span class="eyebrow">Proyectos activos · Dubai y Ras Al Khaimah</span>
       <div class="rule"></div>
-      <h1>Dos proyectos concretos para avanzar con decisión.</h1>
-      <p class="hero-sub">En esta fase trabajaremos sobre dos activos concretos: NH Collection en Ras Al Khaimah y Mira Bentley Villas en Dubai. Si encajan con su perfil, avanzamos con análisis, validación y siguiente paso operativo.</p>
+      <h1>Tres proyectos activos. Perfiles distintos. Entrada abierta ahora.</h1>
+      <p class="hero-sub">Una selección de oportunidades reales en Dubai y Ras Al Khaimah, preparada para inversores con capital listo para actuar.</p>
       <div class="hero-ctas">
-        <a href="index.html#form" class="btn-gold">Solicitar análisis</a>
-        <a href="#grid-proyectos" class="btn-outline">Ver proyectos</a>
+        <a href="index.html#form" class="btn-gold">Solicitar análisis personalizado</a>
       </div>
-      <p class="hero-note">Selección activa centrada en oportunidades ya priorizadas.</p>
     </div>
   </div>
 </section>
@@ -178,88 +203,129 @@ footer{background:var(--navy-d);padding:46px 0 28px}
 <section class="section" id="grid-proyectos">
   <div class="wrap">
     <div class="sh">
-      <span class="eyebrow">Escaparate selectivo</span>
+      <span class="eyebrow">Selección pública · 3 de más de 10 proyectos activos</span>
       <div class="rule"></div>
-      <h2>Proyectos activos en seguimiento.</h2>
-      <p>Estos son los dos proyectos exactos en los que estamos trabajando ahora mismo para evaluación y cierre.</p>
+      <h2>Activos en cartera con ventana de entrada abierta.</h2>
+      <p>Lo que publicamos es solo una parte de lo que tenemos en seguimiento. Estos tres proyectos tienen distinto perfil de riesgo, objetivo y mercado. El resto de la cartera se presenta en el análisis personalizado.</p>
     </div>
     <div class="proj-grid">
-      <article class="p-card">
-        <div class="p-media js-carousel" data-autoplay="true">
+      <article class="p-card" data-project="nh">
+        <div class="p-media js-carousel">
           <img class="carousel-img active" src="assets/projects/nh-collection-rak/c01.jpg" alt="NH Collection en Ras Al Khaimah" loading="lazy"/>
-          <img class="carousel-img" src="assets/projects/nh-collection-rak/PI89_R00.01_GF_Entrance%20Lobby-REV03.jpg" alt="NH Collection lobby" loading="lazy"/>
-          <img class="carousel-img" src="assets/projects/nh-collection-rak/PI89_R00.04_GF_Entrance%20Lobby-REV03.jpg" alt="NH Collection lobby premium" loading="lazy"/>
+          <img class="carousel-img" src="assets/projects/nh-collection-rak/c03.jpg" alt="NH Collection fachada principal" loading="lazy"/>
+          <img class="carousel-img" src="assets/projects/nh-collection-rak/c08.jpg" alt="NH Collection vista exterior" loading="lazy"/>
+          <img class="carousel-img" src="assets/projects/nh-collection-rak/PI89_R00.01_GF_Entrance%20Lobby-REV03.jpg" alt="NH Collection acceso principal" loading="lazy"/>
+          <img class="carousel-img" src="assets/projects/nh-collection-rak/PI89_R00.04_GF_Entrance%20Lobby-REV03.jpg" alt="NH Collection entrada exterior" loading="lazy"/>
           <button class="car-nav prev" type="button" aria-label="Imagen anterior">‹</button>
           <button class="car-nav next" type="button" aria-label="Imagen siguiente">›</button>
           <div class="car-dots" aria-hidden="true"></div>
         </div>
         <div class="p-bd">
-          <div class="p-meta"><span class="p-zone">Ras Al Khaimah</span><span class="p-tag">NH Collection</span></div>
-          <h3>NH Collection RAK</h3>
-          <div class="p-asset">Hospitality branded residences · frente al mar</div>
+          <div class="p-meta"><span class="p-zone">Ras Al Khaimah</span><span class="p-tag">Branded Residence</span></div>
+          <h3>NH Collection Residences</h3>
+          <div class="p-asset">Residencias hoteleras frente al mar · hospitality premium</div>
           <div class="p-kpis">
-            <div class="p-k"><span>Zona</span><strong>RAK</strong></div>
-            <div class="p-k"><span>Tipología</span><strong>Branded</strong></div>
-            <div class="p-k"><span>Enfoque</span><strong>Apreciación</strong></div>
-            <div class="p-k"><span>Estado</span><strong>Activo</strong></div>
+            <div class="p-k"><span>Ubicación</span><strong>Frente al mar</strong></div>
+            <div class="p-k"><span>Fase</span><strong>En preventa</strong></div>
+            <div class="p-k"><span>Objetivo</span><strong>Revalorización</strong></div>
+            <div class="p-k"><span>Catalizador</span><strong>Wynn 2027</strong></div>
           </div>
-          <p class="p-desc">Proyecto seleccionado para estrategia de entrada en Ras Al Khaimah con enfoque en posicionamiento de marca, demanda internacional y potencial de revalorización.</p>
-          <div class="p-cta"><a href="index.html#form" class="btn-gold">Solicitar información</a><a href="index.html#form" class="btn-outline">Recibir análisis</a></div>
+          <p class="p-desc">Residencias con servicio de hotel en primera línea de mar en Ras Al Khaimah. La oportunidad está en entrar ahora, antes de que la apertura del resort Wynn (prevista para 2027) empuje los precios al alza. Hoy, RAK está muy por debajo del precio de Dubai con toda una zona de lujo ya en construcción. Quien entra antes, entra con ventaja.<em class="who who-nh">Para quién: inversor que busca crecimiento de capital a 3-5 años.</em></p>
         </div>
       </article>
 
-      <article class="p-card">
-        <div class="p-media js-carousel" data-autoplay="true">
-          <img class="carousel-img active" src="assets/projects/mira-bentley-villas-dubai/1_aecb205a1d.webp" alt="Mira Bentley Villas en Dubai" loading="lazy"/>
+      <article class="p-card" data-project="mira">
+        <div class="p-media js-carousel">
+          <img class="carousel-img active" src="assets/projects/mira-bentley-villas-dubai/fachada.webp" alt="Mira Bentley Villas fachada en Dubai" loading="lazy"/>
+          <img class="carousel-img" src="assets/projects/mira-bentley-villas-dubai/1_aecb205a1d.webp" alt="Mira Bentley Villas en Dubai" loading="lazy"/>
           <img class="carousel-img" src="assets/projects/mira-bentley-villas-dubai/2_2289ed444c.webp" alt="Mira Bentley Villas exterior" loading="lazy"/>
           <img class="carousel-img" src="assets/projects/mira-bentley-villas-dubai/06_9adb0f3786.webp" alt="Mira Bentley Villas detalle arquitectonico" loading="lazy"/>
-          <img class="carousel-img" src="assets/projects/mira-bentley-villas-dubai/006_626a92225b.webp" alt="Mira Bentley Villas interior premium" loading="lazy"/>
+          <img class="carousel-img" src="assets/projects/mira-bentley-villas-dubai/006_626a92225b.webp" alt="Mira Bentley Villas fachada residencial" loading="lazy"/>
           <img class="carousel-img" src="assets/projects/mira-bentley-villas-dubai/GYM_01_b2d1bcdf3a.webp" alt="Mira Bentley Villas gimnasio" loading="lazy"/>
-          <img class="carousel-img" src="assets/projects/mira-bentley-villas-dubai/fc5abbf2eed5500a99cbc7edc1c446c5bf76b5fa_432cdae6da.jpg" alt="Mira Bentley Villas amenidades" loading="lazy"/>
           <button class="car-nav prev" type="button" aria-label="Imagen anterior">‹</button>
           <button class="car-nav next" type="button" aria-label="Imagen siguiente">›</button>
           <div class="car-dots" aria-hidden="true"></div>
         </div>
         <div class="p-bd">
-          <div class="p-meta"><span class="p-zone">Dubai</span><span class="p-tag">Mira Bentley Villas</span></div>
+          <div class="p-meta"><span class="p-zone">Dubai</span><span class="p-tag">Villa Prime</span></div>
           <h3>Mira Bentley Villas</h3>
-          <div class="p-asset">Villas de lujo · segmento prime</div>
+          <div class="p-asset">Villas de diseño exclusivo · firma Bentley · Dubai</div>
           <div class="p-kpis">
-            <div class="p-k"><span>Zona</span><strong>Dubai</strong></div>
-            <div class="p-k"><span>Tipología</span><strong>Villa</strong></div>
-            <div class="p-k"><span>Enfoque</span><strong>Prime</strong></div>
-            <div class="p-k"><span>Estado</span><strong>Activo</strong></div>
+            <div class="p-k"><span>Tipología</span><strong>Villa de lujo</strong></div>
+            <div class="p-k"><span>Segmento</span><strong>Máximo nivel</strong></div>
+            <div class="p-k"><span>Estrategia</span><strong>Preservar capital</strong></div>
+            <div class="p-k"><span>Comprador</span><strong>Alto patrimonio</strong></div>
           </div>
-          <p class="p-desc">Proyecto priorizado en Dubai para perfil patrimonial que busca producto diferencial en villa premium y potencial de valorización en el segmento alto.</p>
-          <div class="p-cta"><a href="index.html#form" class="btn-gold">Solicitar información</a><a href="index.html#form" class="btn-outline">Recibir análisis</a></div>
+          <p class="p-desc">Villas bajo la firma Bentley en el segmento de máximo lujo de Dubai. No es una compra para alquilar, sino para proteger y hacer crecer el capital con un producto escaso: pocas unidades, compradores de muy alto poder adquisitivo y demanda sólida en un mercado donde hay muy poco disponible a este nivel. Su mayor ventaja es que siempre hay compradores cuando se quiere vender.<em class="who">Para quién: capital a largo plazo sin fecha de salida fija.</em></p>
+        </div>
+      </article>
+
+      <article class="p-card" data-project="gianfranco">
+        <div class="p-media js-carousel">
+          <img class="carousel-img active" src="assets/projects/Gianfranco Ferr%C3%A9 Residence/001.jpg" alt="Gianfranco Ferré Residence en RAK" loading="lazy"/>
+          <img class="carousel-img" src="assets/projects/Gianfranco Ferr%C3%A9 Residence/004.jpg" alt="Gianfranco Ferré Residence vista exterior" loading="lazy"/>
+          <img class="carousel-img" src="assets/projects/Gianfranco Ferr%C3%A9 Residence/005.jpg" alt="Gianfranco Ferré Residence fachada principal" loading="lazy"/>
+          <img class="carousel-img" src="assets/projects/Gianfranco Ferr%C3%A9 Residence/007.PNG" alt="Gianfranco Ferré Residence masterplan" loading="lazy"/>
+          <button class="car-nav prev" type="button" aria-label="Imagen anterior">‹</button>
+          <button class="car-nav next" type="button" aria-label="Imagen siguiente">›</button>
+          <div class="car-dots" aria-hidden="true"></div>
+        </div>
+        <div class="p-bd">
+          <div class="p-meta"><span class="p-zone">Ras Al Khaimah</span><span class="p-tag">Branded Residence</span></div>
+          <h3>Gianfranco Ferré Residence</h3>
+          <div class="p-asset">Residencias de autor · firma de alta costura italiana</div>
+          <div class="p-kpis">
+            <div class="p-k"><span>Firma</span><strong>Alta costura</strong></div>
+            <div class="p-k"><span>Mercado</span><strong>En desarrollo</strong></div>
+            <div class="p-k"><span>Objetivo</span><strong>Revalorización</strong></div>
+            <div class="p-k"><span>Catalizador</span><strong>Wynn 2027</strong></div>
+          </div>
+          <p class="p-desc">Residencias firmadas por la casa de alta costura italiana Gianfranco Ferré en Ras Al Khaimah, antes de que la zona alcance todo su potencial. La apertura del resort Wynn y las nuevas infraestructuras están atrayendo inversión internacional, y el precio todavía no lo refleja. Entrar ahora es entrar antes de que suban los precios, con un producto que se distingue por una marca con nombre propio reconocida en todo el mundo.<em class="who">Para quién: inversor que busca revalorización a 3-6 años en una zona con catalizadores reales de crecimiento.</em></p>
         </div>
       </article>
     </div>
+
+    <div class="locked-strip">
+      <div class="locked-lft">
+        <div class="lock-icon">
+          <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <div class="locked-lft-txt">
+          <strong>+ 7 oportunidades más en cartera</strong>
+          <span>Distintos mercados, perfiles y plazos de inversión</span>
+        </div>
+      </div>
+      <div class="locked-rgt">
+        <p>Los precios, la rentabilidad estimada y cómo se estructura cada operación <strong>solo se comparten en el análisis personalizado.</strong></p>
+        <a href="index.html#form" class="btn-gold" style="white-space:nowrap;flex-shrink:0">Solicitar acceso a cartera completa</a>
+      </div>
+    </div>
+
   </div>
 </section>
 
 <section class="mid-cta">
   <div class="wrap">
-    <p>No todos los proyectos encajan con todos los perfiles. Si lo prefiere, filtramos por capital, objetivo y horizonte para que reciba solo oportunidades alineadas con su estrategia.</p>
-    <a href="index.html#form" class="btn-gold">Solicitar análisis</a>
+    <p>Cada proyecto responde a un perfil distinto. El análisis personalizado tarda menos de 48 horas y le dice si alguno de estos activos tiene sentido para su capital, su objetivo y su horizonte temporal, o si ninguno encaja con su situación. Sin compromiso y sin coste.</p>
+    <a href="index.html#form" class="btn-gold" style="flex-shrink:0">Recibir análisis en 48&nbsp;h</a>
   </div>
 </section>
 
 <section class="section final-cta">
   <div class="wrap">
     <div class="final-box">
-      <span class="eyebrow">Acceso privado</span>
+      <span class="eyebrow">Cartera completa · acceso bajo solicitud</span>
       <div class="rule" style="margin-inline:auto"></div>
-      <h2>No publicamos todas las oportunidades en abierto.</h2>
-      <p>Solicite un análisis y le presentaremos solo los activos que encajan con su perfil, con estimaciones de rentabilidad neta, potencial de revalorización y condiciones de entrada.</p>
-      <a href="index.html#form" class="btn-gold">Solicitar análisis personalizado</a>
+      <h2>Estos tres proyectos son la selección pública. Hay más.</h2>
+      <p>La cartera completa, con condiciones de entrada, rentabilidad estimada y cómo se estructura cada operación, se presenta en el análisis personalizado. El primer paso es hablar, no comprometerse.</p>
+      <a href="index.html#form" class="btn-gold">Solicitar acceso y análisis</a>
     </div>
   </div>
 </section>
 
 <footer>
   <div class="wrap">
-    <p class="copy">© 2026 Horizonte Emirates · Proyectos seleccionados para inversores hispanohablantes</p>
+    <p class="copy">© 2026 Horizonte Emirates · Propulse SLU · Selección curada de inversión inmobiliaria en UAE para inversor hispanohablante</p>
   </div>
 </footer>
 
@@ -357,15 +423,10 @@ window.addEventListener('scroll',()=>{
       render();
       if(resetTimer)restartTimer();
     }
-    function restartTimer(){
-      if(timer)clearInterval(timer);
-      if(imgs.length>1)timer=setInterval(()=>goTo(idx+1,false),4200);
-    }
+    function restartTimer(){ if(timer)clearInterval(timer); }
 
     prev.addEventListener('click',()=>goTo(idx-1,true));
     next.addEventListener('click',()=>goTo(idx+1,true));
-    car.addEventListener('mouseenter',()=>{ if(timer)clearInterval(timer); });
-    car.addEventListener('mouseleave',restartTimer);
     const modalSet=imgs.map((im)=>({src:im.src,alt:im.alt}));
     imgs.forEach((im,i)=>im.addEventListener('click',()=>openModal(modalSet,i)));
 
