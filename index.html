@@ -490,7 +490,7 @@ h1 em{font-style:italic;color:var(--gold)}
 .form-wrap{
   width:min(100%,var(--container-narrow));
   margin:0 auto;
-  background:#fff;
+  background:var(--warm);
   border:1px solid var(--border);
   padding:var(--space-lg) var(--space-md);
   border-radius:6px;
@@ -1700,8 +1700,8 @@ function buildWaMsg(data){
   const cap=data?.capital?`\n- Capital: ${data.capital}`:'';
   const obj=data?.objetivo?`\n- Objetivo: ${data.objetivo}`:'';
   const txt=n
-    ?`Hola, soy ${n}. He dejado mis datos en Horizonte Emirates para recibir acompañamiento gratuito e invertir en Emiratos.${cap}${obj}`
-    :'Hola. He visto Horizonte Emirates y me interesa recibir información sobre inversión inmobiliaria en UAE.';
+    ?`Hola, soy ${n}. Vengo de Horizonte Emirates y he dejado mis datos para recibir acompañamiento gratuito e invertir en Emiratos.${cap}${obj}`
+    :'Hola. Vengo de Horizonte Emirates y me interesa recibir información sobre inversión inmobiliaria en UAE.';
   return`${WA_URL}?text=${encodeURIComponent(txt)}`;
 }
 
