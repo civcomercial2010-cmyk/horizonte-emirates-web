@@ -1562,6 +1562,9 @@ const WA_URL='https://wa.me/971554722025';
 const W3F_KEY='3861d49c-5f0a-4dc3-a9e9-08b1758a110a';
 const W3F_EP='https://api.web3forms.com/submit';
 let savedLead={};
+let roiEventTimer=null;
+let lastRoiPayload='';
+const seenFormSteps=new Set();
 
 // ── NAV SCROLL
 window.addEventListener('scroll',()=>{
@@ -1598,6 +1601,7 @@ function goTo(step){
   cur=step;
   document.getElementById('fs'+cur).classList.add('active');
   updProg(cur);
+  trackFormStep(cur);
   const anchor=document.querySelector('.form-progress-wrap');
   if(anchor)anchor.scrollIntoView({behavior:'smooth',block:'start'});
 }
@@ -1610,6 +1614,12 @@ document.querySelectorAll('.opt-card').forEach(el=>{
     document.querySelectorAll(`.opt-card[data-dim="${dim}"]`).forEach(x=>x.classList.remove('sel'));
     this.classList.add('sel');
     sel[dim]=v;
+    trackGAEvent('form_option_select',{
+      event_category:'form',
+      event_label:dim+':'+v,
+      form_dimension:dim,
+      form_value:v
+    });
     const map={capital:'h-cap',objetivo:'h-obj',plazo:'h-pla',viaje:'h-via'};
     if(map[dim])document.getElementById(map[dim]).value=v;
     if(cur===1&&sel.capital&&sel.objetivo)setTimeout(()=>goTo(2),DELAY);
@@ -1641,6 +1651,34 @@ function checkGdpr(){
 function trackGAEvent(eventName, params){
   if(typeof window.gtag!=='function')return;
   window.gtag('event', eventName, params || {});
+}
+
+function trackFormStep(step){
+  if(seenFormSteps.has(step))return;
+  seenFormSteps.add(step);
+  trackGAEvent('form_step_view',{
+    event_category:'form',
+    event_label:'step_'+step,
+    step_number:step
+  });
+}
+
+function trackROIInteraction(){
+  const price=Number(document.getElementById('roi-price')?.value||0);
+  const y=Number(document.getElementById('roi-yield')?.value||0);
+  const ap=Number(document.getElementById('roi-appr')?.value||0);
+  const totalPct=Number((y+ap).toFixed(1));
+  const payload=`${price}|${y}|${ap}|${totalPct}`;
+  if(payload===lastRoiPayload)return;
+  lastRoiPayload=payload;
+  trackGAEvent('roi_calculator_interaction',{
+    event_category:'analysis_tool',
+    event_label:'roi_adjusted',
+    roi_price:price,
+    roi_yield_pct:y,
+    roi_revaluation_pct:ap,
+    roi_total_pct:totalPct
+  });
 }
 
 // CTA principal: mide clics que llevan al formulario.
@@ -2064,10 +2102,15 @@ initTicker();
 initMetricsCounter();
 ['roi-price','roi-yield','roi-appr'].forEach(id=>{
   const el=document.getElementById(id);
-  if(el)el.addEventListener('input',calcROI);
+  if(el)el.addEventListener('input',()=>{
+    calcROI();
+    clearTimeout(roiEventTimer);
+    roiEventTimer=setTimeout(trackROIInteraction,350);
+  });
 });
 calcROI();
 updProg(1);
+trackFormStep(1);
 </script>
 </body>
 </html>
