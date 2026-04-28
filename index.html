@@ -1565,6 +1565,7 @@ let savedLead={};
 let roiEventTimer=null;
 let lastRoiPayload='';
 const seenFormSteps=new Set();
+const seenSections=new Set();
 
 // ── NAV SCROLL
 window.addEventListener('scroll',()=>{
@@ -1678,6 +1679,27 @@ function trackROIInteraction(){
     roi_yield_pct:y,
     roi_revaluation_pct:ap,
     roi_total_pct:totalPct
+  });
+}
+
+function initSectionTracking(){
+  const trackedIds=['hero','para-quien','como','zonas-inversion','roi','form','faq'];
+  const observer=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(!entry.isIntersecting)return;
+      const sectionId=entry.target.id;
+      if(!sectionId||seenSections.has(sectionId))return;
+      seenSections.add(sectionId);
+      trackGAEvent('section_view',{
+        event_category:'engagement',
+        event_label:sectionId,
+        section_id:sectionId
+      });
+    });
+  },{threshold:0.35});
+  trackedIds.forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)observer.observe(el);
   });
 }
 
@@ -2143,6 +2165,7 @@ initMetricsCounter();
 calcROI();
 updProg(1);
 trackFormStep(1);
+initSectionTracking();
 </script>
 </body>
 </html>
