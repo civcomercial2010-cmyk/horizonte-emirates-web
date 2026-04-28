@@ -21,7 +21,7 @@ const CONFIG = {
   WA_LINK:         'https://wa.me/971554722025',
   CALENDLY_URL:    'https://calendly.com/hola-horizonteemirates/30min',
   CALENDAR_ID:     'primary', // calendario donde Calendly crea las reuniones
-  CALENDLY_EVENT_KEYWORD: 'Llamada estratégica inversión Dubai',
+  CALENDLY_EVENT_KEYWORD: 'Llamada estratégica Horizonte Emirates',
   UNSUBSCRIBE_URL: 'mailto:hola@horizonteemirates.com?subject=BAJA%20COMUNICACIONES',
   LABEL_PROCESADO: 'HE-procesado',
   LABEL_BAJAS:     'HE-bajas-procesado',
@@ -1100,17 +1100,11 @@ function getTemplate(code, lead) {
   if (code === 'A1') return {
     subject: `Su análisis de inversión en Dubai ya está en marcha, ${n}`,
     html: `<p>${sal} ${n},</p>
-<p>Hemos recibido su consulta y nuestro equipo ya está preparando su análisis personalizado.</p>
-<p>Con un presupuesto de <strong>${cap}</strong> y el objetivo de <strong>${obj}</strong>, tenemos activos verificados en cartera que se ajustan a lo que busca.</p>
-<p style="margin:20px 0 8px"><strong>Antes de 24 horas recibirá:</strong></p>
-<ul style="margin:0;padding-left:20px;color:#3a3a3a;line-height:1.8">
-  <li>Mínimo 3 propiedades seleccionadas para su capital y objetivo</li>
-  <li>Rentabilidades netas verificadas por zona (Dubai, RAK, Abu Dhabi)</li>
-  <li>Condiciones de entrada y calendario de pagos para cada activo</li>
-</ul>
-<p style="margin-top:20px">Si prefiere hablar directamente, puede contactarnos ahora:</p>
-${waBtn}${calBtn}${firma}`,
-    text: `${sal} ${n},\n\nYa estamos trabajando su análisis para ${cap} · ${obj}.\nEn menos de 24h recibirá 3 opciones concretas con rentabilidad estimada y condiciones de entrada.\n\nWhatsApp: ${wa} | ${CONFIG.REPLY_TO}\n\nEquipo Horizonte Emirates`,
+<p>Gracias por su solicitud. Ya estamos preparando su análisis para <strong>${cap}</strong> con foco en <strong>${obj}</strong>.</p>
+<p>Le escribiremos en menos de 24 horas con opciones concretas y siguiente paso recomendado.</p>
+<p>Si quiere avanzar hoy mismo, puede escribirnos por WhatsApp:</p>
+${waBtn}${firma}`,
+    text: `${sal} ${n},\n\nGracias por su solicitud.\nYa estamos preparando su análisis para ${cap} con foco en ${obj}.\n\nEn menos de 24 horas le escribiremos con opciones concretas y siguiente paso recomendado.\n\nSi quiere avanzar hoy: WhatsApp ${wa}\n\nEquipo Horizonte Emirates`,
   };
 
   if (code === 'A2') return {
