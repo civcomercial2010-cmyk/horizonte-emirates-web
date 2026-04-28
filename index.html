@@ -1638,6 +1638,23 @@ function checkGdpr(){
   btn.classList.toggle('ready',ok);
 }
 
+function trackGAEvent(eventName, params){
+  if(typeof window.gtag!=='function')return;
+  window.gtag('event', eventName, params || {});
+}
+
+// CTA principal: mide clics que llevan al formulario.
+document.querySelectorAll('a[href="#form"]').forEach(link=>{
+  link.addEventListener('click',function(){
+    const label=(this.textContent||'').trim().replace(/\s+/g,' ').slice(0,80);
+    trackGAEvent('generate_lead_click',{
+      event_category:'engagement',
+      event_label:label||'cta_form',
+      link_target:'#form'
+    });
+  });
+});
+
 document.getElementById('mainform').addEventListener('submit',function(e){
   e.preventDefault();
   const emailVal=(this.querySelector('[name="email"]')?.value||'').trim();
@@ -1674,6 +1691,13 @@ document.getElementById('mainform').addEventListener('submit',function(e){
         tier,
         score
       };
+      trackGAEvent('generate_lead',{
+        event_category:'form',
+        event_label:'mainform_submit_success',
+        value:score,
+        lead_tier:tier,
+        lead_country:pais || 'sin_pais'
+      });
       document.getElementById('mainform').style.display='none';
       const pw=document.querySelector('.form-progress-wrap');
       if(pw)pw.style.display='none';
