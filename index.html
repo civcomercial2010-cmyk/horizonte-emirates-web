@@ -1695,13 +1695,25 @@ document.querySelectorAll('a[href="#form"]').forEach(link=>{
 
 document.getElementById('mainform').addEventListener('submit',function(e){
   e.preventDefault();
+  trackGAEvent('lead_submit_attempt',{
+    event_category:'form',
+    event_label:'mainform_submit_attempt'
+  });
   const emailVal=(this.querySelector('[name="email"]')?.value||'').trim();
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(emailVal)){
+    trackGAEvent('lead_submit_validation_error',{
+      event_category:'form_error',
+      event_label:'invalid_email'
+    });
     showStatus('err','Introduce un email válido para continuar.');return;
   }
   const pfx=document.getElementById('phone-pfx').value||'+34';
   const pnum=(document.getElementById('phone-num').value||'').trim();
   if(pnum.replace(/\D/g,'').length<6){
+    trackGAEvent('lead_submit_validation_error',{
+      event_category:'form_error',
+      event_label:'invalid_phone'
+    });
     showStatus('err','Introduce un número de teléfono válido para continuar.');return;
   }
   document.getElementById('h-phone').value=pfx+' '+pnum;
@@ -1750,10 +1762,18 @@ document.getElementById('mainform').addEventListener('submit',function(e){
       }
       document.getElementById('success').classList.add('show');
     }else{
+      trackGAEvent('lead_submit_error',{
+        event_category:'form_error',
+        event_label:'web3forms_rejected'
+      });
       showStatus('err',d.message||'No se pudo enviar el formulario. Inténtalo de nuevo.');
       btn.disabled=false;btn.textContent='Solicitar análisis personalizado →';
     }
   }).catch(()=>{
+    trackGAEvent('lead_submit_error',{
+      event_category:'form_error',
+      event_label:'network_error'
+    });
     showStatus('err','Error de conexión. Revisa tu conexión e inténtalo de nuevo.');
     btn.disabled=false;btn.textContent='Solicitar análisis personalizado →';
   });
@@ -1776,11 +1796,19 @@ function buildWaMsg(data){
 }
 
 function openWaDirect(preData){
+  trackGAEvent('whatsapp_click',{
+    event_category:'contact',
+    event_label:'success_screen_whatsapp'
+  });
   window.open(buildWaMsg(preData||savedLead),'_blank','noopener');
   return false;
 }
 
 function openWaModal(preData){
+  trackGAEvent('whatsapp_modal_open',{
+    event_category:'contact',
+    event_label:'whatsapp_modal_open'
+  });
   const ov=document.getElementById('wao');
   if(preData?.nombre)document.getElementById('wam-n').value=preData.nombre;
   if(preData?.email)document.getElementById('wam-e').value=preData.email;
@@ -1818,6 +1846,10 @@ document.getElementById('waf').addEventListener('submit',function(e){
   fd.append('botcheck','');
   fetch(W3F_EP,{method:'POST',body:fd}).catch(()=>{});
   savedLead={nombre:n,email:em};
+  trackGAEvent('whatsapp_lead_submit',{
+    event_category:'contact',
+    event_label:'whatsapp_modal_submit'
+  });
   closeWaModal();
   window.open(buildWaMsg(savedLead),'_blank','noopener');
 });
