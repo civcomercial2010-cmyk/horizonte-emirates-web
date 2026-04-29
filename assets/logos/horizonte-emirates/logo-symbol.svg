@@ -1,0 +1,14 @@
+<svg width="260" height="260" viewBox="0 0 260 260" xmlns="http://www.w3.org/2000/svg">
+  <title>Horizonte Emirates — Símbolo</title>
+  <defs>
+    <style>.symbol{fill:#E6E68C;}</style>
+  </defs>
+  <rect width="260" height="260" fill="none"/>
+  <g transform="translate(18,24)">
+    <polygon class="symbol" points="0,158 14,158 14,110 22,110 22,158 36,158 36,26 22,26 22,86 14,86 14,26 0,26"/>
+    <polygon class="symbol" points="56,158 70,158 70,108 78,108 78,158 92,158 92,46 78,46 78,98 70,98 70,46 56,46"/>
+    <polygon class="symbol" points="112,158 126,158 126,18 152,18 152,158 166,158 166,64 152,64 152,128 126,128 126,64 112,64"/>
+    <polygon class="symbol" points="180,158 194,158 194,124 202,124 202,158 216,158 216,84 202,84 202,132 194,132 194,84 180,84"/>
+    <polygon class="symbol" points="236,158 250,158 250,98 258,98 258,158 272,158 272,54 258,54 258,108 250,108 250,54 236,54"/>
+  </g>
+</svg>

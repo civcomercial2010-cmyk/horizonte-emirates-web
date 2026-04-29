@@ -1,0 +1,24 @@
+<svg width="860" height="260" viewBox="0 0 860 260" xmlns="http://www.w3.org/2000/svg">
+  <title>Horizonte Emirates — Logo horizontal</title>
+  <defs>
+    <style>
+      .text-primary{fill:#303257;font-family:'Inter',sans-serif;font-weight:700;letter-spacing:0.12em;}
+      .text-secondary{fill:#303257;font-family:'Inter',sans-serif;font-weight:400;letter-spacing:0.4em;font-size:32px;}
+      .symbol{fill:#E6E68C;}
+    </style>
+  </defs>
+  <rect width="860" height="260" fill="none"/>
+  <g transform="translate(60,34)">
+    <g id="symbol" transform="translate(0,0)">
+      <polygon class="symbol" points="0,158 14,158 14,110 22,110 22,158 36,158 36,26 22,26 22,86 14,86 14,26 0,26"/>
+      <polygon class="symbol" points="60,158 74,158 74,108 82,108 82,158 96,158 96,46 82,46 82,98 74,98 74,46 60,46"/>
+      <polygon class="symbol" points="120,158 134,158 134,18 160,18 160,158 174,158 174,64 160,64 160,128 134,128 134,64 120,64"/>
+      <polygon class="symbol" points="184,158 198,158 198,124 206,124 206,158 220,158 220,84 206,84 206,132 198,132 198,84 184,84"/>
+      <polygon class="symbol" points="248,158 262,158 262,98 270,98 270,158 284,158 284,54 270,54 270,108 262,108 262,54 248,54"/>
+    </g>
+    <g transform="translate(340,10)">
+      <text class="text-primary" x="0" y="70" font-size="72">HORIZONTE</text>
+      <text class="text-secondary" x="0" y="132">EMIRATES</text>
+    </g>
+  </g>
+</svg>
