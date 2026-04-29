@@ -53,7 +53,7 @@ const TG_CONFIG = {
   CHANNEL_ID:      '-1003931276651',
   SPREADSHEET_ID:  '133X4oyXfvAusuhvme7eYISNPfSZ1N0BkIt3oq1WKxXc',
   SHEET_PROJECTS:  'projects_master',
-  CALENDLY_URL:    'https://calendly.com/hola-horizonteemirates/llamada-estrategica-horizonte-emirates-20-minutos',
+  CALENDLY_URL:    'https://calendly.com/hola-horizonteemirates/30min',
   WA_LINK:         'https://wa.me/971554722025',
   NUM_PROYECTOS:   2,
   /** Zona horaria para “día sí / día no” y “ya enviado hoy” (calendario civil) */
