@@ -19,7 +19,7 @@ const CONFIG = {
   AGENT_BRIEFING_EMAIL: 'civcomercial2010@gmail.com',
   WA_NUMBER:       '+971 55 472 2025',
   WA_LINK:         'https://wa.me/971554722025',
-  CALENDLY_URL:    'https://calendly.com/hola-horizonteemirates/30min',
+  CALENDLY_URL:    'https://calendly.com/hola-horizonteemirates/llamada-estrategica-horizonte-emirates-20-minutos',
   CALENDAR_ID:     'primary', // calendario donde Calendly crea las reuniones
   CALENDLY_EVENT_KEYWORD: 'Llamada estratégica Horizonte Emirates',
   UNSUBSCRIBE_URL: 'mailto:hola@horizonteemirates.com?subject=BAJA%20COMUNICACIONES',
@@ -582,6 +582,11 @@ function parseLeadFromEmail(body, subject) {
       case 'puntuacion':
       case 'puntuación':                    lead.puntuacion  = parseInt(val) || lead.puntuacion; break;
       case 'origen':                        lead.origen      = val; break;
+      case 'utm_source':                    lead.utm_source  = val; break;
+      case 'utm_medium':                    lead.utm_medium  = val; break;
+      case 'utm_campaign':                  lead.utm_campaign= val; break;
+      case 'utm_content':                   lead.utm_content = val; break;
+      case 'utm_term':                      lead.utm_term    = val; break;
     }
   });
 
@@ -789,6 +794,11 @@ function saveLead(data) {
     now,
     'activo',
     '',
+    data.utm_source  || '',
+    data.utm_medium  || '',
+    data.utm_campaign|| '',
+    data.utm_content || '',
+    data.utm_term    || '',
   ]);
   const r = sh.getLastRow();
   sh.getRange(r, 4).setNumberFormat('@');
@@ -1098,113 +1108,91 @@ function getTemplate(code, lead) {
   // ── TIER A — 5 emails ────────────────────────────────────────
 
   if (code === 'A1') return {
-    subject: `Su análisis de inversión en Dubai ya está en marcha, ${n}`,
-    html: `<p>${sal} ${n},</p>
-<p>Gracias por su solicitud. Ya estamos preparando su análisis para <strong>${cap}</strong> con foco en <strong>${obj}</strong>.</p>
-<p>Le escribiremos en menos de 24 horas con opciones concretas y siguiente paso recomendado.</p>
-<p>Si quiere avanzar hoy mismo, puede escribirnos por WhatsApp:</p>
+    subject: `Hola ${n}, ya estamos revisando su consulta sobre Dubai`,
+    html: `<p>Hola ${n},</p>
+<p>Gracias por contactar con nosotros sobre inversión en Dubai.</p>
+<p>Estamos preparando un análisis personalizado para <strong>${cap}</strong> con enfoque en <strong>${obj}</strong>.</p>
+<p>En las próximas horas le enviaremos algunas opciones concretas y el siguiente paso recomendado.</p>
+<p>Si tiene alguna pregunta urgente, puede escribirme por WhatsApp:</p>
 ${waBtn}${firma}`,
-    text: `${sal} ${n},\n\nGracias por su solicitud.\nYa estamos preparando su análisis para ${cap} con foco en ${obj}.\n\nEn menos de 24 horas le escribiremos con opciones concretas y siguiente paso recomendado.\n\nSi quiere avanzar hoy: WhatsApp ${wa}\n\nEquipo Horizonte Emirates`,
+    text: `Hola ${n},\n\nGracias por contactar con nosotros sobre inversión en Dubai.\nEstamos preparando un análisis personalizado para ${cap} con enfoque en ${obj}.\n\nEn las próximas horas le enviaremos algunas opciones concretas y el siguiente paso recomendado.\n\nSi tiene alguna pregunta urgente, puede escribirme por WhatsApp: ${wa}\n\nSaludos,\nEquipo Horizonte Emirates`,
   };
 
   if (code === 'A2') return {
-    subject: `${n}, 3 activos seleccionados para su perfil inversor`,
-    html: `<p>${sal} ${n},</p>
-<p>Su análisis ya está listo. Para un perfil como el suyo — <strong>${cap}</strong>, objetivo: <strong>${obj}</strong> — estas son las tres opciones mejor posicionadas ahora:</p>
-<table width="100%" cellpadding="12" cellspacing="0" border="0" style="margin:20px 0;border-collapse:collapse;font-size:14px">
-  <tr style="background:#F8F6F1">
-    <td style="border:1px solid #E0DBD1;font-weight:700;color:#0D1B2A;width:38%">Dubai Marina / Business Bay</td>
-    <td style="border:1px solid #E0DBD1;color:#3a3a3a">Off-plan desde 280.000€. Rentabilidad estimada <strong>7–8% neto</strong>. Promotoras RERA verificadas.</td>
-  </tr>
-  <tr>
-    <td style="border:1px solid #E0DBD1;font-weight:700;color:#0D1B2A">Ras Al Khaimah</td>
-    <td style="border:1px solid #E0DBD1;color:#3a3a3a">Ventana pre-apertura Wynn (2027). Proyección <strong>+20–30% plusvalía</strong>. Tickets desde 200.000€.</td>
-  </tr>
-  <tr style="background:#F8F6F1">
-    <td style="border:1px solid #E0DBD1;font-weight:700;color:#0D1B2A">Abu Dhabi · Aldar</td>
-    <td style="border:1px solid #E0DBD1;color:#3a3a3a">Respaldo soberano. Rentabilidad <strong>5–7% neto</strong>. Mayor estabilidad y liquidez.</td>
-  </tr>
-</table>
-<p>Para ver las propiedades concretas necesito 20 minutos de llamada. ¿Le va bien hoy o mañana?</p>
-${calBtn}${waBtn}${firma}`,
-    text: `${sal} ${n},\n\nHemos preseleccionado 3 activos para ${cap} · ${obj}, priorizando equilibrio entre rentabilidad, entrada y riesgo:\n- Dubai Marina/Business Bay: 7-8% neto\n- RAK pre-Wynn: +20-30% plusvalía desde 200k€\n- Abu Dhabi Aldar: 5-7% neto, estable\n\n¿20 min? ${calL} / WhatsApp ${wa}\n\nEquipo Horizonte Emirates`,
+    subject: `${n}, algunas opciones que podrían interesarle`,
+    html: `<p>Hola ${n},</p>
+<p>Basándome en su perfil de <strong>${cap}</strong> y <strong>${obj}</strong>, he seleccionado tres opciones que podrían encajar bien.</p>
+<p>Dubai Marina/Business Bay: alrededor del 7-8% neto anual.</p>
+<p>Ras Al Khaimah (antes del Wynn): potencial de plusvalía del 20-30% desde 200.000€.</p>
+<p>Abu Dhabi (Aldar): 5-7% neto, más estable.</p>
+<p>Si quiere que hablemos de alguna en detalle, podemos agendar 20 minutos por Calendly ${calL} o por WhatsApp.</p>
+${waBtn}${firma}`,
+    text: `Hola ${n},\n\nBasándome en su perfil de ${cap} y ${obj}, he seleccionado tres opciones que podrían encajar bien.\n\nDubai Marina/Business Bay: alrededor del 7-8% neto anual.\nRas Al Khaimah (antes del Wynn): potencial de plusvalía del 20-30% desde 200.000€.\nAbu Dhabi (Aldar): 5-7% neto, más estable.\n\nSi quiere que hablemos de alguna en detalle, podemos agendar 20 minutos por Calendly ${calL} o por WhatsApp ${wa}.\n\nSaludos,\nEquipo Horizonte Emirates`,
   };
 
   if (code === 'A3') return {
-    subject: `Un dato clave para su perfil inversor, ${n}`,
-    html: `<p>${sal} ${n},</p>
-<p>Le escribo porque hay algo que quiero compartirle antes de que pase más tiempo.</p>
-<p>Los activos off-plan que mejor encajan con un perfil como el suyo (<strong>${cap}</strong>, <strong>${obj}</strong>) tienen ventanas de entrada limitadas. No es un recurso de ventas: es la mecánica real del mercado. Cuando se llena el aforo de una fase, el precio sube o la oportunidad desaparece.</p>
-<p>No le pido que decida ahora. Le pido 20 minutos para que tenga toda la información y pueda decidir con criterio, sin presión.</p>
-${calBtn}${waBtn}${firma}`,
-    text: `${sal} ${n},\n\nLos activos para ${cap} · ${obj} tienen ventanas de entrada limitadas.\nNo le pido decidir ahora. Solo 20 minutos para revisar datos y decidir con criterio, sin presión.\n\n${calL} / WhatsApp ${wa}\n\nEquipo Horizonte Emirates`,
+    subject: `Un detalle importante sobre inversiones en Dubai, ${n}`,
+    html: `<p>Hola ${n},</p>
+<p>Algo que veo a menudo con perfiles como el suyo es que los mejores activos off-plan tienen plazos limitados para entrar.</p>
+<p>No es para presionar, solo para que sepa que a veces vale la pena revisar opciones pronto.</p>
+<p>Si le apetece, podemos charlar 20 minutos sobre esto sin compromiso: Calendly ${calL} o WhatsApp.</p>
+${waBtn}${firma}`,
+    text: `Hola ${n},\n\nAlgo que veo a menudo con perfiles como el suyo es que los mejores activos off-plan tienen plazos limitados para entrar.\n\nNo es para presionar, solo para que sepa que a veces vale la pena revisar opciones pronto.\n\nSi le apetece, podemos charlar 20 minutos sobre esto sin compromiso: Calendly ${calL} o WhatsApp ${wa}.\n\nSaludos,\nEquipo Horizonte Emirates`,
   };
 
   if (code === 'A4') return {
-    subject: `Antes de decidir, ¿ha valorado visitar Dubai, ${n}?`,
-    html: `<p>${sal} ${n},</p>
-<p>La visita presencial acelera decisiones porque reduce incertidumbre: activo, zona y promotor en primera persona.</p>
-<p>La diferencia no es el dinero. Es que ver el activo en persona, hablar con el promotor y entender el entorno elimina las dudas que ningún PDF puede resolver.</p>
-<p>Por eso organizamos ese viaje: agenda de visitas, reuniones con promotoras RERA y acompañamiento de nuestro equipo local. <strong>Sin coste para el inversor</strong> — solo vuelo y alojamiento de su parte.</p>
-<p>¿Le interesa saber cómo funciona?</p>
-${waBtn}${calBtn}${firma}`,
-    text: `${sal} ${n},\n\nLa visita presencial acelera decisiones porque reduce incertidumbre: activo, zona y promotor en primera persona.\n\nOrganizamos el viaje (agenda, promotoras y equipo local) sin coste de asesoramiento.\nSolo vuelo y alojamiento por su parte.\n\nWhatsApp ${wa} / ${calL}\n\nEquipo Horizonte Emirates`,
+    subject: `¿Ha pensado en visitar Dubai antes de decidir? ${n}`,
+    html: `<p>Hola ${n},</p>
+<p>Una cosa que ayuda mucho a la hora de decidir es visitar Dubai en persona.</p>
+<p>Podemos organizar una agenda con visitas a propiedades y reuniones con promotoras en español.</p>
+<p>Todo sin coste para usted (viaje y alojamiento por su cuenta, claro).</p>
+<p>Si le interesa, hablemos por WhatsApp o agendemos algo por Calendly ${calL}.</p>
+${waBtn}${firma}`,
+    text: `Hola ${n},\n\nUna cosa que ayuda mucho a la hora de decidir es visitar Dubai en persona.\n\nPodemos organizar una agenda con visitas a propiedades y reuniones con promotoras en español.\n\nTodo sin coste para usted (viaje y alojamiento por su cuenta, claro).\n\nSi le interesa, hablemos por WhatsApp ${wa} o agendemos algo por Calendly ${calL}.\n\nSaludos,\nEquipo Horizonte Emirates`,
   };
 
   if (code === 'A5') return {
-    subject: `${n}, ¿mantiene Dubai como prioridad de inversión?`,
-    html: `<p>${sal} ${n},</p>
-<p>Le he escrito en varias ocasiones sin recibir respuesta. No me molesta — entiendo que el momento y la prioridad cambian.</p>
-<p>Antes de hacer una pausa, quiero preguntarle directamente: <strong>¿sigue siendo Dubai una prioridad para usted en este momento?</strong></p>
-<p>No hay ningún compromiso. Si el momento no es el adecuado, lo entiendo perfectamente y cierro el seguimiento. Solo necesito saberlo.</p>
-<p>Si sigue interesado, una respuesta a este email o un mensaje por WhatsApp es suficiente. En 24 horas lo tengo todo preparado.</p>
+    subject: `${n}, ¿sigue pensando en Dubai?`,
+    html: `<p>Hola ${n},</p>
+<p>Quería saber si Dubai sigue siendo una opción que está considerando para invertir.</p>
+<p>Si sí, podemos retomar la conversación cuando le venga bien.</p>
+<p>Si no es el momento, no hay problema, lo dejamos aquí.</p>
+<p>Envíeme un mensaje por WhatsApp si quiere.</p>
 ${waBtn}${firma}`,
-    text: `${sal} ${n},\n\n¿Sigue siendo Dubai una prioridad?\n\nSi sigue interesado, responda este email o WhatsApp ${wa}. En 24h lo tengo preparado.\nSi ahora no es el momento, lo dejamos aquí sin problema.\n\nEquipo Horizonte Emirates`,
+    text: `Hola ${n},\n\nQuería saber si Dubai sigue siendo una opción que está considerando para invertir.\n\nSi sí, podemos retomar la conversación cuando le venga bien.\nSi no es el momento, no hay problema, lo dejamos aquí.\n\nEnvíeme un mensaje por WhatsApp ${wa} si quiere.\n\nSaludos,\nEquipo Horizonte Emirates`,
   };
 
   // ── TIER B — 7 emails ────────────────────────────────────────
 
   if (code === 'B1') return {
-    subject: `Recibida su consulta, ${n} — análisis en preparación`,
-    html: `<p>${sal} ${n},</p>
-<p>Gracias por contactar con Horizonte Emirates.</p>
-<p>Hemos recibido su consulta y ya estamos preparando un análisis adaptado a su perfil: <strong>${cap}</strong>, objetivo: <strong>${obj}</strong>.</p>
-<p style="margin:20px 0 8px"><strong>En menos de 24 horas recibirá:</strong></p>
-<ul style="margin:0;padding-left:20px;color:#3a3a3a;line-height:1.8">
-  <li>Activos seleccionados para su capital y objetivo</li>
-  <li>Comparativa de zonas y rentabilidades verificadas</li>
-  <li>Próximos pasos si le interesa profundizar</li>
-</ul>
-<p style="margin-top:20px">Cualquier pregunta, estamos disponibles en español.</p>
+    subject: `Hola ${n}, hemos recibido su consulta`,
+    html: `<p>Hola ${n},</p>
+<p>Gracias por escribirnos sobre inversión en Dubai con <strong>${cap}</strong> y <strong>${obj}</strong>.</p>
+<p>Estamos preparando algunas opciones y una comparativa de zonas para usted.</p>
+<p>Le escribiremos en las próximas 24 horas con más detalles.</p>
+<p>Si tiene alguna duda ahora, WhatsApp.</p>
 ${waBtn}${firma}`,
-    text: `${sal} ${n},\n\nConsulta recibida para ${cap} · ${obj}.\nEn 24h: activos seleccionados, comparativa de zonas, próximos pasos.\n\nWhatsApp: ${wa}\n\nEquipo Horizonte Emirates`,
+    text: `Hola ${n},\n\nGracias por escribirnos sobre inversión en Dubai con ${cap} y ${obj}.\n\nEstamos preparando algunas opciones y una comparativa de zonas para usted.\n\nLe escribiremos en las próximas 24 horas con más detalles.\n\nSi tiene alguna duda ahora, WhatsApp ${wa}.\n\nSaludos,\nEquipo Horizonte Emirates`,
   };
 
   if (code === 'B2') return {
-    subject: `${n}, ¿agendamos 20 minutos esta semana?`,
-    html: `<p>${sal} ${n},</p>
-<p>Tenemos los activos preparados para su perfil (<strong>${cap} · ${obj}</strong>) y me gustaría presentárselos personalmente.</p>
-<p>Son 20 minutos donde le explico las opciones concretas, las rentabilidades reales y el proceso completo. Sin compromiso. Sin presión. Solo información que le permita decidir con criterio.</p>
-<p>¿Cuándo le va bien esta semana?</p>
-${calBtn}${waBtn}${firma}`,
-    text: `${sal} ${n},\n\nActivos listos para ${cap} · ${obj}. ¿20 minutos esta semana?\n\n${calL} / WhatsApp ${wa}\n\nEquipo Horizonte Emirates`,
+    subject: `${n}, ¿podemos hablar 20 minutos esta semana?`,
+    html: `<p>Hola ${n},</p>
+<p>Ya tengo preparadas algunas opciones que podrían interesarle basadas en su perfil.</p>
+<p>¿Le vendría bien una llamada breve de 20 minutos para revisarlas sin compromiso?</p>
+<p>Podemos agendarla por Calendly ${calL} o directamente por WhatsApp.</p>
+${waBtn}${firma}`,
+    text: `Hola ${n},\n\nYa tengo preparadas algunas opciones que podrían interesarle basadas en su perfil.\n\n¿Le vendría bien una llamada breve de 20 minutos para revisarlas sin compromiso?\n\nPodemos agendarla por Calendly ${calL} o directamente por WhatsApp ${wa}.\n\nSaludos,\nEquipo Horizonte Emirates`,
   };
 
   if (code === 'B3') return {
-    subject: `Lo esencial antes de invertir en Dubai desde ${pais}`,
-    html: `<p>${sal} ${n},</p>
-<p>Uno de los mayores frenos que tienen los inversores de ${pais} es la falta de información práctica sobre el proceso real. Hoy quiero resolverlo en cuatro puntos:</p>
-<p style="margin:20px 0 4px"><strong>1. Fiscalidad en UAE</strong></p>
-<p style="margin:0 0 14px;color:#3a3a3a">Cero IRPF. Cero tributación sobre plusvalías. Cero sobre rentas de alquiler. El rendimiento es íntegramente suyo.</p>
-<p style="margin:0 0 4px"><strong>2. Sus obligaciones en ${pais}</strong></p>
-<p style="margin:0 0 14px;color:#3a3a3a">Como residente fiscal, deberá declarar el activo en el Modelo 720 (a partir de 50.000€) y tributar rentas en IRPF. <em>Nosotros no prestamos asesoramiento fiscal — recomendamos asesor especializado en fiscalidad internacional.</em></p>
-<p style="margin:0 0 4px"><strong>3. El proceso de compra</strong></p>
-<p style="margin:0 0 14px;color:#3a3a3a">RERA regula todas las transacciones: proceso seguro y trazable. Firmará un SPA y abonará un primer tramo del 10–20%.</p>
-<p style="margin:0 0 4px"><strong>4. Capital mínimo real</strong></p>
-<p style="margin:0 0 14px;color:#3a3a3a">En off-plan, la entrada es del 10–20% del valor. Con 30.000€ puede acceder a activos desde 150.000€.</p>
-<p>¿Alguna duda? Le respondo directamente.</p>
+    subject: `Aspectos clave antes de invertir en Dubai desde ${pais}`,
+    html: `<p>Hola ${n},</p>
+<p>Antes de dar pasos, es útil saber lo básico sobre fiscalidad en UAE (0% en muchos casos), obligaciones en ${pais}, proceso RERA y capital mínimo requerido.</p>
+<p>Recuerde que no damos asesoramiento fiscal o jurídico, solo información general.</p>
+<p>Si quiere que aclare alguna duda, WhatsApp.</p>
 ${waBtn}${firma}`,
-    text: `${sal} ${n},\n\nClaves Dubai desde ${pais}:\n1. UAE: sin IRPF, sin tributación sobre plusvalías\n2. ${pais}: Modelo 720 + rentas IRPF\n3. RERA: proceso seguro y trazable. SPA + 10-20% de entrada\n4. Off-plan: acceso desde 30.000€\n\nHorizonte Emirates no presta asesoramiento fiscal.\nConsulte siempre con un asesor especializado en fiscalidad internacional.\n\nDudas: WhatsApp ${wa}\n\nEquipo Horizonte Emirates`,
+    text: `Hola ${n},\n\nAntes de dar pasos, es útil saber lo básico sobre fiscalidad en UAE (0% en muchos casos), obligaciones en ${pais}, proceso RERA y capital mínimo requerido.\n\nRecuerde que no damos asesoramiento fiscal o jurídico, solo información general.\n\nSi quiere que aclare alguna duda, WhatsApp ${wa}.\n\nSaludos,\nEquipo Horizonte Emirates`,
   };
 
   if (code === 'B4') return {
@@ -1444,7 +1432,8 @@ function initSheets() {
   if (sh.getLastRow() === 0) {
     sh.appendRow(['ID','Nombre','Email','Teléfono','País','Capital','Objetivo',
                   'Experiencia','Plazo','Viaje Dubai','Puntuación','Tier','Canal',
-                  'Origen','Fecha creación','Estado','Notas']);
+                  'Origen','Fecha creación','Estado','Notas','UTM Source','UTM Medium',
+                  'UTM Campaign','UTM Content','UTM Term']);
     sh.setFrozenRows(1);
     sh.getRange('1:1').setFontWeight('bold').setBackground('#0D1B2A').setFontColor('#ffffff');
     sh.setColumnWidth(1,90);sh.setColumnWidth(2,140);sh.setColumnWidth(3,200);
@@ -1492,6 +1481,7 @@ function getLeadByEmail(email) {
       pais: r[4], capital: r[5], objetivo: r[6], experiencia: r[7],
       plazo: r[8], viaje: r[9], puntuacion: r[10], tier: r[11],
       canal: r[12], origen: r[13], createdAt: r[14], estado: r[15], notas: r[16],
+      utm_source: r[17], utm_medium: r[18], utm_campaign: r[19], utm_content: r[20], utm_term: r[21],
     };
   }
 
