@@ -216,6 +216,15 @@ function extractLeadEmailFromEvent(event) {
   return match ? match[1].toLowerCase() : '';
 }
 
+function isLikelyCalendlyEvent(event, title, desc) {
+  const keyword = String(CONFIG.CALENDLY_EVENT_KEYWORD || '').trim();
+  const location = String(event.getLocation() || '');
+  const blob = (String(title || '') + '\n' + String(desc || '') + '\n' + location).toLowerCase();
+  if (keyword && (title.indexOf(keyword) >= 0 || desc.indexOf(keyword) >= 0)) return true;
+  // Fallback robusto: si Calendly cambia naming del evento, seguir detectando por marcadores típicos.
+  return /calendly|invitee|invitado|rescheduled|reprogramad/i.test(blob);
+}
+
 function notifyCalendlyBookings() {
   const props = PropertiesService.getScriptProperties();
   const raw = props.getProperty('HE_CALENDLY_NOTIFIED') || '{}';
@@ -240,7 +249,7 @@ function notifyCalendlyBookings() {
   events.forEach(event => {
     const title = String(event.getTitle() || '');
     const desc  = String(event.getDescription() || '');
-    if (!title.includes(CONFIG.CALENDLY_EVENT_KEYWORD) && !desc.includes(CONFIG.CALENDLY_EVENT_KEYWORD)) return;
+    if (!isLikelyCalendlyEvent(event, title, desc)) return;
 
     const eventId = event.getId();
     if (notified[eventId]) return;
@@ -249,6 +258,7 @@ function notifyCalendlyBookings() {
     if (!leadEmail) return;
 
     const lead = getLeadByEmail(leadEmail);
+    if (!lead) return;
     const start = event.getStartTime();
     const end = event.getEndTime();
     const meetingLink = extractMeetingLinkFromEvent(event);
