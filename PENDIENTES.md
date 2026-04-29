@@ -42,7 +42,7 @@ _Actualizado: T08, T10, T12, T15 y T18 completadas; referencias de landing pasad
 
 ### 4. Verificar Calendly activo (T09)
 **Qué hacer:**
-- Confirmar que [calendly.com/horizonteemirates](https://calendly.com/horizonteemirates) existe y tiene evento activo (20 min)
+- Confirmar que [calendly.com/hola-horizonteemirates/llamada-estrategica-horizonte-emirates-20-minutos](https://calendly.com/hola-horizonteemirates/llamada-estrategica-horizonte-emirates-20-minutos) existe y tiene evento activo (20 min)
 - El evento debe llamarse "Llamada estratégica inversión Dubai"
 - Preguntas custom en este orden: (1) Capital disponible · (2) Objetivo · (3) Plazo · (4) País
 - Hacer una reserva de prueba y confirmar que el briefing llega por email
