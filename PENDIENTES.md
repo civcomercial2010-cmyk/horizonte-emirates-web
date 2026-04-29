@@ -1,5 +1,5 @@
 # Horizonte Emirates — Tareas Pendientes
-_Actualizado: referencias de landing pasadas a index-v6.html (tareas T12–T15)_
+_Actualizado: T08, T10, T12, T15 y T18 completadas; referencias de landing pasadas a index-v6.html (tareas T12–T15)_
 
 ---
 
@@ -20,7 +20,9 @@ _Actualizado: referencias de landing pasadas a index-v6.html (tareas T12–T15)_
 ---
 
 ### 2. Verificar Apps Script en producción (T08)
-**Qué hacer:**
+**Estado:** ✅ Completada
+
+**Qué hacer (realizado):**
 - Abrir [script.google.com](https://script.google.com)
 - Abrir el proyecto del email engine
 - Pegar el código actualizado de `automation/horizonte-emails.gs` (el del repo)
@@ -29,7 +31,9 @@ _Actualizado: referencias de landing pasadas a index-v6.html (tareas T12–T15)_
 ---
 
 ### 3. Configurar email `hola@horizonteemirates.com` (T10)
-**Qué hacer:**
+**Estado:** ✅ Completada
+
+**Qué hacer (realizado):**
 1. En el panel del registrador del dominio → activar reenvío de email: `hola@horizonteemirates.com` → `civcomercial2010@gmail.com`
 2. En Gmail → Configuración → Cuentas → "Enviar correo como" → Añadir `hola@horizonteemirates.com` → verificar con el código que llegará a civcomercial
 3. **Repo:** `sendEmail()` ya incluye `from: CONFIG.REPLY_TO` (fallará hasta completar pasos 1–2 y verificar la identidad en Gmail).
@@ -46,7 +50,9 @@ _Actualizado: referencias de landing pasadas a index-v6.html (tareas T12–T15)_
 ---
 
 ### 5. Instalar Google Analytics 4 en la landing (T12)
-**Qué hacer:**
+**Estado:** ✅ Completada
+
+**Qué hacer (realizado):**
 1. Ir a [analytics.google.com](https://analytics.google.com) → crear propiedad "Horizonte Emirates" → dominio `horizonteemirates.com`
 2. Copiar el ID de medición (formato `G-XXXXXXXXXX`)
 3. Añadir el snippet de GA4 en el `<head>` de `index-v6.html`
@@ -56,6 +62,8 @@ _Actualizado: referencias de landing pasadas a index-v6.html (tareas T12–T15)_
 ---
 
 ### 6. Crear cuenta Google Ads + campaña en borrador (T13)
+**Estado:** 🟡 Avanzada (cuenta creada, campaña en pausa, GA4 vinculado y conversiones configuradas)
+
 **Qué hacer:**
 1. Crear cuenta en [ads.google.com](https://ads.google.com) con `civcomercial2010@gmail.com`
 2. Vincular con GA4 e importar conversión `form_submit` como "Formulario cualificado"
@@ -66,6 +74,12 @@ _Actualizado: referencias de landing pasadas a index-v6.html (tareas T12–T15)_
    - Keywords: "inversión inmobiliaria Dubai", "comprar piso Dubai", "invertir en Dubai España", "inmuebles Dubai español"
    - Negativas: "trabajo", "hotel", "visa", "alquiler vacacional"
 5. Dejar la campaña en PAUSA — lista para activar en 1 clic
+
+**Pendiente para mañana (cierre T13):**
+
+- Verificar en GA4 `DebugView` una sesión de test completa (sin adblock y con Tag Assistant conectado)
+- Confirmar y unificar evento de conversión principal en Ads (`generate_lead` / `qualify_lead` / `form_submit`) para dejar un único naming operativo
+- Documentar captura final de validación (GA4 Tiempo real + Ads Conversiones en estado Activa)
 
 ---
 
@@ -108,10 +122,15 @@ _Actualizado: referencias de landing pasadas a index-v6.html (tareas T12–T15)_
 ---
 
 ### 11. Google Search Console (T18)
-**Qué hacer:**
-1. Ir a [search.google.com/search-console](https://search.google.com/search-console) → añadir propiedad → Dominio: `horizonteemirates.com`
-2. Verificar propiedad añadiendo el registro DNS TXT que te indique (en el panel del registrador del dominio)
-3. Enviar sitemap (crear `sitemap.xml` básico si no existe y subir a GitHub Pages)
+**Estado:** ✅ Completada (propiedad verificada + sitemap enviado + indexación solicitada)
+
+**Qué hacer (realizado):**
+1. Se añadió propiedad de dominio en Search Console y se verificó por DNS TXT
+2. Se publicó sitemap y robots en GitHub Pages (`sitemap.txt` + `robots.txt`)
+3. Se envió sitemap en Search Console y se solicitó indexación manual de URLs clave
+
+**Seguimiento (normal):**
+- Esperar propagación de indexación de `proyectos.html` y `legal.html` (puede tardar horas/días)
 
 ---
 
