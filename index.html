@@ -1579,7 +1579,9 @@ function captureUTM(){
   const urlParams = new URLSearchParams(window.location.search);
   const utmFields = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid', 'gbraid', 'wbraid'];
   utmFields.forEach(field => {
-    const value = urlParams.get(field) || '';
+    const fromUrl = urlParams.get(field);
+    if (fromUrl) sessionStorage.setItem(field, fromUrl);
+    const value = fromUrl || sessionStorage.getItem(field) || '';
     const input = document.querySelector(`input[name="${field}"]`);
     if (input) input.value = value;
   });
@@ -1590,7 +1592,7 @@ function getTrackingParams(){
   const usp = new URLSearchParams(window.location.search);
   const out = {};
   params.forEach(k=>{
-    const v=(usp.get(k)||'').trim();
+    const v=(usp.get(k) || sessionStorage.getItem(k) || '').trim();
     if(v) out[k]=v;
   });
   return out;
