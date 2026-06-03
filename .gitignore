@@ -1,0 +1,10 @@
+# Sistema operativo / editor
+.DS_Store
+Thumbs.db
+*.tmp
+
+# Claude Code (configuración local)
+.claude/
+
+# Carpetas locales sincronizadas (no forman parte de la web)
+Diario actividad proyecto/

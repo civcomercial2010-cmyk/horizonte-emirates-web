@@ -1,6 +1,5 @@
 User-agent: *
 Allow: /
 Disallow: /admin/
-Disallow: /.git/
 
-Sitemap: https://horizonteemirates.com/sitemap.xml
+Sitemap: https://www.horizonteemirates.com/sitemap.xml
