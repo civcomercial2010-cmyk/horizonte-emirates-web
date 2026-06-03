@@ -1847,7 +1847,7 @@ document.getElementById('mainform').addEventListener('submit',function(e){
     puntuacion:String(score),
     canal:document.getElementById('h-can').value||'whatsapp'
   });
-  fetch(W3F_EP,{method:'POST',body:payload}).then(r=>r.json()).then(d=>{
+  fetch(W3F_EP,{method:'POST',body:payload}).then(r=>r.json().catch(()=>({success:false}))).then(d=>{
     if(d.success){
       savedLead={
         nombre,
@@ -1862,9 +1862,12 @@ document.getElementById('mainform').addEventListener('submit',function(e){
         score
       };
       trackGAEvent('generate_lead',{
+        form_name:'contact_form',
+        lead_source:'website',
         event_category:'form',
         event_label:'mainform_submit_success',
         value:score,
+        currency:'EUR',
         lead_tier:tier,
         lead_country:pais || 'sin_pais'
       });
