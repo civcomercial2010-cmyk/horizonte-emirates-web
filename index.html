@@ -78,6 +78,10 @@ img{display:block;max-width:100%}
   padding-inline:var(--gutter-desktop);
 }
 .eyebrow{font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+.skip-link{position:absolute;left:8px;top:-48px;z-index:1000;background:var(--navy);color:#fff;padding:10px 16px;border-radius:var(--r);font-size:13px;font-weight:600}
+.skip-link:focus{top:8px}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.opt-card:focus-visible,.canal-o:focus-visible,.btn-sub:focus-visible,.btn-back:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--navy);outline-offset:2px}
 .rule{width:38px;height:1px;background:var(--gold);display:block;margin:12px 0}
 .fade{
   --reveal-delay:0ms;
@@ -911,6 +915,7 @@ gtag('config', 'AW-586671676');
 <script src="assets/consent.js" defer></script>
 </head>
 <body>
+<a href="#para-quien" class="skip-link">Saltar al contenido</a>
 
 <!-- NAV -->
 <nav id="nav">
@@ -1662,8 +1667,9 @@ document.querySelectorAll('.opt-card').forEach(el=>{
   el.addEventListener('click',function(){
     const dim=this.dataset.dim,v=this.dataset.v;
     if(!dim)return;
-    document.querySelectorAll(`.opt-card[data-dim="${dim}"]`).forEach(x=>x.classList.remove('sel'));
+    document.querySelectorAll(`.opt-card[data-dim="${dim}"]`).forEach(x=>{x.classList.remove('sel');x.setAttribute('aria-pressed','false');});
     this.classList.add('sel');
+    this.setAttribute('aria-pressed','true');
     sel[dim]=v;
     trackGAEvent('form_option_select',{
       event_category:'form',
@@ -1678,6 +1684,16 @@ document.querySelectorAll('.opt-card').forEach(el=>{
   });
 });
 
+// Accesibilidad: opciones del formulario operables por teclado (Enter/Espacio) + ARIA
+document.querySelectorAll('.opt-card, .canal-o').forEach(el=>{
+  el.setAttribute('tabindex','0');
+  el.setAttribute('role','button');
+  if(!el.hasAttribute('aria-pressed'))el.setAttribute('aria-pressed',el.classList.contains('sel')?'true':'false');
+  el.addEventListener('keydown',function(e){
+    if(e.key==='Enter'||e.key===' '){e.preventDefault();this.click();}
+  });
+});
+
 document.querySelectorAll('.strategy-card').forEach(card=>{
   card.style.cursor='pointer';
   card.addEventListener('click',()=>{
@@ -1687,8 +1703,9 @@ document.querySelectorAll('.strategy-card').forEach(card=>{
 });
 
 function setCanal(el){
-  document.querySelectorAll('.canal-o').forEach(x=>x.classList.remove('sel'));
+  document.querySelectorAll('.canal-o').forEach(x=>{x.classList.remove('sel');x.setAttribute('aria-pressed','false');});
   el.classList.add('sel');
+  el.setAttribute('aria-pressed','true');
   document.getElementById('h-can').value=el.dataset.canal;
 }
 
