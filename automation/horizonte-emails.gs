@@ -63,6 +63,10 @@ const CONFIG = {
   BUSINESS_HOUR_END: 19,
   /** Si true, sábado y domingo no hay envíos de secuencia. */
   BUSINESS_WEEKDAYS_ONLY: true,
+  /** M08 — pon true cuando haya campañas/tráfico activo: habilita la alerta de "sin leads en N horas". */
+  EXPECT_TRAFFIC: false,
+  /** M08 — horas sin nuevos leads que disparan alerta (solo si EXPECT_TRAFFIC=true). */
+  NO_LEAD_ALERT_HOURS: 72,
 };
 
 // Etiquetas legibles para variables del email
@@ -398,6 +402,7 @@ function isHorizonteWeb3Lead(subject, body) {
 }
 
 function pollGmail() {
+  PropertiesService.getScriptProperties().setProperty('HE_LAST_POLL_TS', String(Date.now())); // M08 — heartbeat para healthCheck
   let threads = GmailApp.search(CONFIG.POLL_QUERY, 0, 50);
   if (!threads.length && CONFIG.POLL_QUERY_FALLBACK) {
     threads = GmailApp.search(CONFIG.POLL_QUERY_FALLBACK, 0, 50);
@@ -1480,8 +1485,82 @@ function initSheets() {
   Logger.log('✓ Hojas inicializadas: Leads + Cola');
 }
 
+// ══════════════════════════════════════════════════════════════
+// 9b. HEALTHCHECK DEL PIPELINE (M08) — trigger cada hora
+//     Detecta fallos silenciosos: leads atascados, pollGmail caído,
+//     errores en la Cola y (opcional) inactividad de leads.
+// ══════════════════════════════════════════════════════════════
+function healthCheck() {
+  const props = PropertiesService.getScriptProperties();
+  const problems = [];
+
+  // 1. Leads Web3Forms atascados: correo de lead HE recibido hace >30 min y aún sin etiqueta de procesado.
+  const STUCK_MIN = 30;
+  const cutoff = new Date(Date.now() - STUCK_MIN * 60 * 1000);
+  try {
+    const threads = GmailApp.search('from:web3forms.com newer_than:2d -label:' + CONFIG.LABEL_PROCESADO, 0, 30);
+    let stuck = 0;
+    threads.forEach(t => {
+      const msg = getLatestThreadMessage(t);
+      if (!msg) return;
+      if (!isHorizonteWeb3Lead(msg.getSubject(), getMessageBodyForLeadParse(msg))) return;
+      if (msg.getDate() < cutoff) stuck++;
+    });
+    if (stuck > 0) problems.push(stuck + ' correo(s) de lead Web3Forms sin procesar (>' + STUCK_MIN + ' min). Posible fallo de pollGmail o de parseo.');
+  } catch (e) { problems.push('No se pudo revisar Gmail: ' + e.message); }
+
+  // 2. Heartbeat de pollGmail: ¿se ejecutó en los últimos ~35 min?
+  const lastPoll = props.getProperty('HE_LAST_POLL_TS');
+  if (!lastPoll) {
+    problems.push('Sin registro de ejecución de pollGmail. Ejecuta pollGmail y revisa los triggers.');
+  } else {
+    const ageMin = (Date.now() - Number(lastPoll)) / 60000;
+    if (ageMin > 35) problems.push('pollGmail no se ejecuta desde hace ' + Math.round(ageMin) + ' min. ¿Trigger desactivado o sin permisos?');
+  }
+
+  // 3. Errores en la hoja Cola.
+  try {
+    const q = getSheet('Cola').getDataRange().getValues();
+    let errs = 0;
+    for (let i = 1; i < q.length; i++) { if (String(q[i][3] || '').indexOf('error') >= 0) errs++; }
+    if (errs > 0) problems.push(errs + ' email(s) en la Cola con estado de error.');
+  } catch (e) { problems.push('No se pudo leer la hoja Cola: ' + e.message); }
+
+  // 4. (Opcional) Inactividad de leads — solo si se espera tráfico activo.
+  if (CONFIG.EXPECT_TRAFFIC) {
+    const maxH = Number(CONFIG.NO_LEAD_ALERT_HOURS || 72);
+    try {
+      const L = getSheet('Leads').getDataRange().getValues();
+      let lastTs = 0;
+      for (let i = 1; i < L.length; i++) { const d = new Date(L[i][14]); if (!isNaN(d)) lastTs = Math.max(lastTs, d.getTime()); }
+      if (lastTs === 0 || (Date.now() - lastTs) / 3600000 > maxH) {
+        problems.push('Sin nuevos leads en >' + maxH + 'h (EXPECT_TRAFFIC activo). Revisa campañas y formulario.');
+      }
+    } catch (e) { /* hoja Leads ya cubierta arriba */ }
+  }
+
+  if (!problems.length) { Logger.log('healthCheck OK'); return; }
+
+  // Anti-spam: no repetir la misma alerta en menos de 6 h.
+  const sig = problems.join(' | ');
+  const sameRecently = sig === (props.getProperty('HE_LAST_HEALTH_ALERT') || '') &&
+    (Date.now() - Number(props.getProperty('HE_LAST_HEALTH_ALERT_TS') || 0)) / 3600000 < 6;
+  if (sameRecently) { Logger.log('healthCheck: misma alerta reciente, omitida'); return; }
+
+  GmailApp.sendEmail(
+    CONFIG.AGENT_BRIEFING_EMAIL,
+    '[HE] ⚠ Healthcheck del funnel: ' + problems.length + ' incidencia(s)',
+    'El healthcheck ha detectado:\n\n- ' + problems.join('\n- ') +
+      '\n\nRevisar en Apps Script: pollGmail, triggers y las hojas Leads/Cola.',
+    { name: CONFIG.ASESOR_NOMBRE, replyTo: CONFIG.REPLY_TO }
+  );
+  props.setProperty('HE_LAST_HEALTH_ALERT', sig);
+  props.setProperty('HE_LAST_HEALTH_ALERT_TS', String(Date.now()));
+  Logger.log('healthCheck: alerta enviada — ' + sig);
+}
+
 function createTriggers() {
-  const timeTriggerHandlers = ['pollGmail', 'pollUnsubscribes', 'processQueue', 'notifyCalendlyBookings'];
+  const timeTriggerHandlers = ['pollGmail', 'pollUnsubscribes', 'processQueue', 'notifyCalendlyBookings', 'healthCheck'];
   ScriptApp.getProjectTriggers().forEach(t => {
     const fn = t.getHandlerFunction();
     if (timeTriggerHandlers.indexOf(fn) !== -1) ScriptApp.deleteTrigger(t);
@@ -1490,7 +1569,8 @@ function createTriggers() {
   ScriptApp.newTrigger('pollUnsubscribes').timeBased().everyMinutes(10).create();
   ScriptApp.newTrigger('notifyCalendlyBookings').timeBased().everyMinutes(10).create();
   ScriptApp.newTrigger('processQueue').timeBased().everyHours(1).create();
-  Logger.log('✓ Triggers activos: pollGmail + pollUnsubscribes + notifyCalendlyBookings cada 10 min · processQueue cada hora');
+  ScriptApp.newTrigger('healthCheck').timeBased().everyHours(1).create(); // M08
+  Logger.log('✓ Triggers activos: pollGmail + pollUnsubscribes + notifyCalendlyBookings cada 10 min · processQueue + healthCheck cada hora');
 }
 
 function getLeadByEmail(email) {
