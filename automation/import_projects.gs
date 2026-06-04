@@ -12,14 +12,14 @@
 // ═══════════════════════════════════════════════════════════════
 
 const IMPORT_CONFIG = {
-  SPREADSHEET_ID:     '133X4oyXfvAusuhvme7eYISNPfSZ1N0BkIt3oq1WKxXc',
+  SPREADSHEET_ID:     PropertiesService.getScriptProperties().getProperty('HE_SPREADSHEET_ID'), // M03
   SHEET_PROJECTS:     'projects_master',
   SHEET_CHANGE_LOG:   'change_log',
   SHEET_REVIEW:       'manual_review',
   PIPE_FILE_NAME:     'export-propertyfinder-dubai.pipe',
   // Alternativa: pega aquí el ID del archivo en Drive (más robusto que buscar por nombre)
   PIPE_FILE_ID:       '',
-  ALERT_EMAIL:        'civcomercial2010@gmail.com',
+  ALERT_EMAIL:        PropertiesService.getScriptProperties().getProperty('HE_AGENT_EMAIL') || 'hola@horizonteemirates.com', // M03
 };
 
 // ── DEVELOPER SCORES ───────────────────────────────────────────

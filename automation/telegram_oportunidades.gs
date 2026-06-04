@@ -48,10 +48,10 @@
 // ═══════════════════════════════════════════════════════════════
 
 const TG_CONFIG = {
-  // Si el repo es compartido o público, revoca el token en @BotFather (/revoke) y sustituye aquí.
-  BOT_TOKEN:       '8358149283:AAFtPW2jru2nyx6_Kq4nB5EU8ObA7q1poX8',
+  // Guardar en Script Properties como TG_BOT_TOKEN.
+  BOT_TOKEN:       PropertiesService.getScriptProperties().getProperty('TG_BOT_TOKEN'),
   CHANNEL_ID:      '-1003931276651',
-  SPREADSHEET_ID:  '133X4oyXfvAusuhvme7eYISNPfSZ1N0BkIt3oq1WKxXc',
+  SPREADSHEET_ID:  PropertiesService.getScriptProperties().getProperty('HE_SPREADSHEET_ID'), // M03
   SHEET_PROJECTS:  'projects_master',
   CALENDLY_URL:    'https://calendly.com/hola-horizonteemirates/llamada-estrategica-horizonte-emirates-20-minutos',
   WA_LINK:         'https://wa.me/971554722025',
@@ -70,7 +70,7 @@ const TG_CONFIG = {
   /** 0 o 1: desplaza un día la serie si quieres que “hoy” pase a ser día de envío */
   SEND_DAY_OFFSET:   0,
   /** Reservado (no hay envío de email en este script; se puede usar desde otro .gs) */
-  ALERT_EMAIL:     'civcomercial2010@gmail.com',
+  ALERT_EMAIL:     PropertiesService.getScriptProperties().getProperty('HE_AGENT_EMAIL') || 'hola@horizonteemirates.com', // M03
   EUR_PER_AED:     0.25,   // tasa de conversión AED → EUR (actualizar si cambia)
 };
 
@@ -196,10 +196,27 @@ function sendWeeklyOportunidades(forzar, pruebaSinAvanzarTema) {
     selected = _shuffleArray(projects).slice(0, TG_CONFIG.NUM_PROYECTOS);
   }
 
-  const unified = _buildUnifiedOportunidadesPost(theme, themeRound + 1, selected);
-  const sent    = _sendTelegramMessage(unified, 'HTML');
-  if (!sent.ok) {
-    Logger.log('❌ Fallo envío Telegram unificado: ' + JSON.stringify(sent));
+  const sentHead = _sendTelegramMessage(_buildIssueLeadIn(theme, themeRound + 1, false), 'HTML');
+  if (!sentHead.ok) {
+    Logger.log('❌ Fallo envío Telegram cabecera: ' + JSON.stringify(sentHead));
+    return;
+  }
+
+  const n = Math.min(selected.length, TG_CONFIG.NUM_PROYECTOS);
+  for (let i = 0; i < n; i++) {
+    const project = selected[i];
+    const educational = _buildEducationalEntry(theme, project, i + 1, n);
+    const sentEducational = _sendTelegramMessage(educational, 'HTML');
+    if (!sentEducational.ok) {
+      Logger.log('❌ Fallo envío bloque educativo: ' + JSON.stringify(sentEducational));
+      return;
+    }
+    _sendProjectCard(project, i + 1, null);
+  }
+
+  const sentCta = _sendTelegramMessage(_buildCtaMessage(), 'HTML');
+  if (!sentCta.ok) {
+    Logger.log('❌ Fallo envío Telegram CTA final: ' + JSON.stringify(sentCta));
     return;
   }
 
@@ -376,6 +393,66 @@ function _buildCtaMessage() {
     '📞 <a href="' + _hrefForTelegramHtml(TG_CONFIG.CALENDLY_URL) + '">Reservar llamada con el equipo</a>',
     '💬 <a href="' + _hrefForTelegramHtml(_waPrefillHrefTeamGeneral()) + '">Escribirnos por WhatsApp</a>',
   ].join('\n');
+}
+
+/** Mensaje educativo previo a cada oportunidad (publicación una a una) */
+function _buildEducationalEntry(theme, project, rank, total) {
+  const EDUCATIONAL_BY_THEME = {
+    'entrada_baja': {
+      title: 'Cómo evaluar una entrada baja sin asumir riesgos ocultos',
+      bullets: [
+        'Compara <b>cuánto inmovilizas hoy</b> frente al total del activo.',
+        'Revisa que la promotora tenga historial de <b>entregas reales</b>.',
+        'Prioriza planes de pago que te den margen para <b>gestionar liquidez</b>.',
+      ],
+    },
+    'alta_rentabilidad': {
+      title: 'Cómo leer la rentabilidad más allá del titular',
+      bullets: [
+        'Separa rentabilidad bruta de la <b>rentabilidad neta</b> tras costes.',
+        'Valida demanda de alquiler en la zona y rotación de inquilinos.',
+        'Comprueba si el plan de pago mejora tu <b>flujo de caja</b>.',
+      ],
+    },
+    'revalorizacion': {
+      title: 'Claves para detectar potencial real de revalorización',
+      bullets: [
+        'Analiza infraestructuras nuevas y crecimiento del distrito.',
+        'Compara precio de entrada con proyectos similares entregados.',
+        'Evalua horizonte de 3 a 5 años, no solo el corto plazo.',
+      ],
+    },
+    'lujo': {
+      title: 'Qué mirar en producto premium para proteger valor',
+      bullets: [
+        'Ubicación, escasez de producto y calidad de acabados.',
+        'Marca de promotora y posicionamiento del activo en reventa.',
+        'Perfil de demanda internacional y estabilidad de precios.',
+      ],
+    },
+  };
+
+  const fallback = {
+    title: 'Cómo analizar una oportunidad inmobiliaria con criterio inversor',
+    bullets: [
+      'Ubicación y demanda real de mercado.',
+      'Solidez de promotora y plan de pago.',
+      'Encaje con tu objetivo: renta, revalorización o diversificación.',
+    ],
+  };
+
+  const selected = EDUCATIONAL_BY_THEME[theme.id] || fallback;
+  const lines = [];
+  lines.push('📚 <b>Enfoque educativo · Oportunidad ' + rank + ' de ' + total + '</b>');
+  lines.push('');
+  lines.push('🧠 <b>' + _escapeHtmlText(selected.title) + '</b>');
+  lines.push('');
+  for (let i = 0; i < selected.bullets.length; i++) {
+    lines.push('• ' + selected.bullets[i]);
+  }
+  lines.push('');
+  lines.push('Proyecto que ilustra este enfoque: <b>' + _investorDisplay(project.nombre_proyecto, true) + '</b>.');
+  return _truncateTelegramHtml(lines.join('\n'), 4000);
 }
 
 function _truncateTelegramHtml(html, maxLen) {
@@ -737,8 +814,17 @@ function testWeeklyMessagePreview() {
   const theme      = MESSAGE_THEMES[themeRound % MESSAGE_THEMES.length];
   const selected   = _selectProjectsForTheme(projects, theme);
 
-  Logger.log('=== PREVIEW — MENSAJE ÚNICO (HTML) · TG_THEME_INDEX=' + themeRound + ' ===');
-  Logger.log(_buildUnifiedOportunidadesPost(theme, themeRound + 1, selected));
+  Logger.log('=== PREVIEW — CABECERA (HTML) · TG_THEME_INDEX=' + themeRound + ' ===');
+  Logger.log(_buildIssueLeadIn(theme, themeRound + 1, false));
+  Logger.log('=== PREVIEW — FLUJO UNA A UNA (HTML) ===');
+  for (let i = 0; i < selected.length; i++) {
+    Logger.log('--- BLOQUE EDUCATIVO ' + (i + 1) + ' ---');
+    Logger.log(_buildEducationalEntry(theme, selected[i], i + 1, selected.length));
+    Logger.log('--- FICHA PROYECTO ' + (i + 1) + ' (texto fallback) ---');
+    Logger.log(_buildProjectText(selected[i], i + 1, ''));
+  }
+  Logger.log('=== PREVIEW — CTA FINAL ===');
+  Logger.log(_buildCtaMessage());
 }
 
 // Probar foto con una URL concreta sin tocar el Sheet

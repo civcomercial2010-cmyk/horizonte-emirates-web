@@ -13,10 +13,14 @@
 
 // ── CONFIGURACIÓN ──────────────────────────────────────────────
 const CONFIG = {
-  SPREADSHEET_ID:  '133X4oyXfvAusuhvme7eYISNPfSZ1N0BkIt3oq1WKxXc',
+  // M03 — ID del CRM y email del agente fuera del repo público.
+  // Apps Script → ⚙ Configuración del proyecto → Propiedades de la secuencia de comandos:
+  //   HE_SPREADSHEET_ID = <ID del Google Sheet de leads>
+  //   HE_AGENT_EMAIL    = <email donde recibir los briefings de leads>
+  SPREADSHEET_ID:  PropertiesService.getScriptProperties().getProperty('HE_SPREADSHEET_ID'),
   ASESOR_NOMBRE:   'Horizonte Emirates',
   REPLY_TO:        'hola@horizonteemirates.com',
-  AGENT_BRIEFING_EMAIL: 'civcomercial2010@gmail.com',
+  AGENT_BRIEFING_EMAIL: PropertiesService.getScriptProperties().getProperty('HE_AGENT_EMAIL') || 'hola@horizonteemirates.com',
   WA_NUMBER:       '+971 55 472 2025',
   WA_LINK:         'https://wa.me/971554722025',
   CALENDLY_URL:    'https://calendly.com/hola-horizonteemirates/llamada-estrategica-horizonte-emirates-20-minutos',
@@ -562,18 +566,26 @@ function parseLeadFromEmail(body, subject) {
   body.split(/\r?\n/).forEach(line => {
     const m = line.match(/^([^:]{1,40}):\s*(.+)$/);
     if (!m) return;
-    const key = m[1].trim().toLowerCase().replace(/[\s_]+/g, '_');
+    const key = m[1].trim()
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      // Limpia iconos y signos para soportar etiquetas visuales (ej. "👤 Nombre").
+      .replace(/[^a-z0-9]+/g, '_')
+      .replace(/^_+|_+$/g, '')
+      // Soporta agrupación visual en etiquetas del form (ej. "Contacto · Nombre").
+      .replace(/^(contacto|inversion)_+/, '');
     const val = m[2].trim();
 
     switch (key) {
       case 'nombre':                        lead.nombre      = val; break;
       case 'apellidos':                     lead.apellidos   = val; break;
       case 'email':
+      case 'mail':
       case 'e-mail':
       case 'e_mail':
       case 'correo':
       case 'correo_electronico':
-      case 'correo_electrónico':
       case 'replyto':
       case 'reply_to':                         lead.email       = val.toLowerCase(); break;
       case 'telefono':                      lead.telefono    = val; break;
@@ -590,13 +602,16 @@ function parseLeadFromEmail(body, subject) {
       case 'canal_preferido':               lead.canal       = val; break;
       case 'tier':                          lead.tier        = val; break;
       case 'puntuacion':
-      case 'puntuación':                    lead.puntuacion  = parseInt(val) || lead.puntuacion; break;
+                                          lead.puntuacion  = parseInt(val) || lead.puntuacion; break;
       case 'origen':                        lead.origen      = val; break;
       case 'utm_source':                    lead.utm_source  = val; break;
       case 'utm_medium':                    lead.utm_medium  = val; break;
       case 'utm_campaign':                  lead.utm_campaign= val; break;
       case 'utm_content':                   lead.utm_content = val; break;
       case 'utm_term':                      lead.utm_term    = val; break;
+      case 'gclid':                         lead.gclid       = val; break;
+      case 'gbraid':                        lead.gbraid      = val; break;
+      case 'wbraid':                        lead.wbraid      = val; break;
     }
   });
 
@@ -809,6 +824,9 @@ function saveLead(data) {
     data.utm_campaign|| '',
     data.utm_content || '',
     data.utm_term    || '',
+    data.gclid       || '',
+    data.gbraid      || '',
+    data.wbraid      || '',
   ]);
   const r = sh.getLastRow();
   sh.getRange(r, 4).setNumberFormat('@');
@@ -1443,7 +1461,7 @@ function initSheets() {
     sh.appendRow(['ID','Nombre','Email','Teléfono','País','Capital','Objetivo',
                   'Experiencia','Plazo','Viaje Dubai','Puntuación','Tier','Canal',
                   'Origen','Fecha creación','Estado','Notas','UTM Source','UTM Medium',
-                  'UTM Campaign','UTM Content','UTM Term']);
+                  'UTM Campaign','UTM Content','UTM Term','GCLID','GBRAID','WBRAID']);
     sh.setFrozenRows(1);
     sh.getRange('1:1').setFontWeight('bold').setBackground('#0D1B2A').setFontColor('#ffffff');
     sh.setColumnWidth(1,90);sh.setColumnWidth(2,140);sh.setColumnWidth(3,200);
@@ -1492,6 +1510,7 @@ function getLeadByEmail(email) {
       plazo: r[8], viaje: r[9], puntuacion: r[10], tier: r[11],
       canal: r[12], origen: r[13], createdAt: r[14], estado: r[15], notas: r[16],
       utm_source: r[17], utm_medium: r[18], utm_campaign: r[19], utm_content: r[20], utm_term: r[21],
+      gclid: r[22], gbraid: r[23], wbraid: r[24],
     };
   }
 
@@ -1635,11 +1654,11 @@ function auditTemplateCopy() {
 
 // Helpers de ejecución manual en Apps Script (desplegable sin parámetros)
 function runSimulationA1() {
-  simulateLeadEmail('civcomercial2010@gmail.com', 'A1', false);
+  simulateLeadEmail(CONFIG.AGENT_BRIEFING_EMAIL, 'A1', false);
 }
 
 function runRealSendA1() {
-  simulateLeadEmail('civcomercial2010@gmail.com', 'A1', true);
+  simulateLeadEmail(CONFIG.AGENT_BRIEFING_EMAIL, 'A1', true);
 }
 
 // HE_EMAILS_GS_EOF — Si no ves esta línea al final de Código.gs, el pegado está truncado (provoca «Unexpected end of input»).

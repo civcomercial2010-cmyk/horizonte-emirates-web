@@ -15,13 +15,13 @@
 // ═══════════════════════════════════════════════════════════════
 
 const ME_CONFIG = {
-  SPREADSHEET_ID:   '133X4oyXfvAusuhvme7eYISNPfSZ1N0BkIt3oq1WKxXc',
+  SPREADSHEET_ID:   PropertiesService.getScriptProperties().getProperty('HE_SPREADSHEET_ID'), // M03
   SHEET_LEADS:      'Leads',
   SHEET_PROJECTS:   'projects_master',
   SHEET_MATCHES:    'lead_matches',
   TOP_N_PROJECTS:   5,    // cuántos proyectos recomendar por lead
   MIN_SCORE:        30,   // score mínimo para incluir en resultados
-  ALERT_EMAIL:      'civcomercial2010@gmail.com',
+  ALERT_EMAIL:      PropertiesService.getScriptProperties().getProperty('HE_AGENT_EMAIL') || 'hola@horizonteemirates.com', // M03
 };
 
 // ── SCORING WEIGHTS (total = 100) ──────────────────────────────

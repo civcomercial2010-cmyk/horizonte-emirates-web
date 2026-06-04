@@ -1595,7 +1595,10 @@ const WA_URL='https://wa.me/971554722025';
 const W3F_KEY='3861d49c-5f0a-4dc3-a9e9-08b1758a110a';
 const W3F_EP='https://api.web3forms.com/submit';
 const ADS_CONVERSION_ID='AW-586671676';
-const ADS_CONVERSION_LABEL=''; // Pendiente: etiqueta de la acción de conversión (p. ej. AbCdEfGh...). La conversión nativa de Ads NO se dispara hasta rellenarla.
+const ADS_CONVERSION_LABEL=''; // M04 — pega aquí la etiqueta de la conversión nativa de Google Ads (formato AbCdEfGhIjk) SOLO si NO importas generate_lead desde GA4. Vacío = no dispara la nativa (evita doble conteo si usas la vía GA4→Ads).
+// M05 — valor económico estimado del lead por tier (para Smart Bidding / ROAS). Ajustable.
+const LEAD_VALUE_EUR={A:300,B:120,C:40};
+function leadValueEUR(tier){return LEAD_VALUE_EUR[tier]||LEAD_VALUE_EUR.C;}
 let savedLead={};
 let roiEventTimer=null;
 let lastRoiPayload='';
@@ -1730,7 +1733,7 @@ function trackAdsLeadConversion(leadData){
   if(!ADS_CONVERSION_ID || !ADS_CONVERSION_LABEL)return;
   window.gtag('event','conversion',{
     send_to:`${ADS_CONVERSION_ID}/${ADS_CONVERSION_LABEL}`,
-    value:1.0,
+    value:leadValueEUR(leadData?.tier),
     currency:'EUR',
     email:leadData?.email||''
   });
@@ -1794,18 +1797,20 @@ function buildWeb3LeadPayload(formEl, leadData){
   fd.append('redirect', formEl.querySelector('[name="redirect"]')?.value || '');
   fd.append('botcheck', '');
 
-  // Orden exacto requerido en email de Web3Forms.
-  fd.append('Contacto · 👤 Nombre', leadData.nombre || '');
-  fd.append('Contacto · 📞 Telefono', leadData.telefono || '');
-  fd.append('Contacto · ✉️ Mail', leadData.mail || '');
-  fd.append('Contacto · 🌍 Pais', leadData.pais || '');
-  fd.append('Inversion · 💰 Capital', leadData.capital || '');
-  fd.append('Inversion · 🎯 Objetivo', leadData.objetivo || '');
-  fd.append('Inversion · ⏳ Plazo', leadData.plazo || '');
-  fd.append('Inversion · ✈️ Visita Dubai', leadData.visitaDubai || '');
-  fd.append('Inversion · 🏷️ Tier', leadData.tier || '');
-  fd.append('Inversion · 📊 Puntuacion', leadData.puntuacion || '');
-  fd.append('Inversion · 📲 Canal', leadData.canal || '');
+  // M07 fix — nombres de campo ASCII simples (sin emojis ni '·'): los decorativos
+  // llegaban con mojibake (UTF-8 leído como Latin-1) y rompían el parser de horizonte-emails.gs.
+  // El parser ya reconoce estas claves normalizadas (no requiere tocar el Apps Script).
+  fd.append('Nombre', leadData.nombre || '');
+  fd.append('Telefono', leadData.telefono || '');
+  fd.append('Email', leadData.mail || '');
+  fd.append('Pais', leadData.pais || '');
+  fd.append('Capital', leadData.capital || '');
+  fd.append('Objetivo', leadData.objetivo || '');
+  fd.append('Plazo', leadData.plazo || '');
+  fd.append('Visita Dubai', leadData.visitaDubai || '');
+  fd.append('Tier', leadData.tier || '');
+  fd.append('Puntuacion', leadData.puntuacion || '');
+  fd.append('Canal', leadData.canal || '');
   const trackingParams=getTrackingParams();
   Object.entries(trackingParams).forEach(([k,v])=>fd.append(k,v));
 
@@ -1889,13 +1894,14 @@ document.getElementById('mainform').addEventListener('submit',function(e){
         lead_source:'website',
         event_category:'form',
         event_label:'mainform_submit_success',
-        value:score,
+        value:leadValueEUR(tier),
         currency:'EUR',
         lead_tier:tier,
+        lead_score:score,
         lead_country:pais || 'sin_pais'
       });
       trackAdsLeadConversion(savedLead);
-      if(typeof window.fbq==='function')window.fbq('track','Lead',{value:score,currency:'EUR'});
+      if(typeof window.fbq==='function')window.fbq('track','Lead',{value:leadValueEUR(tier),currency:'EUR'});
       document.getElementById('mainform').style.display='none';
       const pw=document.querySelector('.form-progress-wrap');
       if(pw)pw.style.display='none';

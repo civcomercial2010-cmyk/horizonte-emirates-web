@@ -29,7 +29,7 @@
 ```
 [Lead rellena formulario V3]
         ↓
-[Web3Forms → envía email a civcomercial2010@gmail.com]
+[Web3Forms → envía email a la cuenta Gmail del proyecto]
         ↓
 [GAS: pollGmail() cada 10 min]
   → Detecta email de Web3Forms
@@ -55,10 +55,10 @@
 
 ### Paso 1 — Crear el Google Sheet CRM
 
-1. Ir a [sheets.google.com](https://sheets.google.com) con la cuenta `civcomercial2010@gmail.com`
+1. Ir a [sheets.google.com](https://sheets.google.com) con la cuenta `la cuenta Gmail del proyecto`
 2. Crear una hoja de cálculo vacía → nombrarla **"HE CRM — Leads"**
 3. Copiar el **ID** de la URL: `https://docs.google.com/spreadsheets/d/`**ESTE-ES-EL-ID**`/edit`
-4. Pegar ese ID en `CONFIG.SPREADSHEET_ID` del archivo `horizonte-emails.gs`
+4. Guardar ese ID en **Apps Script → ⚙ Configuración del proyecto → Propiedades de la secuencia de comandos** como `HE_SPREADSHEET_ID` (ya **no** se pega en el código — M03). Añadir también `HE_AGENT_EMAIL` = email donde recibir los briefings de leads.
 
 ### Paso 2 — Crear el proyecto en Google Apps Script
 
@@ -89,7 +89,7 @@ El script crea automáticamente la etiqueta `HE-procesado` la primera vez que pr
 
 ### Paso 6 — Verificar el email de notificación de Web3Forms
 
-Comprobar que los formularios (V3 y botón WA) envían los datos a `civcomercial2010@gmail.com`. Verificar en Web3Forms dashboard que:
+Comprobar que los formularios (V3 y botón WA) envían los datos a `la cuenta Gmail del proyecto`. Verificar en Web3Forms dashboard que:
 - Access key: `3861d49c-5f0a-4dc3-a9e9-08b1758a110a`
 - El subject del formulario incluye `[A|Xpts]` o `[B|Xpts]` o `[C|Xpts]`
 
