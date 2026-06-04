@@ -1607,14 +1607,13 @@ const seenSections=new Set();
 
 // ── UTM CAPTURE
 function captureUTM(){
+  // M11 — persiste UTM/click-ids de la URL en sessionStorage; getTrackingParams() los adjunta al lead en el envío.
+  // (Se eliminó el código muerto que escribía en inputs name="utm_*" que no existen en el formulario.)
   const urlParams = new URLSearchParams(window.location.search);
   const utmFields = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid', 'gbraid', 'wbraid'];
   utmFields.forEach(field => {
     const fromUrl = urlParams.get(field);
     if (fromUrl) sessionStorage.setItem(field, fromUrl);
-    const value = fromUrl || sessionStorage.getItem(field) || '';
-    const input = document.querySelector(`input[name="${field}"]`);
-    if (input) input.value = value;
   });
 }
 
