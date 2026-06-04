@@ -12,6 +12,7 @@
   "use strict";
   var STORE_KEY = "he_consent_v1";
   var POLICY_URL = "legal.html#cookies";
+  var META_PIXEL_ID = "972040562129072";
 
   function readDecision() {
     try { return JSON.parse(localStorage.getItem(STORE_KEY) || "null"); }
@@ -21,15 +22,24 @@
     try { localStorage.setItem(STORE_KEY, JSON.stringify({ state: state, ts: Date.now() })); }
     catch (e) { /* almacenamiento no disponible: la decisión vale solo para esta carga */ }
   }
+  function loadMetaPixel() {
+    if (window._heMetaPixelLoaded || !META_PIXEL_ID) return;
+    window._heMetaPixelLoaded = true;
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version="2.0";n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,"script","https://connect.facebook.net/en_US/fbevents.js");
+    window.fbq("init", META_PIXEL_ID);
+    window.fbq("track", "PageView");
+  }
   function applyConsent(state) {
-    if (typeof window.gtag !== "function") return;
     var g = state === "granted" ? "granted" : "denied";
-    window.gtag("consent", "update", {
-      analytics_storage: g,
-      ad_storage: g,
-      ad_user_data: g,
-      ad_personalization: g
-    });
+    if (typeof window.gtag === "function") {
+      window.gtag("consent", "update", {
+        analytics_storage: g,
+        ad_storage: g,
+        ad_user_data: g,
+        ad_personalization: g
+      });
+    }
+    if (state === "granted") loadMetaPixel();
   }
 
   function injectStyles() {
@@ -70,7 +80,7 @@
     bar.innerHTML =
       '<div class="he-c-inner">' +
         '<div class="he-c-txt"><strong>Usamos cookies.</strong> ' +
-        'Utilizamos cookies de análisis (Google Analytics) para entender el uso del sitio y mejorar el servicio. ' +
+        'Utilizamos cookies de análisis y de publicidad (Google y Meta) para medir el uso del sitio y nuestras campañas. ' +
         'Puede aceptarlas o rechazarlas. Consulte nuestra <a href="' + POLICY_URL + '">política de cookies</a>.</div>' +
         '<div class="he-c-actions">' +
           '<button type="button" class="he-c-reject">Rechazar</button>' +
