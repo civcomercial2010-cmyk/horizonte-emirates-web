@@ -26,7 +26,7 @@ _Última actualización: 2026-06-04_
 | M09 | Reducir fragilidad de captura (anti-SPAM + fallback) | H04 | ⬜ |
 | M10 | Unificar taxonomía de eventos GA4 | H19 | ✅ | Taxonomía documentada en `docs/TRACKING_EVENTS.md`. Eventos clave fantasma (`purchase`, `qualify_lead`, `close_convert_lead`, `manual_event_SUBMIT_L`) desmarcados en GA4; solo `generate_lead` como evento clave |
 | M11 | Limpiar código muerto `captureUTM()` | H14 | ✅ | Eliminada la escritura a inputs `utm_*` inexistentes; persistencia en sessionStorage intacta. Desplegado (`74de19c`) |
-| M12 | Fallback `<noscript>` del formulario | H18 | ⬜ |
+| M12 | Fallback `<noscript>` del formulario | H18 | ✅ | Aviso `<noscript>` con email + WhatsApp si JS está desactivado. Desplegado |
 | M13 | Restricción de dominio / anti-abuso Web3Forms | — | ⬜ |
 
 ## FASE 2 — Legal y confianza
@@ -34,7 +34,7 @@ _Última actualización: 2026-06-04_
 |---|---|---|---|
 | M14 | Identificación registral completa en `legal.html` | H10 | ✅ | Propulse SLU + NRT L-719841-W + domicilio (C. Doctor Molines 23, AD500 Andorra la Vella) en política de privacidad y aviso legal. Desplegado |
 | M15 | Firmar SCC/DPA con RRS y Web3Forms | H10 | 🔒 |
-| M16 | Citar fuente y fecha en cada claim de rentabilidad | H12 | ⬜ |
+| M16 | Citar fuente y fecha en cada claim de rentabilidad | H12 | 🟡 | Nota de "cifras orientativas de mercado (2025), no garantizadas" junto a la tabla comparativa (reduce riesgo legal). Citas específicas (DLD para transacciones, JLL/Knight Frank para rentabilidades) pendientes de que el usuario confirme las fuentes |
 | M17 | Añadir prueba social verificable | H08 | ⬜ |
 
 ## FASE 3 — Captación propia (SEO/CRO)
@@ -45,7 +45,7 @@ _Última actualización: 2026-06-04_
 | M20 | JSON-LD `ItemList`/`Residence` + breadcrumb en proyectos | H20 | ✅ | BreadcrumbList + ItemList(Residence) en `proyectos.html`, sin precios. Desplegado (`bf5b6ba`). Validar en Rich Results Test |
 | M21 | Política robots de IA + resolver doble `User-agent: *` | H11 | ⬜ |
 | M22 | Corregir enlazado interno (footer → proyectos; quitar doble "Zonas") | — | ✅ | Footer enlaza a proyectos.html y al formulario; eliminado el doble enlace "Zonas". Desplegado (`bf5b6ba`) |
-| M23 | Persistencia de progreso + validación inline del formulario | H16 | ⬜ |
+| M23 | Persistencia de progreso + validación inline del formulario | H16 | ✅ | Estado del formulario en sessionStorage (recarga no borra pasos/datos; se limpia al enviar) + validación inline email/teléfono al salir del campo. Desplegado |
 | M24 | Activar Telegram + nurturing con contenido real | — | ⬜ |
 
 ## FASE 4 — Hardening (seguridad / performance / accesibilidad)
@@ -66,7 +66,7 @@ _Última actualización: 2026-06-04_
 | M33 | Migrar captura a webhook directo / ActiveCampaign | H04 | ⬜ |
 | M34 | Conversions API server-side (Meta/Google) | — | ⬜ |
 | M35 | Dashboard de funnel (CPL, CVR, lead→cierre, € por tier) | — | ⬜ |
-| M36 | Higiene de repo (carpeta v2 a rama, robots repo, nombres de imágenes) | H15 | ⬜ |
+| M36 | Higiene de repo (carpeta v2 a rama, robots repo, nombres de imágenes) | H15 | 🟡 | Carpeta `v2` añadida a `.gitignore` (deja de figurar como pendiente). Renombrado de imágenes con espacios/acentos: pendiente (las URLs codificadas funcionan; cosmético) |
 | M37 | Sesgar inversión a ticket alto (≥300k) | — | ⬜ |
 
 ---

@@ -459,59 +459,6 @@ function initTicker(){
   inner.dataset.cloned='1';
 }
 
-function initMetricsCounter(){
-  const root=document.querySelector('.metrics-sect');
-  if(!root)return;
-  const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let ran=false;
-  function tickNum(el,to,dur){
-    const start=performance.now();
-    const from=0;
-    function frame(t){
-      const p=Math.min(1,(t-start)/dur);
-      const eased=1-Math.pow(1-p,3);
-      el.textContent=Math.round(from+(to-from)*eased);
-      if(p<1)requestAnimationFrame(frame);
-      else el.textContent=String(to);
-    }
-    requestAnimationFrame(frame);
-  }
-  function run(){
-    if(ran)return;
-    ran=true;
-    root.querySelectorAll('.metric-tile').forEach(tile=>{
-      const m=tile.getAttribute('data-metric');
-      if(m==='num'){
-        const tgt=Number(tile.getAttribute('data-target'))||0;
-        const numEl=tile.querySelector('.metric-num');
-        if(numEl){
-          if(reduce)numEl.textContent=String(tgt);
-          else tickNum(numEl,tgt,tgt===334?1400:900);
-        }
-      }else if(m==='dual'){
-        const a=Number(tile.getAttribute('data-a'))||0;
-        const b=Number(tile.getAttribute('data-b'))||0;
-        const elA=tile.querySelector('.m-a');
-        const elB=tile.querySelector('.m-b');
-        if(reduce){if(elA)elA.textContent=String(a);if(elB)elB.textContent=String(b);return;}
-        if(elA)tickNum(elA,a,700);
-        if(elB)setTimeout(()=>tickNum(elB,b,700),180);
-      }
-    });
-  }
-  if(reduce)run();
-  else{
-    const io=new IntersectionObserver(entries=>{
-      entries.forEach(e=>{
-        if(!e.isIntersecting)return;
-        io.disconnect();
-        run();
-      });
-    },{threshold:0.2,rootMargin:'0px'});
-    io.observe(root);
-  }
-}
-
 function fmtEUR(n){
   return new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n);
 }
@@ -696,7 +643,6 @@ function calcROI(){
   counterObs.observe(strip);
 })();
 initTicker();
-initMetricsCounter();
 ['roi-price','roi-yield','roi-appr'].forEach(id=>{
   const el=document.getElementById(id);
   if(el)el.addEventListener('input',()=>{

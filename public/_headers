@@ -1,10 +1,10 @@
-# Cabeceras de seguridad — FUENTE DE VERDAD
+# Cabeceras de seguridad — FUENTE DE VERDAD (Cloudflare Pages)
 #
-# ⚠️ GitHub Pages NO procesa este archivo (es funcionalidad de Netlify / Cloudflare Pages).
-#    Mientras se sirva desde GitHub Pages, estas cabeceras NO se aplican.
-#    La CSP y Referrer-Policy están además replicadas vía <meta> en cada página (sí funcionan).
-#    Para activar TODAS estas cabeceras por HTTP, poner Cloudflare delante del dominio
-#    y crear una Transform Rule de "Response Headers". Ver docs/SEGURIDAD_CABECERAS.md.
+# ✅ Cloudflare Pages SÍ procesa este archivo de forma nativa: estas cabeceras se aplican por HTTP.
+#    Este es el directorio de salida (public/), así que /* cubre todo el sitio.
+#    Al estar activas aquí, ELIMINAR la antigua Transform Rule de Cloudflare (evita cabeceras duplicadas).
+#    Tras validar que la CSP llega por HTTP, se puede retirar el <meta> CSP de las 3 páginas
+#    (fuente única). Ver docs/SEGURIDAD_CABECERAS.md.
 #
 /*
   Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
