@@ -14,3 +14,10 @@ Horizonte Emirates v2/
 
 # Copia de seguridad temporal de la limpieza (auditoria 2026-06-05) — eliminar tras validar
 _backup_limpieza_20260605/
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+.env*
+!.env.example
