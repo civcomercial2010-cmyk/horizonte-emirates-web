@@ -37,14 +37,7 @@
 
   <!-- Consent Mode v2 + Google Analytics 4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-BK37V83363"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('consent','default',{ad_storage:'denied',analytics_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',wait_for_update:500});
-    gtag('js', new Date());
-    gtag('config', 'G-BK37V83363');
-    gtag('config', 'AW-586671676');
-  </script>
+  <script src="assets/gtag-init.js"></script>
   <script src="assets/consent.js" defer></script>
 
   <style>
@@ -206,7 +199,7 @@
     <nav class="nav">
       <a href="index.html#para-quien">Por qué Dubai</a>
       <a href="index.html#como">Proceso</a>
-      <a href="index.html#form" class="btn-nav" onclick="gtag('event','cta_click',{button_text:'Solicitar análisis',section:'nav'})">Solicitar análisis</a>
+      <a href="index.html#form" class="btn-nav" data-track="cta_click" data-track-button="Solicitar análisis" data-track-section="nav">Solicitar análisis</a>
     </nav>
   </div>
 </header>
@@ -232,8 +225,8 @@
           <div class="carousel-slide"><img src="assets/projects/nh-collection-rak/PI89_R00.01_GF_Entrance%20Lobby-REV03.webp" alt="NH Collection Residences acceso principal" loading="lazy" /></div>
           <div class="carousel-slide"><img src="assets/projects/nh-collection-rak/PI89_R00.04_GF_Entrance%20Lobby-REV03.webp" alt="NH Collection Residences entrada exterior" loading="lazy" /></div>
         </div>
-        <button class="carousel-btn prev" onclick="prevSlide('1')" aria-label="Imagen anterior">‹</button>
-        <button class="carousel-btn next" onclick="nextSlide('1')" aria-label="Imagen siguiente">›</button>
+        <button class="carousel-btn prev" aria-label="Imagen anterior">‹</button>
+        <button class="carousel-btn next" aria-label="Imagen siguiente">›</button>
         <div class="carousel-dots" id="dots-1" aria-hidden="true"></div>
       </div>
 
@@ -262,8 +255,8 @@
           <div class="reason">Perfil: revalorización del capital a 3–5 años</div>
         </div>
         <div class="project-ctas">
-          <a href="index.html#form" class="btn-primary" onclick="gtag('event','project_cta',{project:'NH Collection',action:'solicitar_analisis'})">Solicitar análisis →</a>
-          <a href="https://wa.me/971554722025?text=Hola%2C%20me%20interesa%20NH%20Collection%20Residences" target="_blank" rel="noopener" class="btn-ghost" onclick="gtag('event','whatsapp_click',{context:'proyecto_nh'})">Preguntar por WhatsApp</a>
+          <a href="index.html#form" class="btn-primary" data-track="project_cta" data-track-project="NH Collection" data-track-action="solicitar_analisis">Solicitar análisis →</a>
+          <a href="https://wa.me/971554722025?text=Hola%2C%20me%20interesa%20NH%20Collection%20Residences" target="_blank" rel="noopener" class="btn-ghost" data-track="whatsapp_click" data-track-context="proyecto_nh">Preguntar por WhatsApp</a>
         </div>
       </div>
     </div>
@@ -282,8 +275,8 @@
           <div class="carousel-slide"><img src="assets/projects/mira-bentley-villas-dubai/06_9adb0f3786.webp" alt="Mira Bentley Villas detalle arquitectónico" loading="lazy" /></div>
           <div class="carousel-slide"><img src="assets/projects/mira-bentley-villas-dubai/GYM_01_b2d1bcdf3a.webp" alt="Mira Bentley Villas gimnasio" loading="lazy" /></div>
         </div>
-        <button class="carousel-btn prev" onclick="prevSlide('2')" aria-label="Imagen anterior">‹</button>
-        <button class="carousel-btn next" onclick="nextSlide('2')" aria-label="Imagen siguiente">›</button>
+        <button class="carousel-btn prev" aria-label="Imagen anterior">‹</button>
+        <button class="carousel-btn next" aria-label="Imagen siguiente">›</button>
         <div class="carousel-dots" id="dots-2" aria-hidden="true"></div>
       </div>
 
@@ -312,8 +305,8 @@
           <div class="reason">Perfil: preservar y hacer crecer el capital a largo plazo</div>
         </div>
         <div class="project-ctas">
-          <a href="index.html#form" class="btn-primary" onclick="gtag('event','project_cta',{project:'Mira Bentley',action:'solicitar_analisis'})">Solicitar análisis →</a>
-          <a href="https://wa.me/971554722025?text=Hola%2C%20me%20interesan%20las%20Mira%20Bentley%20Villas" target="_blank" rel="noopener" class="btn-ghost" onclick="gtag('event','whatsapp_click',{context:'proyecto_bentley'})">Preguntar por WhatsApp</a>
+          <a href="index.html#form" class="btn-primary" data-track="project_cta" data-track-project="Mira Bentley" data-track-action="solicitar_analisis">Solicitar análisis →</a>
+          <a href="https://wa.me/971554722025?text=Hola%2C%20me%20interesan%20las%20Mira%20Bentley%20Villas" target="_blank" rel="noopener" class="btn-ghost" data-track="whatsapp_click" data-track-context="proyecto_bentley">Preguntar por WhatsApp</a>
         </div>
       </div>
     </div>
@@ -331,8 +324,8 @@
           <div class="carousel-slide"><img src="assets/projects/Gianfranco%20Ferr%C3%A9%20Residence/005.webp" alt="Gianfranco Ferré Residence fachada principal" loading="lazy" /></div>
           <div class="carousel-slide"><img src="assets/projects/Gianfranco%20Ferr%C3%A9%20Residence/007.webp" alt="Gianfranco Ferré Residence masterplan" loading="lazy" /></div>
         </div>
-        <button class="carousel-btn prev" onclick="prevSlide('3')" aria-label="Imagen anterior">‹</button>
-        <button class="carousel-btn next" onclick="nextSlide('3')" aria-label="Imagen siguiente">›</button>
+        <button class="carousel-btn prev" aria-label="Imagen anterior">‹</button>
+        <button class="carousel-btn next" aria-label="Imagen siguiente">›</button>
         <div class="carousel-dots" id="dots-3" aria-hidden="true"></div>
       </div>
 
@@ -362,8 +355,8 @@
           <div class="reason">Perfil: revalorización a 3–6 años con catalizadores reales</div>
         </div>
         <div class="project-ctas">
-          <a href="index.html#form" class="btn-primary" onclick="gtag('event','project_cta',{project:'Gianfranco Ferré',action:'solicitar_analisis'})">Solicitar análisis →</a>
-          <a href="https://wa.me/971554722025?text=Hola%2C%20me%20interesa%20Gianfranco%20Ferr%C3%A9%20Residence" target="_blank" rel="noopener" class="btn-ghost" onclick="gtag('event','whatsapp_click',{context:'proyecto_ferre'})">Preguntar por WhatsApp</a>
+          <a href="index.html#form" class="btn-primary" data-track="project_cta" data-track-project="Gianfranco Ferré" data-track-action="solicitar_analisis">Solicitar análisis →</a>
+          <a href="https://wa.me/971554722025?text=Hola%2C%20me%20interesa%20Gianfranco%20Ferr%C3%A9%20Residence" target="_blank" rel="noopener" class="btn-ghost" data-track="whatsapp_click" data-track-context="proyecto_ferre">Preguntar por WhatsApp</a>
         </div>
       </div>
     </div>
@@ -379,7 +372,7 @@
       </div>
       <h2>+7 inmuebles más en cartera</h2>
       <p>Precios de compra, rentabilidad estimada y la estructura de cada operación solo se comparten en el análisis personalizado. Distintas zonas, tipologías y estrategias de retorno en Dubai, Ras Al Khaimah y Abu Dhabi.</p>
-      <a href="index.html#form" class="btn-primary" onclick="gtag('event','cta_click',{button_text:'Solicitar acceso cartera',section:'locked'})">
+      <a href="index.html#form" class="btn-primary" data-track="cta_click" data-track-button="Solicitar acceso cartera" data-track-section="locked">
         Solicitar acceso y análisis →
       </a>
     </div>
@@ -392,7 +385,7 @@
     <div class="final-cta-inner">
       <h2>¿Cuál encaja con tu perfil?</h2>
       <p>El análisis personalizado tarda menos de 48 horas y le indica si alguno de estos inmuebles encaja con su capital, su objetivo y su horizonte —o si le orientamos hacia otro tipo de propiedad. Sin compromiso y sin coste.</p>
-      <a href="index.html#form" class="btn-primary" onclick="gtag('event','cta_click',{button_text:'Solicitar análisis personalizado',section:'final'})">Solicitar análisis personalizado →</a>
+      <a href="index.html#form" class="btn-primary" data-track="cta_click" data-track-button="Solicitar análisis personalizado" data-track-section="final">Solicitar análisis personalizado →</a>
       <p class="form-note">Sin llamadas sin previo aviso. Solo el canal que usted elija.</p>
     </div>
   </div>
@@ -415,7 +408,7 @@
 
 <!-- WA FAB -->
 <a class="wa-fab" href="https://wa.me/971554722025?text=Hola%2C%20vengo%20de%20Horizonte%20Emirates%20y%20me%20interesa%20informaci%C3%B3n%20sobre%20inversi%C3%B3n%20inmobiliaria%20en%20UAE." target="_blank" rel="noopener" aria-label="WhatsApp"
-   onclick="gtag('event','whatsapp_click',{context:'fab_proyectos'})">
+   data-track="whatsapp_click" data-track-context="fab_proyectos">
   <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.109.55 4.09 1.514 5.812L0 24l6.335-1.637A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.88 0-3.647-.497-5.175-1.367l-.371-.221-3.785.978.999-3.671-.243-.386A9.938 9.938 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
 </a>
 
@@ -427,112 +420,6 @@
   <img id="lb-img" src="" alt="Imagen ampliada del proyecto" />
 </div>
 
-<script>
-// ── UTM capture (persistente en sessionStorage, igual que la home)
-(function() {
-  const p = new URLSearchParams(window.location.search);
-  const fields = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','gclid','gbraid','wbraid'];
-  fields.forEach(f => { const v = p.get(f); if (v) sessionStorage.setItem(f, v); });
-})();
-
-// ── Carrusel (dots dinámicos según nº de imágenes + lightbox)
-const carouselState = {};
-function initCarousel(id) {
-  const track = document.getElementById('track-' + id);
-  const dotsWrap = document.getElementById('dots-' + id);
-  if (!track || !dotsWrap) return;
-  const imgs = [...track.querySelectorAll('img')];
-  const count = imgs.length;
-  carouselState[id] = 0;
-
-  // Generar dots según el nº real de slides
-  if (count <= 1) {
-    dotsWrap.style.display = 'none';
-    const c = document.getElementById('carousel-' + id);
-    c.querySelectorAll('.carousel-btn').forEach(b => b.style.display = 'none');
-  } else {
-    for (let i = 0; i < count; i++) {
-      const b = document.createElement('button');
-      b.className = 'carousel-dot' + (i === 0 ? ' active' : '');
-      b.type = 'button';
-      b.setAttribute('aria-label', 'Ir a imagen ' + (i + 1));
-      b.addEventListener('click', () => goSlide(id, i));
-      dotsWrap.appendChild(b);
-    }
-  }
-
-  // Lightbox al hacer clic en cualquier imagen
-  const set = imgs.map(im => ({ src: im.src, alt: im.alt }));
-  imgs.forEach((im, i) => im.addEventListener('click', () => openLightbox(set, i)));
-}
-['1','2','3'].forEach(initCarousel);
-
-function goSlide(id, idx) {
-  const track = document.getElementById('track-' + id);
-  const dots  = document.querySelectorAll('#dots-' + id + ' .carousel-dot');
-  const count = track.children.length;
-  carouselState[id] = (idx + count) % count;
-  track.style.transform = 'translateX(-' + (carouselState[id] * 100) + '%)';
-  dots.forEach((d, i) => d.classList.toggle('active', i === carouselState[id]));
-  const project = document.getElementById('carousel-' + id).dataset.project;
-  gtag('event', 'carousel_slide', { project: project, slide: carouselState[id] });
-}
-function nextSlide(id) { goSlide(id, carouselState[id] + 1); }
-function prevSlide(id) { goSlide(id, carouselState[id] - 1); }
-
-// ── Lightbox
-(function() {
-  const box = document.getElementById('lightbox');
-  const img = document.getElementById('lb-img');
-  const closeBtn = document.getElementById('lb-close');
-  const prevBtn = document.getElementById('lb-prev');
-  const nextBtn = document.getElementById('lb-next');
-  let images = [], index = 0;
-
-  function render() {
-    const cur = images[index];
-    if (!cur) return;
-    img.src = cur.src; img.alt = cur.alt || 'Imagen ampliada del proyecto';
-    const show = images.length > 1;
-    prevBtn.style.display = show ? 'flex' : 'none';
-    nextBtn.style.display = show ? 'flex' : 'none';
-  }
-  window.openLightbox = function(imgs, start) {
-    images = imgs; index = start || 0; render();
-    box.classList.add('open'); box.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
-  };
-  function close() {
-    box.classList.remove('open'); box.setAttribute('aria-hidden', 'true');
-    img.src = ''; document.body.style.overflow = '';
-  }
-  closeBtn.addEventListener('click', close);
-  box.addEventListener('click', e => { if (e.target === box) close(); });
-  prevBtn.addEventListener('click', () => { index = (index - 1 + images.length) % images.length; render(); });
-  nextBtn.addEventListener('click', () => { index = (index + 1) % images.length; render(); });
-  document.addEventListener('keydown', e => {
-    if (!box.classList.contains('open')) return;
-    if (e.key === 'Escape') close();
-    if (e.key === 'ArrowLeft') prevBtn.click();
-    if (e.key === 'ArrowRight') nextBtn.click();
-  });
-})();
-
-// ── Scroll depth tracking
-(function() {
-  const marks = [25, 50, 75, 100]; const fired = new Set();
-  window.addEventListener('scroll', () => {
-    const denom = document.body.scrollHeight - window.innerHeight;
-    if (denom <= 0) return;
-    const pct = Math.round((window.scrollY / denom) * 100);
-    marks.forEach(m => { if (pct >= m && !fired.has(m)) { fired.add(m); gtag('event','scroll_depth',{percentage:m,page:'proyectos'}); }});
-  }, { passive: true });
-})();
-
-// ── Header con fondo al hacer scroll (coherencia con home)
-window.addEventListener('scroll', () => {
-  document.querySelector('.header').style.background = window.scrollY > 24 ? 'rgba(13,27,42,.98)' : 'rgba(13,27,42,.96)';
-}, { passive: true });
-</script>
+<script src="assets/proyectos.js" defer></script>
 </body>
 </html>
