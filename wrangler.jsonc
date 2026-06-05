@@ -1,0 +1,15 @@
+{
+  // Configuración de despliegue de Cloudflare Workers (assets estáticos).
+  // Solo se sirve el contenido de ./public; el resto del repo (privado) no se publica.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "horizonte-emirates-web",
+  "compatibility_date": "2026-06-06",
+  "assets": {
+    "directory": "./public",
+    // "none": sirve las páginas .html tal cual, sin redirección 307 a URL sin extensión.
+    // Mantiene coherencia con los canonical, el sitemap.xml y el enlazado interno (todos en .html).
+    "html_handling": "none",
+    // Rutas no encontradas → sirve la 404.html de marca con estado 404.
+    "not_found_handling": "404-page"
+  }
+}
