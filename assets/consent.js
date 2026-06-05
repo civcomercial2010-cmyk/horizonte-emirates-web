@@ -115,6 +115,10 @@
   window.heOpenConsent = function () { showBanner(); };
 
   function init() {
+    // Botones "Configurar cookies" sin manejador inline (necesario para CSP sin 'unsafe-inline').
+    Array.prototype.forEach.call(document.querySelectorAll("[data-he-open-consent]"), function (el) {
+      el.addEventListener("click", function (e) { e.preventDefault(); showBanner(); });
+    });
     var prev = readDecision();
     if (prev && (prev.state === "granted" || prev.state === "denied")) {
       applyConsent(prev.state);          // re-emite la decisión previa en cada carga
