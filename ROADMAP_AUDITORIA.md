@@ -21,7 +21,7 @@ _Última actualización: 2026-06-04_
 ## FASE 1 — Cierre de fugas y validación E2E
 | ID | Mejora | H | Estado |
 |---|---|---|---|
-| M07 | Prueba end-to-end real del funnel | — | 🟡 | E2E OK (correo→Sheet→email bienvenida). **Bug de parseo CORREGIDO** en `index.html` (nombres de campo ASCII). Pendiente: **commit+push** a GitHub Pages + repetir envío de prueba para confirmar que llegan nombre/teléfono/capital/objetivo/plazo/viaje/canal |
+| M07 | Prueba end-to-end real del funnel | — | ✅ | Re-test validado: llegan nombre/teléfono/capital/objetivo/plazo/viaje/canal. Bug de parseo (emojis→mojibake) corregido y desplegado. Columnas UTM vacías = correcto (solo se rellenan con tráfico de campañas) |
 | M08 | Healthcheck del pipeline (alerta 0 leads/72h) | H04 | ✅ | `healthCheck()` implementado y **activado** (código pegado + forzarPollGmail + createTriggers + probado). Trigger cada hora; alerta ante leads atascados, pollGmail caído o errores de Cola |
 | M09 | Reducir fragilidad de captura (anti-SPAM + fallback) | H04 | ⬜ |
 | M10 | Unificar taxonomía de eventos GA4 | H19 | ✅ | Taxonomía documentada en `docs/TRACKING_EVENTS.md`. Eventos clave fantasma (`purchase`, `qualify_lead`, `close_convert_lead`, `manual_event_SUBMIT_L`) desmarcados en GA4; solo `generate_lead` como evento clave |
@@ -32,7 +32,7 @@ _Última actualización: 2026-06-04_
 ## FASE 2 — Legal y confianza
 | ID | Mejora | H | Estado |
 |---|---|---|---|
-| M14 | Identificación registral completa en `legal.html` | H10 | ⬜ |
+| M14 | Identificación registral completa en `legal.html` | H10 | ✅ | Propulse SLU + NRT L-719841-W + domicilio (C. Doctor Molines 23, AD500 Andorra la Vella) en política de privacidad y aviso legal. Desplegado |
 | M15 | Firmar SCC/DPA con RRS y Web3Forms | H10 | 🔒 |
 | M16 | Citar fuente y fecha en cada claim de rentabilidad | H12 | ⬜ |
 | M17 | Añadir prueba social verificable | H08 | ⬜ |
@@ -51,11 +51,11 @@ _Última actualización: 2026-06-04_
 ## FASE 4 — Hardening (seguridad / performance / accesibilidad)
 | ID | Mejora | H | Estado |
 |---|---|---|---|
-| M25 | Externalizar JS/CSS comunes | H05 | ⬜ |
-| M26 | Eliminar `'unsafe-inline'` de `script-src` (hashes/nonce) | H05 | ⬜ |
+| M25 | Externalizar JS/CSS comunes | H05 | ✅ | JS externalizado en las 3 páginas: `assets/gtag-init.js`, `assets/app.js`, `assets/proyectos.js`; manejadores `onclick`/`onchange` sustituidos por listeners. Sintaxis validada con node. Desplegado |
+| M26 | Eliminar `'unsafe-inline'` de `script-src` | H05 | ✅ | Retirado del `<meta>` CSP de las 3 páginas, de `_headers` y del header CSP en Cloudflare (hecho por el usuario). Verificado en consola: 0 errores de inline-script; web funcional. `style-src` mantiene unsafe-inline (a propósito). Añadido `pagead2.googlesyndication.com` a connect-src (Ads). Pendiente menor: desactivar Cloudflare Web Analytics (beacon bloqueado, preexistente) |
 | M27 | Resolver Google Fonts render-blocking (self-host/preload) | — | ⬜ |
 | M28 | Optimizar animación KPI "tragaperras" (INP) | H13 | ⬜ |
-| M29 | Contraste AA del dorado de marca | H17 | ⬜ |
+| M29 | Contraste AA del dorado de marca | H17 | ✅ | `--gold-text:#9A7016` aplicado a texto pequeño sobre fondo claro (eyebrow, proc-tag, s-range/pill, zone-tag, deliver-t, form-scarcity). Dorado de marca intacto en grande/oscuro. Desplegado |
 | M30 | `404.html` + HSTS 2 años + revisar ACAO | H21 | 🟡 | `404.html` con identidad de marca creada y desplegada (`74de19c`). Pendiente en Cloudflare: subir HSTS a 2 años y revisar `Access-Control-Allow-Origin: *` |
 | M31 | Validar JSON-LD + Lighthouse final ≥90 | — | ⬜ |
 

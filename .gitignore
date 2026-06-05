@@ -8,3 +8,6 @@ Thumbs.db
 
 # Carpetas locales sincronizadas (no forman parte de la web)
 Diario actividad proyecto/
+
+# Versión v2 (exploración local LangGraph/Python, no en producción)
+Horizonte Emirates v2/
