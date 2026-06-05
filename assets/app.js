@@ -718,3 +718,90 @@ document.querySelectorAll('.canal-o').forEach(function(el){ el.addEventListener(
 (function(){ var w=document.getElementById('wa-success-link'); if(w) w.addEventListener('click', function(e){ e.preventDefault(); openWaDirect(savedLead); }); })();
 (function(){ var c=document.querySelector('.wam-close'); if(c) c.addEventListener('click', closeWaModal); })();
 (function(){ var f=document.querySelector('.wa-float a'); if(f) f.addEventListener('click', function(e){ e.preventDefault(); openWaModal(null); }); })();
+
+// ── M23 — Persistencia del formulario + validación inline ──────────────
+(function () {
+  var KEY = 'he_form_state';
+  var form = document.getElementById('mainform');
+  if (!form) return;
+
+  function snapshot() {
+    return {
+      cur: (typeof cur !== 'undefined') ? cur : 1,
+      sel: (typeof sel !== 'undefined') ? sel : {},
+      nombre: (form.querySelector('[name="nombre"]') || {}).value || '',
+      email: (form.querySelector('[name="email"]') || {}).value || '',
+      pfx: (document.getElementById('phone-pfx') || {}).value || '',
+      tel: (document.getElementById('phone-num') || {}).value || '',
+      pais: (form.querySelector('[name="pais"]') || {}).value || '',
+      canal: (document.getElementById('h-can') || {}).value || ''
+    };
+  }
+  function save() {
+    if (form.style.display === 'none') return;
+    try { sessionStorage.setItem(KEY, JSON.stringify(snapshot())); } catch (e) {}
+  }
+  var t;
+  function saveSoon() { clearTimeout(t); t = setTimeout(save, 300); }
+
+  function restore() {
+    var raw; try { raw = sessionStorage.getItem(KEY); } catch (e) { return; }
+    if (!raw) return;
+    var st; try { st = JSON.parse(raw); } catch (e) { return; }
+    if (!st) return;
+    ['capital', 'objetivo', 'plazo', 'viaje'].forEach(function (dim) {
+      var v = st.sel && st.sel[dim];
+      if (!v) return;
+      sel[dim] = v;
+      var card = document.querySelector('.opt-card[data-dim="' + dim + '"][data-v="' + v + '"]');
+      if (card) { card.classList.add('sel'); card.setAttribute('aria-pressed', 'true'); }
+      var map = { capital: 'h-cap', objetivo: 'h-obj', plazo: 'h-pla', viaje: 'h-via' };
+      var h = document.getElementById(map[dim]); if (h) h.value = v;
+    });
+    var setVal = function (q, val) { var el = form.querySelector(q); if (el && val) el.value = val; };
+    setVal('[name="nombre"]', st.nombre);
+    setVal('[name="email"]', st.email);
+    setVal('[name="pais"]', st.pais);
+    if (st.pfx) { var pf = document.getElementById('phone-pfx'); if (pf) pf.value = st.pfx; }
+    if (st.tel) { var pn = document.getElementById('phone-num'); if (pn) pn.value = st.tel; }
+    if (st.canal) {
+      var hc = document.getElementById('h-can'); if (hc) hc.value = st.canal;
+      document.querySelectorAll('.canal-o').forEach(function (c) {
+        var on = c.dataset.canal === st.canal;
+        c.classList.toggle('sel', on); c.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+    }
+    if (st.cur && st.cur >= 1 && st.cur <= 3) {
+      for (var s = 1; s <= 3; s++) {
+        var fs = document.getElementById('fs' + s);
+        if (fs) fs.classList.toggle('active', s === st.cur);
+      }
+      cur = st.cur;
+      if (typeof updProg === 'function') updProg(cur);
+    }
+  }
+
+  document.querySelectorAll('.opt-card, .canal-o').forEach(function (el) { el.addEventListener('click', saveSoon); });
+  form.querySelectorAll('input, select').forEach(function (el) { el.addEventListener('input', saveSoon); el.addEventListener('change', saveSoon); });
+
+  form.addEventListener('submit', function () {
+    var iv = setInterval(function () {
+      var ok = document.getElementById('success');
+      if (ok && ok.classList.contains('show')) { try { sessionStorage.removeItem(KEY); } catch (e) {} clearInterval(iv); }
+    }, 500);
+    setTimeout(function () { clearInterval(iv); }, 20000);
+  });
+
+  var emailEl = form.querySelector('[name="email"]');
+  if (emailEl) emailEl.addEventListener('blur', function () {
+    var v = this.value.trim();
+    this.style.borderColor = (v && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) ? '#c43a3a' : '';
+  });
+  var telEl = document.getElementById('phone-num');
+  if (telEl) telEl.addEventListener('blur', function () {
+    var d = this.value.replace(/\D/g, '');
+    this.style.borderColor = (this.value.trim() && d.length < 6) ? '#c43a3a' : '';
+  });
+
+  restore();
+})();
