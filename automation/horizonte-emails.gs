@@ -1134,7 +1134,7 @@ function getTemplate(code, lead) {
                style="display:inline-block;padding:13px 38px;color:#C4942A;font-family:'Helvetica Neue',Arial,sans-serif;
                       font-size:14px;font-weight:600;letter-spacing:.02em;text-decoration:none;line-height:1;
                       border-radius:50px;background:#ffffff">
-              Reservar llamada · 20 min
+              Reservar llamada · 30 min
             </a>
           </td>
         </tr>
@@ -1165,9 +1165,9 @@ ${waBtn}${firma}`,
 <p>Dubai Marina/Business Bay: alrededor del 7-8% neto anual.</p>
 <p>Ras Al Khaimah (antes del Wynn): potencial de plusvalía del 20-30% desde 200.000€.</p>
 <p>Abu Dhabi (Aldar): 5-7% neto, más estable.</p>
-<p>Si quiere que hablemos de alguna en detalle, podemos agendar 20 minutos por Calendly ${calL} o por WhatsApp.</p>
+<p>Si quiere que hablemos de alguna en detalle, podemos agendar 30 minutos por Calendly ${calL} o por WhatsApp.</p>
 ${waBtn}${firma}`,
-    text: `Hola ${n},\n\nBasándome en su perfil de ${cap} y ${obj}, he seleccionado tres opciones que podrían encajar bien.\n\nDubai Marina/Business Bay: alrededor del 7-8% neto anual.\nRas Al Khaimah (antes del Wynn): potencial de plusvalía del 20-30% desde 200.000€.\nAbu Dhabi (Aldar): 5-7% neto, más estable.\n\nSi quiere que hablemos de alguna en detalle, podemos agendar 20 minutos por Calendly ${calL} o por WhatsApp ${wa}.\n\nSaludos,\nEquipo Horizonte Emirates`,
+    text: `Hola ${n},\n\nBasándome en su perfil de ${cap} y ${obj}, he seleccionado tres opciones que podrían encajar bien.\n\nDubai Marina/Business Bay: alrededor del 7-8% neto anual.\nRas Al Khaimah (antes del Wynn): potencial de plusvalía del 20-30% desde 200.000€.\nAbu Dhabi (Aldar): 5-7% neto, más estable.\n\nSi quiere que hablemos de alguna en detalle, podemos agendar 30 minutos por Calendly ${calL} o por WhatsApp ${wa}.\n\nSaludos,\nEquipo Horizonte Emirates`,
   };
 
   if (code === 'A3') return {
@@ -1175,9 +1175,9 @@ ${waBtn}${firma}`,
     html: `<p>Hola ${n},</p>
 <p>Algo que veo a menudo con perfiles como el suyo es que los mejores activos off-plan tienen plazos limitados para entrar.</p>
 <p>No es para presionar, solo para que sepa que a veces vale la pena revisar opciones pronto.</p>
-<p>Si le apetece, podemos charlar 20 minutos sobre esto sin compromiso: Calendly ${calL} o WhatsApp.</p>
+<p>Si le apetece, podemos charlar 30 minutos sobre esto sin compromiso: Calendly ${calL} o WhatsApp.</p>
 ${waBtn}${firma}`,
-    text: `Hola ${n},\n\nAlgo que veo a menudo con perfiles como el suyo es que los mejores activos off-plan tienen plazos limitados para entrar.\n\nNo es para presionar, solo para que sepa que a veces vale la pena revisar opciones pronto.\n\nSi le apetece, podemos charlar 20 minutos sobre esto sin compromiso: Calendly ${calL} o WhatsApp ${wa}.\n\nSaludos,\nEquipo Horizonte Emirates`,
+    text: `Hola ${n},\n\nAlgo que veo a menudo con perfiles como el suyo es que los mejores activos off-plan tienen plazos limitados para entrar.\n\nNo es para presionar, solo para que sepa que a veces vale la pena revisar opciones pronto.\n\nSi le apetece, podemos charlar 30 minutos sobre esto sin compromiso: Calendly ${calL} o WhatsApp ${wa}.\n\nSaludos,\nEquipo Horizonte Emirates`,
   };
 
   if (code === 'A4') return {
@@ -1216,13 +1216,13 @@ ${waBtn}${firma}`,
   };
 
   if (code === 'B2') return {
-    subject: `${n}, ¿podemos hablar 20 minutos esta semana?`,
+    subject: `${n}, ¿podemos hablar 30 minutos esta semana?`,
     html: `<p>Hola ${n},</p>
 <p>Ya tengo preparadas algunas opciones que podrían interesarle basadas en su perfil.</p>
-<p>¿Le vendría bien una llamada breve de 20 minutos para revisarlas sin compromiso?</p>
+<p>¿Le vendría bien una llamada breve de 30 minutos para revisarlas sin compromiso?</p>
 <p>Podemos agendarla por Calendly ${calL} o directamente por WhatsApp.</p>
 ${waBtn}${firma}`,
-    text: `Hola ${n},\n\nYa tengo preparadas algunas opciones que podrían interesarle basadas en su perfil.\n\n¿Le vendría bien una llamada breve de 20 minutos para revisarlas sin compromiso?\n\nPodemos agendarla por Calendly ${calL} o directamente por WhatsApp ${wa}.\n\nSaludos,\nEquipo Horizonte Emirates`,
+    text: `Hola ${n},\n\nYa tengo preparadas algunas opciones que podrían interesarle basadas en su perfil.\n\n¿Le vendría bien una llamada breve de 30 minutos para revisarlas sin compromiso?\n\nPodemos agendarla por Calendly ${calL} o directamente por WhatsApp ${wa}.\n\nSaludos,\nEquipo Horizonte Emirates`,
   };
 
   if (code === 'B3') return {
@@ -1263,9 +1263,9 @@ ${waBtn}${calBtn}${firma}`,
     <td style="border:1px solid #E0DBD1;color:#3a3a3a">Rentabilidad inmediata. <strong>5–7% neto</strong>. Baja volatilidad.</td>
   </tr>
 </table>
-<p>¿20 minutos para presentarle los números reales de cada opción?</p>
+<p>¿30 minutos para presentarle los números reales de cada opción?</p>
 ${calBtn}${waBtn}${firma}`,
-    text: `${sal} ${n},\n\nDisponible esta semana para ${cap} · ${obj}:\n- Dubai Marina/JVC: 7-8% neto\n- RAK pre-Wynn: máxima apreciación\n- Abu Dhabi: 5-7% neto, estable\n\n20 min para los números reales. ${cal} / WhatsApp ${wa}\n\nEquipo Horizonte Emirates`,
+    text: `${sal} ${n},\n\nDisponible esta semana para ${cap} · ${obj}:\n- Dubai Marina/JVC: 7-8% neto\n- RAK pre-Wynn: máxima apreciación\n- Abu Dhabi: 5-7% neto, estable\n\n30 min para los números reales. ${cal} / WhatsApp ${wa}\n\nEquipo Horizonte Emirates`,
   };
 
   if (code === 'B6') return {
@@ -1385,9 +1385,9 @@ ${waBtn}${calBtn}${firma}`,
   };
 
   if (code === 'C6') return {
-    subject: `${n}, 20 minutos para decidir con datos si Dubai encaja`,
+    subject: `${n}, 30 minutos para decidir con datos si Dubai encaja`,
     html: `<p>${sal} ${n},</p>
-<p>Ha pasado un mes desde que nos dejó su consulta. Le propongo 20 minutos donde:</p>
+<p>Ha pasado un mes desde que nos dejó su consulta. Le propongo 30 minutos donde:</p>
 <ul style="margin:12px 0;padding-left:20px;color:#3a3a3a;line-height:1.8">
   <li>Le presento opciones actuales para <strong>${cap} · ${obj}</strong></li>
   <li>Resuelvo sus dudas sobre proceso, fiscalidad o mercado</li>
@@ -1395,7 +1395,7 @@ ${waBtn}${calBtn}${firma}`,
 </ul>
 <p>Si concluimos que no es el momento, se lo digo directamente. Sin presión ni seguimiento posterior si no lo desea.</p>
 ${calBtn}${waBtn}${firma}`,
-    text: `${sal} ${n},\n\nUn mes desde su consulta. 20 minutos para ${cap} · ${obj} y decirle con honestidad si Dubai tiene sentido ahora.\n\nSin compromiso. ${calL} / WhatsApp ${wa}\n\nEquipo Horizonte Emirates`,
+    text: `${sal} ${n},\n\nUn mes desde su consulta. 30 minutos para ${cap} · ${obj} y decirle con honestidad si Dubai tiene sentido ahora.\n\nSin compromiso. ${calL} / WhatsApp ${wa}\n\nEquipo Horizonte Emirates`,
   };
 
   if (code === 'C7') return {
