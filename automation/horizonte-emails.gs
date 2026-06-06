@@ -404,8 +404,15 @@ function isHorizonteWeb3Lead(subject, body) {
 function pollGmail() {
   PropertiesService.getScriptProperties().setProperty('HE_LAST_POLL_TS', String(Date.now())); // M08 — heartbeat para healthCheck
   let threads = GmailApp.search(CONFIG.POLL_QUERY, 0, 50);
-  if (!threads.length && CONFIG.POLL_QUERY_FALLBACK) {
-    threads = GmailApp.search(CONFIG.POLL_QUERY_FALLBACK, 0, 50);
+  if (CONFIG.POLL_QUERY_FALLBACK) {
+    // M09 — unir SIEMPRE el fallback (Web3Forms recientes sin etiqueta de procesado,
+    // aunque estén marcados como leídos). Evita perder leads cuyo aviso se abrió/leyó
+    // antes de que corriera el trigger (el guard de etiqueta dentro del bucle evita reprocesos).
+    const seen = {};
+    threads.forEach(t => { seen[t.getId()] = true; });
+    GmailApp.search(CONFIG.POLL_QUERY_FALLBACK, 0, 50).forEach(t => {
+      if (!seen[t.getId()]) { seen[t.getId()] = true; threads.push(t); }
+    });
   }
   if (!threads.length) {
     Logger.log('pollGmail: sin correos Web3Forms (principal ni fallback)');
