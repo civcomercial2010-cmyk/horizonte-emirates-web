@@ -1,0 +1,12 @@
+/* ───────────────────────────────────────────────────────────
+   Tokens de marca compartidos — FUENTE ÚNICA de la identidad.
+   Paleta base e identidad tipográfica comunes a todas las páginas.
+   Los tokens específicos de cada página (espaciados, grises, --ink,
+   --muted, --border propios) viven en su hoja correspondiente.
+   ─────────────────────────────────────────────────────────── */
+:root{
+  --navy:#0D1B2A;
+  --gold:#C4942A;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'Inter',system-ui,sans-serif;
+}
