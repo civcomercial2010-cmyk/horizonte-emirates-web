@@ -319,7 +319,7 @@ document.getElementById('mainform').addEventListener('submit',function(e){
         const cp=new URLSearchParams();
         if(nombre)cp.set('name',nombre);
         if(emailVal)cp.set('email',emailVal);
-        calBtn.href='https://calendly.com/hola-horizonteemirates/llamada-estrategica-horizonte-emirates-20-minutos?'+cp.toString();
+        calBtn.href='https://calendly.com/hola-horizonteemirates/llamada-estrategica-horizonte-emirates-30-minutos?'+cp.toString();
       }
       document.getElementById('success').classList.add('show');
     }else{
