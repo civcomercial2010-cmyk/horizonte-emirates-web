@@ -34,7 +34,7 @@ _Última actualización: 2026-06-04_
 |---|---|---|---|
 | M14 | Identificación registral completa en `legal.html` | H10 | ✅ | Propulse SLU + NRT L-719841-W + domicilio (C. Doctor Molines 23, AD500 Andorra la Vella) en política de privacidad y aviso legal. Desplegado |
 | M15 | Firmar SCC/DPA con RRS y Web3Forms | H10 | 🔒 |
-| M16 | Citar fuente y fecha en cada claim de rentabilidad | H12 | 🟡 | Nota de "cifras orientativas de mercado (2025), no garantizadas" junto a la tabla comparativa (reduce riesgo legal). Citas específicas (DLD para transacciones, JLL/Knight Frank para rentabilidades) pendientes de que el usuario confirme las fuentes |
+| M16 | Citar fuente y fecha en cada claim de rentabilidad | H12 | ✅ | Bloque "Fuentes y metodología" (`#fuentes`) en el footer + enlaces desde la nota de la tabla comparativa y una línea bajo los KPI. Atribuye: transacciones → Dubai Land Department; rentabilidades/revalorización → JLL, Knight Frank + portales (Property Finder, Bayut); 0% → marco fiscal UAE. Fecha 2024–2025. Desplegado (`6bbd333`). PENDIENTE de confirmación del usuario: cifras exactas (el "334.000 UAE 2025" y si el 6–9% es neto o bruto) para, si procede, citar informe/año concretos |
 | M17 | Añadir prueba social verificable | H08 | ⬜ |
 
 ## FASE 3 — Captación propia (SEO/CRO)
