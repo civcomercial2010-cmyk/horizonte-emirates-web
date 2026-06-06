@@ -540,9 +540,13 @@ function calcROI(){
       reel.className='slot-reel';
       const track=document.createElement('span');
       track.className='slot-track';
-      const spinRows=54+j*10+Math.floor(Math.random()*8);
-      const endRow=spinRows*10+d;
-      const startRow=Math.max(0,endRow-(42+j*7+Math.floor(Math.random()*8)));
+      // INP (H12): el track solo necesita las filas que se recorren visiblemente
+      // (startRow→endRow). Antes creaba ~540-1120 celdas/rodillo (~5.000 nodos en total);
+      // ahora ~50-85, manteniendo idéntica distancia de giro, dígito final y duración
+      // (la velocidad depende de la distancia recorrida, no del nº de filas del track).
+      const travel=42+j*7+Math.floor(Math.random()*8);
+      const endRow=travel+((d-(travel%10)+10)%10); // alinea el final con el dígito d
+      const startRow=Math.max(0,endRow-travel);
       for(let r=0;r<=endRow+3;r++){
         const cell=document.createElement('span');
         cell.className='slot-cell';
