@@ -165,7 +165,7 @@ nav#nav.at-top{background:transparent;border-color:transparent}
 .prose p{text-wrap:wrap}
 .prose a{color:var(--gold-text);text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px;transition:.2s}
 .prose a:hover{color:var(--gold)}
-.prose strong{font-weight:600;color:var(--ink)}
+.prose strong{font-weight:600;color:inherit}
 .prose ul,.prose ol{padding-left:1.3em;display:flex;flex-direction:column;gap:.5em}
 .prose li{padding-left:.2em}
 .prose ul li::marker{color:var(--gold)}
@@ -202,6 +202,9 @@ nav#nav.at-top{background:transparent;border-color:transparent}
 .takeaways ul{list-style:none;display:flex;flex-direction:column;gap:12px;padding:0}
 .takeaways li{display:flex;gap:12px;font-size:15.5px;line-height:1.5;color:rgba(255,255,255,.9)}
 .takeaways li::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--gold);margin-top:9px;flex-shrink:0}
+.takeaways strong{color:#fff;font-weight:600}
+.takeaways a{color:var(--gold);text-decoration:underline;text-underline-offset:2px}
+.takeaways em{color:#fff}
 
 /* Inline lead-magnet / CTA block */
 .cta-inline{background:linear-gradient(150deg,#fdfbf6,#f4efe4);border:1px solid var(--gold-bd);border-radius:12px;padding:32px 34px;text-align:center}
