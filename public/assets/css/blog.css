@@ -145,7 +145,8 @@ nav#nav.at-top{background:transparent;border-color:transparent}
 .article-hero img{width:100%;height:100%;object-fit:cover}
 
 .article-body{padding-block:var(--space-xl)}
-.article-grid{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:56px;align-items:start}
+.article-grid{display:grid;grid-template-columns:260px minmax(0,1fr);gap:56px;align-items:start}
+.article-grid > .prose{min-width:0}
 
 /* TOC sticky */
 .toc{position:sticky;top:88px;font-size:13.5px}
