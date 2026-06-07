@@ -89,12 +89,16 @@ Cada `.md` lleva **front-matter YAML** con los metadatos SEO. Ese front-matter e
 | Empresa | Free zones de Emiratos comparadas | ✅ publicado |
 | Fiscalidad | Modelo 720: declarar tu inmueble de Dubai | ✅ publicado |
 | Decisión | España vs. Dubai para invertir | ✅ publicado |
-| Residencia | Cómo conseguir la residencia en Dubai | ⬜ siguiente |
-| Inversión | Comprar propiedad siendo no residente | ⬜ |
-| Inversión | Invertir en Abu Dhabi | ⬜ |
-| Vida | Vivir en Dubai siendo español | ⬜ |
+| Residencia | Cómo conseguir la residencia en Dubai | ✅ publicado |
+| Inversión | Comprar propiedad siendo no residente | ✅ publicado |
+| Inversión | Invertir en Abu Dhabi | ✅ publicado |
+| Vida | Vivir en Dubai siendo español | ✅ publicado |
+| Off-plan | Planes de pago en Dubai (detalle) | ⬜ siguiente |
+| Fiscalidad | Convenio doble imposición España-EAU | ⬜ |
+| Inversión | Hipoteca en Dubai para extranjeros | ⬜ |
+| Decisión | Errores al invertir en Dubai | ⬜ |
 
-**Total publicado: 12 artículos + hub + página de equipo (4 clusters: Inversión, Fiscalidad, Residencia & Visados, Empresa).**
+**Total publicado: 16 artículos + hub + página de equipo (5 clusters: Inversión, Fiscalidad, Residencia & Visados, Empresa, Vida).**
 
 Lista completa de 24 clusters y calendario de 12 meses: `docs/SEO_ESTRATEGIA.md`.
 
