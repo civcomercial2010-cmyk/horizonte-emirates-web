@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<!--
+  PLANTILLA DE ARTÍCULO — Horizonte Emirates
+  Copia este archivo a public/blog/{{SLUG}}.html y sustituye TODOS los {{placeholders}}.
+  Reglas: ver contenido-blog/README.md. CSP-safe: nada de <script> inline ejecutable ni onclick.
+  Rutas de assets: ../assets/...  ·  Enlaces internos: absolutos (/ , /blog/... , /#form).
+-->
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="referrer" content="strict-origin-when-cross-origin"/>
+<title>{{TITULO_SEO}} | Horizonte Emirates</title>
+<meta name="description" content="{{META_DESCRIPTION_150_160}}"/>
+<meta name="robots" content="index,follow"/>
+<meta name="facebook-domain-verification" content="d7z5y4hxejdwxie5v3ktszpd0sjueh"/>
+<link rel="canonical" href="https://www.horizonteemirates.com/blog/{{SLUG}}.html"/>
+<link rel="icon" type="image/svg+xml" href="../assets/logos/horizonte-emirates/favicon.svg"/>
+
+<meta property="og:type" content="article"/>
+<meta property="og:title" content="{{TITULO_SEO}}"/>
+<meta property="og:description" content="{{OG_DESCRIPTION}}"/>
+<meta property="og:url" content="https://www.horizonteemirates.com/blog/{{SLUG}}.html"/>
+<meta property="og:image" content="https://www.horizonteemirates.com/assets/og-image.jpg"/>
+<meta property="article:published_time" content="{{YYYY-MM-DD}}"/>
+<meta property="article:modified_time" content="{{YYYY-MM-DD}}"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://www.horizonteemirates.com/assets/og-image.jpg"/>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","headline":"{{TITULO_SEO}}","description":"{{META_DESCRIPTION_150_160}}","image":"https://www.horizonteemirates.com/assets/og-image.jpg","datePublished":"{{YYYY-MM-DD}}","dateModified":"{{YYYY-MM-DD}}","inLanguage":"es","author":{"@type":"Organization","name":"Equipo Horizonte Emirates","url":"https://www.horizonteemirates.com/sobre/equipo.html"},"publisher":{"@type":"Organization","name":"Horizonte Emirates","logo":{"@type":"ImageObject","url":"https://www.horizonteemirates.com/assets/logos/horizonte-emirates/logo-horizontal.svg"}},"mainEntityOfPage":{"@type":"WebPage","@id":"https://www.horizonteemirates.com/blog/{{SLUG}}.html"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Inicio","item":"https://www.horizonteemirates.com/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.horizonteemirates.com/blog/"},{"@type":"ListItem","position":3,"name":"{{TITULO_BREADCRUMB}}","item":"https://www.horizonteemirates.com/blog/{{SLUG}}.html"}]}
+</script>
+<!-- OPCIONAL: FAQPage — debe coincidir con las preguntas visibles del artículo
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"{{PREGUNTA_1}}","acceptedAnswer":{"@type":"Answer","text":"{{RESPUESTA_1}}"}}]}
+</script>
+-->
+
+<link rel="stylesheet" href="../assets/css/tokens.css"/>
+<link rel="stylesheet" href="../assets/css/fonts.css"/>
+<link rel="stylesheet" href="../assets/css/blog.css"/>
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-BK37V83363"></script>
+<script src="../assets/gtag-init.js"></script>
+<script src="../assets/consent.js" defer></script>
+</head>
+<body>
+<a href="#contenido" class="skip-link">Saltar al contenido</a>
+
+<!-- NAV (copiar idéntico en todas las páginas del blog) -->
+<nav id="nav">
+  <div class="nav-i">
+    <a href="/" class="logo">Horizonte <span>Emirates</span></a>
+    <div class="nav-right">
+      <div class="nav-links">
+        <a href="/#para-quien">Por qué</a>
+        <a href="/#como">Proceso</a>
+        <a href="/proyectos.html">Proyectos</a>
+        <a href="/blog/" class="active">Blog</a>
+        <a href="/#faq">FAQ</a>
+      </div>
+      <a href="/#form" class="nav-cta">Solicitar análisis</a>
+    </div>
+  </div>
+</nav>
+
+<main id="contenido">
+<div class="wrap">
+
+  <nav class="breadcrumb" aria-label="Migas de pan">
+    <ol>
+      <li><a href="/">Inicio</a></li><li class="sep">/</li>
+      <li><a href="/blog/">Blog</a></li><li class="sep">/</li>
+      <li aria-current="page">{{TITULO_BREADCRUMB}}</li>
+    </ol>
+  </nav>
+
+  <header class="article-head wrap-narrow" style="padding-inline:0">
+    <span class="a-tag">{{CATEGORIA}}</span>
+    <h1>{{H1}}</h1>
+    <p class="a-lede">{{LEDE}}</p>
+    <div class="article-meta">
+      <span class="am-av" aria-hidden="true">HE</span>
+      <span><span class="am-who">Equipo Horizonte Emirates</span><br/><span class="am-sub">Especialistas en inversión inmobiliaria en UAE</span></span>
+      <span class="am-dot">·</span><span class="am-sub">Actualizado el {{FECHA_LARGA}}</span>
+      <span class="am-dot">·</span><span class="am-sub">{{MIN}} min de lectura</span>
+    </div>
+  </header>
+
+  <figure class="article-hero">
+    <img src="../assets/img/{{IMAGEN}}.webp" width="1280" height="549" alt="{{ALT}}" loading="eager" fetchpriority="high"/>
+  </figure>
+
+</div>
+
+<div class="wrap article-body">
+  <div class="article-grid">
+
+    <aside class="toc" aria-label="Índice del artículo">
+      <h4>En esta guía</h4>
+      <ol>
+        <li><a href="#seccion-1">{{SECCION_1}}</a></li>
+        <li><a href="#seccion-2">{{SECCION_2}}</a></li>
+        <li><a href="#faq">Preguntas frecuentes</a></li>
+      </ol>
+    </aside>
+
+    <article class="prose">
+
+      <div class="takeaways" style="margin-bottom:2em">
+        <span class="c-tag">Lo esencial en 30 segundos</span>
+        <ul><li>{{IDEA_CLAVE_1}}</li><li>{{IDEA_CLAVE_2}}</li></ul>
+      </div>
+
+      <p>{{INTRO}}</p>
+
+      <h2 id="seccion-1">{{SECCION_1}}</h2>
+      <p>{{...}}</p>
+
+      <!-- Bloques reutilizables disponibles en blog.css:
+           .callout / .callout.trust / .callout.warn  (con <span class="c-tag">)
+           .table-wrap > table
+           blockquote
+           .cta-inline (lead magnet / CTA intermedio)
+      -->
+      <div class="cta-inline" style="margin-block:2em">
+        <span class="c-tag">{{CTA_TAG}}</span>
+        <h3>{{CTA_TITULO}}</h3>
+        <p>{{CTA_TEXTO}}</p>
+        <div class="cta-row"><a href="/#form" class="btn-gold">Solicitar análisis &nbsp;→</a></div>
+      </div>
+
+      <h2 id="seccion-2">{{SECCION_2}}</h2>
+      <p>{{...}}</p>
+
+      <h2 id="faq">Preguntas frecuentes</h2>
+      <div class="faq-block">
+        <div class="faq-item">
+          <button class="faq-q"><span>{{PREGUNTA_1}}</span><span class="faq-icon" aria-hidden="true">+</span></button>
+          <div class="faq-a"><div class="faq-a-inner">{{RESPUESTA_1}}</div></div>
+        </div>
+      </div>
+
+      <div class="author-bio">
+        <span class="ab-av" aria-hidden="true">HE</span>
+        <div>
+          <h4>Equipo Horizonte Emirates</h4>
+          <p class="ab-role">Inversión inmobiliaria en UAE · Partners RERA en Dubai</p>
+          <p>Acompañamos a inversores hispanohablantes en el proceso de inversión en los Emiratos, en español. <a href="/sobre/equipo.html">Conoce al equipo</a>.</p>
+        </div>
+      </div>
+
+      <div class="sources">
+        <h4>Fuentes y metodología</h4>
+        <ol><li>{{FUENTE_1}}</li></ol>
+      </div>
+      <p class="article-disclaimer">Contenido informativo de carácter general, no asesoramiento fiscal, jurídico ni financiero. Horizonte Emirates es un servicio de Propulse SLU (Andorra). Consulte con un asesor independiente antes de tomar decisiones.</p>
+
+    </article>
+  </div>
+</div>
+
+<!-- RELATED — sustituir por 2-3 artículos del mismo cluster -->
+<section class="related">
+  <div class="wrap">
+    <div class="sh fade"><h2>Sigue leyendo</h2></div>
+    <div class="post-grid reveal-stagger">
+      <article class="post-card">
+        <a class="pc-media" href="/blog/{{REL_SLUG}}.html" aria-label="{{REL_TITULO}}">
+          <img src="../assets/img/{{REL_IMAGEN}}.webp" width="600" height="375" alt="{{REL_ALT}}" loading="lazy"/>
+        </a>
+        <div class="pc-body">
+          <span class="pc-tag">{{REL_CAT}}</span>
+          <h3><a href="/blog/{{REL_SLUG}}.html">{{REL_TITULO}}</a></h3>
+          <p>{{REL_RESUMEN}}</p>
+          <div class="pc-meta"><span>{{REL_MIN}} min</span><span class="funnel">{{REL_BADGE}}</span></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="cta-band">
+  <div class="wrap-narrow fade">
+    <span class="eyebrow">El siguiente paso</span>
+    <h2>{{CTA_BAND_TITULO}}</h2>
+    <p>Solicita tu análisis personalizado de inversión en UAE. En 48 horas, en español y sin coste para el inversor.</p>
+    <div class="cta-row">
+      <a href="/#form" class="btn-gold">Solicitar análisis personalizado &nbsp;→</a>
+      <a href="/blog/" class="btn-outline-w">Volver al blog</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- FOOTER (copiar idéntico en todas las páginas del blog) -->
+<footer>
+  <div class="wrap">
+    <div class="ft">
+      <div class="fb">
+        <a href="/" class="logo">Horizonte <span>Emirates</span></a>
+        <p>Portal especializado en inversión inmobiliaria en UAE para inversores de habla hispana. Operado bajo Propulse SLU, Andorra.</p>
+      </div>
+      <div class="fc"><h4>Explorar</h4><ul><li><a href="/#zonas-inversion">Zonas de inversión</a></li><li><a href="/proyectos.html">Proyectos en cartera</a></li><li><a href="/#form">Solicitar análisis</a></li></ul></div>
+      <div class="fc"><h4>Contenido</h4><ul><li><a href="/blog/">Blog</a></li><li><a href="/sobre/equipo.html">Quiénes somos</a></li></ul></div>
+      <div class="fc"><h4>Legal</h4><ul><li><a href="/legal.html#politica-privacidad">Política de privacidad</a></li><li><a href="/legal.html#aviso-legal">Aviso legal</a></li><li><a href="/legal.html#cookies">Cookies</a></li></ul></div>
+    </div>
+    <div class="ft-bot">
+      <p class="legal">Horizonte Emirates es un servicio de Propulse SLU (Andorra). Horizonte Emirates no presta asesoramiento fiscal, jurídico ni financiero. La información de este blog es estrictamente orientativa y no constituye oferta de inversión ni recomendación financiera. La inversión inmobiliaria conlleva riesgos. Consulte a un asesor independiente antes de tomar cualquier decisión.</p>
+      <p class="copy">© 2026 Horizonte Emirates</p>
+    </div>
+  </div>
+</footer>
+
+<div class="wa-float"><a href="#" aria-label="WhatsApp"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a></div>
+
+<script src="../assets/blog.js" defer></script>
+</body>
+</html>

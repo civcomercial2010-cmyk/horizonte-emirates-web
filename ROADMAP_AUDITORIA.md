@@ -40,8 +40,8 @@ _Última actualización: 2026-06-04_
 ## FASE 3 — Captación propia (SEO/CRO)
 | ID | Mejora | H | Estado |
 |---|---|---|---|
-| M18 | Plan editorial SEO (8–12 guías) | H09 | ⬜ |
-| M19 | Lead magnet (guía fiscal) | — | ⬜ |
+| M18 | Plan editorial SEO (8–12 guías) | H09 | 🟡 | **Blog construido y en working tree** (`public/blog/`): infraestructura completa (`blog.css` + `blog.js` autocontenidos, misma estética que la home, CSP-safe) + hub `/blog/` con filtro por categorías + **3 guías pilar** publicadas: cómo invertir en Dubai, fiscalidad España↔UAE, Golden Visa. Cada artículo con JSON-LD `BlogPosting`+`BreadcrumbList`+`FAQPage`, TOC, bio de autor, fuentes y CTA al funnel. Página EEAT `/sobre/equipo.html`. Estrategia completa (24 clusters + plan 12 meses) en `docs/SEO_ESTRATEGIA.md`. Pendiente: 5-9 guías restantes + deploy + alta en Search Console |
+| M19 | Lead magnet (guía fiscal) | — | 🟡 | Punto de captación montado: CTA "Guía fiscal Dubai↔España" en el hub del blog y en el artículo de fiscalidad, conectado al formulario (`/#form`). Pendiente: maquetar el PDF y automatizar el envío al solicitar análisis |
 | M20 | JSON-LD `ItemList`/`Residence` + breadcrumb en proyectos | H20 | ✅ | BreadcrumbList + ItemList(Residence) en `proyectos.html`, sin precios. Desplegado (`bf5b6ba`). Validar en Rich Results Test |
 | M21 | Política robots de IA + resolver doble `User-agent: *` | H11 | ⬜ |
 | M22 | Corregir enlazado interno (footer → proyectos; quitar doble "Zonas") | — | ✅ | Footer enlaza a proyectos.html y al formulario; eliminado el doble enlace "Zonas". Desplegado (`bf5b6ba`) |
@@ -72,6 +72,17 @@ _Última actualización: 2026-06-04_
 ---
 
 ## Registro de actividad (tareas realizadas)
+
+### 2026-06-07
+- **M18 🟡 (gran avance)** — Ejecutado el plan editorial SEO sobre el stack actual (HTML estático + Cloudflare, sin migración). Creado:
+  - `assets/css/blog.css` y `assets/blog.js` **autocontenidos** (no dependen de `home.css`/`app.js`), replicando nav, footer, botones y tokens de marca. **CSP-safe**: 0 scripts inline ejecutables, 0 handlers `onclick`; solo JSON-LD (data block) y `src` propios/permitidos.
+  - Hub `public/blog/index.html` (`/blog/`) con hero de marca, filtro por categorías, artículo destacado y grid; JSON-LD `Blog`+`BreadcrumbList`.
+  - **3 guías pilar** (long-form): `como-invertir-inmuebles-dubai.html`, `impuestos-invertir-dubai-espana.html`, `golden-visa-emiratos-guia.html`. Cada una con `BlogPosting`+`BreadcrumbList`+`FAQPage`, TOC con scroll-spy, tablas, callouts, bio de autor, fuentes citadas y disclaimers YMYL. Datos respetando la disciplina de la casa (cifras con fuente; sin inventar precios de promotoras).
+  - Página EEAT `public/sobre/equipo.html` (`AboutPage`) — veraz (Propulse SLU + partners RERA), sin inventar personas.
+  - Enlazado interno: Blog añadido al **nav y footer** de `index.html` y `proyectos.html`; `sitemap.xml` ampliado a 8 URLs.
+  - Validación: 10/10 bloques JSON-LD válidos, imágenes existentes, 0 enlaces internos rotos, etiquetas balanceadas.
+  - **Pendiente:** deploy (`wrangler`/push), alta en Google Search Console + envío de sitemap, validar Rich Results, y completar 5-9 guías restantes del calendario. Verificar tras deploy que `/blog/` resuelve a `index.html` (directory index de Workers Assets con `html_handling:"none"`).
+- **M19 🟡** — CTA del lead magnet "Guía fiscal Dubai↔España" colocado en el hub y en el artículo de fiscalidad, conectado al funnel. Pendiente: PDF + automatización de envío.
 
 ### 2026-06-04
 - **M02 ✅** — Verificado que el Google Sheet de leads es privado (sin acceso en incógnito).
