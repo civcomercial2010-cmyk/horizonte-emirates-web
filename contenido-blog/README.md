@@ -73,18 +73,22 @@ Cada `.md` lleva **front-matter YAML** con los metadatos SEO. Ese front-matter e
 
 ## Mapa de clusters (de `docs/SEO_ESTRATEGIA.md`)
 
-| Cluster | Pilar | Estado |
+| Cluster | Artículo | Estado |
 |---|---|---|
-| Inversión (core) | Cómo invertir en inmuebles en Dubai | ✅ publicado |
-| Fiscalidad | Impuestos al invertir en Dubai desde España | ✅ publicado |
-| Residencia & Visados | Golden Visa de Emiratos | ✅ publicado |
-| Rentabilidad | Rentabilidad inmobiliaria en Dubai (yields por zona) | ⬜ siguiente |
-| Off-plan | Comprar sobre plano en Dubai | ⬜ |
-| Zonas | Mejores zonas para invertir en Dubai | ⬜ |
-| Ras Al Khaimah | Invertir en RAK (efecto Wynn) | ⬜ |
-| Empresa | Crear una empresa en Dubai | ⬜ |
-| Free zones | Free zones de Emiratos comparadas | ⬜ |
-| Residencia fiscal | Residencia fiscal en Emiratos para españoles | ⬜ |
+| Inversión (core) | Cómo invertir en inmuebles en Dubai *(pilar)* | ✅ publicado |
+| Fiscalidad | Impuestos al invertir en Dubai desde España *(pilar)* | ✅ publicado |
+| Residencia & Visados | Golden Visa de Emiratos *(pilar)* | ✅ publicado |
+| Inversión | Rentabilidad inmobiliaria en Dubai (yields por zona) | ✅ publicado |
+| Inversión | Mejores zonas para invertir en Dubai | ✅ publicado |
+| Inversión | Comprar sobre plano (off-plan) en Dubai | ✅ publicado |
+| Fiscalidad | Residencia fiscal en Emiratos para españoles | ✅ publicado |
+| Inversión / RAK | Invertir en Ras Al Khaimah (efecto Wynn) | ✅ publicado |
+| Empresa | Crear una empresa en Dubai *(pilar)* | ⬜ siguiente |
+| Empresa | Free zones de Emiratos comparadas | ⬜ |
+| Residencia | Cómo conseguir la residencia en Dubai | ⬜ |
+| Fiscalidad | Modelo 720: declarar tu inmueble de Dubai | ⬜ |
+| Decisión | España vs. Dubai para invertir | ⬜ |
+| Inversión | Comprar propiedad siendo no residente | ⬜ |
 
 Lista completa de 24 clusters y calendario de 12 meses: `docs/SEO_ESTRATEGIA.md`.
 
