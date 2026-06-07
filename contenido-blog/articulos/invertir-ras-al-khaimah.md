@@ -24,12 +24,12 @@ hero_image: wynn-al-marjan.webp
 - Encaja como complemento de una cartera con base en Dubai.
 
 ## Secciones
-1. **Dónde está y qué es RAK** — emirato del norte, ~1h de Dubai, naturaleza + desarrollo acelerado.
-2. **El efecto Wynn Al Marjan** — resort integrado de lujo (casino), apertura 2027; transforma el mercado del entorno.
-3. **Por qué atrae** — ticket asequible, catalizador concreto, mismo marco país (0%), producto de marca.
-4. **RAK vs. Dubai** — tabla: madurez, ticket, catalizador, liquidez, perfil (base vs. complemento).
-5. **Riesgos** — mercado emergente, dependencia del catalizador, riesgo off-plan, horizonte medio plazo.
-6. **Para qué inversor encaja** — horizonte medio, busca revalorización, acepta riesgo, diversifica en UAE.
+1. **Dónde está y qué es RAK**: emirato del norte, ~1h de Dubai, naturaleza + desarrollo acelerado.
+2. **El efecto Wynn Al Marjan**: resort integrado de lujo (casino), apertura 2027; transforma el mercado del entorno.
+3. **Por qué atrae**: ticket asequible, catalizador concreto, mismo marco país (0%), producto de marca.
+4. **RAK vs. Dubai**: tabla: madurez, ticket, catalizador, liquidez, perfil (base vs. complemento).
+5. **Riesgos**: mercado emergente, dependencia del catalizador, riesgo off-plan, horizonte medio plazo.
+6. **Para qué inversor encaja**: horizonte medio, busca revalorización, acepta riesgo, diversifica en UAE.
 
 ## FAQ
 - ¿Por qué invertir en RAK? → mercado emergente + efecto Wynn; asequible; riesgo de desarrollo.

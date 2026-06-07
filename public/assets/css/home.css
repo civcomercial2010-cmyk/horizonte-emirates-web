@@ -2,7 +2,7 @@
 :root{
   --navy-d:#07121F;--navy-m:rgba(13,27,42,.95);
   --gold-lt:rgba(196,148,42,.12);--gold-bd:rgba(196,148,42,.35);
-  --gold-text:#9A7016;/* M29 — dorado accesible (AA) para texto pequeño sobre fondo claro */
+  --gold-text:#9A7016;/* M29 - dorado accesible (AA) para texto pequeño sobre fondo claro */
   --warm:#F8F6F1;--warm2:#F0EDE5;
   --ink:#1A1A1A;--muted:#646464;
   --trust:#2D6A4F;

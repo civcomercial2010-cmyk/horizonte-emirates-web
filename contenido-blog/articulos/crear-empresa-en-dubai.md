@@ -24,14 +24,14 @@ hero_image: projects/nh-collection-rak/PI89_R00.01_GF_Entrance%20Lobby-REV03.web
 - Crear empresa habilita visados, pero residencia ≠ residencia fiscal.
 
 ## Secciones
-1. Por qué Dubai para tu empresa — fiscalidad, hub, procesos, residencia.
-2. Mainland vs free zone — tabla (propiedad, mercado local, coste, oficina, ideal para).
-3. Tipos de licencia — comercial, profesional/servicios, industrial, holding.
-4. Costes reales — licencia, renovación anual, visados, oficina/flexi-desk, establishment card.
-5. Pasos para constituir — actividad → free zone → nombre → docs → licencia → visados → cuenta.
-6. Tiempos — free zone en días; conjunto en semanas; mainland algo más.
-7. Errores frecuentes — free zone/mainland mal elegido, olvidar renovación, free zone inadecuada, confundir visado con fiscalidad, no anticipar bancarización.
-8. Empresa, residencia e inversión — independientes; enlaces a golden-visa, residencia-fiscal, como-invertir.
+1. Por qué Dubai para tu empresa: fiscalidad, hub, procesos, residencia.
+2. Mainland vs free zone: tabla (propiedad, mercado local, coste, oficina, ideal para).
+3. Tipos de licencia: comercial, profesional/servicios, industrial, holding.
+4. Costes reales: licencia, renovación anual, visados, oficina/flexi-desk, establishment card.
+5. Pasos para constituir: actividad → free zone → nombre → docs → licencia → visados → cuenta.
+6. Tiempos: free zone en días; conjunto en semanas; mainland algo más.
+7. Errores frecuentes: free zone/mainland mal elegido, olvidar renovación, free zone inadecuada, confundir visado con fiscalidad, no anticipar bancarización.
+8. Empresa, residencia e inversión: independientes; enlaces a golden-visa, residencia-fiscal, como-invertir.
 
 ## FAQ
 - ¿Cuánto cuesta? → depende de tipo/actividad/visados; suma renovación anual.

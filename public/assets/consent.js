@@ -1,5 +1,5 @@
 /*
- * Horizonte Emirates — Gestor de consentimiento de cookies (RGPD / LSSI-CE)
+ * Horizonte Emirates - Gestor de consentimiento de cookies (RGPD / LSSI-CE)
  * Integrado con Google Consent Mode v2.
  *
  * El estado por defecto (denied) se fija inline en cada página ANTES de gtag('config'),

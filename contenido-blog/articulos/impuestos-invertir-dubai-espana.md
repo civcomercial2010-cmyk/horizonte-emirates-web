@@ -90,13 +90,13 @@ Si te planteas trasladar tu residencia → [Golden Visa de Emiratos](/blog/golde
 
 ## Preguntas frecuentes (FAQPage)
 
-**¿Pago impuestos en Dubai por mi inmueble?** — No sobre alquiler ni plusvalías de personas físicas. Sí la tasa de registro al comprar (~4% DLD).
+**¿Pago impuestos en Dubai por mi inmueble?**: No sobre alquiler ni plusvalías de personas físicas. Sí la tasa de registro al comprar (~4% DLD).
 
-**¿Tengo que declarar el inmueble en España?** — Sí: Modelo 720 si supera 50.000€, e IRPF por rentas y plusvalías.
+**¿Tengo que declarar el inmueble en España?**: Sí: Modelo 720 si supera 50.000€, e IRPF por rentas y plusvalías.
 
-**¿Existe convenio de doble imposición España-UAE?** — Sí; su aplicación concreta requiere asesor especializado.
+**¿Existe convenio de doble imposición España-UAE?**: Sí; su aplicación concreta requiere asesor especializado.
 
-**¿Qué pasa si no declaro el Modelo 720?** — Puede acarrear sanciones. Cumple Modelo 720 e IRPF; consulta con un asesor.
+**¿Qué pasa si no declaro el Modelo 720?**: Puede acarrear sanciones. Cumple Modelo 720 e IRPF; consulta con un asesor.
 
 ## Fuentes y metodología
 

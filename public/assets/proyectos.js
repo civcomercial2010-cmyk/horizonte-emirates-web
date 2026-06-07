@@ -1,4 +1,4 @@
-/* proyectos.html — JS externalizado (para retirar 'unsafe-inline' de script-src). */
+/* proyectos.html - JS externalizado (para retirar 'unsafe-inline' de script-src). */
 
 // ── UTM capture (persistente en sessionStorage, igual que la home)
 (function () {

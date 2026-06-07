@@ -35,7 +35,7 @@ Pero entre el titular y la firma hay muchos detalles que marcan la diferencia en
 
 ## Por qué Dubai y por qué ahora
 
-El mercado inmobiliario de los Emiratos vive un ciclo de actividad elevada. Solo en 2025, los registros oficiales contabilizaron **más de 334.000 operaciones inmobiliarias** en el conjunto de los Emiratos —agregando los datos del Dubai Land Department, el Abu Dhabi Real Estate Centre y los emiratos del norte—, una cifra que refleja la profundidad y liquidez del mercado.
+El mercado inmobiliario de los Emiratos vive un ciclo de actividad elevada. Solo en 2025, los registros oficiales contabilizaron **más de 334.000 operaciones inmobiliarias** en el conjunto de los Emiratos (agregando los datos del Dubai Land Department, el Abu Dhabi Real Estate Centre y los emiratos del norte), una cifra que refleja la profundidad y liquidez del mercado.
 
 Para un inversor de habla hispana, tres factores explican el atractivo:
 
@@ -82,7 +82,7 @@ Además del alquiler está la **revalorización**. En off-plan bien elegido, la 
 | Riesgo principal | Construcción y ciclo | Estado del inmueble y precio de entrada |
 | Perfil ideal | Horizonte + plusvalía | Flujo de caja inmediato |
 
-Estrategia frecuente: combinar ambos —off-plan para plusvalía + secundario para caja desde el primer mes—.
+Estrategia frecuente: combinar ambos (off-plan para plusvalía + secundario para caja desde el primer mes).
 
 ## El proceso paso a paso (desde España)
 
@@ -127,17 +127,17 @@ Como residente fiscal en España, la compra puede implicar declarar el activo en
 
 ## Preguntas frecuentes (FAQPage)
 
-**¿Cuánto dinero necesito para invertir en Dubai?** — En off-plan la entrada suele ser del 10–20%; con ~30.000€ accedes a propiedades desde 150.000€. En secundario, desde ~150.000€. Cifras orientativas.
+**¿Cuánto dinero necesito para invertir en Dubai?**: En off-plan la entrada suele ser del 10–20%; con ~30.000€ accedes a propiedades desde 150.000€. En secundario, desde ~150.000€. Cifras orientativas.
 
-**¿Es legal comprar en Dubai siendo residente en España?** — Sí, legal y habitual. Operas en zonas freehold bajo RERA. Debes cumplir Modelo 720 (>50.000€) e IRPF.
+**¿Es legal comprar en Dubai siendo residente en España?**: Sí, legal y habitual. Operas en zonas freehold bajo RERA. Debes cumplir Modelo 720 (>50.000€) e IRPF.
 
-**¿Qué rentabilidad puedo esperar?** — Rangos de 6–9% neto de impuestos en origen. No garantizado; no descuenta comunidad ni gestión.
+**¿Qué rentabilidad puedo esperar?**: Rangos de 6–9% neto de impuestos en origen. No garantizado; no descuenta comunidad ni gestión.
 
-**¿Necesito viajar a Dubai para comprar?** — No imprescindible; off-plan se cierra en remoto con poder notarial. Viajar recomendado para tickets altos o secundario.
+**¿Necesito viajar a Dubai para comprar?**: No imprescindible; off-plan se cierra en remoto con poder notarial. Viajar recomendado para tickets altos o secundario.
 
 ## Fuentes y metodología
 
-1. Volumen de operaciones 2025: registros oficiales — DLD, ADREC y emiratos del norte.
+1. Volumen de operaciones 2025: registros oficiales: DLD, ADREC y emiratos del norte.
 2. Rangos de rentabilidad/revalorización: JLL, Knight Frank, Property Finder, Bayut (2024–2025).
 3. Marco fiscal 0% sobre rentas/plusvalías de personas físicas: normativa vigente en los EAU.
 

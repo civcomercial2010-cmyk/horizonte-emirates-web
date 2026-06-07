@@ -17,7 +17,7 @@ Guías prácticas sobre rentabilidad, fiscalidad, residencia y proceso de compra
 
 ## Artículo destacado
 
-- **Cómo invertir en inmuebles en Dubai desde España (guía 2026)** — guía pilar de Inversión. → `/blog/como-invertir-inmuebles-dubai.html`
+- **Cómo invertir en inmuebles en Dubai desde España (guía 2026)**: guía pilar de Inversión. → `/blog/como-invertir-inmuebles-dubai.html`
 
 ## Grid de artículos
 

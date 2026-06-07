@@ -24,12 +24,12 @@ hero_image: projects/nh-collection-rak/PI89_R00.04_GF_Entrance%20Lobby-REV03.web
 - Para vender en el mercado local, valorar mainland.
 
 ## Secciones
-1. Qué es una free zone — zona especial, propiedad 100%, especializada por sector.
-2. Cómo elegir — actividad, presupuesto, visados, oficina, bancarización.
-3. Free zones principales — IFZA, Meydan, DMCC, RAKEZ, DIFC, Internet/Media City, JAFZA.
-4. Tabla orientativa — free zone / fuerte en / perfil.
-5. Coste y visados — licencia (constitución+renovación) + visados; comparar a 12 meses.
-6. Errores frecuentes — precio sin renovación/visados, no especializada, asumir mercado local, bancarización.
+1. Qué es una free zone: zona especial, propiedad 100%, especializada por sector.
+2. Cómo elegir: actividad, presupuesto, visados, oficina, bancarización.
+3. Free zones principales: IFZA, Meydan, DMCC, RAKEZ, DIFC, Internet/Media City, JAFZA.
+4. Tabla orientativa: free zone / fuerte en / perfil.
+5. Coste y visados: licencia (constitución+renovación) + visados; comparar a 12 meses.
+6. Errores frecuentes: precio sin renovación/visados, no especializada, asumir mercado local, bancarización.
 
 ## FAQ
 - ¿Qué es una free zone? → zona especial con propiedad 100% y agilidad.

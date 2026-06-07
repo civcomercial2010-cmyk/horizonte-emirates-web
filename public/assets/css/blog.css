@@ -1,5 +1,5 @@
 /* ───────────────────────────────────────────────────────────
-   Blog — hoja autocontenida (índice, artículos y página de equipo).
+   Blog - hoja autocontenida (índice, artículos y página de equipo).
    Sigue la convención del proyecto: cada sección de página carga
    tokens.css + fonts.css + su propia hoja (como proyectos.css),
    sin depender de home.css. Reproduce nav, footer, botones y la

@@ -24,13 +24,13 @@ hero_image: wynn-al-marjan.webp
 - Riesgo principal: retrasos / mercado durante la construcción.
 
 ## Secciones
-1. **Qué es el off-plan** — compra al promotor antes de finalizar; precio de preventa.
-2. **Por qué atrae** — apalancamiento, revalorización potencial, producto nuevo, flexibilidad de salida.
-3. **Planes de pago** — tabla: vinculado a construcción / por calendario / post-entrega (coste financiero incorporado).
-4. **Escrow y garantías RERA** — fondos en cuenta regulada, liberados según avance; proyectos verificables.
-5. **Riesgos reales** — retrasos, mercado, promotor sin track record, sobre-apalancamiento, liquidez de reventa.
-6. **Cómo protegerte** — verificar RERA + escrow, track record, colchón de liquidez, partner RERA, leer el SPA.
-7. **Proceso paso a paso** — selección/verificación → reserva → SPA → pagos vía escrow → entrega y registro (Oqood → título DLD).
+1. **Qué es el off-plan**: compra al promotor antes de finalizar; precio de preventa.
+2. **Por qué atrae**: apalancamiento, revalorización potencial, producto nuevo, flexibilidad de salida.
+3. **Planes de pago**: tabla: vinculado a construcción / por calendario / post-entrega (coste financiero incorporado).
+4. **Escrow y garantías RERA**: fondos en cuenta regulada, liberados según avance; proyectos verificables.
+5. **Riesgos reales**: retrasos, mercado, promotor sin track record, sobre-apalancamiento, liquidez de reventa.
+6. **Cómo protegerte**: verificar RERA + escrow, track record, colchón de liquidez, partner RERA, leer el SPA.
+7. **Proceso paso a paso**: selección/verificación → reserva → SPA → pagos vía escrow → entrega y registro (Oqood → título DLD).
 
 ## FAQ
 - ¿Qué es off-plan? → comprar en construcción, entrada + plazos.

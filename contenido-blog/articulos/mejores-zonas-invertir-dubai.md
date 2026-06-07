@@ -24,14 +24,14 @@ hero_image: dubai-marina.webp
 - Más allá de Dubai: Ras Al Khaimah por el efecto Wynn.
 
 ## Secciones (zonas)
-1. **Cómo elegir zona** — ¿renta o revalorización? filtra el 80%.
-2. **Dubai Marina / JBR** — icónica, líquida, yield equilibrado.
-3. **Downtown** — prime, revalorización y caché, yield moderado.
-4. **Business Bay** — punto medio renta/apreciación, central.
-5. **JVC** — yield alto, ticket asequible, flujo de caja.
-6. **Palm Jumeirah** — lujo/trofeo, revalorización, ticket muy alto.
-7. **Dubai Hills Estate** — familiar, estable, apreciación a medio plazo.
-8. **Tabla comparativa** — zona / perfil / ticket / ideal para.
+1. **Cómo elegir zona**: ¿renta o revalorización? filtra el 80%.
+2. **Dubai Marina / JBR**: icónica, líquida, yield equilibrado.
+3. **Downtown**: prime, revalorización y caché, yield moderado.
+4. **Business Bay**: punto medio renta/apreciación, central.
+5. **JVC**: yield alto, ticket asequible, flujo de caja.
+6. **Palm Jumeirah**: lujo/trofeo, revalorización, ticket muy alto.
+7. **Dubai Hills Estate**: familiar, estable, apreciación a medio plazo.
+8. **Tabla comparativa**: zona / perfil / ticket / ideal para.
 
 ## FAQ
 - ¿Mejor zona? → según objetivo: asequibles (JVC/Business Bay) vs. prime (Downtown/Palm/Marina).

@@ -29,13 +29,13 @@ Contenido informativo de carácter general. NO es asesoramiento fiscal, jurídic
 - Decisión vital → planificar con asesor.
 
 ## Secciones
-1. **Qué es la residencia fiscal** — determina dónde tributas por renta mundial.
-2. **La regla de los 183 días (y las otras)** — días, centro económico, familia (presunción).
-3. **Cómo funciona en los EAU** — residente legal (visado) + criterios de presencia/vínculos.
-4. **El certificado (TRC)** — Tax Residency Certificate emitido por la autoridad emiratí.
-5. **No es la Golden Visa** — migratoria vs. fiscal; puedes tener la visa y seguir siendo fiscal en España.
-6. **Salir de la residencia española** — cumplir criterios fuera, acreditar TRC, conocer el exit tax.
-7. **Errores frecuentes** — confundir visa con fiscalidad, "menos de 183 días" sin más, no obtener TRC, no planificar.
+1. **Qué es la residencia fiscal**: determina dónde tributas por renta mundial.
+2. **La regla de los 183 días (y las otras)**: días, centro económico, familia (presunción).
+3. **Cómo funciona en los EAU**: residente legal (visado) + criterios de presencia/vínculos.
+4. **El certificado (TRC)**: Tax Residency Certificate emitido por la autoridad emiratí.
+5. **No es la Golden Visa**: migratoria vs. fiscal; puedes tener la visa y seguir siendo fiscal en España.
+6. **Salir de la residencia española**: cumplir criterios fuera, acreditar TRC, conocer el exit tax.
+7. **Errores frecuentes**: confundir visa con fiscalidad, "menos de 183 días" sin más, no obtener TRC, no planificar.
 
 ## FAQ
 - ¿Cómo se obtiene en EAU? → residente legal + criterios + TRC.

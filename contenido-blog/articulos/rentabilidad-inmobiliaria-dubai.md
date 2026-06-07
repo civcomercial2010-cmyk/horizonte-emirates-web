@@ -24,13 +24,13 @@ hero_image: dubai-marina.webp
 - Retorno total = yield por alquiler + revalorización.
 
 ## Secciones
-1. **Qué es el yield** — renta anual / precio. A mayor precio/m², menor yield, mayor revalorización potencial.
-2. **Rangos reales por tipo de zona** — tabla: áreas consolidadas asequibles (≈7–9%, revalorización moderada, flujo de caja); prime/lujo (≈5–7%, revalorización alta, plusvalía); off-plan emergente (variable, renta a la entrega).
-3. **Neto vs. bruto** — las cifras de mercado son netas de impuestos en origen, no en tu bolsillo.
-4. **Gastos que restan** — service charges, gestión de alquiler, vacancia, IRPF en España.
-5. **Yield + revalorización = retorno total** — no mirar solo el yield.
-6. **Comparativa con España** — tabla: 0% origen (alquiler/plusvalía) vs. IRPF; yield más alto vs. comprimido; marco favorable al propietario.
-7. **Cómo maximizar el retorno** — objetivo primero, revisar service charges, valorar gestión, no perseguir el yield más alto a ciegas.
+1. **Qué es el yield**: renta anual / precio. A mayor precio/m², menor yield, mayor revalorización potencial.
+2. **Rangos reales por tipo de zona**: tabla: áreas consolidadas asequibles (≈7–9%, revalorización moderada, flujo de caja); prime/lujo (≈5–7%, revalorización alta, plusvalía); off-plan emergente (variable, renta a la entrega).
+3. **Neto vs. bruto**: las cifras de mercado son netas de impuestos en origen, no en tu bolsillo.
+4. **Gastos que restan**: service charges, gestión de alquiler, vacancia, IRPF en España.
+5. **Yield + revalorización = retorno total**: no mirar solo el yield.
+6. **Comparativa con España**: tabla: 0% origen (alquiler/plusvalía) vs. IRPF; yield más alto vs. comprimido; marco favorable al propietario.
+7. **Cómo maximizar el retorno**: objetivo primero, revisar service charges, valorar gestión, no perseguir el yield más alto a ciegas.
 
 ## FAQ
 - ¿Qué rentabilidad da un piso en Dubai? → 6–9% neto en origen en prime; no garantizado.

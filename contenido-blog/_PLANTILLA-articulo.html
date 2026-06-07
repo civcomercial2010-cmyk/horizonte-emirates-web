@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <!--
-  PLANTILLA DE ARTÍCULO — Horizonte Emirates
+  PLANTILLA DE ARTÍCULO: Horizonte Emirates
   Copia este archivo a public/blog/{{SLUG}}.html y sustituye TODOS los {{placeholders}}.
   Reglas: ver contenido-blog/README.md. CSP-safe: nada de <script> inline ejecutable ni onclick.
-  Rutas de assets: ../assets/...  ·  Enlaces internos: absolutos (/ , /blog/... , /#form).
+  PROHIBIDO el guion largo / raya (—) en el texto: usar comas, parentesis o dos puntos.
+  Rutas de assets: ../assets/...  Enlaces internos: absolutos (/ , /blog/... , /#form).
 -->
 <html lang="es">
 <head>
@@ -33,7 +34,7 @@
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Inicio","item":"https://www.horizonteemirates.com/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.horizonteemirates.com/blog/"},{"@type":"ListItem","position":3,"name":"{{TITULO_BREADCRUMB}}","item":"https://www.horizonteemirates.com/blog/{{SLUG}}.html"}]}
 </script>
-<!-- OPCIONAL: FAQPage — debe coincidir con las preguntas visibles del artículo
+<!-- OPCIONAL: FAQPage: debe coincidir con las preguntas visibles del artículo
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"{{PREGUNTA_1}}","acceptedAnswer":{"@type":"Answer","text":"{{RESPUESTA_1}}"}}]}
 </script>
@@ -163,7 +164,7 @@
   </div>
 </div>
 
-<!-- RELATED — sustituir por 2-3 artículos del mismo cluster -->
+<!-- RELATED: sustituir por 2-3 artículos del mismo cluster -->
 <section class="related">
   <div class="wrap">
     <div class="sh fade"><h2>Sigue leyendo</h2></div>

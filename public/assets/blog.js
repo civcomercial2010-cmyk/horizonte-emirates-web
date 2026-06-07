@@ -1,4 +1,4 @@
-/* Blog — JS autocontenido (sin dependencias del app.js de la home).
+/* Blog - JS autocontenido (sin dependencias del app.js de la home).
    Externalizado para cumplir la CSP sin 'unsafe-inline' (M26).
    Maneja: nav scroll, reveals, acordeón FAQ, TOC scroll-spy, WhatsApp,
    y el seguimiento mínimo de eventos hacia GA4 si gtag está disponible. */

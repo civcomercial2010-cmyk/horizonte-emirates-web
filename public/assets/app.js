@@ -3,8 +3,8 @@ const WA_URL='https://wa.me/971554722025';
 const W3F_KEY='3861d49c-5f0a-4dc3-a9e9-08b1758a110a';
 const W3F_EP='https://api.web3forms.com/submit';
 const ADS_CONVERSION_ID='AW-586671676';
-const ADS_CONVERSION_LABEL=''; // M04 — pega aquí la etiqueta de la conversión nativa de Google Ads (formato AbCdEfGhIjk) SOLO si NO importas generate_lead desde GA4. Vacío = no dispara la nativa (evita doble conteo si usas la vía GA4→Ads).
-// M05 — valor económico estimado del lead por tier (para Smart Bidding / ROAS). Ajustable.
+const ADS_CONVERSION_LABEL=''; // M04 - pega aquí la etiqueta de la conversión nativa de Google Ads (formato AbCdEfGhIjk) SOLO si NO importas generate_lead desde GA4. Vacío = no dispara la nativa (evita doble conteo si usas la vía GA4→Ads).
+// M05 - valor económico estimado del lead por tier (para Smart Bidding / ROAS). Ajustable.
 const LEAD_VALUE_EUR={A:300,B:120,C:40};
 function leadValueEUR(tier){return LEAD_VALUE_EUR[tier]||LEAD_VALUE_EUR.C;}
 let savedLead={};
@@ -15,7 +15,7 @@ const seenSections=new Set();
 
 // ── UTM CAPTURE
 function captureUTM(){
-  // M11 — persiste UTM/click-ids de la URL en sessionStorage; getTrackingParams() los adjunta al lead en el envío.
+  // M11 - persiste UTM/click-ids de la URL en sessionStorage; getTrackingParams() los adjunta al lead en el envío.
   // (Se eliminó el código muerto que escribía en inputs name="utm_*" que no existen en el formulario.)
   const urlParams = new URLSearchParams(window.location.search);
   const utmFields = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid', 'gbraid', 'wbraid'];
@@ -204,7 +204,7 @@ function buildWeb3LeadPayload(formEl, leadData){
   fd.append('redirect', formEl.querySelector('[name="redirect"]')?.value || '');
   fd.append('botcheck', '');
 
-  // M07 fix — nombres de campo ASCII simples (sin emojis ni '·'): los decorativos
+  // M07 fix - nombres de campo ASCII simples (sin emojis ni '·'): los decorativos
   // llegaban con mojibake (UTF-8 leído como Latin-1) y rompían el parser de horizonte-emails.gs.
   // El parser ya reconoce estas claves normalizadas (no requiere tocar el Apps Script).
   fd.append('Nombre', leadData.nombre || '');
@@ -511,7 +511,7 @@ function calcROI(){
   document.querySelectorAll('.fade, .reveal-stagger').forEach(el=>io.observe(el));
 })();
 
-// ── KPI +334.000 — rodillos verticales (tragaperras)
+// ── KPI +334.000 - rodillos verticales (tragaperras)
 (function(){
   const strip=document.getElementById('kpi-strip');
   const wrap=document.getElementById('kpi-slot-wrap');
@@ -669,7 +669,7 @@ document.querySelectorAll('.canal-o').forEach(function(el){ el.addEventListener(
 (function(){ var c=document.querySelector('.wam-close'); if(c) c.addEventListener('click', closeWaModal); })();
 (function(){ var f=document.querySelector('.wa-float a'); if(f) f.addEventListener('click', function(e){ e.preventDefault(); openWaModal(null); }); })();
 
-// ── M23 — Persistencia del formulario + validación inline ──────────────
+// ── M23 - Persistencia del formulario + validación inline ──────────────
 (function () {
   var KEY = 'he_form_state';
   var form = document.getElementById('mainform');

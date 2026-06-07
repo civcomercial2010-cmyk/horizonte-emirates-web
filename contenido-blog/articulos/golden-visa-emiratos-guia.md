@@ -29,7 +29,7 @@ lead_magnet: "Guía Golden Visa por inversión"
 
 ---
 
-La Golden Visa es, probablemente, el segundo gran motivo —después de la rentabilidad— por el que los inversores miran a los Emiratos. Es un permiso de residencia de larga duración para perfiles concretos, entre ellos los inversores inmobiliarios. Alrededor de ella circula mucha información imprecisa; vamos a ordenarla.
+La Golden Visa es, probablemente, el segundo gran motivo (después de la rentabilidad) por el que los inversores miran a los Emiratos. Es un permiso de residencia de larga duración para perfiles concretos, entre ellos los inversores inmobiliarios. Alrededor de ella circula mucha información imprecisa; vamos a ordenarla.
 
 ## Qué es la Golden Visa de Emiratos
 
@@ -90,13 +90,13 @@ Si tu plan incluye optimizar fiscalidad → [Impuestos al invertir en Dubai desd
 
 ## Preguntas frecuentes (FAQPage)
 
-**¿Cuánto hay que invertir para la Golden Visa por inmueble?** — Vía inmobiliaria de 10 años: desde ~2M AED. El umbral lo fija la normativa de los EAU.
+**¿Cuánto hay que invertir para la Golden Visa por inmueble?**: Vía inmobiliaria de 10 años: desde ~2M AED. El umbral lo fija la normativa de los EAU.
 
-**¿Incluye a mi familia?** — Sí: cónyuge e hijos, y bajo condiciones otros dependientes y servicio doméstico.
+**¿Incluye a mi familia?**: Sí: cónyuge e hijos, y bajo condiciones otros dependientes y servicio doméstico.
 
-**¿Tengo que vivir en Emiratos para mantenerla?** — No exige residencia física continuada; permite estancias flexibles.
+**¿Tengo que vivir en Emiratos para mantenerla?**: No exige residencia física continuada; permite estancias flexibles.
 
-**¿Qué pasa si vendo el inmueble?** — Puede afectar a la validez de la visa; planifícalo con asesoramiento.
+**¿Qué pasa si vendo el inmueble?**: Puede afectar a la validez de la visa; planifícalo con asesoramiento.
 
 ## Fuentes y metodología
 

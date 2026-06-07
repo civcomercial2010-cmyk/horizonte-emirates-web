@@ -24,14 +24,14 @@ hero_image: projects/mira-bentley-villas-dubai/GYM_01_b2d1bcdf3a.webp
 - No es "o uno u otro": muchos diversifican.
 
 ## Secciones
-1. El veredicto rápido — la residencia fiscal inclina la balanza.
-2. Fiscalidad — 0% origen Dubai vs IRPF España; renta mundial; Modelo 720.
-3. Rentabilidad — yields 6–9% prime Dubai vs comprimidos en España; revalorización off-plan.
-4. Seguridad jurídica — RERA+escrow vs mercado maduro conocido.
-5. Ocupación e impago — percibido menor en Dubai.
-6. Liquidez y entrada — off-plan 10–20% vs más capital en España.
-7. Tabla comparativa — factor / Dubai / España.
-8. Cuál te conviene — Dubai (rentabilidad/fiscalidad), España (cercanía/control), ambos (diversificar).
+1. El veredicto rápido: la residencia fiscal inclina la balanza.
+2. Fiscalidad: 0% origen Dubai vs IRPF España; renta mundial; Modelo 720.
+3. Rentabilidad: yields 6–9% prime Dubai vs comprimidos en España; revalorización off-plan.
+4. Seguridad jurídica: RERA+escrow vs mercado maduro conocido.
+5. Ocupación e impago: percibido menor en Dubai.
+6. Liquidez y entrada: off-plan 10–20% vs más capital en España.
+7. Tabla comparativa: factor / Dubai / España.
+8. Cuál te conviene: Dubai (rentabilidad/fiscalidad), España (cercanía/control), ambos (diversificar).
 
 ## FAQ
 - ¿Mejor Dubai o España? → según objetivo y residencia fiscal.

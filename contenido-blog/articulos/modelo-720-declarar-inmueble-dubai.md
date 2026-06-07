@@ -28,13 +28,13 @@ Informativo, no asesoramiento fiscal. Consultar con asesor especializado.
 - No presentarlo puede acarrear sanciones.
 
 ## Secciones
-1. Qué es el Modelo 720 — informativa; cuentas, valores e inmuebles.
-2. Cuándo estás obligado — umbral 50.000€ (valor de adquisición).
-3. Qué se declara del inmueble — ubicación, fecha, valor, tipo de derecho.
-4. Plazos — primer trimestre del año siguiente.
-5. Riesgos de no presentarlo — sanciones; régimen revisado pero obligación vigente.
-6. No es un impuesto — la tributación va por IRPF.
-7. Errores frecuentes — no presentarlo por "Dubai no tributa", olvidar años posteriores, no declarar venta, apurar plazo.
+1. Qué es el Modelo 720: informativa; cuentas, valores e inmuebles.
+2. Cuándo estás obligado: umbral 50.000€ (valor de adquisición).
+3. Qué se declara del inmueble: ubicación, fecha, valor, tipo de derecho.
+4. Plazos: primer trimestre del año siguiente.
+5. Riesgos de no presentarlo: sanciones; régimen revisado pero obligación vigente.
+6. No es un impuesto: la tributación va por IRPF.
+7. Errores frecuentes: no presentarlo por "Dubai no tributa", olvidar años posteriores, no declarar venta, apurar plazo.
 
 ## FAQ
 - ¿Tengo que declararlo? → sí si >50.000€ y residente fiscal en España.

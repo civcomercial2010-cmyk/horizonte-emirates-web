@@ -8,7 +8,7 @@ author: Equipo Horizonte Emirates
 published: 2026-06-07
 modified: 2026-06-07
 status: published
-proposito: EEAT — autoridad, confianza y transparencia (sustenta la firma de los artículos del blog)
+proposito: EEAT: autoridad, confianza y transparencia (sustenta la firma de los artículos del blog)
 ---
 
 # Inversores acompañados, no clientes a ciegas
@@ -21,7 +21,7 @@ Horizonte Emirates es un servicio operado por **Propulse SLU**, sociedad constit
 
 ## Cómo trabajamos con partners regulados en Dubai
 
-En Dubai operamos junto a **partners con licencia RERA activa** —el organismo oficial del Gobierno de Dubai que regula y supervisa todas las transacciones inmobiliarias—. Cada proyecto que presentamos está registrado en RERA y puede verificarse de forma independiente.
+En Dubai operamos junto a **partners con licencia RERA activa** (el organismo oficial del Gobierno de Dubai que regula y supervisa todas las transacciones inmobiliarias). Cada proyecto que presentamos está registrado en RERA y puede verificarse de forma independiente.
 
 ## Nuestro compromiso editorial
 
@@ -37,9 +37,9 @@ En Dubai operamos junto a **partners con licencia RERA activa** —el organismo 
 
 ## El equipo
 
-- **Dirección de inversión** — estrategia y relación con el inversor (interlocutor único en español).
-- **Partner local en Dubai** — licencia RERA, acceso a inventario y operativa en destino.
-- **Contenido & análisis** — investigación de mercado y guías del blog con fuentes citadas.
+- **Dirección de inversión**: estrategia y relación con el inversor (interlocutor único en español).
+- **Partner local en Dubai**: licencia RERA, acceso a inventario y operativa en destino.
+- **Contenido & análisis**: investigación de mercado y guías del blog con fuentes citadas.
 
 > Nota de mantenimiento (EEAT): cuando haya personas reales con nombre y credenciales públicas, sustituir los roles genéricos por perfiles nominales con `Person` en JSON-LD. Maximiza E-E-A-T en contenido YMYL. No inventar nombres ni credenciales.
 
