@@ -202,8 +202,8 @@ nav#nav.at-top{background:transparent;border-color:transparent}
 .takeaways{background:var(--navy);color:#fff;border-radius:10px;padding:30px 34px}
 .takeaways .c-tag{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;display:block}
 .takeaways ul{list-style:none;display:flex;flex-direction:column;gap:12px;padding:0}
-.takeaways li{display:flex;gap:12px;font-size:15.5px;line-height:1.5;color:rgba(255,255,255,.9)}
-.takeaways li::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--gold);margin-top:9px;flex-shrink:0}
+.takeaways li{position:relative;padding-left:19px;font-size:15.5px;line-height:1.5;color:rgba(255,255,255,.9)}
+.takeaways li::before{content:'';position:absolute;left:0;top:9px;width:7px;height:7px;border-radius:50%;background:var(--gold)}
 .takeaways strong{color:#fff;font-weight:600}
 .takeaways a{color:var(--gold);text-decoration:underline;text-underline-offset:2px}
 .takeaways em{color:#fff}
