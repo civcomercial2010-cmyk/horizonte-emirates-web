@@ -127,3 +127,17 @@
     });
   }
 })();
+
+// Menú móvil (hamburguesa): navegación a Home/Proyectos/Blog/FAQ + CTA en responsive
+(function(){
+  var b=document.getElementById('nav-burger'), m=document.getElementById('mobile-nav');
+  if(!b||!m)return;
+  function set(open){
+    m.classList.toggle('open',open); b.classList.toggle('open',open);
+    b.setAttribute('aria-expanded',open?'true':'false');
+    m.setAttribute('aria-hidden',open?'false':'true');
+    b.setAttribute('aria-label',open?'Cerrar menú':'Abrir menú');
+  }
+  b.addEventListener('click',function(){ set(!m.classList.contains('open')); });
+  m.querySelectorAll('a').forEach(function(a){ a.addEventListener('click',function(){ set(false); }); });
+})();

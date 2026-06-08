@@ -127,3 +127,17 @@ function prevSlide(id) { goSlide(id, carouselState[id] - 1); }
 window.addEventListener('scroll', function () {
   document.querySelector('.header').style.background = window.scrollY > 24 ? 'rgba(13,27,42,.98)' : 'rgba(13,27,42,.96)';
 }, { passive: true });
+
+// ── Menú móvil (hamburguesa)
+(function () {
+  var b = document.getElementById('nav-burger'), m = document.getElementById('mobile-nav');
+  if (!b || !m) return;
+  function set(open) {
+    m.classList.toggle('open', open); b.classList.toggle('open', open);
+    b.setAttribute('aria-expanded', open ? 'true' : 'false');
+    m.setAttribute('aria-hidden', open ? 'false' : 'true');
+    b.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+  }
+  b.addEventListener('click', function () { set(!m.classList.contains('open')); });
+  m.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { set(false); }); });
+})();
