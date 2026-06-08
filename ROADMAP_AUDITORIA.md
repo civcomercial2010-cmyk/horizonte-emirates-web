@@ -121,6 +121,11 @@ nuevas** que sobreviven al contraste:
   - **M48 ✅** — montado pipeline de imágenes con la API de Pexels (`tools/imgproc/pexels-fetch.mjs` + `assign.mjs`, gitignored). Los 16 artículos pasan de reutilizar 3-4 fotos de proyectos a tener cada uno una imagen temática propia (hero + og + card del hub), con alt correcto. Página de créditos para cumplir la atribución de Pexels. Fotos de proyectos quedan en su sitio natural (`proyectos.html`).
   - **M49 ✅** — barrido de redundancias de copy: 5 de-dups en la home (el blog se deja intacto porque su repetición es funcional: disclaimer YMYL, bio de autor, CTAs).
   - Decisiones del usuario: contrato RRS supeditado al registro del objeto social de Propulse (final de junio) → la firma no es acción inmediata; foco en captación orgánica y conversión. Memoria documental (`G:\...`) sincronizada con el repo.
+- **Lote E (UX, feedback del usuario):**
+  - Fotos hero elegidas por el usuario vía Pexels (como-invertir, comprar-sobre-plano) aplicadas (commit `67e2a67`).
+  - **M50 ✅** — títulos de los artículos del blog: ensanchados (`max-width` del h1 20ch→32ch y el `<header>` pasa a usar el ancho completo del contenido, alineado con el hero; antes se veía en columna estrecha).
+  - **M51 ✅** — menú móvil en la home: botón hamburguesa con navegación (Por qué/Proceso/Proyectos/Blog/FAQ) + CTA destacado; antes en móvil solo quedaba el logo arriba y el sticky-CTA abajo, sin acceso a Proyectos/Blog. CSP-safe (listener en app.js). El sticky-CTA inferior se mantiene (conversión persistente). Pendiente: replicar el patrón en proyectos.html y blog si se quiere navegación móvil consistente.
+  - Pendiente: imágenes IA propias del usuario (golden-visa, mapa de zonas, residencia-fiscal, Wynn x2) → requieren que el usuario las deje en `tools/imgproc/incoming/` (las pegadas en el chat no son accesibles como archivos).
 
 ### 2026-06-07
 - **M18 🟡 (gran avance)** — Ejecutado el plan editorial SEO sobre el stack actual (HTML estático + Cloudflare, sin migración). Creado:

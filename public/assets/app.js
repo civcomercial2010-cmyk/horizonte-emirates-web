@@ -669,6 +669,20 @@ document.querySelectorAll('.canal-o').forEach(function(el){ el.addEventListener(
 (function(){ var c=document.querySelector('.wam-close'); if(c) c.addEventListener('click', closeWaModal); })();
 (function(){ var f=document.querySelector('.wa-float a'); if(f) f.addEventListener('click', function(e){ e.preventDefault(); openWaModal(null); }); })();
 
+// Menú móvil (hamburguesa): navegación a Proyectos/Blog/FAQ + CTA en responsive
+(function(){
+  var b=document.getElementById('nav-burger'), m=document.getElementById('mobile-nav');
+  if(!b||!m)return;
+  function set(open){
+    m.classList.toggle('open',open); b.classList.toggle('open',open);
+    b.setAttribute('aria-expanded',open?'true':'false');
+    m.setAttribute('aria-hidden',open?'false':'true');
+    b.setAttribute('aria-label',open?'Cerrar menú':'Abrir menú');
+  }
+  b.addEventListener('click',function(){ set(!m.classList.contains('open')); });
+  m.querySelectorAll('a').forEach(function(a){ a.addEventListener('click',function(){ set(false); }); });
+})();
+
 // ── M23 - Persistencia del formulario + validación inline ──────────────
 (function () {
   var KEY = 'he_form_state';
