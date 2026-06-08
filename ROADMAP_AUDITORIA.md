@@ -43,7 +43,7 @@ _Última actualización: 2026-06-08_
 | M18 | Plan editorial SEO (8–12 guías) | H09 | 🟡 | **Blog construido y en working tree** (`public/blog/`): infraestructura completa (`blog.css` + `blog.js` autocontenidos, misma estética que la home, CSP-safe) + hub `/blog/` con filtro por categorías + **3 guías pilar** publicadas: cómo invertir en Dubai, fiscalidad España↔UAE, Golden Visa. Cada artículo con JSON-LD `BlogPosting`+`BreadcrumbList`+`FAQPage`, TOC, bio de autor, fuentes y CTA al funnel. Página EEAT `/sobre/equipo.html`. Estrategia completa (24 clusters + plan 12 meses) en `docs/SEO_ESTRATEGIA.md`. Fuente `.md` editable + manual de escalabilidad en `contenido-blog/`. **DESPLEGADO Y VIVO** (`b4acd69`+`79bb6ac`): todas las URLs en 200; `/blog/` servido vía `public/_redirects` (rewrite 200, porque `html_handling:"none"` no da directory-index). Pendiente: 5-9 guías restantes + alta en Search Console |
 | M19 | Lead magnet (guía fiscal) | — | 🟡 | Punto de captación montado: CTA "Guía fiscal Dubai↔España" en el hub del blog y en el artículo de fiscalidad, conectado al formulario (`/#form`). Pendiente: maquetar el PDF y automatizar el envío al solicitar análisis |
 | M20 | JSON-LD `ItemList`/`Residence` + breadcrumb en proyectos | H20 | ✅ | BreadcrumbList + ItemList(Residence) en `proyectos.html`, sin precios. Desplegado (`bf5b6ba`). Validar en Rich Results Test |
-| M21 | Política robots de IA + resolver doble `User-agent: *` | H11 | ⬜ |
+| M21 | Política robots de IA + resolver doble `User-agent: *` | H11 | ✅ | **Hecho 2026-06-08.** El `robots.txt` ya no tenía doble `User-agent`. Política de IA declarada explícita: GPTBot/Google-Extended/PerplexityBot/ClaudeBot con `Allow: /` (decisión: permitir para ganar visibilidad en respuestas de IA; reversible con `Disallow`) |
 | M22 | Corregir enlazado interno (footer → proyectos; quitar doble "Zonas") | — | ✅ | Footer enlaza a proyectos.html y al formulario; eliminado el doble enlace "Zonas". Desplegado (`bf5b6ba`) |
 | M23 | Persistencia de progreso + validación inline del formulario | H16 | ✅ | Estado del formulario en sessionStorage (recarga no borra pasos/datos; se limpia al enviar) + validación inline email/teléfono al salir del campo. Desplegado |
 | M24 | Activar Telegram + nurturing con contenido real | — | ⬜ |
@@ -53,11 +53,11 @@ _Última actualización: 2026-06-08_
 |---|---|---|---|
 | M25 | Externalizar JS/CSS comunes | H05 | ✅ | JS externalizado en las 3 páginas: `assets/gtag-init.js`, `assets/app.js`, `assets/proyectos.js`; manejadores `onclick`/`onchange` sustituidos por listeners. Sintaxis validada con node. Desplegado |
 | M26 | Eliminar `'unsafe-inline'` de `script-src` | H05 | ✅ | Retirado del `<meta>` CSP de las 3 páginas, de `_headers` y del header CSP en Cloudflare (hecho por el usuario). Verificado en consola: 0 errores de inline-script; web funcional. `style-src` mantiene unsafe-inline (a propósito). Añadido `pagead2.googlesyndication.com` a connect-src (Ads). Pendiente menor: desactivar Cloudflare Web Analytics (beacon bloqueado, preexistente) |
-| M27 | Resolver Google Fonts render-blocking (self-host/preload) | — | ⬜ |
-| M28 | Optimizar animación KPI "tragaperras" (INP) | H13 | ⬜ |
+| M27 | Resolver Google Fonts render-blocking (self-host/preload) | — | ✅ | **Hecho 2026-06-08.** Las fuentes YA estaban self-hosted (woff2 locales + `font-display:swap`), sin link a Google Fonts (el "render-blocking de Google" no existía). Añadido `preload` de los 2 woff2 de Cormorant latin (normal+italic), la fuente del H1/LCP. Inter no se preloadea (tiene swap, es secundaria, no compite con la imagen hero) |
+| M28 | Optimizar animación KPI "tragaperras" (INP) | H13 | ⏸️ | **Evaluado 2026-06-08, no se toca sin medir.** Es scroll-triggered (IntersectionObserver), no interacción → no afecta al INP directamente; solo TBT en el scroll inicial, y ya se optimizó una vez (~5000→~50-85 nodos). Reescribir una animación visualmente central a ciegas = riesgo alto por beneficio marginal. Condicionado a que el profiling (M31/PSI) lo señale |
 | M29 | Contraste AA del dorado de marca | H17 | ✅ | `--gold-text:#9A7016` aplicado a texto pequeño sobre fondo claro (eyebrow, proc-tag, s-range/pill, zone-tag, deliver-t, form-scarcity). Dorado de marca intacto en grande/oscuro. Desplegado |
 | M30 | `404.html` + HSTS 2 años + revisar ACAO | H21 | 🟡 | `404.html` con identidad de marca creada y desplegada (`74de19c`). Pendiente en Cloudflare: subir HSTS a 2 años y revisar `Access-Control-Allow-Origin: *` |
-| M31 | Validar JSON-LD + Lighthouse final ≥90 | — | ⬜ |
+| M31 | Validar JSON-LD + Lighthouse final ≥90 | — | 🟡 | **JSON-LD validado 2026-06-08**: 57 bloques en 21 páginas, 0 inválidos (BlogPosting×16, BreadcrumbList×19, FAQPage×17, Blog, RealEstateAgent, WebSite, ItemList, AboutPage). Pendiente: PageSpeed Insights/Lighthouse sobre la URL en vivo tras el deploy de hoy (no medir antes de desplegar) |
 
 ## FASE 5 — Escalabilidad y mejora continua
 | ID | Mejora | H | Estado |
@@ -66,7 +66,7 @@ _Última actualización: 2026-06-08_
 | M33 | Migrar captura a webhook directo / ActiveCampaign | H04 | ⬜ |
 | M34 | Conversions API server-side (Meta/Google) | — | ⬜ |
 | M35 | Dashboard de funnel (CPL, CVR, lead→cierre, € por tier) | — | ⬜ |
-| M36 | Higiene de repo (carpeta v2 a rama, robots repo, nombres de imágenes) | H15 | 🟡 | Carpeta `v2` añadida a `.gitignore` (deja de figurar como pendiente). Renombrado de imágenes con espacios/acentos: pendiente (las URLs codificadas funcionan; cosmético) |
+| M36 | Higiene de repo (carpeta v2 a rama, robots repo, nombres de imágenes) | H15 | ✅ | **Cerrado 2026-06-08.** Carpeta `v2` en `.gitignore`. Imágenes recomprimidas (M44). Renombrado de espacios/acentos: `Gianfranco Ferré Residence/`→`gianfranco-ferre-residence/` y `PI89_..._Entrance Lobby`→`Entrance-Lobby` vía `git mv`; 21 referencias actualizadas en HTML; validado 0 imágenes rotas (121 comprobadas) |
 | M37 | Sesgar inversión a ticket alto (≥300k) | — | ⬜ |
 
 ## FASE 6 — Reevaluación auditoría externa (ChatGPT) · 2026-06-08
@@ -82,8 +82,8 @@ nuevas** que sobreviven al contraste:
 | M43 | `og:image` temática por zona | Media | ✅ | `assets/og/og-abu-dhabi.jpg`, `og-rak.jpg` (1200x630 jpg); `invertir-abu-dhabi.html`, `invertir-ras-al-khaimah.html` | **Hecho 2026-06-08.** 2 og nuevas con foto real (skyline Abu Dhabi; render NH RAK). Los 14 artículos de Dubai/fiscalidad/golden visa mantienen el skyline Dubai genérico (`og-image.jpg` 1200x630, temáticamente correcto; no hay material apaisado de calidad para diferenciar más sin degradar) |
 | M44 | Comprimir imágenes de `/projects` | Media | ✅ | `public/assets/projects/*` | **Hecho 2026-06-08.** Recomprimidas a webp q72 (máx 1600px). Galería **4.6 MB → 2.6 MB (−44%)**. fachada 611→202KB, 06_*534→174KB, etc. Cierra la parte de imágenes de M36 |
 | M42 | ~~Escalonar fechas del blog~~ | Media | ❌ | 16 artículos `datePublished=2026-06-07` (fecha real) | **No-go 2026-06-08 por integridad.** Inventar fechas pasadas falsea el histórico (contra la disciplina de la casa) y es un riesgo SEO (incoherencia con la fecha de primer rastreo que Google ya registró). Acción honesta: dejar `datePublished` real e ir divergiendo `dateModified` al revisar de verdad cada artículo |
-| M39 | Limpiar versión interna "V6/V6.2" de subjects de email | Baja | ⬜ | `index.html:372` (hidden, se sobrescribe); `app.js:201,268,402` | NO aparece en el `<title>` (ChatGPT desactualizado). Solo en el asunto del email del lead. Cosmético |
-| M45 | Ampliar schema: `Organization`+`WebSite` global; valorar `Person` revisor | Baja | ⬜ | `index.html` (hoy `RealEstateAgent`+`FAQPage`); blog autor=`Organization` | Coherente con E-E-A-T sin inventar personas (decisión M18). `Person` solo si hay revisor real con nombre |
+| M39 | Limpiar versión interna "V6/V6.2" de subjects de email | Baja | ✅ | `index.html:372`; `app.js` (3 subjects) | **Hecho 2026-06-08.** "V6.2"/"V6" eliminados de los 4 asuntos de email (lead form + WhatsApp directo) |
+| M45 | Ampliar schema: `Organization`+`WebSite` global; valorar `Person` revisor | Baja | ✅ | `index.html` | **Hecho 2026-06-08.** Añadido `WebSite` (con `publisher` Organization → Propulse SLU). Sin `SearchAction` (no hay buscador interno). `Person` no se añade: no hay revisor con nombre real (coherente con M18) |
 | M46 | ~~URLs limpias sin `.html`~~ | Baja | ❌ | Arquitectura `.html` deliberada (`html_handling:"none"`) | **Evaluado y descartado 2026-06-08** (ver análisis abajo). 0 ganancia SEO + riesgo sobre un sitio recién indexado + reescritura de 20+ archivos. No es mejora con ROI positivo |
 | M47 | ~~Separar consentimiento privacidad/comercial~~ | Media | ❌ | `index.html:534-536` | **Decisión del usuario 2026-06-08: mantener checkbox único** (menos fricción en el form) |
 
@@ -106,7 +106,15 @@ nuevas** que sobreviven al contraste:
 - **M42 ❌** — No-go por integridad: no se falsean fechas de publicación hacia atrás (riesgo SEO + disciplina de no inventar).
 - **M46 ❌** — URLs limpias evaluadas y descartadas: 0 ganancia SEO, riesgo sobre sitio recién indexado, reescritura masiva. No prioritario.
 - **M47 ❌** — Decisión del usuario: mantener checkbox de consentimiento único.
-- **Pendiente de esta tanda:** M39 (limpiar "V6" de subjects) y M45 (schema Organization+WebSite), ambos baja prioridad. **Falta desplegar** (commit + push a main).
+- **Lote B+C (mismo día, segunda tanda):**
+  - **M39 ✅** — "V6"/"V6.2" eliminados de los 4 asuntos de email.
+  - **M45 ✅** — schema `WebSite` (publisher Organization→Propulse SLU) en index.html. JSON-LD del sitio: 57 bloques, 0 inválidos.
+  - **M21 ✅** — política de bots de IA explícita en robots.txt (permitidos GPTBot/Google-Extended/PerplexityBot/ClaudeBot).
+  - **M27 ✅** — fonts ya eran self-hosted; añadido preload de Cormorant latin (H1/LCP).
+  - **M36 ✅** — renombrado de imágenes con espacios/acentos (`gianfranco-ferre-residence`, PI89 `Entrance-Lobby`); 21 refs actualizadas, 0 rotas.
+  - **M28 ⏸️** — evaluada: no tocar sin profiling (scroll-triggered, no afecta INP).
+  - **M31 🟡** — JSON-LD validado (57 bloques OK); pendiente PageSpeed Insights en vivo tras deploy.
+  - Despliegue en 2 commits (lote A: 8455e39; lote B+C: este).
 
 ### 2026-06-07
 - **M18 🟡 (gran avance)** — Ejecutado el plan editorial SEO sobre el stack actual (HTML estático + Cloudflare, sin migración). Creado:

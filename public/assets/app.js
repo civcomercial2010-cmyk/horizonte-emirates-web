@@ -198,7 +198,7 @@ function initSectionTracking(){
 function buildWeb3LeadPayload(formEl, leadData){
   const fd = new FormData();
   fd.append('access_key', formEl.querySelector('[name="access_key"]')?.value || W3F_KEY);
-  fd.append('subject', document.getElementById('f-sub')?.value || 'Nuevo lead · Horizonte Emirates V6');
+  fd.append('subject', document.getElementById('f-sub')?.value || 'Nuevo lead · Horizonte Emirates');
   fd.append('from_name', formEl.querySelector('[name="from_name"]')?.value || 'Horizonte Emirates');
   fd.append('replyto', document.getElementById('f-reply')?.value || leadData.email || '');
   fd.append('redirect', formEl.querySelector('[name="redirect"]')?.value || '');
@@ -265,7 +265,7 @@ document.getElementById('mainform').addEventListener('submit',function(e){
   document.getElementById('h-score').value=score;
   const pais=this.querySelector('[name="pais"]').value||'';
   const nombre=(this.querySelector('[name="nombre"]')?.value||'').trim();
-  document.getElementById('f-sub').value=`[${tier}|${score}pts] Lead HE V6 · ${pais}`;
+  document.getElementById('f-sub').value=`[${tier}|${score}pts] Lead HE · ${pais}`;
   document.getElementById('f-reply').value=emailVal;
   const btn=document.getElementById('btn-sub');
   btn.disabled=true;btn.textContent='Enviando...';
@@ -399,7 +399,7 @@ document.getElementById('waf').addEventListener('submit',function(e){
   err.classList.remove('show');
   const fd=new FormData();
   fd.append('access_key',W3F_KEY);
-  fd.append('subject','[WhatsApp directo] '+n+' · Horizonte Emirates V6');
+  fd.append('subject','[WhatsApp directo] '+n+' · Horizonte Emirates');
   fd.append('from_name','Horizonte Emirates');
   fd.append('replyto',em);
   fd.append('nombre',n);fd.append('email',em);

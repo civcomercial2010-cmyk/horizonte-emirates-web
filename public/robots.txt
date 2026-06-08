@@ -1,4 +1,21 @@
+# robots.txt — Horizonte Emirates
+# Indexación abierta. Se permiten también los rastreadores de IA generativa
+# (GPTBot, Google-Extended, PerplexityBot, ClaudeBot) para ganar visibilidad en
+# respuestas de IA. Para bloquear alguno, cambiar su "Allow: /" por "Disallow: /".
+
 User-agent: *
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
 Allow: /
 
 Sitemap: https://www.horizonteemirates.com/sitemap.xml
