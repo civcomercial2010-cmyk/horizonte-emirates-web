@@ -86,6 +86,8 @@ nuevas** que sobreviven al contraste:
 | M45 | Ampliar schema: `Organization`+`WebSite` global; valorar `Person` revisor | Baja | ✅ | `index.html` | **Hecho 2026-06-08.** Añadido `WebSite` (con `publisher` Organization → Propulse SLU). Sin `SearchAction` (no hay buscador interno). `Person` no se añade: no hay revisor con nombre real (coherente con M18) |
 | M46 | ~~URLs limpias sin `.html`~~ | Baja | ❌ | Arquitectura `.html` deliberada (`html_handling:"none"`) | **Evaluado y descartado 2026-06-08** (ver análisis abajo). 0 ganancia SEO + riesgo sobre un sitio recién indexado + reescritura de 20+ archivos. No es mejora con ROI positivo |
 | M47 | ~~Separar consentimiento privacidad/comercial~~ | Media | ❌ | `index.html:534-536` | **Decisión del usuario 2026-06-08: mantener checkbox único** (menos fricción en el form) |
+| M48 | Imágenes temáticas del blog (Pexels) | Media | ✅ | `public/assets/blog/*`, `public/assets/og/og-*`, `blog/creditos.html` | **Hecho 2026-06-08.** Pipeline `tools/imgproc/` (sharp + API Pexels): cada uno de los 16 artículos con hero (webp 1280) + og (1200x630) temáticos según su tema (golden visa→pasaporte, fiscalidad→documentos, zonas→skyline). Hub `/blog/` con cards temáticas. Alt text actualizado. Página de créditos `/blog/creditos.html` (atribución Pexels) enlazada desde el footer. og genéricas/huérfanas eliminadas |
+| M49 | De-dup de copy en la home | Baja | ✅ | `index.html` | **Hecho 2026-06-08.** 5 redundancias eliminadas (eco "español"/"0€" hero↔badges, "ni al inicio ni al cierre" proceso↔FAQ, dos badges de coste seguidos, ticker = copia de badges, escasez duplicada) + de-dup del hero. Blog NO tocado: su repetición (disclaimer/bio/CTA) es funcional |
 
 **Ya resuelto (ChatGPT lo marcaba como pendiente — verificado en código):** title limpio sin V6.2 ✅ · canonical ✅ · robots.txt+sitemap (21 URLs) ✅ · Consent Mode v2 default `denied`→`granted` ✅ · GA4 `G-BK37V83363`+Ads `AW-586671676`+Meta Pixel (tras consentimiento) ✅ · eventos GA4 completos (`generate_lead`, `form_step_view`, `roi_*`, `whatsapp_*`, `section_view`) ✅ · captura UTM/`gclid`/`gbraid`/`wbraid` ✅ · honeypot `botcheck` ✅ · checkbox RGPD ✅ · `<noscript>` fallback ✅ · CSP sin `unsafe-inline` en script-src + HSTS + X-Frame-Options + Permissions-Policy ✅ · schema `RealEstateAgent`+`FAQPage`+`BlogPosting`+`BreadcrumbList`+`ItemList` ✅ · disclaimers de fuentes (M16) ✅ · hero con `preload`/`fetchpriority`/`srcset`/`width-height` ✅ · skip-link + `lang=es` + ARIA ✅ · ROI con disclaimer ✅ · identificación registral en legal (M14) ✅.
 
@@ -114,7 +116,11 @@ nuevas** que sobreviven al contraste:
   - **M36 ✅** — renombrado de imágenes con espacios/acentos (`gianfranco-ferre-residence`, PI89 `Entrance-Lobby`); 21 refs actualizadas, 0 rotas.
   - **M28 ⏸️** — evaluada: no tocar sin profiling (scroll-triggered, no afecta INP).
   - **M31 🟡** — JSON-LD validado (57 bloques OK); pendiente PageSpeed Insights en vivo tras deploy.
-  - Despliegue en 2 commits (lote A: 8455e39; lote B+C: este).
+  - Despliegue en 2 commits (lote A: 8455e39; lote B+C: c3fdeb6).
+- **Lote D (imágenes temáticas + copy):**
+  - **M48 ✅** — montado pipeline de imágenes con la API de Pexels (`tools/imgproc/pexels-fetch.mjs` + `assign.mjs`, gitignored). Los 16 artículos pasan de reutilizar 3-4 fotos de proyectos a tener cada uno una imagen temática propia (hero + og + card del hub), con alt correcto. Página de créditos para cumplir la atribución de Pexels. Fotos de proyectos quedan en su sitio natural (`proyectos.html`).
+  - **M49 ✅** — barrido de redundancias de copy: 5 de-dups en la home (el blog se deja intacto porque su repetición es funcional: disclaimer YMYL, bio de autor, CTAs).
+  - Decisiones del usuario: contrato RRS supeditado al registro del objeto social de Propulse (final de junio) → la firma no es acción inmediata; foco en captación orgánica y conversión. Memoria documental (`G:\...`) sincronizada con el repo.
 
 ### 2026-06-07
 - **M18 🟡 (gran avance)** — Ejecutado el plan editorial SEO sobre el stack actual (HTML estático + Cloudflare, sin migración). Creado:
