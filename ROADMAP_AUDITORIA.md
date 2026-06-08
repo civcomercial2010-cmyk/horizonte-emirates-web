@@ -3,7 +3,7 @@
 Tablero vivo derivado de la auditoría senior (web + funnel + negocio).
 Estado: ✅ hecho · 🟡 en curso · ⬜ pendiente · 🔒 bloqueado (terceros)
 
-_Última actualización: 2026-06-04_
+_Última actualización: 2026-06-08_
 
 ---
 
@@ -69,9 +69,44 @@ _Última actualización: 2026-06-04_
 | M36 | Higiene de repo (carpeta v2 a rama, robots repo, nombres de imágenes) | H15 | 🟡 | Carpeta `v2` añadida a `.gitignore` (deja de figurar como pendiente). Renombrado de imágenes con espacios/acentos: pendiente (las URLs codificadas funcionan; cosmético) |
 | M37 | Sesgar inversión a ticket alto (≥300k) | — | ⬜ |
 
+## FASE 6 — Reevaluación auditoría externa (ChatGPT) · 2026-06-08
+
+Contraste de la auditoría de ChatGPT contra el código real. La mayoría de sus "críticos"
+ya estaban resueltos (tracking, CSP, consent, schema, sitemap, canonical). Tareas **reales y
+nuevas** que sobreviven al contraste:
+
+| ID | Mejora | Sev | Estado | Archivo / Evidencia | Nota |
+|---|---|---|---|---|---|
+| M40 | Matizar 3 claims absolutos | Alta | ✅ | `index.html:67,156,414`; `proyectos.html:145,155` | **Hecho 2026-06-08.** "sin riesgo de ocupación"→"sin el riesgo de ocupación ilegal propio del mercado español"; "Nulo"→"Muy bajo, dentro del marco regulado"; "Flujo mensual sin ocupas"→"...en un marco regulado"; "siempre hay comprador"→"demanda sostenida...sujeta al ciclo de mercado". "6–9%"→"6–9% estimada" |
+| M41 | Microdisclaimer inline en el hero | Media | ✅ | `index.html` (`p.hero-fineprint` tras hero-filter) | **Hecho 2026-06-08.** Nota tenue "Cifras estimadas de mercado (2024–2025), no garantizadas; la fiscalidad depende de su país de residencia" con enlace a #fuentes |
+| M43 | `og:image` temática por zona | Media | ✅ | `assets/og/og-abu-dhabi.jpg`, `og-rak.jpg` (1200x630 jpg); `invertir-abu-dhabi.html`, `invertir-ras-al-khaimah.html` | **Hecho 2026-06-08.** 2 og nuevas con foto real (skyline Abu Dhabi; render NH RAK). Los 14 artículos de Dubai/fiscalidad/golden visa mantienen el skyline Dubai genérico (`og-image.jpg` 1200x630, temáticamente correcto; no hay material apaisado de calidad para diferenciar más sin degradar) |
+| M44 | Comprimir imágenes de `/projects` | Media | ✅ | `public/assets/projects/*` | **Hecho 2026-06-08.** Recomprimidas a webp q72 (máx 1600px). Galería **4.6 MB → 2.6 MB (−44%)**. fachada 611→202KB, 06_*534→174KB, etc. Cierra la parte de imágenes de M36 |
+| M42 | ~~Escalonar fechas del blog~~ | Media | ❌ | 16 artículos `datePublished=2026-06-07` (fecha real) | **No-go 2026-06-08 por integridad.** Inventar fechas pasadas falsea el histórico (contra la disciplina de la casa) y es un riesgo SEO (incoherencia con la fecha de primer rastreo que Google ya registró). Acción honesta: dejar `datePublished` real e ir divergiendo `dateModified` al revisar de verdad cada artículo |
+| M39 | Limpiar versión interna "V6/V6.2" de subjects de email | Baja | ⬜ | `index.html:372` (hidden, se sobrescribe); `app.js:201,268,402` | NO aparece en el `<title>` (ChatGPT desactualizado). Solo en el asunto del email del lead. Cosmético |
+| M45 | Ampliar schema: `Organization`+`WebSite` global; valorar `Person` revisor | Baja | ⬜ | `index.html` (hoy `RealEstateAgent`+`FAQPage`); blog autor=`Organization` | Coherente con E-E-A-T sin inventar personas (decisión M18). `Person` solo si hay revisor real con nombre |
+| M46 | ~~URLs limpias sin `.html`~~ | Baja | ❌ | Arquitectura `.html` deliberada (`html_handling:"none"`) | **Evaluado y descartado 2026-06-08** (ver análisis abajo). 0 ganancia SEO + riesgo sobre un sitio recién indexado + reescritura de 20+ archivos. No es mejora con ROI positivo |
+| M47 | ~~Separar consentimiento privacidad/comercial~~ | Media | ❌ | `index.html:534-536` | **Decisión del usuario 2026-06-08: mantener checkbox único** (menos fricción en el form) |
+
+**Ya resuelto (ChatGPT lo marcaba como pendiente — verificado en código):** title limpio sin V6.2 ✅ · canonical ✅ · robots.txt+sitemap (21 URLs) ✅ · Consent Mode v2 default `denied`→`granted` ✅ · GA4 `G-BK37V83363`+Ads `AW-586671676`+Meta Pixel (tras consentimiento) ✅ · eventos GA4 completos (`generate_lead`, `form_step_view`, `roi_*`, `whatsapp_*`, `section_view`) ✅ · captura UTM/`gclid`/`gbraid`/`wbraid` ✅ · honeypot `botcheck` ✅ · checkbox RGPD ✅ · `<noscript>` fallback ✅ · CSP sin `unsafe-inline` en script-src + HSTS + X-Frame-Options + Permissions-Policy ✅ · schema `RealEstateAgent`+`FAQPage`+`BlogPosting`+`BreadcrumbList`+`ItemList` ✅ · disclaimers de fuentes (M16) ✅ · hero con `preload`/`fetchpriority`/`srcset`/`width-height` ✅ · skip-link + `lang=es` + ARIA ✅ · ROI con disclaimer ✅ · identificación registral en legal (M14) ✅.
+
+**Falsos positivos de ChatGPT:** "V6.2 en el `<title>`" (no: limpio, solo en subject) · "Google Ads vacío / Meta Pixel ausente" (ambos configurados) · claims "garantiza" (son disclaimers "no garantizado") · "ROI muestra 0€ al cargar" (`calcROI()` se ejecuta al cargar, `app.js:658`).
+
+**Pendientes preexistentes que ChatGPT también señala (ya en el tablero):** M09 (anti-spam/fallback captura) · M13 (restricción dominio Web3Forms) · M17 (prueba social verificable) · M19 (PDF lead magnet) · M21 (robots IA + doble `User-agent`) · M27 (fonts render-blocking) · M28 (INP animación KPI) · M30 (HSTS 2 años + ACAO en Cloudflare) · M31 (Lighthouse ≥90 + validar JSON-LD) · M36 (higiene imágenes).
+
 ---
 
 ## Registro de actividad (tareas realizadas)
+
+### 2026-06-08 — Reevaluación auditoría ChatGPT + FASE 6
+- **Reevaluación** — Contrastada la auditoría externa de ChatGPT contra el código real. La mayoría de sus "críticos" ya estaban resueltos (tracking GA4+Ads+Meta, Consent Mode v2, CSP sin unsafe-inline, schema, sitemap, canonical, UTM/gclid, honeypot, RGPD, noscript). Falsos positivos: "V6.2 en el title" (limpio), "Ads/Pixel ausentes" (ambos viven), claims "garantiza" (son disclaimers). Tablero FASE 6 con lo que sobrevive.
+- **M40 ✅** — Matizados los 3 claims absolutos (5 ubicaciones) en `index.html` y `proyectos.html`. Riesgo legal/credibilidad cerrado. Sin tocar las cifras con fuente (M16).
+- **M41 ✅** — Microdisclaimer tenue en el hero con enlace a #fuentes.
+- **M44 ✅** — Galería `/projects` recomprimida con sharp (webp q72, máx 1600px): **4.6 MB → 2.6 MB (−44%)**, in-place, mismas dimensiones. Toolchain aislada en `tools/imgproc/` (gitignored).
+- **M43 ✅** — 2 og temáticas (Abu Dhabi, RAK) generadas desde foto real a 1200x630 jpg y asignadas (og:image + twitter:image + JSON-LD image). Resto mantiene el skyline Dubai genérico.
+- **M42 ❌** — No-go por integridad: no se falsean fechas de publicación hacia atrás (riesgo SEO + disciplina de no inventar).
+- **M46 ❌** — URLs limpias evaluadas y descartadas: 0 ganancia SEO, riesgo sobre sitio recién indexado, reescritura masiva. No prioritario.
+- **M47 ❌** — Decisión del usuario: mantener checkbox de consentimiento único.
+- **Pendiente de esta tanda:** M39 (limpiar "V6" de subjects) y M45 (schema Organization+WebSite), ambos baja prioridad. **Falta desplegar** (commit + push a main).
 
 ### 2026-06-07
 - **M18 🟡 (gran avance)** — Ejecutado el plan editorial SEO sobre el stack actual (HTML estático + Cloudflare, sin migración). Creado:

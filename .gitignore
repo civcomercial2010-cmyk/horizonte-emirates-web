@@ -11,3 +11,6 @@ Diario actividad proyecto/
 
 # Versión v2 (exploración local LangGraph/Python, no en producción)
 Horizonte Emirates v2/
+
+# Toolchain local de procesamiento de imágenes (no en producción)
+tools/imgproc/
