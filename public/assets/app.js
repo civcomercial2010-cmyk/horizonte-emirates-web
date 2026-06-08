@@ -683,6 +683,21 @@ document.querySelectorAll('.canal-o').forEach(function(el){ el.addEventListener(
   m.querySelectorAll('a').forEach(function(a){ a.addEventListener('click',function(){ set(false); }); });
 })();
 
+// Nav que se oculta al bajar y reaparece al subir (maximiza el espacio de lectura en móvil)
+(function(){
+  var nav=document.getElementById('nav')||document.querySelector('.header');
+  if(!nav)return;
+  var last=0;
+  window.addEventListener('scroll',function(){
+    var y=window.scrollY||window.pageYOffset;
+    var mob=document.getElementById('mobile-nav');
+    if(mob&&mob.classList.contains('open')){ nav.classList.remove('nav-hidden'); last=y; return; }
+    if(y>140&&y>last+4){ nav.classList.add('nav-hidden'); }
+    else if(y<last-4||y<140){ nav.classList.remove('nav-hidden'); }
+    last=y;
+  },{passive:true});
+})();
+
 // ── M23 - Persistencia del formulario + validación inline ──────────────
 (function () {
   var KEY = 'he_form_state';
