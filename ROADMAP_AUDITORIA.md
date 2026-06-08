@@ -125,7 +125,7 @@ nuevas** que sobreviven al contraste:
   - Fotos hero elegidas por el usuario vía Pexels (como-invertir, comprar-sobre-plano) aplicadas (commit `67e2a67`).
   - **M50 ✅** — títulos de los artículos del blog: ensanchados (`max-width` del h1 20ch→32ch y el `<header>` pasa a usar el ancho completo del contenido, alineado con el hero; antes se veía en columna estrecha).
   - **M51 ✅** — menú móvil en la home: botón hamburguesa con navegación (Por qué/Proceso/Proyectos/Blog/FAQ) + CTA destacado; antes en móvil solo quedaba el logo arriba y el sticky-CTA abajo, sin acceso a Proyectos/Blog. CSP-safe (listener en app.js). El sticky-CTA inferior se mantiene (conversión persistente). Pendiente: replicar el patrón en proyectos.html y blog si se quiere navegación móvil consistente.
-  - Pendiente: imágenes IA propias del usuario (golden-visa, mapa de zonas, residencia-fiscal, Wynn x2) → requieren que el usuario las deje en `tools/imgproc/incoming/` (las pegadas en el chat no son accesibles como archivos).
+  - **Imágenes propias (IA) del usuario aplicadas** (commit `e03272b`): 4 heroes propios (golden-visa = UAE Golden Visa, residencia-fiscal, vivir-en-dubai, invertir-ras-al-khaimah = Wynn sin texto) + 2 imágenes dentro de artículo (mapa de zonas en mejores-zonas; render Wynn con texto en invertir-ras-al-khaimah). Estos 4 salen de la atribución Pexels (son propios); créditos regenerados (12 fotos Pexels). Flujo: archivos en `tools/imgproc/incoming/` → `process-incoming.mjs` (sharp).
 
 ### 2026-06-07
 - **M18 🟡 (gran avance)** — Ejecutado el plan editorial SEO sobre el stack actual (HTML estático + Cloudflare, sin migración). Creado:
