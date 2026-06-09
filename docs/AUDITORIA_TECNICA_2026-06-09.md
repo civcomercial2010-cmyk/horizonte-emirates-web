@@ -219,8 +219,8 @@ style-src 'self';
 
 ### Fase 1 — Crítico / Quick wins
 - [ ] **F1** Caché larga inmutable en `/assets/*` (`public/_headers`)
-- [ ] **F2** Web3Forms: domain restriction + captcha `[MANUAL+código]`
-- [ ] **F3** HSTS unificado a 2 años + preload list `[MANUAL]`
+- [x] **F2** Web3Forms anti-spam — **cerrada 2026-06-09**: Spam Protection Level → Strict + honeypot (Turnstile/Domain Restriction son PRO; hCaptcha descartado por fricción). Sin código.
+- [x] **F3** HSTS — **cerrada 2026-06-09**: `_headers` alineado a `max-age=31536000` (Cloudflare topa en 12 meses). Preload evaluado y **no registrado** por decisión: hstspreload.org rechaza por orden de redirecciones (apex http→https://www directo) y el compromiso es casi irreversible; HSTS ya protege a usuarios reales.
 - [ ] **F5** Labels `for`/`id` en formularios (home + modal WA)
 
 ### Fase 2 — Técnica / SEO
