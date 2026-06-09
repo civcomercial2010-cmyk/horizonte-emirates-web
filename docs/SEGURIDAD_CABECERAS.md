@@ -14,7 +14,7 @@ páginas es redundante (puede retirarse cuando se confirme que no rompe nada).
 
 | Cabecera | Valor | Propósito |
 |---|---|---|
-| `Strict-Transport-Security` | `max-age=63072000; includeSubDomains; preload` | Fuerza HTTPS, previene downgrade. Objetivo: registrar en hstspreload.org |
+| `Strict-Transport-Security` | `max-age=31536000; includeSubDomains; preload` | Fuerza HTTPS, previene downgrade. 1 año (máximo del plan free de Cloudflare), suficiente para la preload list. Objetivo: registrar en hstspreload.org |
 | `X-Frame-Options` | `DENY` | Anti-clickjacking |
 | `X-Content-Type-Options` | `nosniff` | Evita MIME sniffing |
 | `Referrer-Policy` | `strict-origin-when-cross-origin` | Control de referer |
@@ -38,12 +38,12 @@ Imágenes/fuentes/logos en `immutable` porque solo cambian al renombrarse. CSS/J
 hasta tener fingerprint/hash en el nombre (F12); cuando F12 esté hecho, subir CSS/JS a
 `max-age=31536000, immutable`.
 
-## HSTS (acción de dashboard)
+## HSTS (F3)
 
-El valor correcto (2 años + preload) ya está en `_headers`. Si en vivo aparece `max-age=31536000`
-(1 año), es el HSTS gestionado del dashboard de Cloudflare (SSL/TLS → Edge Certificates → HSTS)
-imponiéndose. Acción: desactivar ese HSTS gestionado para que mande `_headers`, verificar, y luego
-registrar el dominio en https://hstspreload.org.
+`_headers` declara `max-age=31536000` (1 año). Es el máximo que permite el plan free de Cloudflare
+y coincide con lo que se sirve en vivo, así que no hay desajuste entre el archivo y producción.
+1 año cumple el mínimo de la preload list (>= 31536000). Pendiente: registrar el dominio en
+https://hstspreload.org una vez confirmado que toda la propiedad sirve HSTS.
 
 ## Verificación
 
