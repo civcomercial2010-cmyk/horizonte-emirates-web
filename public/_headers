@@ -33,6 +33,9 @@
 /assets/*.js
   Cache-Control: public, max-age=86400, stale-while-revalidate=604800
 
+/guias/*.pdf
+  Cache-Control: public, max-age=604800
+
 /*
   Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
   X-Frame-Options: DENY

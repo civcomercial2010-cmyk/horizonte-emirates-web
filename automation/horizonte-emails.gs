@@ -24,6 +24,8 @@ const CONFIG = {
   WA_NUMBER:       '+971 55 472 2025',
   WA_LINK:         'https://wa.me/971554722025',
   CALENDLY_URL:    'https://calendly.com/hola-horizonteemirates/llamada-estrategica-horizonte-emirates-30-minutos',
+  // M19 — Lead magnet: guía fiscal entregada en el email de bienvenida (A1/B1/C1).
+  GUIDE_URL:       'https://www.horizonteemirates.com/guias/guia-fiscal-dubai-espana.html',
   CALENDAR_ID:     'primary', // calendario donde Calendly crea las reuniones
   CALENDLY_EVENT_KEYWORD: 'Llamada estratégica Horizonte Emirates',
   UNSUBSCRIBE_URL: 'mailto:hola@horizonteemirates.com?subject=BAJA%20COMUNICACIONES',
@@ -1145,6 +1147,20 @@ function getTemplate(code, lead) {
 
   const firma  = `<p style="margin:28px 0 0;padding-top:20px;border-top:1px solid #E0DBD1;font-size:14px;color:#646464;line-height:1.6">Un saludo,<br><strong style="color:#1A1A1A">Equipo Horizonte Emirates</strong></p>`;
 
+  // ── Lead magnet (M19): tarjeta con la guía fiscal prometida en la web ──
+  // Se incluye en los emails de bienvenida (A1/B1/C1) para cumplir "te la enviamos al solicitar tu análisis".
+  const guiaUrl  = CONFIG.GUIDE_URL;
+  const guiaCard = `
+<table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="margin:22px 0 6px">
+  <tr>
+    <td style="background:#F8F6F1;border:1px solid #E0DBD1;border-radius:10px;padding:20px 22px">
+      <p style="margin:0 0 4px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#C4942A;font-weight:700">Recurso para usted</p>
+      <p style="margin:0 0 12px;font-size:15px;color:#1A1A1A;line-height:1.5"><strong>Guía fiscal del inversor: Dubai ↔ España.</strong> Obligaciones en España (IRPF, Modelo 720, plusvalías), convenio de doble imposición y errores frecuentes.</p>
+      <a href="${guiaUrl}" rel="noopener noreferrer" style="display:inline-block;background:#0D1B2A;color:#E9D9B0;font-family:'Helvetica Neue',Arial,sans-serif;font-size:13.5px;font-weight:700;letter-spacing:.02em;text-decoration:none;padding:11px 26px;border-radius:50px">Abrir la guía fiscal →</a>
+    </td>
+  </tr>
+</table>`;
+
   // ── TIER A — 5 emails ────────────────────────────────────────
 
   if (code === 'A1') return {
@@ -1153,9 +1169,11 @@ function getTemplate(code, lead) {
 <p>Gracias por contactar con nosotros sobre inversión en Dubai.</p>
 <p>Estamos preparando un análisis personalizado para <strong>${cap}</strong> con enfoque en <strong>${obj}</strong>.</p>
 <p>En las próximas horas le enviaremos algunas opciones concretas y el siguiente paso recomendado.</p>
+<p>Mientras tanto, le dejamos una guía práctica que resuelve muchas de las dudas habituales:</p>
+${guiaCard}
 <p>Si tiene alguna pregunta urgente, puede escribirme por WhatsApp:</p>
 ${waBtn}${firma}`,
-    text: `Hola ${n},\n\nGracias por contactar con nosotros sobre inversión en Dubai.\nEstamos preparando un análisis personalizado para ${cap} con enfoque en ${obj}.\n\nEn las próximas horas le enviaremos algunas opciones concretas y el siguiente paso recomendado.\n\nSi tiene alguna pregunta urgente, puede escribirme por WhatsApp: ${wa}\n\nSaludos,\nEquipo Horizonte Emirates`,
+    text: `Hola ${n},\n\nGracias por contactar con nosotros sobre inversión en Dubai.\nEstamos preparando un análisis personalizado para ${cap} con enfoque en ${obj}.\n\nEn las próximas horas le enviaremos algunas opciones concretas y el siguiente paso recomendado.\n\nMientras tanto, le dejamos nuestra guía fiscal Dubai-España (IRPF, Modelo 720, plusvalías): ${guiaUrl}\n\nSi tiene alguna pregunta urgente, puede escribirme por WhatsApp: ${wa}\n\nSaludos,\nEquipo Horizonte Emirates`,
   };
 
   if (code === 'A2') return {
@@ -1210,9 +1228,11 @@ ${waBtn}${firma}`,
 <p>Gracias por escribirnos sobre inversión en Dubai con <strong>${cap}</strong> y <strong>${obj}</strong>.</p>
 <p>Estamos preparando algunas opciones y una comparativa de zonas para usted.</p>
 <p>Le escribiremos en las próximas 24 horas con más detalles.</p>
+<p>Mientras tanto, aquí tiene una guía práctica sobre la fiscalidad de la operación:</p>
+${guiaCard}
 <p>Si tiene alguna duda ahora, WhatsApp.</p>
 ${waBtn}${firma}`,
-    text: `Hola ${n},\n\nGracias por escribirnos sobre inversión en Dubai con ${cap} y ${obj}.\n\nEstamos preparando algunas opciones y una comparativa de zonas para usted.\n\nLe escribiremos en las próximas 24 horas con más detalles.\n\nSi tiene alguna duda ahora, WhatsApp ${wa}.\n\nSaludos,\nEquipo Horizonte Emirates`,
+    text: `Hola ${n},\n\nGracias por escribirnos sobre inversión en Dubai con ${cap} y ${obj}.\n\nEstamos preparando algunas opciones y una comparativa de zonas para usted.\n\nLe escribiremos en las próximas 24 horas con más detalles.\n\nMientras tanto, le dejamos nuestra guía fiscal Dubai-España (IRPF, Modelo 720, plusvalías): ${guiaUrl}\n\nSi tiene alguna duda ahora, WhatsApp ${wa}.\n\nSaludos,\nEquipo Horizonte Emirates`,
   };
 
   if (code === 'B2') return {
@@ -1300,9 +1320,11 @@ ${waBtn}${firma}`,
   <li>Conocer las implicaciones fiscales para residentes en ${pais}</li>
   <li>Comparar la rentabilidad real de Dubai frente a mercados europeos</li>
 </ul>
+<p>Para empezar, le dejamos nuestra guía fiscal: es justo el tipo de información clara que necesita en esta etapa.</p>
+${guiaCard}
 <p>Sin prisa. Cuando esté ${listoOLista} para dar un paso más, aquí estaremos.</p>
 ${waBtn}${firma}`,
-    text: `${sal} ${n},\n\nConsulta recibida. Le enviaremos contenido claro sobre mercado UAE, fiscalidad para ${pais} y comparativas de rentabilidad.\n\nSin prisa. Cuando esté ${listoOLista}, aquí estaremos.\n\nWhatsApp: ${wa}\n\nEquipo Horizonte Emirates`,
+    text: `${sal} ${n},\n\nConsulta recibida. Le enviaremos contenido claro sobre mercado UAE, fiscalidad para ${pais} y comparativas de rentabilidad.\n\nPara empezar, aquí tiene nuestra guía fiscal Dubai-España (IRPF, Modelo 720, plusvalías): ${guiaUrl}\n\nSin prisa. Cuando esté ${listoOLista}, aquí estaremos.\n\nWhatsApp: ${wa}\n\nEquipo Horizonte Emirates`,
   };
 
   if (code === 'C2') return {

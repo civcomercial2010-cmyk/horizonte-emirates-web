@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="referrer" content="strict-origin-when-cross-origin"/>
+<!-- Lead magnet: recurso entregado tras solicitar análisis. No indexar (evita competir con el artículo de blog y preserva su valor de recurso exclusivo). -->
+<meta name="robots" content="noindex,follow"/>
+<title>Guía fiscal del inversor: Dubai ↔ España | Horizonte Emirates</title>
+<meta name="description" content="Guía práctica de las obligaciones fiscales en España al invertir en inmuebles en Dubai y UAE: IRPF, Modelo 720, plusvalías, convenio de doble imposición y errores frecuentes. Documento informativo."/>
+<link rel="canonical" href="https://www.horizonteemirates.com/guias/guia-fiscal-dubai-espana.html"/>
+<link rel="icon" type="image/svg+xml" href="/assets/logos/horizonte-emirates/favicon.svg"/>
+<style>
+  :root{
+    --navy:#0D1B2A; --navy-2:#0b1827; --gold:#C4942A; --gold-soft:#E9D9B0;
+    --ink:#1A1A1A; --muted:#5a5a5a; --line:#E2DCCF; --paper:#ffffff; --cream:#F8F6F1;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:#ece8df; color:var(--ink);
+    font-family:"Helvetica Neue",Arial,"Segoe UI",sans-serif;
+    font-size:16px; line-height:1.65; -webkit-font-smoothing:antialiased;
+  }
+  .doc{max-width:820px; margin:0 auto; background:var(--paper)}
+  .pad{padding:0 56px}
+
+  /* ---- Barra de acciones (oculta en impresión) ---- */
+  .toolbar{
+    position:sticky; top:0; z-index:10; display:flex; gap:14px; align-items:center; justify-content:space-between;
+    background:var(--navy); color:#fff; padding:12px 56px;
+  }
+  .toolbar .tb-brand{font-size:14px; letter-spacing:.04em; font-weight:600}
+  .toolbar .tb-brand span{color:var(--gold)}
+  .btn-dl{
+    display:inline-block; background:var(--gold); color:var(--navy); text-decoration:none;
+    font-weight:700; font-size:13.5px; letter-spacing:.02em; padding:10px 22px; border-radius:50px;
+  }
+  .btn-dl:hover{background:#d8a73a}
+
+  /* ---- Portada ---- */
+  .cover{
+    background:linear-gradient(155deg,var(--navy),var(--navy-2));
+    color:#fff; padding:64px 56px 56px; position:relative; overflow:hidden;
+  }
+  .cover::after{content:""; position:absolute; right:-80px; top:-80px; width:260px; height:260px;
+    border:1px solid rgba(196,148,42,.25); border-radius:50%}
+  .cover::before{content:""; position:absolute; right:-30px; bottom:-120px; width:320px; height:320px;
+    border:1px solid rgba(196,148,42,.16); border-radius:50%}
+  .wordmark{font-size:15px; letter-spacing:.16em; text-transform:uppercase; font-weight:600; margin:0 0 40px}
+  .wordmark span{color:var(--gold)}
+  .eyebrow{display:inline-block; font-size:12px; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--gold); border:1px solid rgba(196,148,42,.5); padding:6px 14px; border-radius:50px; margin:0 0 22px}
+  .cover h1{
+    font-family:Georgia,"Times New Roman",serif; font-weight:600; font-size:42px; line-height:1.12;
+    margin:0 0 18px; letter-spacing:-.01em;
+  }
+  .cover h1 em{color:var(--gold-soft); font-style:italic}
+  .cover .sub{font-size:18px; color:rgba(255,255,255,.82); max-width:560px; margin:0 0 30px; line-height:1.6}
+  .cover .meta{font-size:13px; color:rgba(255,255,255,.6); letter-spacing:.02em; border-top:1px solid rgba(255,255,255,.14); padding-top:18px}
+  .cover .meta strong{color:rgba(255,255,255,.9)}
+
+  /* ---- Aviso ---- */
+  .notice{background:#FBF3DC; border-left:3px solid var(--gold); padding:16px 20px; margin:30px 0; font-size:14px; color:#4a4123; border-radius:0 6px 6px 0}
+  .notice strong{color:var(--navy)}
+
+  /* ---- Tipografía de contenido ---- */
+  h2{font-family:Georgia,serif; font-size:26px; font-weight:600; color:var(--navy); margin:46px 0 8px; letter-spacing:-.01em}
+  h2 .num{color:var(--gold); font-size:18px; font-weight:700; vertical-align:2px; margin-right:10px; font-family:"Helvetica Neue",Arial,sans-serif}
+  h3{font-size:18px; font-weight:700; color:var(--navy); margin:28px 0 6px}
+  p{margin:0 0 14px}
+  .lede{font-size:19px; line-height:1.6; color:#33404e; margin:26px 0 6px}
+  strong{color:var(--ink)}
+  a{color:#9a7320}
+  ul,ol{margin:6px 0 16px; padding-left:22px}
+  li{margin:6px 0}
+  .hr{height:1px; background:var(--line); border:0; margin:30px 0}
+
+  /* ---- Índice ---- */
+  .toc{background:var(--cream); border:1px solid var(--line); border-radius:10px; padding:24px 28px; margin:34px 0}
+  .toc h4{margin:0 0 12px; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted)}
+  .toc ol{margin:0; padding-left:20px; columns:2; column-gap:34px}
+  .toc a{color:var(--navy); text-decoration:none}
+  .toc a:hover{color:var(--gold)}
+
+  /* ---- Tablas ---- */
+  table{width:100%; border-collapse:collapse; margin:16px 0 8px; font-size:14.5px}
+  th{background:var(--navy); color:#fff; text-align:left; font-size:11.5px; letter-spacing:.08em; text-transform:uppercase; padding:11px 14px; font-weight:600}
+  td{border:1px solid var(--line); padding:11px 14px; vertical-align:top; color:#33404e}
+  tbody tr:nth-child(even){background:var(--cream)}
+  td strong{color:var(--navy)}
+
+  /* ---- Callout / checklist ---- */
+  .key{background:var(--navy); color:#fff; border-radius:10px; padding:24px 28px; margin:30px 0}
+  .key h4{margin:0 0 12px; color:var(--gold); font-size:12px; letter-spacing:.14em; text-transform:uppercase}
+  .key ul{padding-left:20px} .key li{margin:8px 0; color:rgba(255,255,255,.9)}
+  .key li strong{color:#fff}
+
+  .check{list-style:none; padding:0; margin:14px 0}
+  .check li{position:relative; padding:8px 0 8px 32px; border-bottom:1px solid var(--line)}
+  .check li::before{content:"✓"; position:absolute; left:6px; top:8px; color:var(--gold); font-weight:700}
+
+  /* ---- CTA ---- */
+  .cta{background:linear-gradient(155deg,var(--navy),var(--navy-2)); color:#fff; padding:42px 56px; margin-top:50px}
+  .cta h2{color:#fff; margin:0 0 10px}
+  .cta p{color:rgba(255,255,255,.82); max-width:560px}
+  .cta-btns{margin-top:22px; display:flex; gap:14px; flex-wrap:wrap}
+  .cta-btns a{display:inline-block; text-decoration:none; font-weight:700; font-size:14px; padding:14px 30px; border-radius:50px}
+  .b-gold{background:var(--gold); color:var(--navy)}
+  .b-wa{background:#1DAA61; color:#fff}
+
+  /* ---- Fuentes / pie ---- */
+  .sources{font-size:13px; color:var(--muted); margin:34px 0 0}
+  .sources h4{font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--navy); margin:0 0 10px}
+  .disclaimer{background:var(--cream); border:1px solid var(--line); border-radius:8px; padding:18px 22px; margin:24px 0; font-size:13px; color:#4a4a4a; line-height:1.6}
+  footer{background:var(--navy); color:rgba(255,255,255,.6); font-size:12.5px; padding:26px 56px; line-height:1.7}
+  footer strong{color:#fff}
+  footer a{color:var(--gold-soft)}
+
+  @media (max-width:680px){
+    .pad,.cover,.toolbar,.cta,footer{padding-left:24px; padding-right:24px}
+    .cover h1{font-size:32px} .toc ol{columns:1} .cta-btns a{flex:1; text-align:center}
+  }
+
+  /* ---- Impresión / PDF ---- */
+  @media print{
+    body{background:#fff; font-size:11.5pt}
+    .toolbar{display:none !important}
+    .doc{max-width:none; margin:0}
+    .pad,.cover,.cta,footer{padding-left:0; padding-right:0}
+    .cover{margin:0; border-radius:0; -webkit-print-color-adjust:exact; print-color-adjust:exact; padding:30pt 36pt}
+    .cover,.key,.cta,th,footer,.notice{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+    .pad{padding:0 36pt}
+    .cta,footer{padding:24pt 36pt}
+    h2{margin-top:24pt} .cover h1{font-size:30pt}
+    h2,h3{break-after:avoid} table,.key,.notice,.disclaimer{break-inside:avoid}
+    a{color:var(--ink); text-decoration:none}
+    @page{margin:14mm 0}
+  }
+</style>
+</head>
+<body>
+
+<div class="doc">
+
+  <!-- Barra de acciones (no se imprime) -->
+  <div class="toolbar">
+    <span class="tb-brand">Horizonte <span>Emirates</span></span>
+    <a class="btn-dl" href="/guias/guia-fiscal-dubai-espana.pdf" download>Descargar en PDF ↓</a>
+  </div>
+
+  <!-- PORTADA -->
+  <header class="cover">
+    <p class="wordmark">Horizonte <span>Emirates</span></p>
+    <span class="eyebrow">Guía del inversor · 2026</span>
+    <h1>Fiscalidad del inversor:<br/>Dubai <em>↔</em> España</h1>
+    <p class="sub">Qué tributas, qué debes declarar y los errores que más caros salen cuando inviertes en inmuebles de Emiratos siendo residente fiscal en España.</p>
+    <p class="meta"><strong>Documento informativo.</strong> No constituye asesoramiento fiscal, jurídico ni financiero. Propulse SLU · Andorra.</p>
+  </header>
+
+  <div class="pad">
+
+    <p class="lede">"0% de impuestos en Dubai" es cierto… en origen. Si resides fiscalmente en España, sigues teniendo obligaciones. Esta guía resume, sin tecnicismos, lo que tributas, lo que debes declarar y cómo evitar los errores más frecuentes.</p>
+
+    <div class="notice">
+      <strong>Cómo usar esta guía.</strong> Es un mapa práctico para que llegues a tu asesor fiscal con las preguntas correctas, no un sustituto de su trabajo. La fiscalidad depende de tu situación personal y cambia con el tiempo: verifica siempre la normativa vigente.
+    </div>
+
+    <!-- ÍNDICE -->
+    <nav class="toc">
+      <h4>Contenido</h4>
+      <ol>
+        <li><a href="#origen">0% en origen, no en destino</a></li>
+        <li><a href="#obligaciones">Tus obligaciones en España</a></li>
+        <li><a href="#alquiler">IRPF sobre el alquiler</a></li>
+        <li><a href="#plusvalia">Plusvalía al vender</a></li>
+        <li><a href="#m720">El Modelo 720</a></li>
+        <li><a href="#patrimonio">Impuesto sobre el Patrimonio</a></li>
+        <li><a href="#cdi">Convenio de doble imposición</a></li>
+        <li><a href="#errores">Errores frecuentes</a></li>
+        <li><a href="#calendario">Calendario fiscal</a></li>
+        <li><a href="#residencia">Si trasladas tu residencia</a></li>
+      </ol>
+    </nav>
+
+    <!-- 1 -->
+    <h2 id="origen"><span class="num">01</span>0% en origen, no en destino</h2>
+    <p>El argumento estrella de cualquier presentación sobre Dubai es el "0% de impuestos". Es verdad, pero incompleto. Ese 0% es <strong>en origen</strong>: lo que no te cobran los Emiratos. Lo que tributas <strong>en destino</strong>, es decir, en tu país de residencia fiscal, es otra historia. Si vives en España, esa historia se llama IRPF y Modelo 720.</p>
+    <ul>
+      <li><strong>Tributación en origen (Emiratos):</strong> para personas físicas, los EAU no gravan las rentas de alquiler ni las plusvalías. Sí existe una <strong>tasa de registro de la propiedad</strong> al comprar, en torno al 4% del valor (Dubai Land Department).</li>
+      <li><strong>Tributación en destino (España):</strong> como residente fiscal tributas por tu <strong>renta mundial</strong>. El alquiler y la plusvalía de tu inmueble de Dubai se integran en tu IRPF, y el activo se declara en el Modelo 720.</li>
+    </ul>
+
+    <div class="key">
+      <h4>En una frase</h4>
+      <ul>
+        <li>Emiratos <strong>no grava</strong> alquiler ni plusvalías de personas físicas: 0% en origen.</li>
+        <li>Si resides en España, tributas por tu <strong>renta mundial</strong>: alquiler y plusvalías van a tu <strong>IRPF</strong>.</li>
+        <li>Declaras el inmueble en el <strong>Modelo 720</strong> si supera los 50.000€.</li>
+        <li>Existe <strong>convenio de doble imposición</strong> España-EAU para no pagar dos veces.</li>
+      </ul>
+    </div>
+
+    <!-- 2 -->
+    <h2 id="obligaciones"><span class="num">02</span>Tus obligaciones si resides fiscalmente en España</h2>
+    <p>Ser residente fiscal en España (con carácter general, permanecer más de 183 días al año o tener aquí tu centro de intereses económicos) implica cuatro frentes a vigilar con un inmueble en Emiratos:</p>
+    <table>
+      <thead><tr><th>Obligación</th><th>Qué es</th><th>Cuándo aplica</th></tr></thead>
+      <tbody>
+        <tr><td><strong>IRPF · alquiler</strong></td><td>Las rentas del alquiler tributan como rendimientos del capital inmobiliario</td><td>Si alquilas el inmueble</td></tr>
+        <tr><td><strong>IRPF · plusvalía</strong></td><td>La ganancia en la venta tributa en la base del ahorro</td><td>Cuando vendes</td></tr>
+        <tr><td><strong>Modelo 720</strong></td><td>Declaración informativa de bienes en el extranjero</td><td>Si superan 50.000€ por categoría</td></tr>
+        <tr><td><strong>Patrimonio</strong></td><td>El inmueble computa en tu patrimonio mundial</td><td>Según comunidad autónoma y mínimo exento</td></tr>
+      </tbody>
+    </table>
+
+    <!-- 3 -->
+    <h2 id="alquiler"><span class="num">03</span>IRPF sobre las rentas de alquiler</h2>
+    <p>Si alquilas tu inmueble de Dubai siendo residente fiscal en España, esas rentas se declaran en el IRPF como <strong>rendimientos del capital inmobiliario</strong> (o de actividad económica, según el caso). Al no haber impuesto en origen, normalmente no hay nada que deducir por doble imposición sobre esa renta, porque no has pagado impuesto en Emiratos.</p>
+    <p>Estos rendimientos se integran en la <strong>base general</strong> del IRPF, que tributa a tipos progresivos (estatales más autonómicos). El tipo marginal depende del conjunto de tus rentas y de tu comunidad autónoma.</p>
+
+    <!-- 4 -->
+    <h2 id="plusvalia"><span class="num">04</span>Plusvalía al vender</h2>
+    <p>Cuando vendas el inmueble, la <strong>ganancia patrimonial</strong> (diferencia entre el valor de transmisión y el de adquisición, con sus ajustes) tributa en España en la <strong>base del ahorro</strong> del IRPF. Como Emiratos no grava esa plusvalía en origen, el grueso de la tributación recae en España.</p>
+    <p>Tramos estatales de la base del ahorro (orientativos, verifica la vigencia en la Agencia Tributaria):</p>
+    <table>
+      <thead><tr><th>Base del ahorro</th><th>Tipo (estatal + autonómico)</th></tr></thead>
+      <tbody>
+        <tr><td>Hasta 6.000 €</td><td>19 %</td></tr>
+        <tr><td>De 6.000 € a 50.000 €</td><td>21 %</td></tr>
+        <tr><td>De 50.000 € a 200.000 €</td><td>23 %</td></tr>
+        <tr><td>De 200.000 € a 300.000 €</td><td>27 %</td></tr>
+        <tr><td>Más de 300.000 €</td><td>28 %</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:13.5px;color:var(--muted)">Tipos de referencia vigentes en 2025-2026 para el conjunto de la base del ahorro. Pueden variar por reformas normativas. Tu tipo efectivo depende del total de ganancias y rentas del ahorro del ejercicio.</p>
+
+    <!-- 5 -->
+    <h2 id="m720"><span class="num">05</span>El Modelo 720: la obligación que no puedes olvidar</h2>
+    <p>El <strong>Modelo 720</strong> es la declaración informativa sobre bienes y derechos situados en el extranjero que presentan los residentes fiscales en España. Cubre tres categorías: cuentas, valores/seguros e <strong>inmuebles</strong>. Tu propiedad en Dubai entra en la tercera.</p>
+    <ul>
+      <li>Se activa cuando el valor de los bienes de una categoría supera los <strong>50.000€</strong>. Para inmuebles se atiende al valor de adquisición.</li>
+      <li>Es una declaración <strong>informativa, no de pago</strong>: no liquida impuesto, pero su omisión puede salir cara.</li>
+      <li>Se presenta en el <strong>primer trimestre</strong> del año siguiente al que se refiere la información (habitualmente enero a marzo).</li>
+      <li>Hay que volver a declarar en años posteriores si el valor del conjunto aumenta de forma significativa respecto a lo ya declarado, o si vendes o transmites el bien.</li>
+    </ul>
+    <p>El régimen sancionador del Modelo 720 fue revisado tras la sentencia del Tribunal de Justicia de la UE de 2022, pero <strong>la obligación de informar se mantiene</strong>. La recomendación es clara: cumple en plazo y forma, con asesoramiento.</p>
+
+    <!-- 6 -->
+    <h2 id="patrimonio"><span class="num">06</span>Impuesto sobre el Patrimonio</h2>
+    <p>Como residente, tu inmueble de Dubai computa en tu <strong>patrimonio mundial</strong>. La obligación de declarar y de pagar depende de tu <strong>comunidad autónoma</strong> (mínimos exentos, bonificaciones y tipos varían) y del mínimo exento general. En comunidades con bonificación, puede no haber cuota, pero sí obligación de declarar a partir de ciertos umbrales. Revísalo según tu residencia autonómica.</p>
+
+    <!-- 7 -->
+    <h2 id="cdi"><span class="num">07</span>El convenio de doble imposición España-EAU</h2>
+    <p>España y los Emiratos Árabes Unidos tienen firmado un <strong>convenio para evitar la doble imposición</strong> (en vigor desde 2007). Su función es que una misma renta no se grave dos veces. En la práctica inmobiliaria, como Emiratos no grava al particular, el convenio rara vez te da un crédito fiscal por impuestos pagados allí (porque no los pagas), pero sí ordena las reglas de reparto y aporta seguridad jurídica.</p>
+
+    <!-- 8 -->
+    <h2 id="errores"><span class="num">08</span>Los cinco errores que más caros salen</h2>
+    <ul class="check">
+      <li><strong>Creer que "0% en Dubai" = "0% para mí".</strong> Es el error conceptual más extendido: confunde origen con destino.</li>
+      <li><strong>No presentar el Modelo 720.</strong> Por desconocimiento o por minimizar el valor del activo.</li>
+      <li><strong>No declarar el alquiler en el IRPF.</strong> Las rentas mundiales se declaran aunque no haya retención en origen.</li>
+      <li><strong>No planificar la venta.</strong> La plusvalía puede suponer una factura fiscal relevante en España si no se anticipa.</li>
+      <li><strong>Apurar los plazos sin documentación.</strong> Reunir título y valor del activo en Dubai lleva tiempo; no lo dejes para marzo.</li>
+    </ul>
+
+    <!-- 9 -->
+    <h2 id="calendario"><span class="num">09</span>Calendario fiscal del inversor</h2>
+    <table>
+      <thead><tr><th>Momento</th><th>Qué ocurre</th><th>Dónde</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Al comprar</strong></td><td>Tasa de registro de la propiedad (~4% del valor)</td><td>Emiratos (DLD)</td></tr>
+        <tr><td><strong>Cada año (1er trimestre)</strong></td><td>Modelo 720 si superas el umbral o hay cambios relevantes</td><td>España (AEAT)</td></tr>
+        <tr><td><strong>Cada año (campaña de Renta)</strong></td><td>IRPF de las rentas del alquiler + Patrimonio si aplica</td><td>España (AEAT)</td></tr>
+        <tr><td><strong>Al vender</strong></td><td>Ganancia patrimonial en la base del ahorro del IRPF</td><td>España (AEAT)</td></tr>
+      </tbody>
+    </table>
+
+    <!-- 10 -->
+    <h2 id="residencia"><span class="num">10</span>Si trasladas tu residencia fiscal, cambia todo</h2>
+    <p>Todo lo anterior parte de que <strong>mantienes tu residencia fiscal en España</strong>. Si te planteas trasladarla (por ejemplo, vía residencia por inversión en Emiratos), el marco cambia por completo: dejas de tributar por renta mundial en España, pero el traslado tiene requisitos estrictos de permanencia y prueba, y reglas de salida que conviene planificar con antelación. Es una decisión de calado que merece asesoramiento específico antes de dar cualquier paso.</p>
+
+    <div class="key">
+      <h4>Lleva esto a tu asesor</h4>
+      <ul>
+        <li>Tu <strong>residencia fiscal</strong> actual y si prevés cambiarla.</li>
+        <li>Si superarás los <strong>50.000€</strong> (Modelo 720).</li>
+        <li>Cómo integrarás el <strong>alquiler</strong> en el IRPF.</li>
+        <li>Tu previsión de <strong>plusvalía</strong> a la venta.</li>
+        <li>Tu situación en el <strong>Impuesto sobre el Patrimonio</strong> según tu comunidad autónoma.</li>
+      </ul>
+    </div>
+
+    <!-- Fuentes -->
+    <div class="sources">
+      <h4>Fuentes y metodología</h4>
+      <p>Elaboración propia de Horizonte Emirates a partir de fuentes oficiales: <strong>Agencia Tributaria (AEAT)</strong> para IRPF, base del ahorro, Modelo 720 e Impuesto sobre el Patrimonio; <strong>Convenio entre España y los Emiratos Árabes Unidos para evitar la doble imposición</strong> (en vigor desde 2007); <strong>Dubai Land Department (DLD)</strong> para la tasa de registro. Los tipos y umbrales son orientativos y vigentes a la fecha de edición (2026); pueden variar por cambios normativos. Verifica siempre la normativa en vigor.</p>
+    </div>
+
+    <div class="disclaimer">
+      <strong>Aviso legal.</strong> Horizonte Emirates (Propulse SLU) no presta asesoramiento fiscal, jurídico ni financiero. Este documento es de carácter informativo y general; no contempla las circunstancias particulares de cada inversor y no debe utilizarse como base única para tomar decisiones. La fiscalidad depende de tu situación personal y cambia con el tiempo. Consulta con un asesor especializado en fiscalidad internacional antes de actuar.
+    </div>
+
+  </div>
+
+  <!-- CTA -->
+  <section class="cta">
+    <h2>Del análisis fiscal a la oportunidad real</h2>
+    <p>Te preparamos un análisis personalizado de inversión en Emiratos en menos de 48 horas. Servicio íntegro en español y sin coste para el inversor.</p>
+    <div class="cta-btns">
+      <a class="b-gold" href="https://www.horizonteemirates.com/#form">Solicitar análisis personalizado →</a>
+      <a class="b-wa" href="https://wa.me/971554722025?text=Hola%2C%20he%20le%C3%ADdo%20la%20gu%C3%ADa%20fiscal%20y%20me%20interesa%20un%20an%C3%A1lisis">Hablar por WhatsApp</a>
+    </div>
+  </section>
+
+  <footer>
+    <strong>Horizonte Emirates</strong> · Inversión inmobiliaria en Emiratos para inversores hispanohablantes.<br/>
+    Propulse SLU · Andorra · <a href="https://www.horizonteemirates.com">horizonteemirates.com</a> · Partner local con licencia RERA.<br/>
+    Documento informativo, no asesoramiento fiscal ni jurídico. © 2026 Horizonte Emirates.
+  </footer>
+
+</div>
+
+</body>
+</html>
