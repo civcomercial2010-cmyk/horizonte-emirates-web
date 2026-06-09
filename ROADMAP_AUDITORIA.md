@@ -174,3 +174,30 @@ nuevas** que sobreviven al contraste:
    - **Recomendada (M06):** Ads → Herramientas → Conversiones → importar el evento `generate_lead` de GA4. Dejar `ADS_CONVERSION_LABEL` **vacío** en el código (ya lo está → no duplica).
    - **Alternativa (M04):** crear conversión nativa en Ads, copiar la etiqueta y pegarla en `ADS_CONVERSION_LABEL`. En ese caso, **no** importar también `generate_lead` desde GA4.
 3. **Verificar** el disparo en Tag Assistant / GA4 DebugView con un envío de prueba (encaja con M07).
+
+---
+
+## FASE 7: Auditoría técnica 2026-06-09 (Cursor) · hallazgos F1 a F13
+
+Doc completo en `docs/AUDITORIA_TECNICA_2026-06-09.md`. Veredicto global: estado BUENO a MUY BUENO; mejoras de higiene técnica fina. Lote aplicado en código (sin deploy, pendiente de push del usuario):
+
+- **M48 (F1) ✅:** caché larga inmutable para `/assets/*` en `public/_headers` (imágenes/fuentes/logos `immutable` 1 año; og 30 días; css/js 1 día + `stale-while-revalidate`). Reglas antes de `/*`; cabeceras de seguridad acumulativas. Verificar en vivo tras deploy con `curl.exe -sI .../assets/css/home.css`.
+- **M49 (F4) ✅:** raíz servida con 200 sin 301. Rewrite `/  /index.html  200` en `public/_redirects`, alineado con canonical y sitemap. Verificar tras deploy: `curl.exe -s -o NUL -w "%{http_code}" .../` = 200 sin `Location`.
+- **M50 (F5) ✅:** labels `for`/`id` asociados en formularios de `index.html` (home: `f-nombre`, `f-email`, `phone-num`, `f-pais`; modal WA: `wam-n`, `wam-e`, `wam-ph`). Añadido `autocomplete` a nombre/email del home.
+- **M51 (F11) ✅:** `href` reales en `index.html`: wa-float a `wa.me/971554722025` (con `target`/`rel`; el JS sigue interceptando para abrir el modal) y logo del footer a `/`.
+- **M52 (F9) ✅:** `twitter:title` y `twitter:description` añadidos en 20 páginas (derivados de `og:title`/`og:description`). `legal.html` y `creditos.html` no tienen tarjetas OG/Twitter (páginas internas, fuera de alcance).
+- **M53 (F10) ✅:** `hreflang="es"` + `x-default` (apuntando al canonical de cada página) en 22 páginas. `404.html` excluida (noindex, sin canonical).
+- **M54 (F7) ✅:** `README.md` reescrito (stack, estructura, deploy, disciplina) y `docs/SEGURIDAD_CABECERAS.md` actualizado al stack real (Cloudflare Workers Assets, `_headers` nativo, tabla de caché). El doc anterior describía GitHub Pages y decía que `_headers` se ignoraba (falso hoy).
+
+### Pendiente de acción manual (dashboard/terceros)
+- **M55 (F2) 🔒:** Web3Forms → activar **Domain Restriction** (solo `horizonteemirates.com`) + **hCaptcha/Turnstile**. Mantener honeypot `botcheck`. Si se añade Turnstile, hay que meter el widget en `#mainform` y `#waf` y permitir su dominio en la CSP.
+- **M56 (F3) 🔒:** HSTS a 2 años. El valor correcto ya está en `_headers`; desactivar el HSTS gestionado de Cloudflare (SSL/TLS → Edge Certificates) que impone 1 año, verificar y registrar en hstspreload.org.
+
+### Diferido (Fase 3/4 de la auditoría, mayor esfuerzo)
+- **F6 ⬜:** extraer `common.js` (de-dup de menú móvil, nav-auto-hide, UTM, FAQ entre `app.js`/`proyectos.js`/`blog.js`).
+- **F12 ⬜:** fingerprint/versionado de assets (habilita subir css/js a `immutable` 1 año).
+- **F8 ⬜:** retirar `style-src 'unsafe-inline'` migrando estilos inline a clases.
+- **F13 ⬜:** Conversions API server-side (Meta/Google) + dashboard de funnel.
+
+### Limpieza de repo (2026-06-09)
+- Eliminadas `scripts/` (vacía) y `Horizonte Emirates v2/` (exploración LangGraph local, sin referencias en el repo salvo `.gitignore`, ya limpiado). Se conservan `tools/imgproc/`, `export-propertyfinder-dubai.pipe` y el Diario de actividad (evidencia AEAT). Doc de auditoría movido a `docs/`.

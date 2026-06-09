@@ -1,4 +1,4 @@
-# Cabeceras de seguridad — FUENTE DE VERDAD (Cloudflare Pages)
+# Cabeceras de seguridad: FUENTE DE VERDAD (Cloudflare Workers Assets)
 #
 # ✅ Cloudflare Pages SÍ procesa este archivo de forma nativa: estas cabeceras se aplican por HTTP.
 #    Este es el directorio de salida (public/), así que /* cubre todo el sitio.
@@ -6,6 +6,33 @@
 #    Tras validar que la CSP llega por HTTP, se puede retirar el <meta> CSP de las 3 páginas
 #    (fuente única). Ver docs/SEGURIDAD_CABECERAS.md.
 #
+# Cache de assets (F1). Imagenes, fuentes y logos: inmutables (solo cambian al renombrarse).
+# CSS/JS con TTL menor + revalidacion en segundo plano hasta tener fingerprint (F12).
+# Las reglas /* de seguridad se aplican de forma acumulativa (cabeceras distintas).
+/assets/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/img/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/projects/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/blog/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/logos/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/og/*
+  Cache-Control: public, max-age=2592000
+
+/assets/*.css
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/assets/*.js
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
 /*
   Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
   X-Frame-Options: DENY

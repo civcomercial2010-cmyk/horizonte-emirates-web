@@ -1,55 +1,55 @@
-# Cabeceras de seguridad — estado y plan
+# Cabeceras de seguridad y caché: estado actual
 
-## Situación actual (GitHub Pages)
+> Stack en producción: **Cloudflare Workers (Assets)**. Solo se publica `public/`.
+> `public/_headers` y `public/_redirects` se aplican de forma **nativa** (verificado en vivo).
 
-El sitio se sirve desde **GitHub Pages**, que **no permite configurar cabeceras HTTP personalizadas**.
-El archivo `_headers` de la raíz **es ignorado** (es una funcionalidad de Netlify / Cloudflare Pages, no de GitHub Pages).
+## Fuente de verdad
 
-### Lo que SÍ está aplicado hoy (vía `<meta>` en cada página)
+Toda la configuración de cabeceras vive en **`public/_headers`**. No hay Transform Rules
+de Cloudflare para cabeceras (se retiraron para evitar duplicados). La CSP también se sirve
+por HTTP desde ese archivo, así que el `<meta http-equiv="Content-Security-Policy">` de las
+páginas es redundante (puede retirarse cuando se confirme que no rompe nada).
 
-| Protección | Mecanismo | Estado |
+## Cabeceras aplicadas (bloque `/*`)
+
+| Cabecera | Valor | Propósito |
 |---|---|---|
-| Content-Security-Policy | `<meta http-equiv="Content-Security-Policy">` | ✅ Activo |
-| Referrer-Policy | `<meta name="referrer">` | ✅ Activo |
-| Forzar HTTPS en subrecursos | `upgrade-insecure-requests` en la CSP | ✅ Activo |
+| `Strict-Transport-Security` | `max-age=63072000; includeSubDomains; preload` | Fuerza HTTPS, previene downgrade. Objetivo: registrar en hstspreload.org |
+| `X-Frame-Options` | `DENY` | Anti-clickjacking |
+| `X-Content-Type-Options` | `nosniff` | Evita MIME sniffing |
+| `Referrer-Policy` | `strict-origin-when-cross-origin` | Control de referer |
+| `Permissions-Policy` | `geolocation=(), camera=(), microphone=(), payment=()` | Restringe APIs del navegador |
+| `Content-Security-Policy` | ver `_headers` | `script-src` sin `unsafe-inline`; `frame-ancestors 'none'`; `object-src 'none'`; `base-uri 'self'`; `form-action` restringido; `upgrade-insecure-requests` |
 
-### Lo que NO se puede activar solo con `<meta>` (requiere cabecera HTTP)
+> Pendiente (F8): retirar `style-src 'unsafe-inline'` una vez migrados los `style="..."` inline a clases.
 
-| Cabecera | Por qué importa | Cómo activarla |
-|---|---|---|
-| `Strict-Transport-Security` (HSTS) | Fuerza HTTPS y previene downgrade | Cloudflare / activar "Enforce HTTPS" en Pages |
-| `X-Frame-Options` / `frame-ancestors` | Anti-clickjacking (evita que embeban el sitio) | Cloudflare |
-| `X-Content-Type-Options: nosniff` | Evita MIME sniffing | Cloudflare |
-| `Permissions-Policy` | Restringe APIs del navegador | Cloudflare |
+## Caché de assets (F1)
 
-> Nota mínima sin Cloudflare: en **GitHub → Settings → Pages**, activar **"Enforce HTTPS"**.
+Reglas específicas **antes** del bloque `/*` en `public/_headers`. Cabeceras distintas, así que
+las de seguridad de `/*` se aplican de forma acumulativa sobre los assets.
 
-## Plan recomendado: Cloudflare delante del dominio
+| Patrón | Cache-Control |
+|---|---|
+| `/assets/fonts/*`, `/assets/img/*`, `/assets/projects/*`, `/assets/blog/*`, `/assets/logos/*` | `public, max-age=31536000, immutable` |
+| `/assets/og/*` | `public, max-age=2592000` |
+| `/assets/*.css`, `/assets/*.js` | `public, max-age=86400, stale-while-revalidate=604800` |
 
-1. Crear cuenta en Cloudflare y añadir el dominio `horizonteemirates.com`.
-2. Cambiar los **nameservers** del dominio a los de Cloudflare (en el registrador).
-3. En DNS, mantener el `CNAME`/registros que apuntan a GitHub Pages, con el proxy (nube naranja) **activado**.
-4. SSL/TLS → modo **Full**.
-5. **Rules → Transform Rules → Modify Response Header** → "Set static" para cada cabecera:
+Imágenes/fuentes/logos en `immutable` porque solo cambian al renombrarse. CSS/JS con TTL menor
+hasta tener fingerprint/hash en el nombre (F12); cuando F12 esté hecho, subir CSS/JS a
+`max-age=31536000, immutable`.
 
-```
-Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
-X-Frame-Options: DENY
-X-Content-Type-Options: nosniff
-Referrer-Policy: strict-origin-when-cross-origin
-Permissions-Policy: geolocation=(), camera=(), microphone=(), payment=()
-```
+## HSTS (acción de dashboard)
 
-6. (Opcional) Mover la CSP completa a Cloudflare (incluida `frame-ancestors 'none'`) y retirar la de `<meta>`.
-   La CSP de referencia está en el archivo `_headers` de la raíz.
-7. Caché: crear una regla para `*/assets/*` con caché larga (Edge TTL alto), ya que GitHub Pages solo envía `max-age=600`.
+El valor correcto (2 años + preload) ya está en `_headers`. Si en vivo aparece `max-age=31536000`
+(1 año), es el HSTS gestionado del dashboard de Cloudflare (SSL/TLS → Edge Certificates → HSTS)
+imponiéndose. Acción: desactivar ese HSTS gestionado para que mande `_headers`, verificar, y luego
+registrar el dominio en https://hstspreload.org.
 
 ## Verificación
 
-Tras configurar Cloudflare, comprobar:
-
 ```bash
-curl -sI https://www.horizonteemirates.com/ | grep -iE "strict-transport|x-frame|x-content-type|referrer|content-security|permissions-policy"
+curl.exe -sI https://www.horizonteemirates.com/ | findstr /I "strict-transport x-frame x-content-type referrer content-security permissions-policy"
+curl.exe -sI https://www.horizonteemirates.com/assets/css/home.css | findstr /I "cache-control"
 ```
 
-Y auditar en https://securityheaders.com → objetivo **A / A+**.
+Auditar en https://securityheaders.com → objetivo **A / A+**.

@@ -1,8 +1,13 @@
-# Reglas de rutas — Cloudflare (Workers Assets procesa este archivo de forma nativa).
+# Reglas de rutas: Cloudflare (Workers Assets procesa este archivo de forma nativa).
 #
 # Hub del blog: con html_handling:"none" NO se sirve el índice de directorio
 # automáticamente, así que /blog y /blog/ darían 404. Usamos un REWRITE (200):
 # se sirve /blog/index.html manteniendo la URL canónica /blog/ (sin redirección).
 # Los artículos /blog/<slug>.html ya funcionan como archivos directos (no se tocan).
+# Raiz: servir index.html con 200 (sin 301), alineado con el canonical
+# https://www.horizonteemirates.com/ y el sitemap. Evita el hop extra en la home (F4).
+/    /index.html    200
+
+# Hub del blog
 /blog/    /blog/index.html    200
 /blog     /blog/index.html    200
