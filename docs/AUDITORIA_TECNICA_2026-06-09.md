@@ -231,8 +231,8 @@ style-src 'self';
 - [ ] **F11** `href` reales en wa-float y logo footer
 
 ### Fase 3 — Refactor / Escalabilidad
-- [ ] **F6** Extraer `common.js` (de-dup JS)
-- [ ] **F12** Fingerprint/versionado de assets
+- [x] **F6** Extraer `common.js` (de-dup JS) — **hecho 2026-06-09**: menú móvil + nav-auto-ocultable unificados en `assets/common.js`, retirados de app/proyectos/blog.js, cargado en las 20 páginas con nav. `node --check` OK.
+- [~] **F12** Fingerprint/versionado de assets — **descartado 2026-06-09**: en un sitio sin build y de despliegue frecuente, el `immutable` exige re-estampar hash en ~22 ficheros en cada cambio (riesgo de servir CSS/JS viejo). El esquema actual `max-age=86400 + stale-while-revalidate` ya es seguro y auto-actualizable. Sin ROI positivo.
 - [ ] **F8** Eliminar `style-src 'unsafe-inline'` (mover estilos a clases)
 
 ### Fase 4 — Excelencia

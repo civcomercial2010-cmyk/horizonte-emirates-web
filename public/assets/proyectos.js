@@ -128,31 +128,4 @@ window.addEventListener('scroll', function () {
   document.querySelector('.header').style.background = window.scrollY > 24 ? 'rgba(13,27,42,.98)' : 'rgba(13,27,42,.96)';
 }, { passive: true });
 
-// ── Menú móvil (hamburguesa)
-(function () {
-  var b = document.getElementById('nav-burger'), m = document.getElementById('mobile-nav');
-  if (!b || !m) return;
-  function set(open) {
-    m.classList.toggle('open', open); b.classList.toggle('open', open);
-    b.setAttribute('aria-expanded', open ? 'true' : 'false');
-    m.setAttribute('aria-hidden', open ? 'false' : 'true');
-    b.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
-  }
-  b.addEventListener('click', function () { set(!m.classList.contains('open')); });
-  m.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { set(false); }); });
-})();
-
-// Nav que se oculta al bajar y reaparece al subir (maximiza el espacio de lectura en móvil)
-(function () {
-  var nav = document.querySelector('.header');
-  if (!nav) return;
-  var last = 0;
-  window.addEventListener('scroll', function () {
-    var y = window.scrollY || window.pageYOffset;
-    var mob = document.getElementById('mobile-nav');
-    if (mob && mob.classList.contains('open')) { nav.classList.remove('nav-hidden'); last = y; return; }
-    if (y > 140 && y > last + 4) { nav.classList.add('nav-hidden'); }
-    else if (y < last - 4 || y < 140) { nav.classList.remove('nav-hidden'); }
-    last = y;
-  }, { passive: true });
-})();
+// Menú móvil (hamburguesa) y nav-auto-ocultable al scroll: movidos a assets/common.js (F6, compartido).
