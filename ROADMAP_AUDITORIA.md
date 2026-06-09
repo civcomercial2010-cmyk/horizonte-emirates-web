@@ -3,7 +3,7 @@
 Tablero vivo derivado de la auditoría senior (web + funnel + negocio).
 Estado: ✅ hecho · 🟡 en curso · ⬜ pendiente · 🔒 bloqueado (terceros)
 
-_Última actualización: 2026-06-08_
+_Última actualización: 2026-06-09_
 
 ---
 
@@ -27,7 +27,7 @@ _Última actualización: 2026-06-08_
 | M10 | Unificar taxonomía de eventos GA4 | H19 | ✅ | Taxonomía documentada en `docs/TRACKING_EVENTS.md`. Eventos clave fantasma (`purchase`, `qualify_lead`, `close_convert_lead`, `manual_event_SUBMIT_L`) desmarcados en GA4; solo `generate_lead` como evento clave |
 | M11 | Limpiar código muerto `captureUTM()` | H14 | ✅ | Eliminada la escritura a inputs `utm_*` inexistentes; persistencia en sessionStorage intacta. Desplegado (`74de19c`) |
 | M12 | Fallback `<noscript>` del formulario | H18 | ✅ | Aviso `<noscript>` con email + WhatsApp si JS está desactivado. Desplegado |
-| M13 | Restricción de dominio / anti-abuso Web3Forms | — | ⬜ |
+| M13 | Restricción de dominio / anti-abuso Web3Forms | — | ✅ | **Cerrada 2026-06-09 (F2).** Domain Restriction y Turnstile son PRO en Web3Forms; el captcha gratis (hCaptcha) es checkbox visible → fricción no asumible en un funnel de conversión. Decisión: **Spam Protection Level → Strict** (server-side, gratis, sin fricción) + honeypot `botcheck` (ya activo). El form no tiene texto libre (campos estructurados) → riesgo de falso positivo bajo. Validado con healthcheck M08 (alerta 0 leads/72h). hCaptcha / Domain Restriction (PRO) quedan en reserva si aparece spam real |
 
 ## FASE 2 — Legal y confianza
 | ID | Mejora | H | Estado |
@@ -56,7 +56,7 @@ _Última actualización: 2026-06-08_
 | M27 | Resolver Google Fonts render-blocking (self-host/preload) | — | ✅ | **Hecho 2026-06-08.** Las fuentes YA estaban self-hosted (woff2 locales + `font-display:swap`), sin link a Google Fonts (el "render-blocking de Google" no existía). Añadido `preload` de los 2 woff2 de Cormorant latin (normal+italic), la fuente del H1/LCP. Inter no se preloadea (tiene swap, es secundaria, no compite con la imagen hero) |
 | M28 | Optimizar animación KPI "tragaperras" (INP) | H13 | ⏸️ | **Evaluado 2026-06-08, no se toca sin medir.** Es scroll-triggered (IntersectionObserver), no interacción → no afecta al INP directamente; solo TBT en el scroll inicial, y ya se optimizó una vez (~5000→~50-85 nodos). Reescribir una animación visualmente central a ciegas = riesgo alto por beneficio marginal. Condicionado a que el profiling (M31/PSI) lo señale |
 | M29 | Contraste AA del dorado de marca | H17 | ✅ | `--gold-text:#9A7016` aplicado a texto pequeño sobre fondo claro (eyebrow, proc-tag, s-range/pill, zone-tag, deliver-t, form-scarcity). Dorado de marca intacto en grande/oscuro. Desplegado |
-| M30 | `404.html` + HSTS 2 años + revisar ACAO | H21 | 🟡 | `404.html` con identidad de marca creada y desplegada (`74de19c`). Pendiente en Cloudflare: subir HSTS a 2 años y revisar `Access-Control-Allow-Origin: *` |
+| M30 | `404.html` + HSTS 2 años + revisar ACAO | H21 | 🟡 | `404.html` con identidad de marca creada y desplegada (`74de19c`). **HSTS revisado 2026-06-09 (F3):** en vivo Cloudflare ya sirve `max-age=31536000; includeSubDomains; preload` en todas las respuestas (incl. redirect del apex) → **ya cumple requisitos de hstspreload.org**. El dashboard de Cloudflare topa en 12 meses, así que el "2 años" de `_headers` no se aplicaba; se **alineó `_headers` a 31536000** (fin del valor fantasma). Acción del usuario pendiente: registrar el dominio en hstspreload.org. ACAO `*` no apareció en las cabeceras live verificadas |
 | M31 | Validar JSON-LD + Lighthouse final ≥90 | — | 🟡 | **JSON-LD validado 2026-06-08**: 57 bloques en 21 páginas, 0 inválidos (BlogPosting×16, BreadcrumbList×19, FAQPage×17, Blog, RealEstateAgent, WebSite, ItemList, AboutPage). Pendiente: PageSpeed Insights/Lighthouse sobre la URL en vivo tras el deploy de hoy (no medir antes de desplegar) |
 
 ## FASE 5 — Escalabilidad y mejora continua
@@ -98,6 +98,13 @@ nuevas** que sobreviven al contraste:
 ---
 
 ## Registro de actividad (tareas realizadas)
+
+### 2026-06-09 — Auditoría técnica senior (F1–F13) + ejecución F2/F3
+- **Auditoría completa** documentada en `AUDITORIA_TECNICA_2026-06-09.md` (hallazgos F1–F13, plan por fases, checklist ejecutable, propuestas de código). Verificación de cabeceras/caché/redirecciones con `curl.exe -sI` contra producción.
+- **F3 ✅ (mi parte)** — `public/_headers`: línea HSTS alineada de `max-age=63072000` a `max-age=31536000` (lo que realmente sirve Cloudflare; el dashboard topa en 12 meses). Eliminado el valor fantasma de 2 años. El sitio ya es elegible para preload. **Pendiente usuario:** registrar en hstspreload.org.
+- **F2 ✅** — Anti-spam Web3Forms cerrado por decisión: **Spam Protection Level → Strict** (panel, gratis, server-side, sin fricción) + honeypot `botcheck`. Turnstile/Domain Restriction son PRO; hCaptcha (gratis) descartado por fricción de checkbox en el funnel. Sin cambios de código. Validación: test E2E + healthcheck M08. Ver M13.
+- **Hallazgo nuevo principal (F1, Alta):** assets estáticos servidos con `Cache-Control: public, max-age=0, must-revalidate` → sin caché de navegador. Pendiente: reglas de caché larga inmutable en `_headers` (propuesta lista en la auditoría).
+- **Doc obsoleta detectada (F7):** `docs/SEGURIDAD_CABECERAS.md` describe GitHub Pages y afirma que `_headers` se ignora — falso hoy (Cloudflare Workers lo aplica). `README.md` vacío.
 
 ### 2026-06-08 — Reevaluación auditoría ChatGPT + FASE 6
 - **Reevaluación** — Contrastada la auditoría externa de ChatGPT contra el código real. La mayoría de sus "críticos" ya estaban resueltos (tracking GA4+Ads+Meta, Consent Mode v2, CSP sin unsafe-inline, schema, sitemap, canonical, UTM/gclid, honeypot, RGPD, noscript). Falsos positivos: "V6.2 en el title" (limpio), "Ads/Pixel ausentes" (ambos viven), claims "garantiza" (son disclaimers). Tablero FASE 6 con lo que sobrevive.
@@ -179,7 +186,7 @@ nuevas** que sobreviven al contraste:
 
 ## FASE 7: Auditoría técnica 2026-06-09 (Cursor) · hallazgos F1 a F13
 
-Doc completo en `docs/AUDITORIA_TECNICA_2026-06-09.md`. Veredicto global: estado BUENO a MUY BUENO; mejoras de higiene técnica fina. Lote aplicado en código (sin deploy, pendiente de push del usuario):
+Doc completo en `docs/AUDITORIA_TECNICA_2026-06-09.md`. Veredicto global: estado BUENO a MUY BUENO; mejoras de higiene técnica fina. Lote **aplicado y desplegado** a producción (commits `ec135f2` + `b980ca9`); F1, F5, F9, F10, F11 verificados en vivo:
 
 - **M48 (F1) ✅:** caché larga inmutable para `/assets/*` en `public/_headers` (imágenes/fuentes/logos `immutable` 1 año; og 30 días; css/js 1 día + `stale-while-revalidate`). Reglas antes de `/*`; cabeceras de seguridad acumulativas. Verificar en vivo tras deploy con `curl.exe -sI .../assets/css/home.css`.
 - **M49 (F4) ⬜ NO VIABLE en este stack:** se probó el rewrite `/  /index.html  200` pero el router de Workers Assets aplica su 301 de índice del root (`/`→`/index.html`) con precedencia sobre `_redirects` (confirmado en vivo; `/blog` sí funciona por rewrite, `/` no). Evitarlo exigiría cambiar `html_handling`, lo que rompería todos los `.html` (canonical/sitemap/enlaces). Decisión del usuario: mantener canonical `/` y aceptar el 301 (benigno; Google sigue el 301 y respeta el canonical). Regla muerta revertida; nota dejada en `_redirects`.
@@ -190,7 +197,7 @@ Doc completo en `docs/AUDITORIA_TECNICA_2026-06-09.md`. Veredicto global: estado
 - **M54 (F7) ✅:** `README.md` reescrito (stack, estructura, deploy, disciplina) y `docs/SEGURIDAD_CABECERAS.md` actualizado al stack real (Cloudflare Workers Assets, `_headers` nativo, tabla de caché). El doc anterior describía GitHub Pages y decía que `_headers` se ignoraba (falso hoy).
 
 ### Pendiente de acción manual (dashboard/terceros)
-- **M55 (F2) 🔒:** Web3Forms → activar **Domain Restriction** (solo `horizonteemirates.com`) + **hCaptcha/Turnstile**. Mantener honeypot `botcheck`. Si se añade Turnstile, hay que meter el widget en `#mainform` y `#waf` y permitir su dominio en la CSP.
+- **F2:** ver **M13** (ya cerrada): Spam Protection → Strict + honeypot `botcheck`. No se hace trabajo de código adicional (decisión del usuario 2026-06-09).
 - **M56 (F3) 🟡:** HSTS fijado a `max-age=31536000` (1 año) en `_headers`, máximo del plan free de Cloudflare y alineado con lo que se sirve en vivo (ya no hay desajuste archivo/producción). 1 año cumple el mínimo de la preload list. Pendiente solo: registrar el dominio en hstspreload.org.
 
 ### Diferido (Fase 3/4 de la auditoría, mayor esfuerzo)
