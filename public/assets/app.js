@@ -45,10 +45,11 @@ window.addEventListener('scroll',()=>{
 const SCORES={
   capital:{'150k-300k':1,'300k-600k':2,'600k-1M':3,'mas1M':4},
   objetivo:{'alquiler':3,'revalorizacion':3,'diversificacion':2,'residencia':1},
-  plazo:{'ya':4,'6meses':3,'12meses':2,'indefinido':1},
+  plazo:{'ya':4,'capital-6m':3,'6meses':3,'12meses':2,'indefinido':1},
   viaje:{'si':2,'quizas':1,'no':0}
 };
 let cur=1,sel={capital:null,objetivo:null,plazo:null,viaje:null};
+let manualNav=false;
 const DELAY=340;
 
 function classify(){
@@ -63,7 +64,8 @@ function updProg(step){
   const pct=step<=1?33.33:step===2?66.66:100;
   if(fill)fill.style.width=pct+'%';
   if(lab)lab.textContent='Paso '+step+' de 3';
-  document.getElementById('btn-back').style.display=step>1?'block':'none';
+  const backBtn=document.getElementById('btn-back');
+  if(backBtn)backBtn.style.display=step>1?'block':'none';
 }
 
 function goTo(step){
@@ -72,10 +74,16 @@ function goTo(step){
   document.getElementById('fs'+cur).classList.add('active');
   updProg(cur);
   trackFormStep(cur);
+  if(typeof window.heFormSave==='function')window.heFormSave();
   const anchor=document.querySelector('.form-progress-wrap');
   if(anchor)anchor.scrollIntoView({behavior:'smooth',block:'start'});
 }
-function goBack(){if(cur>1)goTo(cur-1);}
+function goBack(){
+  if(cur>1){
+    manualNav=true;
+    goTo(cur-1);
+  }
+}
 
 document.querySelectorAll('.opt-card').forEach(el=>{
   el.addEventListener('click',function(){
@@ -85,6 +93,7 @@ document.querySelectorAll('.opt-card').forEach(el=>{
     this.classList.add('sel');
     this.setAttribute('aria-pressed','true');
     sel[dim]=v;
+    if(dim==='capital'||dim==='objetivo'||dim==='plazo'||dim==='viaje')manualNav=false;
     trackGAEvent('form_option_select',{
       event_category:'form',
       event_label:dim+':'+v,
@@ -93,8 +102,8 @@ document.querySelectorAll('.opt-card').forEach(el=>{
     });
     const map={capital:'h-cap',objetivo:'h-obj',plazo:'h-pla',viaje:'h-via'};
     if(map[dim])document.getElementById(map[dim]).value=v;
-    if(cur===1&&sel.capital&&sel.objetivo)setTimeout(()=>goTo(2),DELAY);
-    if(cur===2&&sel.plazo&&sel.viaje)setTimeout(()=>goTo(3),DELAY);
+    if(cur===1&&sel.capital&&sel.objetivo&&!manualNav)setTimeout(()=>goTo(2),DELAY);
+    if(cur===2&&sel.plazo&&sel.viaje&&!manualNav)setTimeout(()=>goTo(3),DELAY);
   });
 });
 
@@ -693,6 +702,7 @@ document.querySelectorAll('.canal-o').forEach(function(el){ el.addEventListener(
     if (form.style.display === 'none') return;
     try { sessionStorage.setItem(KEY, JSON.stringify(snapshot())); } catch (e) {}
   }
+  window.heFormSave = save;
   var t;
   function saveSoon() { clearTimeout(t); t = setTimeout(save, 300); }
 

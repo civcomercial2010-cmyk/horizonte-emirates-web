@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<title>Preview — Zonas de inversión | Horizonte Emirates</title>
+<link rel="icon" type="image/svg+xml" href="../assets/logos/horizonte-emirates/favicon.svg"/>
+<link rel="stylesheet" href="../assets/css/tokens.css"/>
+<link rel="stylesheet" href="../assets/css/fonts.css"/>
+<link rel="stylesheet" href="../assets/css/home.css"/>
+<style>
+  /* Preview interno — forzar visibilidad sin app.js (home.css oculta .fade hasta scroll) */
+  .fade,.fade.in{opacity:1!important;transform:none!important;filter:none!important}
+  .fade .rule{transform:scaleX(1)!important}
+
+  .preview-top{
+    background:var(--navy);
+    color:#fff;
+    padding:14px var(--gutter-desktop);
+    font-size:13px;
+    line-height:1.55;
+    text-align:center;
+  }
+  .preview-top strong{color:var(--gold)}
+  .preview-top a{color:rgba(255,255,255,.85);text-decoration:underline}
+
+  .preview-jump{
+    position:sticky;top:0;z-index:50;
+    background:#fff;
+    border-bottom:1px solid var(--border);
+    padding:10px var(--gutter-desktop);
+    display:flex;flex-wrap:wrap;gap:8px;justify-content:center;
+  }
+  .preview-jump a{
+    font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    padding:8px 14px;border-radius:999px;border:1px solid var(--border);
+    transition:.2s;
+  }
+  .preview-jump a:hover,.preview-jump a:focus{border-color:var(--gold);color:var(--gold-text)}
+  .preview-jump a.is-rec{background:rgba(196,148,42,.12);border-color:var(--gold)}
+
+  .variant-intro{
+    margin-bottom:var(--space-md);
+    padding:18px 20px;
+    background:#fff;
+    border:1px solid var(--border);
+    border-left:3px solid var(--gold);
+  }
+  .variant-badge{
+    display:inline-block;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+    background:var(--navy);color:#fff;padding:4px 10px;border-radius:999px;margin-bottom:8px;
+  }
+  .variant-badge.rec{background:var(--gold);color:var(--navy)}
+  .variant-intro h2{font-family:var(--serif);font-size:26px;font-weight:500;color:var(--ink);margin:0 0 6px}
+  .variant-intro p{font-size:15px;color:var(--muted);margin:0;line-height:1.6;max-width:var(--measure)}
+
+  .variant-sep{height:48px;background:linear-gradient(180deg,var(--warm2),var(--warm))}
+
+  /* B — reutiliza compare-table de home */
+  .zones-b-table{margin-top:var(--space-md)}
+
+  /* C — estrategia con estética de marca */
+  .strategy-zones{
+    display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:1px;background:var(--border);border:1px solid var(--border);
+  }
+  .strat-block{
+    background:#fff;padding:36px var(--space-md);
+    display:flex;flex-direction:column;gap:10px;height:100%;
+  }
+  .strat-focus{font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-text)}
+  .strat-block h3{font-family:var(--serif);font-size:30px;font-weight:500;color:var(--ink);margin:0}
+  .strat-block p{font-size:15px;color:var(--muted);line-height:1.65;margin:0}
+  .strat-metrics{display:flex;flex-wrap:wrap;gap:16px 24px;margin:10px 0 4px}
+  .strat-m .sm-n{font-family:var(--serif);font-size:25px;font-weight:600;color:#0d1b2a;display:block;line-height:1}
+  .strat-m .sm-l{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#415469;font-weight:600}
+  .strat-geo{font-size:13px;color:var(--muted);margin-top:auto;padding-top:14px;border-top:1px solid var(--border)}
+  .strat-geo strong{color:var(--ink)}
+
+  .preview-footer{
+    text-align:center;padding:32px var(--gutter-desktop) 48px;
+    font-size:13px;color:var(--muted);line-height:1.65;
+  }
+  .preview-footer a{color:var(--gold-text);text-decoration:underline}
+
+  @media(max-width:900px){.strategy-zones{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="preview-top">
+  <strong>Preview interno</strong> — Comparativa de bloques «Zonas de inversión». Render con los mismos CSS e imágenes que la home.
+  <a href="../index.html#zonas-inversion">Ver en home (A1)</a>
+</div>
+
+<nav class="preview-jump" aria-label="Ir a variante">
+  <a href="#variant-a" class="is-rec">A1 · 3 cols + filas (home)</a>
+  <a href="#variant-a2">A2 · Fila horizontal</a>
+  <a href="#variant-b">B · Tabla comparativa</a>
+  <a href="#variant-c">C · Por estrategia</a>
+</nav>
+
+<!-- ═══ VARIANTE A1 — implementada en home ═══ -->
+<section class="section alt" id="variant-a">
+  <div class="wrap">
+    <div class="variant-intro">
+      <span class="variant-badge rec">A1 · Implementada en home</span>
+      <h2>Tres columnas · rentabilidades alineadas</h2>
+      <p>Grid de 3 tarjetas. Debajo del texto, tres filas con etiqueta a la izquierda y cifra alineada a la derecha.</p>
+    </div>
+    <div class="sh">
+      <span class="eyebrow">Zonas de inversión</span>
+      <div class="rule"></div>
+      <h2>Tres mercados inmobiliarios en UAE. Tres estrategias de inversión.</h2>
+    </div>
+    <div class="zones-g">
+      <div class="zone-c">
+        <div class="zone-media">
+          <img src="../assets/img/abu-dhabi.webp" width="1000" height="532" alt="Skyline de Abu Dhabi" loading="lazy" class="zone-img-abu"/>
+        </div>
+        <div class="zone-tag">Institucional · Largo plazo</div>
+        <h3>Abu Dhabi</h3>
+        <p>Proyectos con respaldo soberano (Aldar Properties, Saadiyat). Menor volatilidad, horizontes de cinco años o más y máxima seguridad contractual para capital conservador.</p>
+        <dl class="zone-yield-list" aria-label="Rentabilidades estimadas Abu Dhabi">
+          <div class="zone-yield-row"><dt>Rentabilidad alquiler/año</dt><dd>5–7%</dd></div>
+          <div class="zone-yield-row"><dt>Revalorización activo/año</dt><dd>~4–5%</dd></div>
+          <div class="zone-yield-row zone-yield-row--total"><dt>Rentabilidad total</dt><dd>~9–12%</dd></div>
+        </dl>
+      </div>
+      <div class="zone-c">
+        <div class="zone-media">
+          <img src="../assets/img/dubai-marina.webp" width="800" height="1200" alt="Dubai Marina" loading="lazy"/>
+        </div>
+        <div class="zone-tag">Prime urbano</div>
+        <h3>Dubai</h3>
+        <p>Marina, Palm Jumeirah, Downtown y Business Bay. Alta liquidez de reventa y demanda de alquiler permanente por parte de expatriados de alta renta.</p>
+        <dl class="zone-yield-list" aria-label="Rentabilidades estimadas Dubai">
+          <div class="zone-yield-row"><dt>Rentabilidad alquiler/año</dt><dd>6–9%</dd></div>
+          <div class="zone-yield-row"><dt>Revalorización activo/año</dt><dd>~6%</dd></div>
+          <div class="zone-yield-row zone-yield-row--total"><dt>Rentabilidad total</dt><dd>~12–15%</dd></div>
+        </dl>
+      </div>
+      <div class="zone-c">
+        <div class="zone-media">
+          <img src="../assets/img/wynn-al-marjan.webp" width="400" height="240" alt="Proyecto Wynn en Ras Al Khaimah" loading="lazy"/>
+        </div>
+        <div class="zone-tag">Emergente · Alta apreciación</div>
+        <h3>Ras Al Khaimah</h3>
+        <p>Primer casino de UAE (Wynn, 2027). Ventana de apreciación estimada del 20–35% antes de la apertura. Ticket más accesible que Dubai Prime.</p>
+        <dl class="zone-yield-list" aria-label="Rentabilidades estimadas Ras Al Khaimah">
+          <div class="zone-yield-row"><dt>Rentabilidad alquiler/año</dt><dd>5–7%</dd></div>
+          <div class="zone-yield-row"><dt>Revalorización activo/año</dt><dd>~7–12%</dd></div>
+          <div class="zone-yield-row zone-yield-row--total"><dt>Rentabilidad total</dt><dd>~12–19%</dd></div>
+        </dl>
+        <p class="zone-yield-foot">Revalorización anualizada pre-2027<br/>Plusvalía acumulada estimada +20–35%</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="variant-sep" aria-hidden="true"></div>
+
+<!-- ═══ VARIANTE A2 — archivo horizontal ═══ -->
+<section class="section" id="variant-a2">
+  <div class="wrap">
+    <div class="variant-intro">
+      <span class="variant-badge">A2 · Archivo</span>
+      <h2>Imagen + zona a la izquierda · tabla 3 columnas a la derecha</h2>
+      <p>Layout apilado por filas. Alternativa descartada frente a A1.</p>
+    </div>
+    <div class="sh">
+      <span class="eyebrow">Zonas de inversión</span>
+      <div class="rule"></div>
+      <h2>Tres mercados inmobiliarios en UAE. Tres estrategias de inversión.</h2>
+    </div>
+    <div class="zones-stack">
+      <article class="zone-row">
+        <div class="zone-row-left">
+          <div class="zone-row-media">
+            <img src="../assets/img/abu-dhabi.webp" width="1000" height="532" alt="Skyline de Abu Dhabi" loading="lazy" class="zone-img-abu"/>
+          </div>
+          <div class="zone-row-body">
+            <div class="zone-tag">Institucional · Largo plazo</div>
+            <h3>Abu Dhabi</h3>
+            <p>Proyectos con respaldo soberano (Aldar Properties, Saadiyat). Menor volatilidad, horizontes de cinco años o más.</p>
+          </div>
+        </div>
+        <div class="zone-row-metrics">
+          <div class="zone-metrics" role="group" aria-label="Rentabilidades estimadas Abu Dhabi">
+            <div class="zone-metrics-head"><span>Rentabilidad alquiler</span><span>Revalorización</span><span>Rentabilidad total</span></div>
+            <div class="zone-metrics-val"><span class="zm-n">5–7%</span><span class="zm-n">~4–5%</span><span class="zm-n zm-total">~9–12%</span></div>
+            <div class="zone-metrics-sub"><span>neto / año</span><span>anual est.</span><span>estimada / año</span></div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<div class="variant-sep" aria-hidden="true"></div>
+
+<!-- ═══ VARIANTE B ═══ -->
+<section class="section" id="variant-b">
+  <div class="wrap">
+    <div class="variant-intro">
+      <span class="variant-badge">B · Mini-tabla comparativa</span>
+      <h2>Tarjetas con foto + tabla bajo el grid</h2>
+      <p>Las tres columnas arriba (foto + copy); la comparación numérica en una tabla única debajo. Mejor para comparar de un vistazo; más denso en móvil.</p>
+    </div>
+    <div class="sh">
+      <span class="eyebrow">Zonas de inversión</span>
+      <div class="rule"></div>
+      <h2>Tres mercados inmobiliarios en UAE. Tres estrategias de inversión.</h2>
+    </div>
+    <div class="zones-g">
+      <div class="zone-c">
+        <div class="zone-media">
+          <img src="../assets/img/abu-dhabi.webp" width="1000" height="532" alt="Skyline de Abu Dhabi" loading="lazy" class="zone-img-abu"/>
+        </div>
+        <div class="zone-tag">Institucional · Largo plazo</div>
+        <h3>Abu Dhabi</h3>
+        <p>Proyectos con respaldo soberano (Aldar Properties, Saadiyat). Menor volatilidad, horizontes de cinco años o más.</p>
+      </div>
+      <div class="zone-c">
+        <div class="zone-media">
+          <img src="../assets/img/dubai-marina.webp" width="800" height="1200" alt="Dubai Marina" loading="lazy"/>
+        </div>
+        <div class="zone-tag">Prime urbano</div>
+        <h3>Dubai</h3>
+        <p>Marina, Palm Jumeirah, Downtown y Business Bay. Alta liquidez de reventa y demanda de alquiler permanente.</p>
+      </div>
+      <div class="zone-c">
+        <div class="zone-media">
+          <img src="../assets/img/wynn-al-marjan.webp" width="400" height="240" alt="Proyecto Wynn en Ras Al Khaimah" loading="lazy"/>
+        </div>
+        <div class="zone-tag">Emergente · Alta apreciación</div>
+        <h3>Ras Al Khaimah</h3>
+        <p>Primer casino de UAE (Wynn, 2027). Ventana de apreciación estimada del 20–35% antes de la apertura.</p>
+      </div>
+    </div>
+    <div class="compare-wrap zones-b-table">
+      <table class="compare-table" style="margin-top:0">
+        <thead>
+          <tr>
+            <th>Mercado</th>
+            <th>Alquiler neto / año</th>
+            <th>Revalorización</th>
+            <th>Horizonte</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Abu Dhabi</td>
+            <td class="cmp-dubai">5–7%</td>
+            <td class="cmp-dubai">~4–5% <small style="display:block;font-weight:500;font-size:11px;color:var(--muted)">anual</small></td>
+            <td>5+ años</td>
+          </tr>
+          <tr>
+            <td>Dubai</td>
+            <td class="cmp-dubai">6–9%</td>
+            <td class="cmp-dubai">~6% <small style="display:block;font-weight:500;font-size:11px;color:var(--muted)">anual</small></td>
+            <td>3–5 años</td>
+          </tr>
+          <tr>
+            <td>Ras Al Khaimah</td>
+            <td class="cmp-dubai">5–7%</td>
+            <td class="cmp-dubai">+20–35% <small style="display:block;font-weight:500;font-size:11px;color:var(--muted)">acumulada 2024–2027, no anual</small></td>
+            <td>Pre-2027</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<div class="variant-sep" aria-hidden="true"></div>
+
+<!-- ═══ VARIANTE C ═══ -->
+<section class="section alt" id="variant-c">
+  <div class="wrap">
+    <div class="variant-intro">
+      <span class="variant-badge">C · Por estrategia</span>
+      <h2>Estrategia primero, geografía secundaria</h2>
+      <p>El visitante elige por objetivo (renta estable / renta + liquidez / plusvalía temprana). Cambio narrativo mayor; puede chocar con SEO por zona.</p>
+    </div>
+    <div class="sh">
+      <span class="eyebrow">Estrategias de inversión</span>
+      <div class="rule"></div>
+      <h2>Tres perfiles. Tres formas de entrar en UAE.</h2>
+    </div>
+    <div class="strategy-zones">
+      <div class="strat-block">
+        <div class="strat-focus">Renta estable</div>
+        <h3>Conservador</h3>
+        <p>Flujo predecible, respaldo institucional y contratos a largo plazo. Menor volatilidad que Dubai Prime.</p>
+        <div class="strat-metrics">
+          <div class="strat-m"><span class="sm-n">5–7%</span><span class="sm-l">Alquiler / año</span></div>
+          <div class="strat-m"><span class="sm-n">~4–5%</span><span class="sm-l">Reval. anual</span></div>
+        </div>
+        <div class="strat-geo"><strong>Zona:</strong> Abu Dhabi (Aldar, Saadiyat)</div>
+      </div>
+      <div class="strat-block">
+        <div class="strat-focus">Renta + liquidez</div>
+        <h3>Equilibrado</h3>
+        <p>Yield sólido con mercado secundario activo y salida rápida si hace falta. Demanda expatriada permanente.</p>
+        <div class="strat-metrics">
+          <div class="strat-m"><span class="sm-n">6–9%</span><span class="sm-l">Alquiler / año</span></div>
+          <div class="strat-m"><span class="sm-n">~6%</span><span class="sm-l">Reval. anual</span></div>
+        </div>
+        <div class="strat-geo"><strong>Zona:</strong> Dubai Prime (Marina, Palm, Downtown)</div>
+      </div>
+      <div class="strat-block">
+        <div class="strat-focus">Plusvalía temprana</div>
+        <h3>Apreciación</h3>
+        <p>Entrada antes de catalizador macro (Wynn 2027). Plusvalía acumulada en ventana temporal, no rentabilidad anual.</p>
+        <div class="strat-metrics">
+          <div class="strat-m"><span class="sm-n">5–7%</span><span class="sm-l">Alquiler / año</span></div>
+          <div class="strat-m"><span class="sm-n">+20–35%</span><span class="sm-l">Plusvalía acum.</span></div>
+        </div>
+        <div class="strat-geo"><strong>Zona:</strong> Ras Al Khaimah (Al Marjan)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="preview-footer">
+  Cifras orientativas 2024–2025 · validar RAK con partner antes de campañas.<br/>
+  <a href="../index.html#zonas-inversion">Home — variante A1 en producción</a> · <a href="../index.html">Volver a la home</a>
+</footer>
+
+</body>
+</html>

@@ -142,8 +142,9 @@ Comprobar que los formularios (V3 y botón WA) envían los datos a `la cuenta Gm
 | Objetivo | Alquiler o revalorización | 3 |
 | Objetivo | Diversificación | 2 |
 | Objetivo | Residencia | 1 |
-| Plazo | Cuanto antes | 4 |
-| Plazo | < 6 meses | 3 |
+| Plazo | Capital listo — operar ya | 4 |
+| Plazo | Capital en menos de 6 meses | 3 |
+| Plazo | Decisión activa (< 6 meses) | 3 |
 | Plazo | < 12 meses | 2 |
 | Plazo | Sin definir | 1 |
 | Visita Dubai | Sí, me interesa | 2 |

@@ -58,7 +58,7 @@
       + "#he-consent .he-c-actions{display:flex;gap:10px;flex-wrap:wrap}"
       + "#he-consent button{font-family:inherit;font-size:12px;font-weight:600;letter-spacing:.06em;"
       + "text-transform:uppercase;padding:11px 22px;border-radius:2px;cursor:pointer;border:1px solid transparent;transition:.2s}"
-      + "#he-consent .he-c-accept{background:#C4942A;color:#fff}"
+      + "#he-consent .he-c-accept{background:#C4942A;color:#07121F}"
       + "#he-consent .he-c-accept:hover{filter:brightness(1.08)}"
       + "#he-consent .he-c-reject{background:transparent;color:rgba(248,246,241,.85);border-color:rgba(248,246,241,.35)}"
       + "#he-consent .he-c-reject:hover{border-color:rgba(248,246,241,.7);color:#fff}"

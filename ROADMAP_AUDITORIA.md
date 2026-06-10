@@ -3,7 +3,7 @@
 Tablero vivo derivado de la auditoría senior (web + funnel + negocio).
 Estado: ✅ hecho · 🟡 en curso · ⬜ pendiente · 🔒 bloqueado (terceros)
 
-_Última actualización: 2026-06-09_
+_Última actualización: 2026-06-10_
 
 ---
 
@@ -57,7 +57,7 @@ _Última actualización: 2026-06-09_
 | M28 | Optimizar animación KPI "tragaperras" (INP) | H13 | ⏸️ | **Evaluado 2026-06-08, no se toca sin medir.** Es scroll-triggered (IntersectionObserver), no interacción → no afecta al INP directamente; solo TBT en el scroll inicial, y ya se optimizó una vez (~5000→~50-85 nodos). Reescribir una animación visualmente central a ciegas = riesgo alto por beneficio marginal. Condicionado a que el profiling (M31/PSI) lo señale |
 | M29 | Contraste AA del dorado de marca | H17 | ✅ | `--gold-text:#9A7016` aplicado a texto pequeño sobre fondo claro (eyebrow, proc-tag, s-range/pill, zone-tag, deliver-t, form-scarcity). Dorado de marca intacto en grande/oscuro. Desplegado |
 | M30 | `404.html` + HSTS + revisar ACAO | H21 | ✅ | **Cerrada 2026-06-09 (F3).** `404.html` de marca desplegada (`74de19c`). HSTS: Cloudflare sirve `max-age=31536000; includeSubDomains; preload` en todas las respuestas; el dashboard topa en 12 meses, así que se **alineó `_headers` a 31536000** (fin del valor fantasma de 2 años). **Preload NO registrado por decisión del usuario**: hstspreload.org marcó el dominio no elegible (el apex `http://` salta directo a `https://www`, falta el salto intermedio `http://apex→https://apex`); el arreglo exige tocar el routing de Cloudflare y el compromiso es casi irreversible → beneficio marginal (HSTS ya protege a usuarios reales). ACAO `*` no aparece en las cabeceras live |
-| M31 | Validar JSON-LD + Lighthouse final ≥90 | — | 🟡 | **JSON-LD validado 2026-06-08**: 57 bloques en 21 páginas, 0 inválidos (BlogPosting×16, BreadcrumbList×19, FAQPage×17, Blog, RealEstateAgent, WebSite, ItemList, AboutPage). **Lighthouse medido en vivo 2026-06-09 (CLI v13.3.0, home `https://www.horizonteemirates.com/`):** **Desktop** Perf **100** / A11y 91 / BP 92 / SEO 92 → todo ≥90 ✅. **Mobile** Perf **67** ❌ / A11y 91 ✅ / BP 92 ✅ / SEO 92 ✅. Lastres mobile de Perf, por orden: (1) **redirect raíz `/`→`/index.html` (301): 816 ms** en 4G simulado → es el problema de **M49/F4**, ya adjudicado "no viable" en Workers Assets; (2) **JS sin usar ~710 ms / 129 KB** = tags de Google (GA4 68 KB + Ads 61 KB), inherente a terceros; (3) **CLS 0.169** por `div.hero-in` (salto del bloque hero) — único fixable barato; LCP 4.9 s (amplificado por el redirect), TBT 310 ms. **Veredicto: ≥90 cumplido en desktop (4/4) y en mobile en A11y/BP/SEO; mobile Performance NO llega a 90 y está gobernado por la decisión M49 (redirect) + JS de terceros.** Próximo paso opcional de bajo coste: reservar espacio del hero para matar el CLS. |
+| M31 | Validar JSON-LD + Lighthouse final ≥90 | — | 🟡 | **JSON-LD validado 2026-06-08** (57 bloques, 0 inválidos). **Lighthouse medido en vivo 2026-06-09 (CLI v13.3.0, home):** Desktop **100/91/92/92** (todo ≥90 ✅); Mobile **Perf 67** ❌ / A11y 91 / BP 92 / SEO 92. **Diagnóstico de los lastres mobile + FIXES (sesión 09/06 tarde):**<br>• **A11y 91→100** ✅ **(shipped, validado en build local)**: `for`/`aria-label` en sliders ROI (`index.html`); contraste AA del footer sobre navy oscuro (enlaces .3–.4→.72, textos .18–.3→.62 en `home.css`); botón consent `#fff`→navy en `consent.js`; `heading-order` footer `<h4>`→`<h2>` (`index.html`+`home.css`).<br>• **SEO 92→100** ✅: el aviso `canonical` desaparece al matar el 301 (ver redirect).<br>• **BP 92→100**: único fallo = beacon Cloudflare Web Analytics bloqueado por CSP (en build local sin beacon = 100). **Acción del usuario (dashboard): desactivar Cloudflare Web Analytics** (M26 ya lo recomendaba; mejor que añadirlo a la CSP, evita +JS).<br>• **Redirect `/`→`/index.html` (816 ms) — FIX shipped en `public/_redirects`** (`/ /index.html 200`): el bloqueo histórico de M49 era un **falso positivo de wrangler** ("Infinite loop"), corregido en workers-sdk PR #11904 (ene-2026). **REQUIERE deploy con wrangler actualizado + verificar `curl -I /` = 200**.<br>• **CLS 0.169 — causa raíz confirmada (Puppeteer+Lighthouse): font-swap en frío del hero anclado abajo** (`#hero justify-content:flex-end`); al cargar Cormorant+Inter el bloque cambia de alto y su top salta ~160px (con fuentes bloqueadas CLS=0). El fallback de métricas no basta (efecto compuesto de las 2 fuentes). **Fix probado: `#hero justify-content:flex-start` → CLS 0.009 (score 1.0)**, pero mueve el texto del hero de abajo a arriba (decisión estética/conversión → PENDIENTE de OK del usuario; no shipped). **Estimación mobile Perf con redirect+CLS resueltos: ~88–93 (≥90 alcanzable).** |
 
 ## FASE 5 — Escalabilidad y mejora continua
 | ID | Mejora | H | Estado |
@@ -89,6 +89,20 @@ nuevas** que sobreviven al contraste:
 | M48 | Imágenes temáticas del blog (Pexels) | Media | ✅ | `public/assets/blog/*`, `public/assets/og/og-*`, `blog/creditos.html` | **Hecho 2026-06-08.** Pipeline `tools/imgproc/` (sharp + API Pexels): cada uno de los 16 artículos con hero (webp 1280) + og (1200x630) temáticos según su tema (golden visa→pasaporte, fiscalidad→documentos, zonas→skyline). Hub `/blog/` con cards temáticas. Alt text actualizado. Página de créditos `/blog/creditos.html` (atribución Pexels) enlazada desde el footer. og genéricas/huérfanas eliminadas |
 | M49 | De-dup de copy en la home | Baja | ✅ | `index.html` | **Hecho 2026-06-08.** 5 redundancias eliminadas (eco "español"/"0€" hero↔badges, "ni al inicio ni al cierre" proceso↔FAQ, dos badges de coste seguidos, ticker = copia de badges, escasez duplicada) + de-dup del hero. Blog NO tocado: su repetición (disclaimer/bio/CTA) es funcional |
 
+## FASE 7 — Feedback UX externo · 2026-06-10
+
+Mejoras derivadas de revisión de usuario real (feedback amigo / tester).
+
+| ID | Mejora | Estado | Archivo / Evidencia | Nota |
+|---|---|---|---|---|
+| M53 | Aclarar rentabilidad por alquiler en titulares (hero, KPI, ticker, pain) | ✅ | `index.html` | Alineado con tabla comparativa y metodología M16 |
+| M54 | Reframing exposición cambiaria → dólar (AED anclado USD) | ✅ | `index.html` L176 | Sin tono de "riesgo de divisa" |
+| M55 | Zonas: alquiler + reval. por separado (dual pills) | ✅ | `index.html`, `home.css` | Preview alternativas en `public/guias/preview-zonas-inversion.html` |
+| M56 | Simulador: yield max 15%, precio activo min 50k + nota off-plan | ✅ | `index.html`, `home.css` | Coherente con FAQ (30k = entrada, no activo) |
+| M57 | Fix navegación atrás formulario (paso 3 → 1) | ✅ | `index.html`, `app.js` | `#btn-back` fuera de `#fs3`; flag `manualNav`; `heFormSave` en goTo |
+| M58 | Horizonte decisión: opción "Capital en menos de 6 meses" | ✅ | `index.html`, `app.js` | `data-v="capital-6m"`, score=3 |
+| M52 | Documentar + evaluar tokenización (&lt;150k) vía Nexis | ⬜ | `docs/TOKENIZACION_NEXIS.md` | Pendiente conversación con Jesús antes de web/formulario/enlaces |
+
 **Ya resuelto (ChatGPT lo marcaba como pendiente — verificado en código):** title limpio sin V6.2 ✅ · canonical ✅ · robots.txt+sitemap (21 URLs) ✅ · Consent Mode v2 default `denied`→`granted` ✅ · GA4 `G-BK37V83363`+Ads `AW-586671676`+Meta Pixel (tras consentimiento) ✅ · eventos GA4 completos (`generate_lead`, `form_step_view`, `roi_*`, `whatsapp_*`, `section_view`) ✅ · captura UTM/`gclid`/`gbraid`/`wbraid` ✅ · honeypot `botcheck` ✅ · checkbox RGPD ✅ · `<noscript>` fallback ✅ · CSP sin `unsafe-inline` en script-src + HSTS + X-Frame-Options + Permissions-Policy ✅ · schema `RealEstateAgent`+`FAQPage`+`BlogPosting`+`BreadcrumbList`+`ItemList` ✅ · disclaimers de fuentes (M16) ✅ · hero con `preload`/`fetchpriority`/`srcset`/`width-height` ✅ · skip-link + `lang=es` + ARIA ✅ · ROI con disclaimer ✅ · identificación registral en legal (M14) ✅.
 
 **Falsos positivos de ChatGPT:** "V6.2 en el `<title>`" (no: limpio, solo en subject) · "Google Ads vacío / Meta Pixel ausente" (ambos configurados) · claims "garantiza" (son disclaimers "no garantizado") · "ROI muestra 0€ al cargar" (`calcROI()` se ejecuta al cargar, `app.js:658`).
@@ -98,6 +112,10 @@ nuevas** que sobreviven al contraste:
 ---
 
 ## Registro de actividad (tareas realizadas)
+
+### 2026-06-10 — Feedback UX web (FASE 7)
+- **M53–M58 ✅** — Mejoras de copy (rentabilidad por alquiler, exposición dólar), zonas dual pills, simulador (yield 15%, activo min 50k), fix navegación formulario paso 3, nueva opción plazo `capital-6m`. Preview variantes zonas en `public/guias/preview-zonas-inversion.html`.
+- **M52 ⬜** — Documento `docs/TOKENIZACION_NEXIS.md` creado; pendiente conversación con Jesús antes de enlaces públicos.
 
 ### 2026-06-09 — Auditoría técnica senior (F1–F13) + ejecución F2/F3
 - **Auditoría completa** documentada en `AUDITORIA_TECNICA_2026-06-09.md` (hallazgos F1–F13, plan por fases, checklist ejecutable, propuestas de código). Verificación de cabeceras/caché/redirecciones con `curl.exe -sI` contra producción.
