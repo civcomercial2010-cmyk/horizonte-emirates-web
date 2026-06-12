@@ -102,7 +102,7 @@ Dos rutas, ambas respetan el stack de hosting:
 |---|---|
 | **Categorías** | Páginas hub estáticas (`/blog/categoria-fiscalidad.html`) que listan artículos. Expresan topic cluster. |
 | **Tags** | Opcional y con moderación. Si se usan, `noindex` a las páginas de tag para evitar thin content. Mejor enlazado contextual que tags. |
-| **Autor** | Bloque de autor visible + `Person` en JSON-LD + página `/sobre/equipo.html`. **Crítico para EEAT en YMYL.** |
+| **Autor** | Bloque de autor visible en cada artículo + `Organization` en JSON-LD + identificación en `legal.html`. **Crítico para EEAT en YMYL.** |
 | **Fecha** | `datePublished` + `dateModified` en JSON-LD y visible. Actualizar `dateModified` al revisar (señal de frescura). |
 | **Breadcrumbs** | Visibles + `BreadcrumbList` JSON-LD (ya domináis el patrón en `proyectos.html`). |
 | **Schema** | `BlogPosting`/`Article` + `author`(Person) + `publisher`(Organization) + `FAQPage` cuando aplique. |
@@ -118,7 +118,7 @@ Dos rutas, ambas respetan el stack de hosting:
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"BlogPosting",
  "headline":"...","datePublished":"2026-...","dateModified":"2026-...",
- "author":{"@type":"Person","name":"...","jobTitle":"...","url":".../sobre/equipo.html"},
+ "author":{"@type":"Organization","name":"Horizonte Emirates","url":"https://www.horizonteemirates.com/"},
  "publisher":{"@type":"Organization","name":"Horizonte Emirates","logo":{"@type":"ImageObject","url":".../assets/logos/..."}},
  "mainEntityOfPage":".../blog/slug.html","image":".../assets/blog/slug.webp"}
 </script>
@@ -295,7 +295,7 @@ Modelo hub-and-spoke. Cada pilar es la URL canónica del tema; los artículos de
 
 ### EEAT — palancas concretas
 - **Experience:** casos reales anonimizados, "cómo lo hacemos", fotos propias de proyectos (ya tenéis assets en `/assets/projects/`).
-- **Expertise:** autor identificado con credenciales reales + página de equipo (`/sobre/equipo.html`) + `Person` JSON-LD.
+- **Expertise:** bloque de autor en artículos + identificación registral en `legal.html` + bloque confianza en home.
 - **Authoritativeness:** estudios/datos propios (dossier de mercado trimestral) → genera citaciones y backlinks; digital PR en medios hispanos de expatriación/inversión.
 - **Trust:** ya tenéis identificación registral (`legal.html`, Propulse SLU + NRT), partner RERA verificable, fuentes citadas (`#fuentes`), HTTPS/HSTS. **Falta prueba social verificable (M17)** → añadir testimonios con nombre/foto/resultado y casos de éxito.
 
@@ -339,7 +339,7 @@ Decisión de negocio (no técnica): definir si "crear empresa / corporate servic
 1. **Dar de alta el sitio en Google Search Console** y enviar el sitemap (si no está). Base de toda medición SEO.
 2. **Crear la estructura `/blog/` con índice + publicar las 2 primeras guías pilar** (HTML manual, plantilla §4). Desbloquea captación.
 3. **Validar el JSON-LD existente** en Rich Results Test (M31 parcial) — ya tenéis `FAQPage`/`ItemList`, asegurad rich snippets.
-4. **Añadir bloque de autor + página `/sobre/equipo.html`** con credenciales (palanca EEAT inmediata).
+4. **Mantener bloque de autor** en artículos y bloque confianza en home (palanca EEAT; sin página de equipo dedicada).
 5. **Lead magnet #1 (guía fiscal) en PDF + captura** conectado al funnel (resuelve M19).
 6. **Optimizar INP de la animación KPI** (M28) — último CWV pendiente.
 7. **Internal linking desde home y proyectos hacia los nuevos artículos** en cuanto existan.

@@ -459,6 +459,40 @@ document.getElementById('waf').addEventListener('submit',function(e){
   });
 })();
 
+// ── FAQ fiscal tabs (A04)
+(function initFaqFiscalTabs(){
+  const tabs=[...document.querySelectorAll('.faq-fiscal-tab')];
+  if(!tabs.length)return;
+  const panels={
+    es:document.getElementById('faq-fiscal-es'),
+    ad:document.getElementById('faq-fiscal-ad'),
+    latam:document.getElementById('faq-fiscal-latam')
+  };
+  function resizeOpenFaq(){
+    const open=document.querySelector('.faq-item.open .faq-a');
+    const inner=open&&open.querySelector('.faq-a-inner');
+    if(open&&inner)open.style.maxHeight=inner.scrollHeight+'px';
+  }
+  tabs.forEach(tab=>{
+    tab.addEventListener('click',()=>{
+      const key=tab.dataset.fiscalTab;
+      tabs.forEach(t=>{
+        const on=t===tab;
+        t.classList.toggle('active',on);
+        t.setAttribute('aria-selected',on?'true':'false');
+      });
+      Object.keys(panels).forEach(k=>{
+        const p=panels[k];
+        if(!p)return;
+        const on=k===key;
+        p.classList.toggle('active',on);
+        p.hidden=!on;
+      });
+      resizeOpenFaq();
+    });
+  });
+})();
+
 function initTicker(){
   const inner=document.getElementById('ticker-inner');
   if(!inner||inner.dataset.cloned)return;

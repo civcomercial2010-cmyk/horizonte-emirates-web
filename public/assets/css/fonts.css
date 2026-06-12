@@ -1,3 +1,21 @@
+/* A06/M31: métricas de fallback calibradas para reducir CLS al font-swap */
+@font-face {
+  font-family: 'Cormorant Garamond Fallback';
+  src: local('Georgia');
+  size-adjust: 98%;
+  ascent-override: 95%;
+  descent-override: 25%;
+  line-gap-override: 0%;
+}
+/* A06/M31: métricas de fallback calibradas para reducir CLS al font-swap */
+@font-face {
+  font-family: 'Cormorant Garamond Fallback';
+  src: local('Georgia');
+  size-adjust: 98%;
+  ascent-override: 95%;
+  descent-override: 25%;
+  line-gap-override: 0%;
+}
 /* latin-ext */
 @font-face {
   font-family: 'Cormorant Garamond';

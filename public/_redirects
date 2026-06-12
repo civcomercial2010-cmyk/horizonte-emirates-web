@@ -18,3 +18,5 @@
 /         /index.html         200
 /blog/    /blog/index.html    200
 /blog     /blog/index.html    200
+/sobre/equipo.html  /  301
+/sobre/equipo       /  301

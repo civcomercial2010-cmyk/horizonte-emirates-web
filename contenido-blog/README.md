@@ -17,8 +17,7 @@ contenido-blog/
 │   ├── impuestos-invertir-dubai-espana.md
 │   └── golden-visa-emiratos-guia.md
 └── paginas/                       ← fuente de hub y páginas fijas
-    ├── blog-index.md
-    └── sobre-equipo.md
+    └── blog-index.md
 ```
 
 Cada `.md` lleva **front-matter YAML** con los metadatos SEO. Ese front-matter es la base de la escalabilidad: si algún día se adopta un generador estático (Eleventy/Astro), estos `.md` se consumen tal cual sin reescribir nada. Mientras tanto, sirven de borrador y de registro.
@@ -98,7 +97,7 @@ Cada `.md` lleva **front-matter YAML** con los metadatos SEO. Ese front-matter e
 | Inversión | Hipoteca en Dubai para extranjeros | ⬜ |
 | Decisión | Errores al invertir en Dubai | ⬜ |
 
-**Total publicado: 16 artículos + hub + página de equipo (5 clusters: Inversión, Fiscalidad, Residencia & Visados, Empresa, Vida).**
+**Total publicado: 16 artículos + hub (5 clusters: Inversión, Fiscalidad, Residencia & Visados, Empresa, Vida).**
 
 Lista completa de 24 clusters y calendario de 12 meses: `docs/SEO_ESTRATEGIA.md`.
 

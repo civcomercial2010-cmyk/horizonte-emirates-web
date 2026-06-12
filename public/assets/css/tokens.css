@@ -7,6 +7,6 @@
 :root{
   --navy:#0D1B2A;
   --gold:#C4942A;
-  --serif:'Cormorant Garamond',Georgia,serif;
+  --serif:'Cormorant Garamond','Cormorant Garamond Fallback',Georgia,serif;
   --sans:'Inter',system-ui,sans-serif;
 }

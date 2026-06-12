@@ -24,7 +24,6 @@ public/                 # Lo único que se despliega (la web)
   proyectos.html        # Cartera de proyectos
   legal.html            # Aviso legal y privacidad
   blog/                 # Hub + 16 artículos SEO + créditos
-  sobre/equipo.html
   assets/               # css, js, fonts (self-host), img, projects, blog, logos, og
   _headers              # Cabeceras de seguridad + caché (fuente de verdad)
   _redirects            # Rewrites (raíz 200, hub de blog)
