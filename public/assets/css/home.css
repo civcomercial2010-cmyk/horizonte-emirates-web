@@ -438,6 +438,15 @@ h1 em{font-style:italic;color:var(--gold)}
 }
 
 /* ── TRUST / OBJECIONES (A11) ─────────────────── */
+/* Lead magnet (A12) */
+.cta-inline{background:linear-gradient(150deg,#fdfbf6,#f4efe4);border:1px solid var(--gold-bd);border-radius:6px;padding:36px 34px;text-align:center}
+.cta-inline .c-tag{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-text);margin-bottom:12px;display:block}
+.cta-inline h2{font-family:var(--serif);font-size:clamp(24px,3vw,32px);font-weight:500;line-height:1.18;color:var(--ink);margin-bottom:12px}
+.cta-inline p{font-size:16px;color:var(--muted);line-height:1.6;max-width:54ch;margin:0 auto 22px}
+.cta-inline .cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-outline{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--border);color:var(--ink);padding:15px 26px;border-radius:var(--r);transition:.2s;background:#fff}
+.btn-outline:hover{border-color:var(--gold-bd);color:var(--gold-text)}
+
 .trust-g{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
 .trust-card{background:#fff;border:1px solid var(--border);border-radius:6px;padding:30px 28px}
 .trust-card h3{font-family:var(--serif);font-size:clamp(24px,2.6vw,30px);font-weight:500;color:var(--ink);margin-bottom:12px;line-height:1.15}
@@ -986,6 +995,7 @@ footer{background:var(--navy-d);padding:60px 0 24px}
   .pain-col.left{border-right:none;border-bottom:1px solid var(--border)}
   .pain-col{padding:28px 22px}
   .compare-wrap{margin-top:14px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .cta-inline{padding:24px 22px}
   .trust-g{grid-template-columns:1fr}
   .strategy-g{grid-template-columns:1fr 1fr}
   .proc-g{grid-template-columns:1fr;gap:12px}

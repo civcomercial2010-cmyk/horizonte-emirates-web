@@ -5,17 +5,9 @@
 # se sirve /blog/index.html manteniendo la URL canónica /blog/ (sin redirección).
 # Los artículos /blog/<slug>.html ya funcionan como archivos directos (no se tocan).
 #
-# Nota F4 (REVISADA 2026-06-09, M31): el bloqueo histórico de "/ /index.html 200" era un
-# FALSO POSITIVO de wrangler ("Infinite loop" en una regla de path exacto), corregido en
-# workers-sdk PR #11904 (ene-2026). Con html_handling:"none", "/" NO sirve index.html por
-# sí solo: el rewrite 200 es la vía OFICIAL (docs Cloudflare) y NO redirige — la URL sigue
-# siendo "/", se mantienen _headers (CSP/HSTS) y el canonical. Mata el 301 que costaba
-# ~816ms en mobile (Lighthouse) y arregla el aviso "canonical" de SEO.
-# REQUIERE wrangler actualizado. Verificar tras deploy:
-#   curl -I https://www.horizonteemirates.com/   ->   debe responder 200 (no 301)
-# Si por la versión de wrangler reapareciera el 301, alternativa: Worker shim con
-# run_worker_first:["/"] que haga env.ASSETS.fetch("/index.html").
-/         /index.html         200
+# Raíz "/": el rewrite 200 NO funciona (Assets aplica 301 con precedencia, M49).
+# Solución: worker/index.js con run_worker_first:["/"] en wrangler.jsonc (A06/M31).
+# Verificar: curl -I https://www.horizonteemirates.com/  ->  200 (no 301)
 /blog/    /blog/index.html    200
 /blog     /blog/index.html    200
 /sobre/equipo.html  /  301

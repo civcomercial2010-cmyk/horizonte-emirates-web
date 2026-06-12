@@ -28,6 +28,7 @@ public/                 # Lo único que se despliega (la web)
   _headers              # Cabeceras de seguridad + caché (fuente de verdad)
   _redirects            # Rewrites (raíz 200, hub de blog)
   robots.txt, sitemap.xml, 404.html
+worker/index.js         # Shim: sirve / con 200 (sin 301 a index.html)
 wrangler.jsonc          # Config de despliegue Cloudflare
 ROADMAP_AUDITORIA.md    # Tablero de tareas (M-IDs) y auditorías
 contenido-blog/         # Fuentes .md de los artículos (no se publican)

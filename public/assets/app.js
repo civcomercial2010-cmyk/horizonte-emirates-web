@@ -184,7 +184,7 @@ function trackROIInteraction(){
 }
 
 function initSectionTracking(){
-  const trackedIds=['hero','para-quien','como','zonas-inversion','roi','form','faq'];
+  const trackedIds=['hero','para-quien','como','confianza','zonas-inversion','roi','guia-fiscal','form','faq'];
   const observer=new IntersectionObserver(entries=>{
     entries.forEach(entry=>{
       if(!entry.isIntersecting)return;
@@ -201,6 +201,18 @@ function initSectionTracking(){
   trackedIds.forEach(id=>{
     const el=document.getElementById(id);
     if(el)observer.observe(el);
+  });
+}
+
+function initLeadMagnetTracking(){
+  document.querySelectorAll('[data-he-lead-magnet]').forEach(el=>{
+    el.addEventListener('click',()=>{
+      trackGAEvent('lead_magnet_click',{
+        event_category:'engagement',
+        event_label:el.dataset.heLeadMagnet||'unknown',
+        lead_magnet:el.dataset.heLeadMagnet||'unknown'
+      });
+    });
   });
 }
 
@@ -702,6 +714,7 @@ calcROI();
 updProg(1);
 trackFormStep(1);
 initSectionTracking();
+initLeadMagnetTracking();
 captureUTM();
 
 // M25/M26 - listeners que sustituyen a los onclick/onchange inline (CSP sin unsafe-inline)
