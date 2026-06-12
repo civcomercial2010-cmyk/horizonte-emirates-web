@@ -101,6 +101,7 @@ Mejoras derivadas de revisión de usuario real (feedback amigo / tester).
 | M56 | Simulador: yield max 15%, precio activo min 50k + nota off-plan | ✅ | `index.html`, `home.css` | Coherente con FAQ (30k = entrada, no activo) |
 | M57 | Fix navegación atrás formulario (paso 3 → 1) | ✅ | `index.html`, `app.js` | `#btn-back` fuera de `#fs3`; flag `manualNav`; `heFormSave` en goTo |
 | M58 | Horizonte decisión: opción "Capital en menos de 6 meses" | ✅ | `index.html`, `app.js` | `data-v="capital-6m"`, score=3 |
+| M59 | Fix 301 raíz `/` → 200 sin redirect (A06/F4) | ⬜ | `worker/index.js`, `wrangler.jsonc`, `package.json` | Código listo (worker + `run_worker_first`). **Pendiente:** activar en Cloudflare (build `npm install && npm run deploy`) o `wrangler deploy` con `CLOUDFLARE_API_TOKEN`. Verificar: `curl -I https://www.horizonteemirates.com/` = 200 |
 | M52 | Documentar + evaluar tokenización (&lt;150k) vía Nexis | ⬜ | `docs/TOKENIZACION_NEXIS.md` | Pendiente conversación con Jesús antes de web/formulario/enlaces |
 
 **Ya resuelto (ChatGPT lo marcaba como pendiente — verificado en código):** title limpio sin V6.2 ✅ · canonical ✅ · robots.txt+sitemap (21 URLs) ✅ · Consent Mode v2 default `denied`→`granted` ✅ · GA4 `G-BK37V83363`+Ads `AW-586671676`+Meta Pixel (tras consentimiento) ✅ · eventos GA4 completos (`generate_lead`, `form_step_view`, `roi_*`, `whatsapp_*`, `section_view`) ✅ · captura UTM/`gclid`/`gbraid`/`wbraid` ✅ · honeypot `botcheck` ✅ · checkbox RGPD ✅ · `<noscript>` fallback ✅ · CSP sin `unsafe-inline` en script-src + HSTS + X-Frame-Options + Permissions-Policy ✅ · schema `RealEstateAgent`+`FAQPage`+`BlogPosting`+`BreadcrumbList`+`ItemList` ✅ · disclaimers de fuentes (M16) ✅ · hero con `preload`/`fetchpriority`/`srcset`/`width-height` ✅ · skip-link + `lang=es` + ARIA ✅ · ROI con disclaimer ✅ · identificación registral en legal (M14) ✅.
@@ -112,6 +113,11 @@ Mejoras derivadas de revisión de usuario real (feedback amigo / tester).
 ---
 
 ## Registro de actividad (tareas realizadas)
+
+### 2026-06-12 — Auditoría integral Fase 1–2
+- **Fase 1 ✅ desplegada** — copy legal (A07/A08), bloque confianza A11, CLS hero, FAQ fiscal multipaís, retiro `/sobre/equipo.html`, lead magnet A12 en home.
+- **M59 ⬜** — Fix 301 `/` apuntado como pendiente; worker en repo sin activar en edge.
+- **A10** — suavizado RAK revertido por decisión del usuario; se mantiene copy con escenario 20–35% + disclaimer.
 
 ### 2026-06-10 — Feedback UX web (FASE 7)
 - **M53–M58 ✅** — Mejoras de copy (rentabilidad por alquiler, exposición dólar), zonas dual pills, simulador (yield 15%, activo min 50k), fix navegación formulario paso 3, nueva opción plazo `capital-6m`. Preview variantes zonas en `public/guias/preview-zonas-inversion.html`.
@@ -211,7 +217,7 @@ Mejoras derivadas de revisión de usuario real (feedback amigo / tester).
 Doc completo en `docs/AUDITORIA_TECNICA_2026-06-09.md`. Veredicto global: estado BUENO a MUY BUENO; mejoras de higiene técnica fina. Lote **aplicado y desplegado** a producción (commits `ec135f2` + `b980ca9`); F1, F5, F9, F10, F11 verificados en vivo:
 
 - **M48 (F1) ✅:** caché larga inmutable para `/assets/*` en `public/_headers` (imágenes/fuentes/logos `immutable` 1 año; og 30 días; css/js 1 día + `stale-while-revalidate`). Reglas antes de `/*`; cabeceras de seguridad acumulativas. Verificar en vivo tras deploy con `curl.exe -sI .../assets/css/home.css`.
-- **M49 (F4) ✅ RESUELTO 2026-06-12 (A06):** el rewrite `/  /index.html  200` no funciona (Assets aplica 301 con precedencia). Fix: `worker/index.js` + `run_worker_first:["/"]` en `wrangler.jsonc` sirve `index.html` con 200 manteniendo la URL `/`. Verificar: `curl -I https://www.horizonteemirates.com/` → 200.
+- **M49 (F4) / M59 ⬜ PENDIENTE (A06):** el rewrite `/  /index.html  200` no funciona (Assets aplica 301 con precedencia). Fix preparado en repo: `worker/index.js` + `run_worker_first: true` en `wrangler.jsonc`. **No activo en producción** (Git auto-deploy publica solo `public/`). Pendiente: build Cloudflare `npm install && npm run deploy` o deploy manual con token. Verificar: `curl -I https://www.horizonteemirates.com/` → 200.
 - **M50 (F5) ✅:** labels `for`/`id` asociados en formularios de `index.html` (home: `f-nombre`, `f-email`, `phone-num`, `f-pais`; modal WA: `wam-n`, `wam-e`, `wam-ph`). Añadido `autocomplete` a nombre/email del home.
 - **M51 (F11) ✅:** `href` reales en `index.html`: wa-float a `wa.me/971554722025` (con `target`/`rel`; el JS sigue interceptando para abrir el modal) y logo del footer a `/`.
 - **M52 (F9) ✅:** `twitter:title` y `twitter:description` añadidos en 20 páginas (derivados de `og:title`/`og:description`). `legal.html` y `creditos.html` no tienen tarjetas OG/Twitter (páginas internas, fuera de alcance).

@@ -42,10 +42,10 @@ tools/                  # optimize_images.py + toolchain local de imágenes (img
 
 Deploy automático desde `push` a `main` (integración Git de Cloudflare).
 
-**Importante (fix `/` sin 301):** el worker `worker/index.js` solo se activa si el build de Cloudflare
-ejecuta `npx wrangler deploy` (no basta con publicar solo `public/`). En el dashboard de Cloudflare
-→ Workers & Pages → tu proyecto → Settings → Builds: comando de build `npm install && npm run deploy`.
-Sin eso, `/` seguirá en 301→`/index.html` aunque el HTML esté actualizado.
+**Pendiente (M59 — fix `/` sin 301):** el worker `worker/index.js` está en el repo pero **no activo**
+en producción. El auto-deploy de Git publica solo `public/`; hace falta build
+`npm install && npm run deploy` en Cloudflare (Settings → Builds) o deploy manual con token.
+Hasta entonces `/` sigue en 301→`/index.html`.
 
 Deploy manual (requiere `CLOUDFLARE_API_TOKEN`):
 
