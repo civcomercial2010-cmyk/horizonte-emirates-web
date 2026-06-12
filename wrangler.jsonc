@@ -15,6 +15,6 @@
     "not_found_handling": "404-page",
     // El router de Assets aplica 301 de / → /index.html con precedencia sobre _redirects.
     // El worker intercepta solo "/" y sirve index.html con 200 (A06/M31).
-    "run_worker_first": ["/"]
+    "run_worker_first": true
   }
 }

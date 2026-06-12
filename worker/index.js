@@ -7,7 +7,10 @@ export default {
     const url = new URL(request.url);
     if (url.pathname === '/' || url.pathname === '') {
       const indexUrl = new URL('/index.html', url.origin);
-      return env.ASSETS.fetch(new Request(indexUrl, request));
+      const res = await env.ASSETS.fetch(new Request(indexUrl, request));
+      const headers = new Headers(res.headers);
+      headers.set('X-HE-Root', 'worker');
+      return new Response(res.body, { status: 200, headers });
     }
     return env.ASSETS.fetch(request);
   },
