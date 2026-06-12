@@ -45,7 +45,7 @@ window.addEventListener('scroll',()=>{
 const SCORES={
   capital:{'150k-300k':1,'300k-600k':2,'600k-1M':3,'mas1M':4},
   objetivo:{'alquiler':3,'revalorizacion':3,'diversificacion':2,'residencia':1},
-  plazo:{'ya':4,'capital-6m':3,'6meses':3,'12meses':2,'indefinido':1},
+  plazo:{'ya':4,'6meses':3,'12meses':2,'indefinido':1},
   viaje:{'si':2,'quizas':1,'no':0}
 };
 let cur=1,sel={capital:null,objetivo:null,plazo:null,viaje:null};
