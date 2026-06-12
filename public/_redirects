@@ -5,9 +5,9 @@
 # se sirve /blog/index.html manteniendo la URL canónica /blog/ (sin redirección).
 # Los artículos /blog/<slug>.html ya funcionan como archivos directos (no se tocan).
 #
-# Raíz "/": el rewrite 200 NO funciona (Assets aplica 301 con precedencia, M49).
-# Solución: worker/index.js con run_worker_first:["/"] en wrangler.jsonc (A06/M31).
+# Raíz "/": rewrite 200 (Pages) + worker/index.js (Workers Assets, A06/M31).
 # Verificar: curl -I https://www.horizonteemirates.com/  ->  200 (no 301)
+/         /index.html         200
 /blog/    /blog/index.html    200
 /blog     /blog/index.html    200
 /sobre/equipo.html  /  301
