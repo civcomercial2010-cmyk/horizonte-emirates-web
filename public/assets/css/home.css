@@ -137,7 +137,7 @@ html.reduce-motion .reveal-stagger > *{
   filter:none!important;
   transition:none!important;
 }
-html.reduce-motion .ticker-inner{animation:none!important}
+html.reduce-motion .ticker-inner{animation:none!important;flex-wrap:nowrap!important;width:100%!important;justify-content:center!important}
 .section{padding-block:var(--space-2xl)}
 .section.alt{background:var(--warm2)}
 .sh{margin-bottom:var(--space-lg)}
@@ -294,8 +294,11 @@ h1 em{font-style:italic;color:var(--gold)}
 .ticker-inner:hover{animation-play-state:paused}
 .ticker-line{display:inline-block;padding:11px 56px;font-size:15px;font-weight:600;letter-spacing:.04em;white-space:nowrap}
 @keyframes ticker-marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+/* Sin animación: una sola línea centrada (rotación vía JS en initTicker) */
+.ticker-static,.ticker-static.ticker-inner{width:100%!important;justify-content:center;flex-wrap:nowrap!important;animation:none!important}
+.ticker-static .ticker-line{width:100%;text-align:center;padding:11px 20px}
 @media (prefers-reduced-motion:reduce){
-  .ticker-inner{animation:none;justify-content:center;flex-wrap:wrap;width:auto;margin:0 auto}
+  .ticker-inner{animation:none;justify-content:center;flex-wrap:nowrap;width:100%}
 }
 
 /* ── FILTER SECTION ──────────────────────────── */

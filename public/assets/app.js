@@ -507,11 +507,24 @@ document.getElementById('waf').addEventListener('submit',function(e){
 
 function initTicker(){
   const inner=document.getElementById('ticker-inner');
-  if(!inner||inner.dataset.cloned)return;
+  if(!inner||inner.dataset.initialized)return;
   const lines=Array.from(inner.querySelectorAll('.ticker-line'));
   if(!lines.length)return;
+  const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce){
+    inner.classList.add('ticker-static');
+    lines.forEach(function(l,i){l.hidden=i!==0;});
+    let idx=0;
+    setInterval(function(){
+      lines[idx].hidden=true;
+      idx=(idx+1)%lines.length;
+      lines[idx].hidden=false;
+    },4500);
+    inner.dataset.initialized='1';
+    return;
+  }
   lines.forEach(function(l){inner.appendChild(l.cloneNode(true));});
-  inner.dataset.cloned='1';
+  inner.dataset.initialized='1';
 }
 
 function fmtEUR(n){
