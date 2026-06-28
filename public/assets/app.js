@@ -286,7 +286,9 @@ document.getElementById('mainform').addEventListener('submit',function(e){
   document.getElementById('h-score').value=score;
   const pais=this.querySelector('[name="pais"]').value||'';
   const nombre=(this.querySelector('[name="nombre"]')?.value||'').trim();
-  document.getElementById('f-sub').value=`[${tier}|${score}pts] Lead HE · ${pais}`;
+  // El asunto debe contener un marcador estable que reconozca isHorizonteWeb3Lead del Apps Script:
+  // «[A|Xpts]», «Lead HE» y «Horizonte Emirates». No quitar ninguno sin actualizar el detector (regresión c3fdeb6).
+  document.getElementById('f-sub').value=`[${tier}|${score}pts] Lead HE · ${pais} · Horizonte Emirates`;
   document.getElementById('f-reply').value=emailVal;
   const btn=document.getElementById('btn-sub');
   btn.disabled=true;btn.textContent='Enviando...';

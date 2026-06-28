@@ -43,7 +43,9 @@ const CONFIG = {
     'no más correos', 'no mas correos', 'cancelar suscripción', 'cancelar suscripcion',
     'stop', 'unsubscribe',
   ],
-  // Palabras clave para confirmar que el email es de Horizonte Emirates (además, isHorizonteWeb3Lead detecta «Lead HE Vn» en asunto).
+  // Palabras clave para confirmar que el email es de Horizonte Emirates. Además, isHorizonteWeb3Lead
+  // detecta el marcador de scoring del asunto «[A|11pts]» y «Lead HE» (con o sin versión Vn), que son
+  // los identificadores estables del embudo aunque cambie el texto del asunto del formulario.
   POLL_KEYWORDS:   ['Horizonte Emirates', 'HE V6', 'HE V5', 'HE V3', 'HE V2'],
   TEST_MODE:       false, // true → simula sin enviar emails reales
   /**
@@ -399,7 +401,12 @@ function isHorizonteWeb3Lead(subject, body) {
   const blob = s + '\n' + b;
   if (CONFIG.POLL_KEYWORDS.some(kw => s.includes(kw) || b.includes(kw))) return true;
   if (/Horizonte\s+Emirates/i.test(blob)) return true;
-  if (/\bLead\s+HE\s+V\d+\b/i.test(s)) return true;
+  // Marcador de scoring del embudo en el asunto: «[A|11pts]», «[B|7pts]», «[C|3pts]».
+  // Es el identificador más estable del funnel: no depende de la versión (Vn) ni del país,
+  // así que un retoque del asunto del formulario no vuelve a romper la captación (regresión c3fdeb6).
+  if (/\[\s*[ABC]\s*\|\s*\d+\s*pts\s*\]/i.test(s)) return true;
+  // «Lead HE» con o sin versión: cubre asuntos nuevos «Lead HE · País» y antiguos «Lead HE Vn».
+  if (/\bLead\s+HE\b/i.test(s)) return true;
   return false;
 }
 
@@ -722,15 +729,18 @@ function forzarPollGmail() {
 }
 
 /**
- * RECUPERACIÓN: procesa TODOS los threads Web3Forms de los últimos 7 días,
- * incluyendo los ya etiquetados. Guarda en Sheets cualquier lead que no exista aún.
- * Usar una sola vez después de actualizar el script en Apps Script.
+ * RECUPERACIÓN: procesa TODOS los threads Web3Forms recientes, incluyendo los ya
+ * etiquetados y los marcados como leídos. Guarda en Sheets cualquier lead que no exista aún
+ * y dispara su email de bienvenida. Usar después de actualizar el script en Apps Script.
+ * @param {number} [days=30] — ventana de búsqueda hacia atrás. Por defecto 30 días para cubrir
+ *   la regresión c3fdeb6 (asunto sin «V6» → detección rota desde 2026-06-08). Ej.: recuperarLeadsPerdidos(45).
  */
-function recuperarLeadsPerdidos() {
-  const q = 'from:web3forms.com newer_than:7d';
-  let threads = GmailApp.search(q, 0, 50);
+function recuperarLeadsPerdidos(days) {
+  const lookback = Math.max(1, parseInt(days, 10) || 30);
+  const q = 'from:web3forms.com newer_than:' + lookback + 'd';
+  let threads = GmailApp.search(q, 0, 100);
   if (!threads.length) {
-    Logger.log('recuperarLeadsPerdidos: sin hilos Web3Forms en los últimos 7 días');
+    Logger.log('recuperarLeadsPerdidos: sin hilos Web3Forms en los últimos ' + lookback + ' días');
     return;
   }
   sortThreadsByLatestMessage(threads);
