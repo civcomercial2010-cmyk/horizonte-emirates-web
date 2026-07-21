@@ -11,3 +11,9 @@ Diario actividad proyecto/
 
 # Toolchain local de procesamiento de imágenes (no en producción)
 tools/imgproc/
+
+# Dependencias de Node (wrangler). Se reinstalan con npm install
+node_modules/
+
+# Capturas de depuración generadas en la raíz durante pruebas locales
+/ticker-*.png

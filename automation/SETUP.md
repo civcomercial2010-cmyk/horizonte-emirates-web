@@ -209,3 +209,34 @@ En Apps Script, editar `previewEmail('A1')` y luego usar `sendEmail('A1', leadDe
 - Cuando se migre a ActiveCampaign (actualizar arquitectura)
 - Cuando se añada un nuevo canal de captación (actualizar POLL_QUERY si cambia el formato del subject)
 - Cuando se modifiquen los tiers o el scoring (actualizar tabla de scoring y secuencias)
+
+---
+
+## Guardián del funnel (`horizonte-guardian.gs`)
+
+Archivo independiente que vigila que ningún lead se pierda. **No modifica nada**: solo lee Gmail y el Sheet, y envía un informe. `horizonte-emails.gs` no se toca, así que instalarlo o retirarlo no puede romper el motor de emails.
+
+### Instalación (una sola vez)
+
+1. Apps Script del proyecto → `+` junto a Archivos → Secuencia de comandos → nombrarlo `horizonte-guardian`.
+2. Pegar el contenido de `automation/horizonte-guardian.gs` y guardar.
+3. Ejecutar `guardianProbar()` → llega un informe inmediato. Sirve para validar que todo funciona antes de programarlo.
+4. Ejecutar `guardianCrearTrigger()` → queda programado cada 2 días a las 8:00.
+
+Para retirarlo: `guardianBorrarTrigger()`. Solo borra su propio trigger, no toca los del motor.
+
+### Qué contiene el informe
+
+| Categoría | Significado | Acción |
+|---|---|---|
+| Leads correctos | Aviso recibido y lead en el CRM | Ninguna |
+| Leads perdidos | Es lead, se interpreta, pero no está en el CRM | Ejecutar `recuperarLeadsPerdidos(5)` |
+| Sospechosos | El detector lo descarta pero parece un lead | Revisar `isHorizonteWeb3Lead`: `recuperarLeadsPerdidos` NO los recupera |
+| No interpretables | Pasa el detector pero no se le saca el email | Revisar el formato del aviso |
+| Descartados | Correos de Web3Forms que no son leads | Ninguna |
+
+La categoría **Sospechosos** es la que cubre el agujero de la regresión de junio de 2026: usa una heurística propia (presencia de campos del formulario) en lugar del detector oficial, de modo que si el detector vuelve a romperse, el guardián sí lo ve.
+
+### Ajustes
+
+Todo en la constante `GUARDIAN_CFG` al principio del archivo: días analizados (5), días entre informes (2), hora de envío (8), destinatario (por defecto el de los briefings) y si debe avisar también cuando todo está correcto (sí).
