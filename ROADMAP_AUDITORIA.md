@@ -3,7 +3,14 @@
 Tablero vivo derivado de la auditoría senior (web + funnel + negocio).
 Estado: ✅ hecho · 🟡 en curso · ⬜ pendiente · 🔒 bloqueado (terceros)
 
-_Última actualización: 2026-06-10_
+_Última actualización: 2026-07-21_
+
+> **Revisión del 2026-07-21 contra producción.** Verificado con `curl` y sobre el repo:
+> - **M59 / M49 (F4) ✅ RESUELTO**: `curl -I https://www.horizonteemirates.com/` devuelve **200 sin redirect**. El worker está activo en el edge. El tablero lo daba por pendiente.
+> - **F6 ✅ HECHO**: `public/assets/common.js` existe y lo cargan 19 páginas. Figuraba a la vez como hecho (registro 09/06) y como diferido: se corrige.
+> - **Caché y HSTS ✅ vivos**: `max-age=86400 + stale-while-revalidate` en CSS, HSTS a 1 año.
+> - **Sin beacon de Cloudflare Web Analytics** en el HTML servido, así que el lastre de Best Practices de M31 puede haber desaparecido: hay que volver a medir antes de actuar.
+> - **Colisión de IDs**: M52, M53 y M54 están usados dos veces (FASE 7 de junio-10 reutilizó números de la auditoría técnica de junio-09). No renumerar retroactivamente; usar M60+ para lo nuevo.
 
 ---
 
@@ -11,12 +18,12 @@ _Última actualización: 2026-06-10_
 
 | ID | Mejora | H | Estado | Nota |
 |---|---|---|---|---|
-| M01 | Firmar Referral Agreement con RRS (tail, atribución, no-circumvention, % base) | H01 | 🟡 | Borrador validado; firma prevista semana del 09/06. Ampliación de objeto social ya realizada |
+| M01 | Firmar Referral Agreement con RRS (tail, atribución, no-circumvention, % base) | H01 | 🟡 | **21/07:** RRS firmó el 13/07 (efectivo 01/07). Falta la **contrafirma de Propulse** y el **anexo de comisiones**: el 3% pactado cubre solo NH Collection Al Marjan. Tail conseguido: 36 meses. Registro del grupo verificado (RERA/ORN 16084). Detalle en `06_contrato_rrs.md` |
 | M02 | Verificar que el Google Sheet de leads es privado | H06 | ✅ | Confirmado: sin acceso en incógnito |
 | M03 | Mover `SPREADSHEET_ID` + email del agente a Script Properties | H06 | ✅ | **Cerrada.** Properties `HE_SPREADSHEET_ID`/`HE_AGENT_EMAIL` creadas en "HE Email Automation", código pegado y verificado. Telegram está en proyecto Apps Script aparte → repetir properties allí al activarlo |
 | M04 | Activar la conversión de Google Ads | H03 | ✅ | Resuelto por vía A (importación GA4→Ads). `ADS_CONVERSION_LABEL` queda vacío a propósito (no se usa etiqueta nativa, evita doble conteo) |
 | M05 | Mapear `value` de `generate_lead` a € por tier | H07 | ✅ | `LEAD_VALUE_EUR={A:300,B:120,C:40}` aplicado a GA4 + Ads + Meta |
-| M06 | Vincular GA4 ↔ Ads e importar `generate_lead` | — | ✅ | `generate_lead` (GA4) importado y como conversión **Principal** en Ads (objetivo "Envío de formulario para clientes potenciales"). Pendiente menor: dejar SOLO esa acción como principal |
+| M06 | Vincular GA4 ↔ Ads e importar `generate_lead` | — | ✅ | **Cerrada 2026-07-21.** `generate_lead` (GA4) es la **única** conversión principal en Ads; retirada la acción duplicada "Formulario de contacto - Enviar". Fin del doble conteo: Smart Bidding optimiza ya contra una señal limpia |
 
 ## FASE 1 — Cierre de fugas y validación E2E
 | ID | Mejora | H | Estado |
@@ -101,7 +108,7 @@ Mejoras derivadas de revisión de usuario real (feedback amigo / tester).
 | M56 | Simulador: yield max 15%, precio activo min 50k + nota off-plan | ✅ | `index.html`, `home.css` | Coherente con FAQ (30k = entrada, no activo) |
 | M57 | Fix navegación atrás formulario (paso 3 → 1) | ✅ | `index.html`, `app.js` | `#btn-back` fuera de `#fs3`; flag `manualNav`; `heFormSave` en goTo |
 | M58 | Horizonte decisión: opción "Capital en menos de 6 meses" | ✅ | `index.html`, `app.js` | `data-v="capital-6m"`, score=3 |
-| M59 | Fix 301 raíz `/` → 200 sin redirect (A06/F4) | ⬜ | `worker/index.js`, `wrangler.jsonc`, `package.json` | Código listo (worker + `run_worker_first`). **Pendiente:** activar en Cloudflare (build `npm install && npm run deploy`) o `wrangler deploy` con `CLOUDFLARE_API_TOKEN`. Verificar: `curl -I https://www.horizonteemirates.com/` = 200 |
+| M59 | Fix 301 raíz `/` → 200 sin redirect (A06/F4) | ✅ | `worker/index.js`, `wrangler.jsonc`, `package.json` | **Cerrada 2026-07-21.** Verificado en vivo: `curl -I https://www.horizonteemirates.com/` devuelve **200, 0 redirects, 0,26 s**. El worker está activo en el edge. Cierra también el lastre de SEO y los 816 ms de M31 |
 | M52 | Documentar + evaluar tokenización (&lt;150k) vía Nexis | ⬜ | `docs/TOKENIZACION_NEXIS.md` | Pendiente conversación con Jesús antes de web/formulario/enlaces |
 
 **Ya resuelto (ChatGPT lo marcaba como pendiente — verificado en código):** title limpio sin V6.2 ✅ · canonical ✅ · robots.txt+sitemap (21 URLs) ✅ · Consent Mode v2 default `denied`→`granted` ✅ · GA4 `G-BK37V83363`+Ads `AW-586671676`+Meta Pixel (tras consentimiento) ✅ · eventos GA4 completos (`generate_lead`, `form_step_view`, `roi_*`, `whatsapp_*`, `section_view`) ✅ · captura UTM/`gclid`/`gbraid`/`wbraid` ✅ · honeypot `botcheck` ✅ · checkbox RGPD ✅ · `<noscript>` fallback ✅ · CSP sin `unsafe-inline` en script-src + HSTS + X-Frame-Options + Permissions-Policy ✅ · schema `RealEstateAgent`+`FAQPage`+`BlogPosting`+`BreadcrumbList`+`ItemList` ✅ · disclaimers de fuentes (M16) ✅ · hero con `preload`/`fetchpriority`/`srcset`/`width-height` ✅ · skip-link + `lang=es` + ARIA ✅ · ROI con disclaimer ✅ · identificación registral en legal (M14) ✅.
@@ -229,7 +236,7 @@ Doc completo en `docs/AUDITORIA_TECNICA_2026-06-09.md`. Veredicto global: estado
 - **M56 (F3) 🟡:** HSTS fijado a `max-age=31536000` (1 año) en `_headers`, máximo del plan free de Cloudflare y alineado con lo que se sirve en vivo (ya no hay desajuste archivo/producción). 1 año cumple el mínimo de la preload list. Pendiente solo: registrar el dominio en hstspreload.org.
 
 ### Diferido (Fase 3/4 de la auditoría, mayor esfuerzo)
-- **F6 ⬜:** extraer `common.js` (de-dup de menú móvil, nav-auto-hide, UTM, FAQ entre `app.js`/`proyectos.js`/`blog.js`).
+- **F6 ✅ (cerrada, verificado 2026-07-21):** `public/assets/common.js` existe (menú móvil + nav-auto-hide) y lo cargan 19 páginas. Estaba duplicado como hecho y como diferido.
 - **F12 ⬜:** fingerprint/versionado de assets (habilita subir css/js a `immutable` 1 año).
 - **F8 ⬜:** retirar `style-src 'unsafe-inline'` migrando estilos inline a clases.
 - **F13 ⬜:** Conversions API server-side (Meta/Google) + dashboard de funnel.
