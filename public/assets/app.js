@@ -351,7 +351,7 @@ document.getElementById('mainform').addEventListener('submit',function(e){
         event_label:'web3forms_rejected'
       });
       showStatus('err',d.message||'No se pudo enviar el formulario. Inténtalo de nuevo.');
-      btn.disabled=false;btn.textContent='Solicitar análisis personalizado →';
+      btn.disabled=false;btn.textContent='Solicitar análisis gratuito →';
     }
   }).catch(()=>{
     trackGAEvent('lead_submit_error',{
@@ -359,7 +359,7 @@ document.getElementById('mainform').addEventListener('submit',function(e){
       event_label:'network_error'
     });
     showStatus('err','Error de conexión. Revisa tu conexión e inténtalo de nuevo.');
-    btn.disabled=false;btn.textContent='Solicitar análisis personalizado →';
+    btn.disabled=false;btn.textContent='Solicitar análisis gratuito →';
   });
 });
 
