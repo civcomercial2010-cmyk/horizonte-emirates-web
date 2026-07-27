@@ -11,8 +11,14 @@ gtag('consent', 'default', {
   analytics_storage: 'denied',
   ad_user_data: 'denied',
   ad_personalization: 'denied',
+  personalization_storage: 'denied',
+  functionality_storage: 'granted',   // técnica: no requiere consentimiento
+  security_storage: 'granted',        // seguridad y antifraude: no requiere consentimiento
   wait_for_update: 500
 });
+// Sin consentimiento publicitario, Google elimina los identificadores de clic
+// de los pings de conversión (no se envía gclid ni dato asociable).
+gtag('set', 'ads_data_redaction', true);
 gtag('js', new Date());
 gtag('config', 'G-BK37V83363');
 gtag('config', 'AW-586671676');

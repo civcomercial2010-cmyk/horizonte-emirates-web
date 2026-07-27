@@ -576,9 +576,22 @@
               <li>Orientación sobre los puntos fiscales clave según su país de residencia</li>
             </ul>
           </div>
+          <!-- Información básica en capa 1 (art. 13 RGPD). El texto de las casillas se registra
+               literalmente en el envío: si se modifica, subir CONSENT_VERSION en app.js. -->
+          <div class="gdpr-basic">
+            <strong>Responsable:</strong> Propulse SLU (Andorra), marca Horizonte Emirates.
+            <strong>Finalidad:</strong> atender su solicitud de análisis de inversión y contactarle por el canal que elija.
+            <strong>Destinatarios:</strong> nuestro socio inmobiliario en Emiratos Árabes Unidos, país que no cuenta con decisión de adecuación de la Unión Europea, para elaborar la selección de inmuebles.
+            <strong>Derechos:</strong> acceso, rectificación, supresión, oposición y portabilidad escribiendo a <a href="mailto:hola@horizonteemirates.com">hola@horizonteemirates.com</a>.
+            Detalle completo en la <a href="legal.html#politica-privacidad" target="_blank" rel="noopener">política de privacidad</a>.
+          </div>
           <div class="gdpr">
-            <input type="checkbox" id="gdpr-cb"/>
-            <label for="gdpr-cb">He leído y acepto la <a href="legal.html#politica-privacidad" target="_blank" rel="noopener">política de privacidad</a>. Autorizo a Horizonte Emirates a contactarme con información sobre inversión inmobiliaria en UAE.</label>
+            <input type="checkbox" id="gdpr-cb" name="consentimiento_privacidad" value="SI" required/>
+            <label for="gdpr-cb">He leído y acepto la <a href="legal.html#politica-privacidad" target="_blank" rel="noopener">política de privacidad</a> y consiento que mis datos se comuniquen al socio de Horizonte Emirates en Emiratos Árabes Unidos para preparar mi análisis de inversión. <span class="gdpr-req">Obligatorio</span></label>
+          </div>
+          <div class="gdpr">
+            <input type="checkbox" id="gdpr-mkt" name="consentimiento_marketing" value="SI"/>
+            <label for="gdpr-mkt">Además, deseo recibir información comercial sobre oportunidades inmobiliarias en Emiratos por email o WhatsApp. <span class="gdpr-opt">Opcional, puede retirarlo en cualquier momento</span></label>
           </div>
           <p class="priv">Sin llamadas sin previo aviso. Solo el canal que usted elija.</p>
           <p class="form-fiscal-note">La fiscalidad depende de su país de residencia. Horizonte Emirates no presta asesoramiento fiscal ni jurídico.</p>
@@ -812,9 +825,16 @@
         </div>
       </div>
       <div class="wam-f">
+        <p class="wam-basic">Responsable Propulse SLU (Andorra). Finalidad atenderle por WhatsApp y preparar su análisis de inversión. Destinatarios nuestro socio inmobiliario en Emiratos Árabes Unidos, país sin decisión de adecuación de la UE. Derechos en <a href="mailto:hola@horizonteemirates.com">hola@horizonteemirates.com</a>.</p>
         <label style="display:flex;gap:8px;align-items:flex-start;">
-          <input type="checkbox" id="wam-gdpr"/>
-          <span>He leído y acepto la <a href="legal.html#politica-privacidad" target="_blank" rel="noopener">política de privacidad</a>. Autorizo a Horizonte Emirates a contactarme.</span>
+          <input type="checkbox" id="wam-gdpr" required/>
+          <span>He leído y acepto la <a href="legal.html#politica-privacidad" target="_blank" rel="noopener">política de privacidad</a> y consiento que mis datos se comuniquen al socio de Horizonte Emirates en Emiratos Árabes Unidos. <span class="gdpr-req">Obligatorio</span></span>
+        </label>
+      </div>
+      <div class="wam-f">
+        <label style="display:flex;gap:8px;align-items:flex-start;">
+          <input type="checkbox" id="wam-mkt"/>
+          <span>Además, deseo recibir información comercial sobre oportunidades inmobiliarias en Emiratos. <span class="gdpr-opt">Opcional</span></span>
         </label>
       </div>
       <div class="wam-err" id="wam-err"></div>

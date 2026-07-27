@@ -186,6 +186,9 @@ function buildLeadBriefingText(lead) {
     'Origen: ' + (lead.origen || ''),
     'Estado: ' + (lead.estado || ''),
     'Notas: ' + (lead.notas || ''),
+    'Consent privacidad: ' + (lead.cons_privacidad || 'sin registro'),
+    'Consent marketing: ' + (lead.cons_marketing || 'sin registro'),
+    'Consent fecha: ' + (lead.cons_fecha || ''),
   ].join('\n');
 }
 
@@ -633,6 +636,12 @@ function parseLeadFromEmail(body, subject) {
       case 'gclid':                         lead.gclid       = val; break;
       case 'gbraid':                        lead.gbraid      = val; break;
       case 'wbraid':                        lead.wbraid      = val; break;
+      // Prueba del consentimiento (art. 7.1 RGPD). Los envía app.js en cada formulario.
+      case 'consentimiento_privacidad':     lead.cons_privacidad = val; break;
+      case 'consentimiento_marketing':      lead.cons_marketing  = val; break;
+      case 'consentimiento_version':        lead.cons_version    = val; break;
+      case 'consentimiento_fecha':          lead.cons_fecha      = val; break;
+      case 'consentimiento_texto':          lead.cons_texto      = val; break;
     }
   });
 
@@ -851,6 +860,13 @@ function saveLead(data) {
     data.gclid       || '',
     data.gbraid      || '',
     data.wbraid      || '',
+    // Columnas 26-30: prueba del consentimiento. No borrar ni reordenar: son la
+    // evidencia frente a una reclamación (art. 7.1 RGPD).
+    data.cons_privacidad || '',
+    data.cons_marketing  || '',
+    data.cons_version    || '',
+    data.cons_fecha      || '',
+    data.cons_texto      || '',
   ]);
   const r = sh.getLastRow();
   sh.getRange(r, 4).setNumberFormat('@');
@@ -1505,7 +1521,9 @@ function initSheets() {
     sh.appendRow(['ID','Nombre','Email','Teléfono','País','Capital','Objetivo',
                   'Experiencia','Plazo','Viaje Dubai','Puntuación','Tier','Canal',
                   'Origen','Fecha creación','Estado','Notas','UTM Source','UTM Medium',
-                  'UTM Campaign','UTM Content','UTM Term','GCLID','GBRAID','WBRAID']);
+                  'UTM Campaign','UTM Content','UTM Term','GCLID','GBRAID','WBRAID',
+                  'Consent privacidad','Consent marketing','Consent versión',
+                  'Consent fecha','Consent texto']);
     sh.setFrozenRows(1);
     sh.getRange('1:1').setFontWeight('bold').setBackground('#0D1B2A').setFontColor('#ffffff');
     sh.setColumnWidth(1,90);sh.setColumnWidth(2,140);sh.setColumnWidth(3,200);
@@ -1522,6 +1540,50 @@ function initSheets() {
   }
 
   Logger.log('✓ Hojas inicializadas: Leads + Cola');
+}
+
+/**
+ * Migración de la hoja Leads ya existente: añade las 5 columnas de prueba del
+ * consentimiento (26-30) si aún no están. Ejecutar UNA vez tras desplegar el
+ * formulario con consentimiento separado. Es idempotente.
+ */
+function migrarColumnasConsentimiento() {
+  const NUEVAS = ['Consent privacidad','Consent marketing','Consent versión',
+                  'Consent fecha','Consent texto'];
+  const sh = getSheet('Leads');
+  const lastCol = sh.getLastColumn();
+  const headers = sh.getRange(1, 1, 1, lastCol).getValues()[0].map(h => String(h).trim());
+
+  if (headers.indexOf(NUEVAS[0]) !== -1) {
+    Logger.log('migrarColumnasConsentimiento: ya migrada, no se toca nada.');
+    return;
+  }
+  if (lastCol < 25) {
+    Logger.log('migrarColumnasConsentimiento: ABORTADA. La hoja tiene ' + lastCol +
+               ' columnas y se esperaban 25 (hasta WBRAID). Revisar antes de continuar.');
+    return;
+  }
+
+  sh.getRange(1, 26, 1, NUEVAS.length).setValues([NUEVAS]);
+  sh.getRange(1, 26, 1, NUEVAS.length)
+    .setFontWeight('bold').setBackground('#0D1B2A').setFontColor('#ffffff');
+  sh.setColumnWidth(26, 110);
+  sh.setColumnWidth(27, 110);
+  sh.setColumnWidth(28, 100);
+  sh.setColumnWidth(29, 150);
+  sh.setColumnWidth(30, 320);
+
+  // Los leads anteriores a esta versión no tienen prueba registrable: se marcan
+  // como tales en lugar de dejarlos en blanco, para poder distinguirlos.
+  const filas = sh.getLastRow() - 1;
+  if (filas > 0) {
+    const marca = [];
+    for (let i = 0; i < filas; i++) {
+      marca.push(['SIN REGISTRO', 'SIN REGISTRO', 'pre-v2', '', 'Lead anterior al registro de consentimiento (jul-2026). Casilla marcada en el formulario, sin evidencia almacenada.']);
+    }
+    sh.getRange(2, 26, filas, NUEVAS.length).setValues(marca);
+  }
+  Logger.log('✓ Columnas de consentimiento añadidas. Filas marcadas como pre-v2: ' + filas);
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1630,6 +1692,8 @@ function getLeadByEmail(email) {
       canal: r[12], origen: r[13], createdAt: r[14], estado: r[15], notas: r[16],
       utm_source: r[17], utm_medium: r[18], utm_campaign: r[19], utm_content: r[20], utm_term: r[21],
       gclid: r[22], gbraid: r[23], wbraid: r[24],
+      cons_privacidad: r[25], cons_marketing: r[26], cons_version: r[27],
+      cons_fecha: r[28], cons_texto: r[29],
     };
   }
 

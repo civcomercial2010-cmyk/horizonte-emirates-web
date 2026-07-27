@@ -6,6 +6,40 @@ const ADS_CONVERSION_ID='AW-586671676';
 const ADS_CONVERSION_LABEL=''; // M04 - pega aquí la etiqueta de la conversión nativa de Google Ads (formato AbCdEfGhIjk) SOLO si NO importas generate_lead desde GA4. Vacío = no dispara la nativa (evita doble conteo si usas la vía GA4→Ads).
 // M05 - valor económico estimado del lead por tier (para Smart Bidding / ROAS). Ajustable.
 const LEAD_VALUE_EUR={A:300,B:120,C:40};
+
+/* ── PRUEBA DEL CONSENTIMIENTO (art. 7.1 RGPD) ─────────────────────────────
+ * El texto literal que acepta el lead viaja en el envío junto a la marca y la
+ * fecha, de modo que sea demostrable qué consintió exactamente y cuándo.
+ * Si se cambia la redacción de las casillas en index.html, SUBIR la versión:
+ * de lo contrario el registro dejaría de corresponderse con lo aceptado.       */
+const CONSENT_VERSION='v2-2026-07';
+const CONSENT_TEXTS={
+  privacidad:'He leído y acepto la política de privacidad y consiento que mis datos se comuniquen al socio de Horizonte Emirates en Emiratos Árabes Unidos para preparar mi análisis de inversión.',
+  marketing:'Deseo recibir información comercial sobre oportunidades inmobiliarias en Emiratos por email o WhatsApp.'
+};
+/* Los textos no deben contener ':' ni saltos de línea: el parser de
+   horizonte-emails.gs corta la clave por el primer ':' de cada línea. */
+
+/** Estado del consentimiento de cookies publicitarias (lo escribe consent.js). */
+function heAdsConsentGranted(){
+  try{
+    const raw=JSON.parse(localStorage.getItem('he_consent_v1')||'null');
+    if(!raw)return false;
+    // Formato granular actual; se mantiene la lectura del formato binario antiguo.
+    if(raw.ads)return raw.ads==='granted';
+    return raw.state==='granted';
+  }catch(e){return false;}
+}
+
+/** SHA-256 en hexadecimal del email normalizado (formato exigido por enhanced conversions). */
+function sha256Hex(value){
+  const norm=String(value||'').trim().toLowerCase();
+  if(!norm||!window.crypto||!window.crypto.subtle)return Promise.resolve('');
+  return window.crypto.subtle
+    .digest('SHA-256',new TextEncoder().encode(norm))
+    .then(buf=>Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join(''))
+    .catch(()=>'');
+}
 function leadValueEUR(tier){return LEAD_VALUE_EUR[tier]||LEAD_VALUE_EUR.C;}
 let savedLead={};
 let roiEventTimer=null;
@@ -147,11 +181,21 @@ function trackGAEvent(eventName, params){
 function trackAdsLeadConversion(leadData){
   if(typeof window.gtag!=='function')return;
   if(!ADS_CONVERSION_ID || !ADS_CONVERSION_LABEL)return;
-  window.gtag('event','conversion',{
+  const conv={
     send_to:`${ADS_CONVERSION_ID}/${ADS_CONVERSION_LABEL}`,
     value:leadValueEUR(leadData?.tier),
-    currency:'EUR',
-    email:leadData?.email||''
+    currency:'EUR'
+  };
+  // El email NUNCA se envía en claro (dato personal identificable, prohibido además
+  // por la política de PII de Google Ads). Enhanced conversions exige SHA-256 en
+  // user_data y solo procede si el usuario aceptó las cookies publicitarias.
+  if(!heAdsConsentGranted()){
+    window.gtag('event','conversion',conv);
+    return;
+  }
+  sha256Hex(leadData?.email).then(hash=>{
+    if(hash)window.gtag('set','user_data',{sha256_email_address:hash});
+    window.gtag('event','conversion',conv);
   });
 }
 
@@ -239,6 +283,17 @@ function buildWeb3LeadPayload(formEl, leadData){
   fd.append('Tier', leadData.tier || '');
   fd.append('Puntuacion', leadData.puntuacion || '');
   fd.append('Canal', leadData.canal || '');
+
+  // Prueba del consentimiento: qué aceptó, con qué texto y cuándo (art. 7.1 RGPD).
+  const okPriv=!!document.getElementById('gdpr-cb')?.checked;
+  const okMkt =!!document.getElementById('gdpr-mkt')?.checked;
+  fd.append('Consentimiento privacidad', okPriv ? 'SI' : 'NO');
+  fd.append('Consentimiento marketing',  okMkt  ? 'SI' : 'NO');
+  fd.append('Consentimiento version', CONSENT_VERSION);
+  fd.append('Consentimiento fecha', new Date().toISOString());
+  fd.append('Consentimiento texto', CONSENT_TEXTS.privacidad);
+  if(okMkt) fd.append('Consentimiento texto marketing', CONSENT_TEXTS.marketing);
+
   const trackingParams=getTrackingParams();
   Object.entries(trackingParams).forEach(([k,v])=>fd.append(k,v));
 
@@ -263,6 +318,15 @@ document.getElementById('mainform').addEventListener('submit',function(e){
     event_category:'form',
     event_label:'mainform_submit_attempt'
   });
+  // Barrera de consentimiento independiente del botón deshabilitado: sin la casilla
+  // obligatoria no se construye ni se envía el payload.
+  if(!document.getElementById('gdpr-cb')?.checked){
+    trackGAEvent('lead_submit_validation_error',{
+      event_category:'form_error',
+      event_label:'missing_consent'
+    });
+    showStatus('err','Debe aceptar la política de privacidad para enviar la solicitud.');return;
+  }
   const emailVal=(this.querySelector('[name="email"]')?.value||'').trim();
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(emailVal)){
     trackGAEvent('lead_submit_validation_error',{
@@ -428,6 +492,11 @@ document.getElementById('waf').addEventListener('submit',function(e){
   fd.append('nombre',n);fd.append('email',em);
   fd.append('telefono',pfx+' '+ph);
   fd.append('origen','Botón WhatsApp flotante');
+  fd.append('Consentimiento privacidad','SI');
+  fd.append('Consentimiento marketing',document.getElementById('wam-mkt')?.checked?'SI':'NO');
+  fd.append('Consentimiento version',CONSENT_VERSION);
+  fd.append('Consentimiento fecha',new Date().toISOString());
+  fd.append('Consentimiento texto',CONSENT_TEXTS.privacidad);
   const trackingParams=getTrackingParams();
   Object.entries(trackingParams).forEach(([k,v])=>fd.append(k,v));
   fd.append('fecha_registro',new Date().toLocaleString('es-ES',{timeZone:'Europe/Madrid'}));
