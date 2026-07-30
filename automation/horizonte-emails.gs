@@ -33,7 +33,9 @@ const CONFIG = {
   LABEL_BAJAS:     'HE-bajas-procesado',
   // Busca todos los emails de Web3Forms no leídos (compatible V1, V2, V3)
   // Cualquier remitente @web3forms.com (evita perder avisos si cambian la cuenta de envío)
-  POLL_QUERY:          'from:web3forms.com is:unread',
+  // Excluye los ya etiquetados: con KEEP_LEAD_MAIL_UNREAD los avisos procesados siguen «no leídos»
+  // a propósito, y sin este filtro volverían a ocupar el lote de 50 hilos en cada pasada.
+  POLL_QUERY:          'from:web3forms.com is:unread -label:HE-procesado',
   // Reintento: últimos días sin etiqueta de procesado (útil si el correo se marcó leído antes del trigger)
   POLL_QUERY_FALLBACK: 'from:web3forms.com newer_than:3d -label:HE-procesado',
   // Respuestas de leads que pueden contener solicitud de baja
@@ -48,6 +50,37 @@ const CONFIG = {
   // los identificadores estables del embudo aunque cambie el texto del asunto del formulario.
   POLL_KEYWORDS:   ['Horizonte Emirates', 'HE V6', 'HE V5', 'HE V3', 'HE V2'],
   TEST_MODE:       false, // true → simula sin enviar emails reales
+  /**
+   * INTERRUPTOR MAESTRO del envío automático al lead (2026-07-30).
+   * false = ningún correo sale solo. El lead se registra en el CRM, se avisa al asesor
+   *         y los correos se escriben a mano con automation/MAILS-MANUALES.md.
+   *         Motivo: volumen bajo de leads, atención 1:1 y máxima personalización.
+   * true  = vuelve la secuencia automática por tier (SEQUENCES). Antes de activarlo,
+   *         leer reanudarEnvioAutomatico(): la cola acumula ítems «pausado-manual».
+   */
+  AUTO_SEND_LEADS: false,
+  /**
+   * ÚNICA EXCEPCIÓN al interruptor anterior: el acuse de recibo inmediato (código W0).
+   * Sale en segundos tras el formulario, incluso de noche y en fin de semana, porque un lead que
+   * rellena un formulario y no recibe nada da por hecho que se ha perdido. No vende: confirma,
+   * entrega la guía fiscal prometida y anuncia el correo personal del asesor.
+   * false → tampoco sale este y el lead no recibe absolutamente nada hasta que se le escriba.
+   */
+  AUTO_SEND_WELCOME: true,
+  /** Persona que firma los correos (el acuse de recibo va en su nombre). */
+  ASESOR_FIRMA: 'Jesús Ibáñez',
+  /**
+   * Plazo que promete el acuse de recibo para el correo personal del asesor.
+   * 48 horas es lo que ya promete la web ("respuesta en menos de 48 horas"), así que el lead
+   * lee lo mismo en los dos sitios. Se promete holgado y se cumple antes: el ritmo real de
+   * trabajo (menos de 1 hora en tier A) está en automation/MAILS-MANUALES.md.
+   * Si algún día se quiere prometer más rápido, se cambia solo esta línea.
+   */
+  WELCOME_PROMISE: 'en las próximas 48 horas',
+  /** Con envío manual: avisar al asesor de cada lead nuevo con su ficha y el guion sugerido. */
+  NOTIFY_AGENT_ON_NEW_LEAD: true,
+  /** No marcar como leído el aviso de Web3Forms de un lead válido (para que se vea en negrita). */
+  KEEP_LEAD_MAIL_UNREAD: true,
   /**
    * Nombre mostrado como remitente (Gmail «De:»). Vacío → se usa ASESOR_NOMBRE.
    * Para tono 1:1 suele ayudar un nombre de persona + marca, p. ej. "Laura · Horizonte Emirates"
@@ -75,9 +108,9 @@ const CONFIG = {
 
 // Etiquetas legibles para variables del email
 const CAPITAL_LABELS = {
-  '150k-300k': '150.000 – 300.000 €',
-  '300k-600k': '300.000 – 600.000 €',
-  '600k-1M':   '600.000 – 1.000.000 €',
+  '150k-300k': '150.000 a 300.000 €',
+  '300k-600k': '300.000 a 600.000 €',
+  '600k-1M':   '600.000 a 1.000.000 €',
   'mas1M':     'más de 1.000.000 €',
 };
 const OBJETIVO_LABELS = {
@@ -121,6 +154,16 @@ const FEMALE_NAMES = new Set([
   'jessica','ashley','kelly','britney','whitney','madison','savannah','amber',
   'crystal','destiny','tiffany','brittany','holly','heather',
 ]);
+
+/**
+ * Nombre de pila con la inicial en mayúscula, para el saludo.
+ * El formulario recoge lo que el lead escribe («jose diaz mellado»), y saludar con el nombre
+ * completo tal cual delata el envío automático. «Hola Jose» siempre suena a persona.
+ */
+function firstName(nombre) {
+  const first = String(nombre || '').trim().split(/\s+/)[0] || 'Inversor';
+  return first.charAt(0).toUpperCase() + first.slice(1);
+}
 
 function detectGender(nombre) {
   const first = (nombre || '').split(/\s+/)[0]
@@ -190,6 +233,145 @@ function buildLeadBriefingText(lead) {
     'Consent marketing: ' + (lead.cons_marketing || 'sin registro'),
     'Consent fecha: ' + (lead.cons_fecha || ''),
   ].join('\n');
+}
+
+// ══════════════════════════════════════════════════════════════
+// AVISO AL ASESOR DE LEAD NUEVO (modo envío manual)
+// Con AUTO_SEND_LEADS=false este correo es el único disparador de acción:
+// llega con la ficha del lead, el guion recomendado y accesos directos.
+// ══════════════════════════════════════════════════════════════
+
+/**
+ * Fuerza «no leído» + destacado + importante en el aviso interno que acaba de enviarse.
+ * Gmail marca como leído todo lo que envía la propia cuenta, así que un aviso a uno mismo
+ * aterriza en Recibidos sin negrita y pasa desapercibido. Se localiza por un token único
+ * del asunto (ID de lead, ID de evento) y se revierte el estado.
+ * @param {string} token cadena única presente en el asunto del aviso.
+ */
+function forceUnreadBySubjectToken(token) {
+  const t = String(token || '').trim();
+  if (!t) return;
+  try {
+    Utilities.sleep(1500); // el hilo tarda un instante en indexarse en Gmail
+    const threads = GmailApp.search('subject:"' + t + '" newer_than:1d', 0, 5);
+    threads.forEach(th => {
+      th.markUnread();
+      th.markImportant();
+      const msgs = th.getMessages();
+      if (msgs.length) msgs[msgs.length - 1].star();
+    });
+    if (!threads.length) Logger.log('forceUnreadBySubjectToken: sin hilo para «' + t + '» (¿indexación lenta?)');
+  } catch (e) {
+    Logger.log('forceUnreadBySubjectToken: fallo con «' + t + '»: ' + e.message);
+  }
+}
+
+/** Teléfono en formato wa.me (solo dígitos, sin «+» ni separadores). */
+function phoneForWhatsApp(raw) {
+  return String(raw || '').replace(/\D/g, '');
+}
+
+/** Guion recomendado según tier y plazo declarado. Devuelve {urgencia, accion, plantilla}. */
+function playbookForLead(lead) {
+  const tier  = String((lead && lead.tier) || 'C').toUpperCase();
+  const plazo = String((lead && lead.plazo) || '').toLowerCase();
+  const yaVa  = plazo === 'ya' || plazo === '6meses';
+
+  if (tier === 'A') return {
+    urgencia:  'Contactar en menos de 1 hora (horario laboral) o a primera hora del día siguiente.',
+    accion:    'WhatsApp primero, y a continuación el correo M1-A. No esperar respuesta al correo para escribir por WhatsApp.',
+    plantilla: 'M1-A (primer contacto, perfil caliente)',
+  };
+  if (tier === 'B') return {
+    urgencia:  yaVa ? 'Contactar hoy mismo, antes de 4 horas.' : 'Contactar hoy mismo.',
+    accion:    'Correo M1-B con los bloques de su objetivo y su plazo. WhatsApp solo si no responde en 24 h.',
+    plantilla: 'M1-B (primer contacto, perfil a validar)',
+  };
+  return {
+    urgencia:  'Contactar en menos de 24 horas.',
+    accion:    'Correo M1-C, tono educativo y sin presión. La llamada se propone como opción, no como paso obligado.',
+    plantilla: 'M1-C (primer contacto, perfil exploratorio)',
+  };
+}
+
+/**
+ * Avisa al asesor de un lead nuevo. El correo llega como NO LEÍDO y destacado:
+ * Gmail marca leídos los mensajes que envía la propia cuenta, así que se fuerza markUnread()
+ * buscando el hilo por el ID del lead (identificador único en el asunto).
+ */
+function notifyAgentNewLead(leadId, lead) {
+  if (!CONFIG.NOTIFY_AGENT_ON_NEW_LEAD) return;
+  if (!lead) return;
+
+  const pb      = playbookForLead(lead);
+  const cap     = CAPITAL_LABELS[lead.capital]   || lead.capital  || 'sin dato';
+  const obj     = OBJETIVO_LABELS[lead.objetivo] || lead.objetivo || 'sin dato';
+  const tier    = String(lead.tier || 'C').toUpperCase();
+  const waDigits= phoneForWhatsApp(lead.telefono);
+  const waText  = 'Hola ' + String(lead.nombre || '').split(/\s+/)[0] +
+    ', soy Marc de Horizonte Emirates. Acabo de recibir su solicitud de análisis de inversión en Dubai. ' +
+    '¿Le va bien que le llame hoy o prefiere que le proponga un par de horarios?';
+  const waUrl   = waDigits ? 'https://wa.me/' + waDigits + '?text=' + encodeURIComponent(waText) : '';
+  const mailUrl = 'https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(lead.email || '');
+  const sheetUrl= CONFIG.SPREADSHEET_ID ? 'https://docs.google.com/spreadsheets/d/' + CONFIG.SPREADSHEET_ID + '/edit' : '';
+
+  const subject = '[LEAD ' + tier + '|' + (lead.puntuacion || 0) + 'pts] ' +
+    (lead.nombre || 'Inversor') + ' · ' + (lead.pais || '') + ' · ' + cap + ' · ' + leadId;
+
+  const row = (k, v) => '<tr><td style="padding:6px 12px 6px 0;color:#646464;font-size:13px;white-space:nowrap">' + k +
+    '</td><td style="padding:6px 0;color:#1A1A1A;font-size:13px"><strong>' + (v || 'sin dato') + '</strong></td></tr>';
+
+  const html = [
+    '<div style="font-family:Arial,Helvetica,sans-serif;max-width:640px">',
+    '<p style="margin:0 0 4px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#C4942A;font-weight:700">Lead nuevo · envío automático desactivado</p>',
+    '<h2 style="margin:0 0 14px;font-size:20px;color:#0D1B2A">' + (lead.nombre || 'Inversor') + ' · Tier ' + tier + ' (' + (lead.puntuacion || 0) + ' pts)</h2>',
+    '<p style="margin:0 0 16px;padding:12px 14px;background:#FDF6E7;border-left:3px solid #C4942A;font-size:14px;color:#1A1A1A;line-height:1.55">',
+    '<strong>' + pb.urgencia + '</strong><br>' + pb.accion + '<br>Plantilla: <strong>' + pb.plantilla + '</strong> (automation/MAILS-MANUALES.md)',
+    '</p>',
+    CONFIG.AUTO_SEND_WELCOME !== false
+      ? '<p style="margin:0 0 16px;padding:12px 14px;background:#EEF2F6;border-left:3px solid #3E5A75;font-size:13.5px;color:#1A1A1A;line-height:1.55">' +
+        'El lead ya ha recibido el acuse de recibo automático con su ficha y la guía fiscal, y ahí se le dice que ' +
+        '<strong>usted le escribe ' + (CONFIG.WELCOME_PROMISE || 'en las próximas 48 horas') + '</strong>. Ese es el plazo máximo que ha leído el lead, no el objetivo: el ritmo de trabajo lo marca el tier. Su correo no debe repetir el saludo.</p>'
+      : '',
+    '<table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;margin:0 0 18px">',
+    row('Email', lead.email),
+    row('Teléfono', lead.telefono),
+    row('País', lead.pais),
+    row('Capital', cap),
+    row('Objetivo', obj),
+    row('Plazo', lead.plazo),
+    row('Visita Dubai', lead.viaje),
+    row('Canal preferido', lead.canal),
+    row('Origen', lead.origen),
+    row('Consent. marketing', lead.cons_marketing || 'NO'),
+    '</table>',
+    waUrl ? '<p style="margin:0 0 10px"><a href="' + waUrl + '" style="display:inline-block;background:#1DAA61;color:#fff;text-decoration:none;padding:12px 26px;border-radius:50px;font-size:14px;font-weight:600">Abrir WhatsApp con mensaje listo</a></p>' : '',
+    '<p style="margin:0 0 10px"><a href="' + mailUrl + '" style="display:inline-block;border:1px solid #C4942A;color:#C4942A;text-decoration:none;padding:11px 26px;border-radius:50px;font-size:14px;font-weight:600">Redactar correo al lead</a></p>',
+    sheetUrl ? '<p style="margin:0 0 10px;font-size:13px"><a href="' + sheetUrl + '" style="color:#0D1B2A">Abrir el CRM en Sheets</a></p>' : '',
+    '<p style="margin:20px 0 0;padding-top:14px;border-top:1px solid #E0DBD1;font-size:12px;color:#8a8a8a;line-height:1.5">La secuencia automática está en pausa (CONFIG.AUTO_SEND_LEADS = false). Este lead no recibirá ningún correo hasta que usted lo escriba.</p>',
+    '</div>',
+  ].join('\n');
+
+  const plain = [
+    'LEAD NUEVO · envío automático desactivado',
+    '',
+    pb.urgencia,
+    pb.accion,
+    'Plantilla: ' + pb.plantilla,
+    '',
+    buildLeadBriefingText(lead),
+    '',
+    waUrl ? 'WhatsApp listo: ' + waUrl : '',
+  ].join('\n');
+
+  GmailApp.sendEmail(CONFIG.AGENT_BRIEFING_EMAIL, subject, plain, {
+    name:     CONFIG.ASESOR_NOMBRE,
+    replyTo:  CONFIG.REPLY_TO,
+    htmlBody: html,
+  });
+
+  forceUnreadBySubjectToken(leadId); // el ID del lead va en el asunto y es único
+  Logger.log('notifyAgentNewLead: aviso enviado para ' + leadId + ' (' + lead.email + ')');
 }
 
 function extractMeetingLinkFromEvent(event) {
@@ -278,7 +460,9 @@ function notifyCalendlyBookings() {
     const end = event.getEndTime();
     const meetingLink = extractMeetingLinkFromEvent(event);
 
-    const subject = '[HE] Nueva reunión agendada: ' + (lead && lead.nombre ? lead.nombre : leadEmail);
+    // Token único del evento en el asunto: permite forzar «no leído» sobre este aviso concreto.
+    const evToken = 'EV' + String(eventId).replace(/[^a-zA-Z0-9]/g, '').substring(0, 10);
+    const subject = '[HE] Nueva reunión agendada: ' + (lead && lead.nombre ? lead.nombre : leadEmail) + ' · ' + evToken;
     const body = [
       'Se ha agendado una nueva reunión desde Calendly.',
       '',
@@ -298,6 +482,7 @@ function notifyCalendlyBookings() {
       name: CONFIG.ASESOR_NOMBRE,
       replyTo: CONFIG.REPLY_TO,
     });
+    forceUnreadBySubjectToken(evToken);
 
     notified[eventId] = now.toISOString();
     sent++;
@@ -481,14 +666,33 @@ function pollGmail() {
       try {
         leadId = saveLead(lead);
         scheduleSequence(leadId, lead.tier, new Date());
-        processQueue({ immediateWelcomeAfterPoll: true });
+        if (CONFIG.AUTO_SEND_LEADS === false) {
+          // El acuse de recibo va primero: es lo único que el lead espera de inmediato.
+          // Si falla, el lead ya está guardado y el aviso al asesor sale igualmente.
+          try {
+            sendWelcomeEmail(leadId, lead);
+          } catch (wErr) {
+            Logger.log('pollGmail: fallo al enviar el acuse de recibo W0 a ' + lead.email + ': ' + wErr.toString());
+          }
+          notifyAgentNewLead(leadId, Object.assign({}, lead, { id: leadId }));
+        } else {
+          processQueue({ immediateWelcomeAfterPoll: true });
+        }
       } catch (err) {
         Logger.log('pollGmail: ERROR al guardar en Sheets / cola: ' + err.toString());
         throw err;
       }
 
       thread.addLabel(label);
-      msg.markRead();
+      if (CONFIG.KEEP_LEAD_MAIL_UNREAD) {
+        // El aviso se queda en negrita y destacado en Recibidos: el lead no se pasa por alto.
+        // El guard de etiqueta de arriba evita que se reprocese en las siguientes pasadas.
+        msg.markUnread();
+        msg.star();
+        thread.markImportant();
+      } else {
+        msg.markRead();
+      }
       Logger.log(`✓ Lead: ${lead.nombre} [Tier ${lead.tier}|${lead.puntuacion}pts] → ${lead.email}`);
 
     } catch(e) {
@@ -877,10 +1081,37 @@ function saveLead(data) {
 function scheduleSequence(leadId, tier, createdAt) {
   const sheet    = getSheet('Cola');
   const sequence = SEQUENCES[tier] || SEQUENCES['C'];
+  // Con envío manual la cola se siembra en «pausado-manual»: sirve de agenda de seguimiento
+  // (qué toque tocaría y cuándo) sin que processQueue la envíe nunca.
+  const estado = CONFIG.AUTO_SEND_LEADS === false ? 'pausado-manual' : 'pendiente';
   sequence.forEach(item => {
     const scheduledAt = new Date(createdAt.getTime() + item.delay * 3600 * 1000);
-    sheet.appendRow([leadId, item.code, scheduledAt, 'pendiente', '', '']);
+    sheet.appendRow([leadId, item.code, scheduledAt, estado, '', '']);
   });
+}
+
+/**
+ * Reactiva la secuencia automática sin disparar de golpe los toques atrasados.
+ * Pasos: 1) poner CONFIG.AUTO_SEND_LEADS = true  2) ejecutar esta función.
+ * Los ítems «pausado-manual» con fecha futura vuelven a «pendiente»; los ya vencidos
+ * se cancelan (enviarlos ahora sería una ráfaga de correos viejos al lead).
+ */
+function reanudarEnvioAutomatico() {
+  if (CONFIG.AUTO_SEND_LEADS !== true) {
+    Logger.log('reanudarEnvioAutomatico: CONFIG.AUTO_SEND_LEADS sigue en false. Cámbialo a true y vuelve a ejecutar.');
+    return;
+  }
+  const sh = getSheet('Cola');
+  const data = sh.getDataRange().getValues();
+  const now = new Date();
+  let reactivados = 0, cancelados = 0;
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][3] || '') !== 'pausado-manual') continue;
+    const when = new Date(data[i][2]);
+    if (!isNaN(when) && when > now) { sh.getRange(i + 1, 4).setValue('pendiente'); reactivados++; }
+    else { sh.getRange(i + 1, 4).setValue('cancelado (pausa manual)'); cancelados++; }
+  }
+  Logger.log('reanudarEnvioAutomatico: reactivados=' + reactivados + ' · cancelados por vencidos=' + cancelados);
 }
 
 /** Fin de semana por nombre localizado (respaldo si «u» ISO no está disponible en el runtime). */
@@ -910,6 +1141,46 @@ function isWithinBusinessSendWindow(date) {
   return true;
 }
 
+/**
+ * Acuse de recibo inmediato (W0). Se envía en la misma pasada que detecta el lead,
+ * sin esperar ventana laboral, y queda registrado en la hoja Cola para no repetirlo.
+ * Un fallo aquí nunca debe impedir el registro del lead ni el aviso al asesor.
+ */
+function sendWelcomeEmail(leadId, lead) {
+  if (CONFIG.AUTO_SEND_WELCOME === false) {
+    Logger.log('sendWelcomeEmail: desactivado (AUTO_SEND_WELCOME=false)');
+    return false;
+  }
+  if (!lead || !lead.email) return false;
+
+  // Idempotencia: si ya consta un W0 enviado para este lead, no se repite.
+  try {
+    const q = getSheet('Cola').getDataRange().getValues();
+    for (let i = 1; i < q.length; i++) {
+      if (String(q[i][0]) === String(leadId) && String(q[i][1]) === 'W0') {
+        Logger.log('sendWelcomeEmail: ya enviado antes para ' + leadId + ', omitido');
+        return false;
+      }
+    }
+  } catch (e) {
+    Logger.log('sendWelcomeEmail: no se pudo comprobar la Cola (' + e.message + '), se continúa');
+  }
+
+  if (CONFIG.TEST_MODE) {
+    Logger.log('[TEST] W0 → ' + lead.email);
+    return false;
+  }
+
+  sendEmail('W0', lead, { welcome: true, bypassBusinessHours: true });
+  try {
+    getSheet('Cola').appendRow([leadId, 'W0', new Date(), 'enviado', new Date(), 'acuse de recibo automático']);
+  } catch (e) {
+    Logger.log('sendWelcomeEmail: enviado pero no registrado en Cola: ' + e.message);
+  }
+  Logger.log('✓ W0 (acuse de recibo) → ' + lead.email);
+  return true;
+}
+
 /** Primer email de cada tier (tras registro en web). Puede enviarse fuera de horario solo cuando processQueue viene de pollGmail. */
 function isWelcomeSequenceEmail(code) {
   return code === 'A1' || code === 'B1' || code === 'C1';
@@ -925,6 +1196,11 @@ function isWelcomeSequenceEmail(code) {
  */
 function processQueue(opts) {
   opts = opts || {};
+  // Interruptor maestro: con envío manual no sale ningún correo, ni el de bienvenida.
+  if (CONFIG.AUTO_SEND_LEADS === false) {
+    Logger.log('processQueue: envío automático desactivado (CONFIG.AUTO_SEND_LEADS=false). Los correos se envían a mano.');
+    return;
+  }
   const qSheet = getSheet('Cola');
   const lSheet = getSheet('Leads');
   const now    = new Date();
@@ -1005,9 +1281,15 @@ function buildEmailPlainBody(tplText) {
 /**
  * @param {Object} [opts]
  * @param {boolean} [opts.bypassBusinessHours] — true: prueba manual (simulateLeadEmail) o bienvenida inmediata tras form (pollGmail).
+ * @param {boolean} [opts.manual] — true: envío pedido a mano por el asesor (simulateLeadEmail).
+ * @param {boolean} [opts.welcome] — true: acuse de recibo W0, permitido por CONFIG.AUTO_SEND_WELCOME.
  */
 function sendEmail(code, lead, opts) {
   opts = opts || {};
+  const allowed = opts.manual || (opts.welcome && CONFIG.AUTO_SEND_WELCOME !== false);
+  if (CONFIG.AUTO_SEND_LEADS === false && !allowed) {
+    throw new Error('Envío automático desactivado (CONFIG.AUTO_SEND_LEADS=false). Usa las plantillas de automation/MAILS-MANUALES.md.');
+  }
   if (!opts.bypassBusinessHours && CONFIG.BUSINESS_HOURS_ONLY !== false && !isWithinBusinessSendWindow(new Date())) {
     throw new Error('sendEmail fuera de ventana laboral (no debería ocurrir si processQueue filtra antes)');
   }
@@ -1186,6 +1468,50 @@ function getTemplate(code, lead) {
     </td>
   </tr>
 </table>`;
+
+  // ── W0 — ACUSE DE RECIBO INMEDIATO ───────────────────────────
+  // Único correo automático activo. Reglas de este texto:
+  //   1. No vende. Confirma lo recibido y devuelve el eco del perfil (prueba de que llegó bien).
+  //   2. Dice la verdad sobre su naturaleza: es automático, y el siguiente lo escribe una persona.
+  //      La transparencia genera más confianza que fingir que lo ha escrito alguien a mano.
+  //   3. Entrega la guía fiscal en el momento: es el recurso que la web promete.
+  //   4. Siembra la visita a Emiratos en una línea, sin desarrollarla (eso es el M11 manual).
+  //   5. Da salida al lead impaciente con Calendly, sin convertirlo en la petición principal.
+  if (code === 'W0') {
+    const firma  = CONFIG.ASESOR_FIRMA || CONFIG.ASESOR_NOMBRE;
+    const cuando = CONFIG.WELCOME_PROMISE || 'en las próximas 48 horas';
+    const pila   = firstName(lead.nombre); // solo el nombre de pila: «Hola Jose», no «Hola Jose Diaz mellado»
+    const ficha  = `
+<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="margin:18px 0 6px;border-collapse:collapse">
+  <tr>
+    <td style="padding:7px 16px 7px 0;font-size:14px;color:#646464;white-space:nowrap">Capital</td>
+    <td style="padding:7px 0;font-size:14px;color:#1A1A1A"><strong>${cap}</strong></td>
+  </tr>
+  <tr>
+    <td style="padding:7px 16px 7px 0;font-size:14px;color:#646464;white-space:nowrap">Objetivo</td>
+    <td style="padding:7px 0;font-size:14px;color:#1A1A1A"><strong>${obj}</strong></td>
+  </tr>
+  <tr>
+    <td style="padding:7px 16px 7px 0;font-size:14px;color:#646464;white-space:nowrap">Residencia</td>
+    <td style="padding:7px 0;font-size:14px;color:#1A1A1A"><strong>${pais}</strong></td>
+  </tr>
+</table>`;
+
+    return {
+      subject: `Hemos recibido su solicitud, ${pila}`,
+      html: `<p>Hola ${pila},</p>
+<p>Su solicitud ha llegado correctamente. Esto es lo que hemos registrado:</p>
+${ficha}
+<p>Este correo es automático, para que sepa que no se ha perdido nada. <strong>El siguiente lo escribo yo, ${cuando}</strong>, y ahí entramos en lo concreto: qué encaja con lo que busca y qué no.</p>
+<p>Mientras tanto le dejo la guía fiscal, que es lo que más dudas resuelve al principio:</p>
+${guiaCard}
+<p>Y una cosa que suele sorprender: si en algún momento quiere ver los proyectos en persona, le montamos nosotros la agenda completa en Emiratos, incluidas las visitas a las promotoras y la reunión en nuestras oficinas de Dubai. Se lo cuento con calma en el próximo correo.</p>
+<p>Si prefiere adelantar y hablar directamente con Marc, nuestro socio en Dubai, puede coger hueco aquí:</p>
+${calBtn}
+<p style="margin:28px 0 0;padding-top:20px;border-top:1px solid #E0DBD1;font-size:14px;color:#646464;line-height:1.6">Un saludo,<br><strong style="color:#1A1A1A">${firma}</strong><br>Horizonte Emirates<br><span style="font-size:13px">Puede responder a este correo: lo leo yo.</span></p>`,
+      text: `Hola ${pila},\n\nSu solicitud ha llegado correctamente. Esto es lo que hemos registrado:\n\nCapital: ${cap}\nObjetivo: ${obj}\nResidencia: ${pais}\n\nEste correo es automático, para que sepa que no se ha perdido nada. El siguiente lo escribo yo, ${cuando}, y ahí entramos en lo concreto: qué encaja con lo que busca y qué no.\n\nMientras tanto le dejo la guía fiscal Dubai y España, que es lo que más dudas resuelve al principio (IRPF, modelo 720, plusvalías y convenio de doble imposición):\n${guiaUrl}\n\nY una cosa que suele sorprender: si en algún momento quiere ver los proyectos en persona, le montamos nosotros la agenda completa en Emiratos, incluidas las visitas a las promotoras y la reunión en nuestras oficinas de Dubai. Se lo cuento con calma en el próximo correo.\n\nSi prefiere adelantar y hablar directamente con Marc, nuestro socio en Dubai, puede coger hueco aquí:\n${calL}\n\nUn saludo,\n${firma}\nHorizonte Emirates\nPuede responder a este correo: lo leo yo.`,
+    };
+  }
 
   // ── TIER A — 5 emails ────────────────────────────────────────
 
@@ -1655,6 +1981,7 @@ function healthCheck() {
       '\n\nRevisar en Apps Script: pollGmail, triggers y las hojas Leads/Cola.',
     { name: CONFIG.ASESOR_NOMBRE, replyTo: CONFIG.REPLY_TO }
   );
+  forceUnreadBySubjectToken('Healthcheck del funnel');
   props.setProperty('HE_LAST_HEALTH_ALERT', sig);
   props.setProperty('HE_LAST_HEALTH_ALERT_TS', String(Date.now()));
   Logger.log('healthCheck: alerta enviada — ' + sig);
@@ -1718,7 +2045,8 @@ function simulateLeadEmail(leadEmail, emailCode, forceSend) {
 
   const shouldSend = Boolean(forceSend) && !CONFIG.TEST_MODE;
   if (shouldSend) {
-    sendEmail(code, lead, { bypassBusinessHours: true });
+    // manual:true = excepción explícita del asesor al interruptor AUTO_SEND_LEADS.
+    sendEmail(code, lead, { bypassBusinessHours: true, manual: true });
     Logger.log('✓ Envío real: ' + code + ' → ' + lead.email);
     return;
   }
@@ -1833,6 +2161,34 @@ function auditTemplateCopy() {
   });
 
   Logger.log('=== FIN AUDITORIA: ' + codes.length + ' templates revisados · incidencias: ' + issues + ' ===');
+}
+
+/**
+ * Vista previa del acuse de recibo sin enviar nada: escribe asunto y texto en el registro.
+ * Ejecutar desde el desplegable de Apps Script para revisar el copy y la frase de plazo.
+ */
+function previewWelcome() {
+  const lead = {
+    nombre: 'Jose Diaz', email: 'ejemplo@ejemplo.com',
+    capital: '150k-300k', objetivo: 'alquiler', plazo: '6meses',
+    pais: 'España', viaje: 'quizas', canal: 'email', tier: 'B', puntuacion: 8,
+  };
+  const tpl = getTemplate('W0', lead);
+  Logger.log('=== W0 · acuse de recibo ===');
+  Logger.log('Plazo prometido (CONFIG.WELCOME_PROMISE): ' + CONFIG.WELCOME_PROMISE);
+  Logger.log('Asunto: ' + tpl.subject);
+  Logger.log('\n' + buildEmailPlainBody(tpl.text));
+}
+
+/** Envío real del acuse de recibo a la dirección del asesor, para verlo en el buzón tal cual llega. */
+function testWelcomeToSelf() {
+  const lead = {
+    nombre: 'Prueba Interna', email: CONFIG.AGENT_BRIEFING_EMAIL,
+    capital: '300k-600k', objetivo: 'revalorizacion', plazo: 'ya',
+    pais: 'España', viaje: 'si', canal: 'whatsapp', tier: 'A', puntuacion: 11,
+  };
+  sendEmail('W0', lead, { welcome: true, bypassBusinessHours: true });
+  Logger.log('✓ W0 de prueba enviado a ' + lead.email);
 }
 
 // Helpers de ejecución manual en Apps Script (desplegable sin parámetros)

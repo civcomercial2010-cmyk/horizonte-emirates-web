@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Correos · Horizonte Emirates</title>
+<base target="_top"/>
+</head>
+<body>
+<style>
+  /* ── Tokens ─────────────────────────────────────────────────
+     Paleta heredada de la identidad real: azul noche y dorado de
+     horizonteemirates.com y del wrapper de los correos. El neutro
+     lleva sesgo cálido (papel), no gris puro.                    */
+  :root{
+    --navy:#0D1B2A;
+    --gold:#C4942A;        /* solo gráfico: barras, bordes, chips */
+    --gold-ink:#8A6414;    /* dorado legible como texto en claro  */
+    --bg:#EDEAE3;
+    --surface:#FFFFFF;
+    --field:#FBFAF7;
+    --line:#DED9CF;
+    --ink:#161C24;
+    --muted:#5F6771;
+    --ok:#128A4E;
+    --a-bg:#F7E2E0; --a-fg:#8E1F1F;
+    --b-bg:#F6EBD2; --b-fg:#7A5910;
+    --c-bg:#E3E9EF; --c-fg:#33526F;
+    --warn-bg:#FBE6E4; --warn-fg:#8E1F1F;
+    --shadow:0 1px 2px rgba(13,27,42,.06), 0 8px 24px rgba(13,27,42,.06);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --gold:#D8A94A;
+      --gold-ink:#D8A94A;
+      --bg:#0B141E;
+      --surface:#141E29;
+      --field:#101923;
+      --line:#26333F;
+      --ink:#E8EAED;
+      --muted:#95A0AC;
+      --ok:#3FCB85;
+      --a-bg:#3A1A19; --a-fg:#F0A9A4;
+      --b-bg:#332711; --b-fg:#E8C583;
+      --c-bg:#1B2A38; --c-fg:#9EC2E0;
+      --warn-bg:#331815; --warn-fg:#F0A9A4;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.3);
+    }
+  }
+  /* El conmutador del visor manda sobre la preferencia del sistema */
+  :root[data-theme="dark"]{
+    --gold:#D8A94A; --gold-ink:#D8A94A; --bg:#0B141E; --surface:#141E29;
+    --field:#101923; --line:#26333F; --ink:#E8EAED; --muted:#95A0AC; --ok:#3FCB85;
+    --a-bg:#3A1A19; --a-fg:#F0A9A4; --b-bg:#332711; --b-fg:#E8C583;
+    --c-bg:#1B2A38; --c-fg:#9EC2E0; --warn-bg:#331815; --warn-fg:#F0A9A4;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.3);
+  }
+  :root[data-theme="light"]{
+    --gold:#C4942A; --gold-ink:#8A6414; --bg:#EDEAE3; --surface:#FFFFFF;
+    --field:#FBFAF7; --line:#DED9CF; --ink:#161C24; --muted:#5F6771; --ok:#128A4E;
+    --a-bg:#F7E2E0; --a-fg:#8E1F1F; --b-bg:#F6EBD2; --b-fg:#7A5910;
+    --c-bg:#E3E9EF; --c-fg:#33526F; --warn-bg:#FBE6E4; --warn-fg:#8E1F1F;
+    --shadow:0 1px 2px rgba(13,27,42,.06), 0 8px 24px rgba(13,27,42,.06);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    -webkit-text-size-adjust:100%;
+  }
+
+  /* ── Cabecera ─────────────────────────────────────────────── */
+  .hd{
+    background:var(--navy);
+    padding:14px 18px calc(14px + 2px);
+    position:relative;
+  }
+  .hd::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--gold)}
+  .wordmark{
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:19px;letter-spacing:.02em;color:#fff;line-height:1.2;
+  }
+  .wordmark span{color:var(--gold)}
+  .hd-sub{
+    margin-top:2px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    color:rgba(255,255,255,.5);font-weight:600;
+  }
+
+  main{
+    max-width:720px;margin:0 auto;
+    padding:14px 14px calc(96px + env(safe-area-inset-bottom));
+    display:flex;flex-direction:column;gap:14px;
+  }
+
+  /* ── Paneles ──────────────────────────────────────────────── */
+  .panel{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:12px;
+    box-shadow:var(--shadow);
+    overflow:hidden;
+  }
+  .panel-body{padding:14px;display:flex;flex-direction:column;gap:12px}
+
+  summary{
+    padding:14px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;
+    font-weight:700;color:var(--gold-ink);cursor:pointer;list-style:none;
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+  }
+  summary::-webkit-details-marker{display:none}
+  summary::after{
+    content:"Plegar";font-size:11px;letter-spacing:.04em;text-transform:none;
+    color:var(--muted);font-weight:600;
+  }
+  details:not([open]) summary::after{content:"Abrir"}
+
+  label{
+    display:block;font-size:12px;font-weight:600;color:var(--muted);
+    margin-bottom:5px;letter-spacing:.01em;
+  }
+  input,select{
+    width:100%;
+    /* 16px evita que iOS haga zoom al enfocar el campo */
+    font:16px/1.3 inherit;
+    padding:11px 12px;min-height:46px;
+    background:var(--field);color:var(--ink);
+    border:1px solid var(--line);border-radius:9px;
+    appearance:none;-webkit-appearance:none;
+  }
+  select{
+    background-image:linear-gradient(45deg,transparent 50%,currentColor 50%),linear-gradient(135deg,currentColor 50%,transparent 50%);
+    background-position:calc(100% - 19px) 21px,calc(100% - 14px) 21px;
+    background-size:5px 5px,5px 5px;background-repeat:no-repeat;
+    padding-right:38px;
+  }
+  input:focus-visible,select:focus-visible,button:focus-visible,summary:focus-visible{
+    outline:2px solid var(--gold);outline-offset:2px;
+  }
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+  /* ── Estado del lead ──────────────────────────────────────── */
+  .status{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    padding:12px 14px;border-bottom:1px solid var(--line);
+  }
+  /* .badge lo aplica la lógica compartida al repintar el tier: los dos deben pintar igual */
+  .chip,.badge{
+    font-size:12px;font-weight:800;letter-spacing:.06em;
+    padding:5px 12px;border-radius:100px;white-space:nowrap;
+  }
+  .b-A{background:var(--a-bg);color:var(--a-fg)}
+  .b-B{background:var(--b-bg);color:var(--b-fg)}
+  .b-C{background:var(--c-bg);color:var(--c-fg)}
+  .meta{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+  /* ── Leads del CRM (solo dentro de la web app de Apps Script) ─ */
+  #panel-crm{display:none}
+  #panel-crm.on{display:block}
+  .crm-list{display:flex;flex-direction:column;gap:8px}
+  .lead{
+    display:flex;align-items:center;gap:10px;width:100%;
+    padding:11px 12px;min-height:auto;
+    background:var(--field);border:1px solid var(--line);border-radius:10px;
+    text-align:left;cursor:pointer;color:var(--ink);font:inherit;
+  }
+  .lead:hover{border-color:var(--gold)}
+  .lead[aria-pressed="true"]{border-color:var(--gold);background:var(--surface);box-shadow:inset 3px 0 0 var(--gold)}
+  .lead-main{flex:1;min-width:0}
+  .lead-nm{font-weight:700;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .lead-sub{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .lead-when{font-size:11.5px;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+  .crm-msg{font-size:13px;color:var(--muted);padding:2px 0;line-height:1.5}
+  .crm-tools{display:flex;gap:8px;align-items:center}
+  .crm-tools select{flex:1}
+  .crm-tools button{flex:0 0 auto;min-height:46px;padding:0 16px;font-size:13px}
+
+  .playbook{
+    margin:0;padding:11px 14px;
+    background:var(--field);border-bottom:1px solid var(--line);
+    font-size:13.5px;line-height:1.5;color:var(--ink);
+    border-left:3px solid var(--gold);
+  }
+
+  /* ── Salida ───────────────────────────────────────────────── */
+  .subject{
+    font-weight:700;font-size:15px;line-height:1.35;
+    padding:12px 14px;background:var(--field);
+    border:1px solid var(--line);border-radius:9px;
+    overflow-wrap:anywhere;
+  }
+  pre{
+    margin:0;padding:14px;
+    background:var(--field);border:1px solid var(--line);border-radius:9px;
+    font:14px/1.62 ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    white-space:pre-wrap;overflow-wrap:anywhere;
+    max-height:52vh;overflow-y:auto;
+  }
+  .warn{
+    display:none;
+    padding:11px 13px;border-radius:9px;
+    background:var(--warn-bg);color:var(--warn-fg);
+    font-size:13px;line-height:1.5;border-left:3px solid currentColor;
+  }
+  .warn.on{display:block}
+  .note{font-size:12.5px;color:var(--muted);line-height:1.5;margin:0}
+
+  /* ── Barra de acciones fija (zona del pulgar) ─────────────── */
+  .actions{
+    position:fixed;left:0;right:0;bottom:0;z-index:20;
+    display:flex;gap:8px;
+    padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+    background:color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter:blur(12px);
+    border-top:1px solid var(--line);
+  }
+  button{
+    flex:1;min-height:50px;
+    font:700 14px/1 inherit;
+    border-radius:100px;cursor:pointer;
+    border:1px solid var(--navy);background:var(--navy);color:#fff;
+    display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  }
+  button.ghost{background:transparent;color:var(--ink);border-color:var(--line);flex:0 0 auto;padding:0 16px}
+  button.primary{background:var(--navy);border-color:var(--navy)}
+  @media (prefers-color-scheme: dark){
+    button.primary{background:var(--gold);border-color:var(--gold);color:#0B141E}
+  }
+  :root[data-theme="dark"] button.primary{background:var(--gold);border-color:var(--gold);color:#0B141E}
+  :root[data-theme="light"] button.primary{background:var(--navy);border-color:var(--navy);color:#fff}
+  button:active{transform:translateY(1px)}
+
+  .toast{
+    position:fixed;left:50%;bottom:calc(74px + env(safe-area-inset-bottom));
+    transform:translateX(-50%) translateY(6px);
+    background:var(--ink);color:var(--surface);
+    padding:10px 20px;border-radius:100px;font-size:13.5px;font-weight:600;
+    opacity:0;pointer-events:none;transition:opacity .18s ease,transform .18s ease;z-index:30;
+  }
+  .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+  @media (prefers-reduced-motion: reduce){
+    .toast{transition:none}
+    button:active{transform:none}
+  }
+  @media (min-width:700px){
+    .grid2{gap:12px}
+    main{padding-top:20px}
+  }
+</style>
+
+<header class="hd">
+  <div class="wordmark">Horizonte <span>Emirates</span></div>
+  <div class="hd-sub">Generador de correos</div>
+</header>
+
+<main>
+
+  <section class="panel" id="panel-crm">
+    <div class="status">
+      <span class="chip b-C" style="background:var(--field);color:var(--muted)">CRM</span>
+      <span class="meta" id="crmResumen">Cargando leads...</span>
+    </div>
+    <div class="panel-body">
+      <div class="crm-tools">
+        <select id="crmDias" aria-label="Periodo">
+          <option value="7">Últimos 7 días</option>
+          <option value="30" selected>Últimos 30 días</option>
+          <option value="90">Últimos 90 días</option>
+        </select>
+        <button class="ghost" id="crmRecargar" type="button">Recargar</button>
+      </div>
+      <div class="crm-list" id="crmLista"></div>
+      <p class="crm-msg" id="crmMsg"></p>
+      <button class="ghost" id="crmAnotar" type="button" style="display:none">Anotar el contacto en el CRM</button>
+    </div>
+  </section>
+
+  <details class="panel" id="panel-lead" open>
+    <summary>El lead</summary>
+    <div class="panel-body">
+      <div>
+        <label for="nombre">Nombre de pila</label>
+        <input id="nombre" type="text" inputmode="text" autocomplete="off" placeholder="José"/>
+      </div>
+      <div>
+        <label for="email">Email</label>
+        <input id="email" type="email" inputmode="email" autocomplete="off" autocapitalize="none" placeholder="inversor@ejemplo.com"/>
+      </div>
+      <div>
+        <label for="capital">Capital disponible</label>
+        <select id="capital">
+          <option value="150k-300k">150.000 a 300.000 €</option>
+          <option value="300k-600k" selected>300.000 a 600.000 €</option>
+          <option value="600k-1M">600.000 a 1.000.000 €</option>
+          <option value="mas1M">Más de 1.000.000 €</option>
+        </select>
+      </div>
+      <div>
+        <label for="objetivo">Objetivo principal</label>
+        <select id="objetivo">
+          <option value="alquiler" selected>Renta pasiva (alquiler)</option>
+          <option value="revalorizacion">Apreciación del capital</option>
+          <option value="diversificacion">Diversificación geográfica</option>
+          <option value="residencia">Residencia en UAE</option>
+        </select>
+      </div>
+      <div class="grid2">
+        <div>
+          <label for="plazo">Horizonte</label>
+          <select id="plazo">
+            <option value="ya">Operar ya</option>
+            <option value="6meses" selected>Menos de 6 meses</option>
+            <option value="12meses">Menos de 12 meses</option>
+            <option value="indefinido">Sin plazo</option>
+          </select>
+        </div>
+        <div>
+          <label for="viaje">Visita a Dubai</label>
+          <select id="viaje">
+            <option value="si">Sí, le interesa</option>
+            <option value="quizas" selected>Lo valora</option>
+            <option value="no">No por ahora</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid2">
+        <div>
+          <label for="pais">País</label>
+          <select id="pais">
+            <option value="España" selected>España</option>
+            <option value="Andorra">Andorra</option>
+            <option value="México">México</option>
+            <option value="Argentina">Argentina</option>
+            <option value="Colombia">Colombia</option>
+            <option value="Chile">Chile</option>
+            <option value="Perú">Perú</option>
+            <option value="Venezuela">Venezuela</option>
+            <option value="Ecuador">Ecuador</option>
+            <option value="Uruguay">Uruguay</option>
+            <option value="Otro">Otro</option>
+          </select>
+        </div>
+        <div>
+          <label for="canal">Canal preferido</label>
+          <select id="canal">
+            <option value="whatsapp" selected>WhatsApp</option>
+            <option value="llamada">Llamada</option>
+            <option value="email">Email</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label for="consent">Consentimiento de marketing</label>
+        <select id="consent">
+          <option value="SI">SI, todo el kit disponible</option>
+          <option value="NO" selected>NO, solo atender su solicitud</option>
+        </select>
+      </div>
+      <div class="grid2">
+        <div><label for="dia1">Hueco 1</label><input id="dia1" type="text" placeholder="jueves"/></div>
+        <div><label for="hora1">Hora</label><input id="hora1" type="text" inputmode="numeric" placeholder="11:30"/></div>
+      </div>
+      <div class="grid2">
+        <div><label for="dia2">Hueco 2</label><input id="dia2" type="text" placeholder="viernes"/></div>
+        <div><label for="hora2">Hora</label><input id="hora2" type="text" inputmode="numeric" placeholder="17:00"/></div>
+      </div>
+    </div>
+  </details>
+
+  <section class="panel">
+    <div class="status">
+      <span class="chip b-B" id="tierBadge">Tier B</span>
+      <span class="meta" id="scoreTxt"></span>
+    </div>
+    <p class="playbook" id="playbook"></p>
+    <div class="panel-body">
+      <div>
+        <label for="tpl">Correo a generar</label>
+        <select id="tpl">
+          <option value="auto" selected>M1 · Primer contacto (según tier)</option>
+          <option value="M11">M11 · Visita a Emiratos</option>
+          <option value="M2">M2 · 48 h sin respuesta</option>
+          <option value="M3">M3 · Selección preparada</option>
+          <option value="M4">M4 · Confirmación de llamada</option>
+          <option value="M5">M5 · Recordatorio 24 h antes</option>
+          <option value="M6">M6 · No se presentó</option>
+          <option value="M7">M7 · Después de la llamada</option>
+          <option value="M8A">M8-A · "Es una burbuja"</option>
+          <option value="M8B">M8-B · "Está muy lejos"</option>
+          <option value="M8C">M8-C · "Lo veo con mi asesor"</option>
+          <option value="M8D">M8-D · "Mándeme la info"</option>
+          <option value="M8E">M8-E · "Ahora no es el momento"</option>
+          <option value="M9">M9 · Reactivación</option>
+          <option value="M10">M10 · Cierre elegante</option>
+          <option value="WA">WhatsApp complementario</option>
+        </select>
+      </div>
+      <div class="subject" id="outSubject"></div>
+      <pre id="outBody"></pre>
+      <div class="warn" id="warnConsent">
+        Este lead no dio consentimiento de marketing: solo se le puede escribir para atender su
+        solicitud. Los correos M8-E y M9 son seguimiento comercial y no deben enviarse.
+      </div>
+      <p class="note">
+        Enviar desde hola@horizonteemirates.com, en texto normal y sin plantilla de marca.
+        Los seguimientos van en el mismo hilo, respondiendo, no en un correo nuevo.
+      </p>
+    </div>
+  </section>
+
+</main>
+
+<div class="actions">
+  <button class="primary" id="btnBody">Copiar correo</button>
+  <button class="ghost" id="btnSubject">Asunto</button>
+  <button class="ghost" id="btnGmail">Gmail</button>
+</div>
+
+<div class="toast" id="toast">Copiado</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var FIRMA = "Jesús Ibáñez";   // presentación y firma del primer contacto
+  var FIRMA_PILA = "Jesús";     // firma de los seguimientos dentro del hilo
+  var CAL = "https://calendly.com/hola-horizonteemirates/llamada-estrategica-horizonte-emirates-30-minutos";
+  var GUIA = "https://www.horizonteemirates.com/guias/guia-fiscal-dubai-espana.html";
+  var COMP = "https://www.horizonteemirates.com/#comparativa";
+  var WA = "+971 55 472 2025";
+  var MAIL = "hola@horizonteemirates.com";
+  var DESCARGO = "Horizonte Emirates no presta asesoramiento fiscal ni jurídico. La información es orientativa.";
+
+  var SCORES = {
+    capital:{"150k-300k":1,"300k-600k":2,"600k-1M":3,"mas1M":4},
+    objetivo:{alquiler:3,revalorizacion:3,diversificacion:2,residencia:1},
+    plazo:{ya:4,"6meses":3,"12meses":2,indefinido:1},
+    viaje:{si:2,quizas:1,no:0}
+  };
+
+  var CAPITAL_LABELS = {
+    "150k-300k":"150.000 a 300.000 €",
+    "300k-600k":"300.000 a 600.000 €",
+    "600k-1M":"600.000 a 1.000.000 €",
+    "mas1M":"más de 1.000.000 €"
+  };
+  var OBJETIVO_LABELS = {
+    alquiler:"generar renta pasiva con alquiler",
+    revalorizacion:"revalorización del capital",
+    diversificacion:"diversificación geográfica del patrimonio",
+    residencia:"obtener residencia en UAE"
+  };
+
+  var FIRMA_LARGA = "Un saludo,\n" + FIRMA + "\nHorizonte Emirates\n" + MAIL + " · WhatsApp " + WA;
+  var FIRMA_CORTA = "Un saludo,\n" + FIRMA_PILA;
+
+  // ── Bloques modulares (mismo texto que automation/MAILS-MANUALES.md) ──
+  var B_OBJETIVO = {
+    alquiler:
+"Usted busca renta. Ahí lo que manda no es el precio de entrada, es quién gestiona el\n" +
+"alquiler y qué ocupación real tiene la zona. Un 8 % sobre el papel con tres meses vacío\n" +
+"al año es un 6 %. En la llamada verá las cifras de ocupación por zona, no solo la\n" +
+"rentabilidad bruta estimada del 6 al 12 % que se publica.",
+    revalorizacion:
+"Usted busca plusvalía. Eso significa entrar antes de que el precio recoja lo que va a\n" +
+"pasar en la zona, y eso obliga a hablar de plazos de entrega y de solvencia del promotor\n" +
+"más que de rentabilidad. Son escenarios orientativos, sin resultados garantizados: por\n" +
+"eso conviene verlos con Marc y no en una ficha.",
+    diversificacion:
+"Su objetivo no es maximizar el rendimiento, es sacar una parte del patrimonio del euro\n" +
+"y de un único marco regulatorio. Cambia bastante la selección: se priorizan activos\n" +
+"líquidos, en zonas consolidadas y con salida fácil, aunque la rentabilidad no sea la mayor.",
+    residencia:
+"Le interesa la residencia. Aquí el orden importa: el inmueble tiene que cumplir los\n" +
+"requisitos de importe y de titularidad para la visa, así que primero se define eso y\n" +
+"luego se busca la mejor opción dentro de ese filtro. Hacerlo al revés suele acabar en\n" +
+"una compra que no sirve para el objetivo."
+  };
+
+  var B_CAPITAL = {
+    "150k-300k":
+"Con su rango se trabaja bien en off-plan premium y en residencial consolidado de Dubai.\n" +
+"La clave está en el plan de pagos: hay proyectos donde se entra con el 20 % y el resto\n" +
+"se escalona hasta la entrega, y eso cambia por completo el capital que necesita hoy.",
+    "300k-600k":
+"Su rango permite algo que abajo no se puede: repartir en dos activos con lógicas\n" +
+"distintas, uno de renta y otro de apreciación. La mayoría lo descubre en la llamada\n" +
+"y es la decisión que más les cambia el resultado.",
+    "600k-1M":
+"En su rango entra el prime real (Marina, Downtown, Palm) y también la opción de un solo\n" +
+"activo grande frente a una cartera de tres. No hay respuesta buena en abstracto: depende\n" +
+"de si quiere gestionar poco o rendir más.",
+    "mas1M":
+"A partir de ese volumen se negocia de otra forma: descuentos por compra en bloque,\n" +
+"condiciones de pago fuera de catálogo y acceso a lanzamientos antes de la salida pública.\n" +
+"Eso se habla directamente con Marc y con el promotor, no por correo."
+  };
+
+  var B_PLAZO = {
+    ya:
+"Como tiene el capital disponible, la conversación es distinta: se trata de ver qué hay\n" +
+"abierto ahora mismo y con qué condiciones, no de teoría de mercado. Por eso le propongo\n" +
+"hablar esta misma semana.",
+    "6meses":
+"Con un horizonte de seis meses hay tiempo de hacerlo bien: ver opciones, comparar y\n" +
+"decidir con calma. Lo que no conviene es dejar la parte fiscal para el final, porque\n" +
+"es lo que más suele retrasar una operación.",
+    "12meses":
+"Doce meses dan margen para lo más valioso: ver cómo evoluciona lo que hoy está sobre\n" +
+"plano y entrar con criterio. La llamada de ahora sirve para saber qué mirar durante\n" +
+"ese año.",
+    indefinido:
+"Sin plazo definido no hay ninguna prisa, y así lo trataremos. La llamada le sirve para\n" +
+"saber si esto tiene sentido para usted antes de invertir tiempo en analizar proyectos\n" +
+"concretos."
+  };
+
+  // Versión corta: va en el primer contacto, siempre, con la variante que marcó el lead.
+  // La visita no compite con la videollamada: la justifica (la llamada elige qué ver).
+  var B_VIAJE = {
+    si:
+"Ha marcado que le interesa verlo en persona, y me alegra: es la mejor decisión que puede\n" +
+"tomar antes de firmar nada. La agenda la montamos nosotros de principio a fin (los\n" +
+"proyectos, nuestras oficinas de Dubai y las reuniones con los promotores). En la llamada\n" +
+"con Marc decidimos qué merece la pena que vea.",
+    quizas:
+"Sobre venir a Emiratos: no hace falta decidirlo hoy, pero quiero que sepa que la puerta\n" +
+"está abierta y que la agenda la montamos nosotros (los proyectos, nuestras oficinas de\n" +
+"Dubai y las reuniones con los promotores). En la llamada con Marc verá si en su caso\n" +
+"merece la pena el viaje.",
+    no:
+"Ha indicado que prefiere gestión remota, y es perfectamente viable: se compra a distancia,\n" +
+"con poder notarial y con nuestro equipo verificando cada paso en Dubai. Y si algún día\n" +
+"quiere verlo con sus propios ojos, la invitación queda hecha y la agenda la montamos\n" +
+"nosotros."
+  };
+
+  // Versión desarrollada: arranque del M11.
+  var B_VIAJE_LARGO = {
+    si:
+"Ha marcado que le interesa verlo en persona. Es la mejor decisión que puede tomar antes\n" +
+"de firmar nada, y le explico cómo lo hacemos.\n\n" +
+"Cuando un inversor viaja con nosotros no viene a hacer turismo inmobiliario. Le montamos\n" +
+"la agenda completa, de principio a fin:",
+    quizas:
+"Le voy a proponer algo distinto de lo que suele hacer una agencia.\n\n" +
+"En lugar de mandarle más documentación, le propongo que venga a Emiratos y lo vea usted\n" +
+"mismo. De la agenda nos ocupamos nosotros, de principio a fin:",
+    no:
+"Ha indicado que prefiere gestión remota, y es perfectamente viable: la compra se puede\n" +
+"hacer entera a distancia, con poder notarial y con nuestro equipo verificando cada paso\n" +
+"en Dubai. Buena parte de nuestros inversores opera así y funciona.\n\n" +
+"Dicho eso, dejo la invitación hecha por si en algún momento cambia de opinión. Si quiere\n" +
+"ver el activo, nuestras oficinas de Dubai y a los promotores en persona, esto es lo que\n" +
+"le montamos nosotros:"
+  };
+
+  var B_AGENDA =
+"- Visitas a los proyectos preseleccionados para su perfil, en obra y ya terminados\n" +
+"- Reunión en nuestras oficinas de Dubai con el equipo que llevaría su operación\n" +
+"- Encuentros cara a cara con los promotores, donde se habla de condiciones que no\n" +
+"  aparecen en ningún catálogo\n" +
+"- Recorrido por las zonas: quién vive allí, qué se está construyendo al lado y cómo\n" +
+"  está el alquiler en la práctica\n" +
+"- Todo en español, con alguien de nuestro equipo acompañándole en cada reunión";
+
+  var B_PAIS_ES =
+"Desde España hay tres cosas que conviene tener claras antes de nada: las rentas del\n" +
+"alquiler tributan en el IRPF, el inmueble se declara en el modelo 720 si supera el\n" +
+"umbral, y el convenio de doble imposición con los EAU evita pagar dos veces. La guía\n" +
+"lo explica con detalle.";
+  var B_PAIS_AD =
+"Desde Andorra el tratamiento es distinto al español y bastante más simple, pero depende\n" +
+"de su situación concreta de residencia. Es de las primeras cosas que conviene revisar\n" +
+"con su asesor, y en la llamada le decimos qué preguntarle exactamente.";
+  var B_PAIS_LATAM =
+"Desde {{pais}} lo que más pesa no suele ser la rentabilidad, es tener parte del patrimonio\n" +
+"en una divisa estable y en una jurisdicción previsible. La fiscalidad depende de su\n" +
+"país, y ahí siempre recomendamos contrastar con un asesor local antes de decidir.";
+
+  var B_CANAL = {
+    whatsapp:
+"Ha indicado WhatsApp como canal preferido, así que le escribo también por ahí para que\n" +
+"lo tenga a mano. Si prefiere que hablemos solo por correo, dígamelo y así lo hacemos.",
+    llamada:
+"Ha indicado que prefiere que le llamemos. Dígame qué franja le viene bien y le llamamos\n" +
+"cuando usted diga: no llamamos a nadie sin avisar antes.",
+    email:
+"Ha indicado el correo como canal preferido, así que por aquí seguimos. Si en algún\n" +
+"momento prefiere WhatsApp, mi número está abajo."
+  };
+
+  function bloquePais(pais){
+    if(pais === "España") return B_PAIS_ES;
+    if(pais === "Andorra") return B_PAIS_AD;
+    return B_PAIS_LATAM;
+  }
+
+  // ── Plantillas ──
+  function tplM1A(d){
+    return {
+      subject:"Su análisis de Dubai, " + d.nombre + ": una pregunta antes de enviárselo",
+      body:
+"Hola " + d.nombre + ",\n\n" +
+"Soy " + FIRMA + ", el que firmaba el correo de confirmación de hace un rato. Ahora ya en\n" +
+"persona y con su solicitud delante.\n\n" +
+"Antes de mandarle inmuebles quiero afinar una cosa, porque para " + d.cap + " con " + d.obj + "\n" +
+"hay dos caminos bastante distintos y el que le convenga cambia toda la selección.\n\n" +
+B_OBJETIVO[d.objetivo] + "\n\n" +
+"Quien lo revisa con usted es Marc, nuestro socio en Dubai. Es quien negocia con las\n" +
+"promotoras y quien puede decirle, sin rodeos, si lo que busca encaja hoy con el mercado\n" +
+"o si conviene replantearlo.\n\n" +
+B_PLAZO[d.plazo] + "\n\n" +
+"{{EXTRAS}}" +
+"Le he reservado dos huecos esta semana:\n" +
+"- " + d.dia1 + " a las " + d.hora1 + "\n" +
+"- " + d.dia2 + " a las " + d.hora2 + "\n\n" +
+"¿Cuál le viene mejor? Si prefiere elegir usted:\n" + CAL + "\n\n" +
+FIRMA_LARGA + "\n\n" + DESCARGO
+    };
+  }
+
+  function tplM1B(d){
+    return {
+      subject:d.nombre + ", su análisis de inversión en Dubai",
+      body:
+"Hola " + d.nombre + ",\n\n" +
+"Soy " + FIRMA + ", el que firmaba el correo de confirmación. Ya he mirado su solicitud con\n" +
+"calma.\n\n" +
+"Le cuento cómo lo hacemos, porque no es lo habitual: primero hablamos 20 minutos y\n" +
+"después le enviamos inmuebles. Al revés no funciona. Mandar fichas en PDF a alguien de\n" +
+"quien no sabemos si busca renta, plusvalía o cobertura de patrimonio es hacerle perder\n" +
+"el tiempo.\n\n" +
+B_OBJETIVO[d.objetivo] + "\n\n" +
+"La videollamada la hace Marc, que está en Dubai y trata directamente con las promotoras.\n" +
+"Son 20 o 30 minutos, sin coste y sin compromiso. Si al terminar la conclusión es que\n" +
+"Dubai no encaja con lo que busca, se lo diremos igual.\n\n" +
+"{{EXTRAS}}" +
+"Puede elegir el hueco que quiera aquí:\n" + CAL + "\n\n" +
+"Y mientras, la guía fiscal Dubai y España, con lo que hay que saber desde " + d.pais + ":\n" + GUIA + "\n\n" +
+FIRMA_LARGA + "\n\n" + DESCARGO
+    };
+  }
+
+  function tplM1C(d){
+    return {
+      subject:"Su guía fiscal de Dubai, " + d.nombre + " (y una idea para cuando le encaje)",
+      body:
+"Hola " + d.nombre + ",\n\n" +
+"Soy " + FIRMA + ", el que firmaba el correo de confirmación. Le escribo yo ahora.\n\n" +
+"Por lo que ha marcado, entiendo que está en fase de mirar y entender, no de comprar.\n" +
+"Perfecto: es exactamente el momento en el que conviene informarse bien y sin prisa.\n\n" +
+"Le dejo la guía fiscal Dubai y España, que es lo más útil en su punto. Explica qué se\n" +
+"declara en " + d.pais + ", cómo funciona el convenio de doble imposición y los errores que más\n" +
+"caros salen:\n" + GUIA + "\n\n" +
+"Y también el comparador: mete su precio de compra y ve el retorno estimado en Dubai\n" +
+"frente a España, con sus propios supuestos:\n" + COMP + "\n\n" +
+bloquePais(d.pais) + "\n\n" +
+"{{EXTRAS}}" +
+"Cuando quiera pasar de leer a ver números concretos, mi socio Marc está en Dubai y hace\n" +
+"videollamadas de 20 minutos con inversores en su situación. Sin coste y sin compromiso.\n" +
+"Lo digo por si le sirve más adelante, no hay ninguna prisa:\n" + CAL + "\n\n" +
+FIRMA_LARGA + "\n\n" + DESCARGO
+    };
+  }
+
+  var TPL = {
+    M2:function(d){return{
+      subject:"Re: (responder en el hilo del primer correo)",
+      body:
+"Hola " + d.nombre + ",\n\n" +
+"Le escribo por si el correo anterior quedó enterrado, que pasa constantemente.\n\n" +
+"No hace falta que decida nada ahora. Solo dígame si le viene mejor:\n" +
+"- " + d.dia1 + " a las " + d.hora1 + "\n" +
+"- " + d.dia2 + " a las " + d.hora2 + "\n" +
+"- o ninguna de las dos, y le propongo otras\n\n" +
+"Son 20 minutos con Marc y salen de ahí dos cosas concretas: si su planteamiento para\n" +
+d.cap + " encaja hoy con el mercado, y qué haría él en su lugar.\n\n" + FIRMA_CORTA
+    };},
+
+    M3:function(d){return{
+      subject:d.nombre + ", tengo tres opciones para su perfil (le explico en 20 min)",
+      body:
+"Hola " + d.nombre + ",\n\n" +
+"Ya tengo preparada la selección para " + d.cap + " con " + d.obj + ": tres inmuebles, cada uno\n" +
+"con una lógica distinta, y la comparativa por zona entre Dubai, Ras Al Khaimah y Abu Dhabi.\n\n" +
+"No se lo envío en PDF a secas y por una razón: los números importantes no son la\n" +
+"rentabilidad bruta estimada, son la ocupación real, el plan de pagos y el historial del\n" +
+"promotor. Eso se entiende hablando, en veinte minutos, y no leyendo una ficha.\n\n" +
+"Marc se lo pasa por pantalla y lo repasan juntos. Elija hueco aquí:\n" + CAL + "\n\n" +
+"Si después de la llamada quiere las fichas, se las envío ese mismo día.\n\n" +
+FIRMA_CORTA + "\n\n" +
+"Horizonte Emirates no presta asesoramiento fiscal ni jurídico. Las rentabilidades son\n" +
+"estimaciones de mercado y no garantizan resultados."
+    };},
+
+    M4:function(d){return{
+      subject:"Confirmado: " + d.dia1 + " a las " + d.hora1 + " con Marc",
+      body:
+"Hola " + d.nombre + ",\n\n" +
+"Confirmado para el " + d.dia1 + " a las " + d.hora1 + " (hora de [zona horaria]). Le llegará el enlace\n" +
+"de la videollamada con la invitación.\n\n" +
+"Marc llega con esto preparado:\n" +
+"- Tres inmuebles para " + d.cap + " con " + d.obj + "\n" +
+"- Rentabilidad estimada, plan de pagos y plazo de entrega de cada uno\n" +
+"- Comparativa entre Dubai, Ras Al Khaimah y Abu Dhabi\n" +
+"- Los puntos fiscales que le afectan desde " + d.pais + "\n" +
+"- Cómo sería la agenda si quiere venir a verlo en persona, con fechas posibles\n\n" +
+"Solo le pido una cosa: traiga sus dudas incómodas. Las de \"¿y si no se alquila?\",\n" +
+"\"¿qué pasa si el promotor se retrasa?\" o \"¿cómo saco el dinero de ahí?\". Son las que\n" +
+"de verdad sirven y las que Marc responde mejor.\n\n" +
+"Si le surge algo y necesita moverla, dígamelo con confianza.\n\n" + FIRMA_CORTA
+    };},
+
+    M5:function(d){return{
+      subject:"Mañana a las " + d.hora1 + ", " + d.nombre,
+      body:
+"Hola " + d.nombre + ",\n\n" +
+"Un recordatorio rápido: mañana " + d.dia1 + " a las " + d.hora1 + " con Marc, 20 o 30 minutos por\n" +
+"videollamada. Aquí tiene el enlace: [enlace]\n\n" +
+"Si le ha surgido algo, dígamelo y la movemos sin problema. Es mejor cambiarla que\n" +
+"hacerla con prisa.\n\n" + FIRMA_CORTA
+    };},
+
+    M6:function(d){return{
+      subject:"Se nos ha cruzado la hora, " + d.nombre,
+      body:
+"Hola " + d.nombre + ",\n\n" +
+"Hoy no hemos coincidido en la llamada. Sin ningún problema: cuando uno tiene la agenda\n" +
+"llena, es lo normal.\n\n" +
+"Marc tiene su selección preparada y sigue disponible. ¿Le busco hueco para " + d.dia1 + " o\n" +
+"prefiere la semana que viene?\n\n" +
+"Y si simplemente ha decidido dejarlo, dígamelo con total libertad y dejo de escribirle.\n" +
+"Prefiero saberlo a insistir sin sentido.\n\n" + FIRMA_CORTA
+    };},
+
+    M7:function(d){return{
+      subject:"Lo que hablamos hoy, " + d.nombre + ", y el siguiente paso",
+      body:
+"Hola " + d.nombre + ",\n\n" +
+"Le resumo lo que salió de la llamada con Marc:\n\n" +
+"1. [Conclusión sobre su objetivo, en una línea]\n" +
+"2. [Opción recomendada y por qué]\n" +
+"3. [Lo que hay que verificar o decidir antes de avanzar]\n\n" +
+"Le adjunto las fichas de los inmuebles que vio, con los números que comentamos.\n\n" +
+"El siguiente paso es [paso concreto]. Si le encaja, lo preparo y le digo qué necesito\n" +
+"de su parte.\n\n" +
+"Y si de esta conversación ha salido que no es el momento, también es una conclusión\n" +
+"válida. Se lo digo en serio.\n\n" + FIRMA_CORTA + "\n\n" +
+"Horizonte Emirates no presta asesoramiento fiscal ni jurídico. Las cifras son\n" +
+"estimaciones y no garantizan resultados."
+    };},
+
+    M8A:function(d){return{
+      subject:"Re: sobre si Dubai es una burbuja",
+      body:
+"Hola " + d.nombre + ",\n\n" +
+"Es la duda más razonable que se puede tener, y quien no se la hace es el que debería\n" +
+"preocuparme.\n\n" +
+"Lo que le puedo decir con datos: en 2025 se registraron más de 270.000 operaciones\n" +
+"inmobiliarias en Dubai según el Dubai Land Department, con una base de demanda que ya\n" +
+"no es especulativa sino residencial, sostenida por llegada de población. No es 2008,\n" +
+"cuando el mercado se movía por reventas sobre plano sin comprador final.\n\n" +
+"Dicho eso: hay zonas donde yo no compraría y proyectos que no le enseñaríamos. Esa\n" +
+"distinción es justo lo que le aporta hablar con Marc veinte minutos.\n\n" +
+"¿Le busco hueco esta semana?\n\n" + FIRMA_CORTA
+    };},
+
+    M8B:function(d){return{
+      subject:"Re: sobre la distancia y el control del inmueble",
+      body:
+"Hola " + d.nombre + ",\n\n" +
+"Tiene toda la razón en que un inmueble a 5.000 kilómetros no se gestiona igual que uno\n" +
+"en su ciudad. Por eso la pregunta correcta no es cómo lo va a controlar usted, es quién\n" +
+"lo gestiona y qué responde si algo va mal.\n\n" +
+"En la práctica: gestión profesional del alquiler, nuestro equipo en Dubai como\n" +
+"interlocutor suyo, y el marco RERA, que obliga a que los pagos del off-plan vayan a\n" +
+"cuentas de garantía supervisadas y no al bolsillo del promotor.\n\n" +
+"Es exactamente lo que conviene que le explique Marc, que es quien está allí.\n" +
+"¿Veinte minutos esta semana?\n\n" + FIRMA_CORTA
+    };},
+
+    M8C:function(d){return{
+      subject:"Re: para su conversación con el asesor fiscal",
+      body:
+"Hola " + d.nombre + ",\n\n" +
+"Me parece lo correcto, y de hecho es lo que recomendamos siempre: nosotros no somos\n" +
+"asesores fiscales y no vamos a comportarnos como si lo fuéramos.\n\n" +
+"Para que esa conversación con su asesor sea útil, le mando la guía fiscal Dubai y\n" +
+"España, que es la que suelen agradecer porque ordena el asunto (IRPF, modelo 720,\n" +
+"convenio de doble imposición):\n" + GUIA + "\n\n" +
+"Una idea: si hacemos primero la llamada con Marc, irá a su asesor con un caso concreto\n" +
+"en la mano en lugar de con una pregunta abierta. Suele ahorrar dos o tres vueltas.\n\n" +
+FIRMA_CORTA + "\n\n" + "Horizonte Emirates no presta asesoramiento fiscal ni jurídico."
+    };},
+
+    M8D:function(d){return{
+      subject:"Re: sobre enviarle la información por correo",
+      body:
+"Hola " + d.nombre + ",\n\n" +
+"Se lo mando encantado, pero antes le explico por qué insisto en la llamada, y luego\n" +
+"usted decide.\n\n" +
+"Si le envío tres fichas ahora, voy a acertar por casualidad. No sé si prioriza cobrar\n" +
+"renta desde el primer mes o entrar barato y esperar, ni si quiere gestionar poco o\n" +
+"rendir más. Con esos datos, la selección es otra.\n\n" +
+"Veinte minutos con Marc y le llega una propuesta que sí es suya. Si aun así prefiere\n" +
+"las fichas primero, dígamelo y se las envío hoy sin más.\n\n" +
+"Y le adelanto por dónde acaba esto normalmente: con el inversor viniendo a Emiratos a\n" +
+"verlo. Le montamos nosotros la agenda entera (proyectos, nuestras oficinas de Dubai y\n" +
+"reuniones con los promotores) y usted solo pone el vuelo y el hotel. Ninguna ficha en PDF\n" +
+"compite con eso.\n\n" + FIRMA_CORTA
+    };},
+
+    M8E:function(d){return{
+      subject:"Re: entendido, lo dejamos para más adelante",
+      body:
+"Hola " + d.nombre + ",\n\n" +
+"Entendido, y gracias por decírmelo claramente. Se agradece más que un silencio.\n\n" +
+"Dos cosas y le dejo tranquilo:\n\n" +
+"Si quiere, le escribo dentro de [tres o seis] meses para ver cómo está el mercado y si\n" +
+"entonces le encaja. Si prefiere que no, dígamelo y no vuelvo a escribirle.\n\n" +
+"Y si en cualquier momento le surge una duda concreta, mi número está abajo. Responder\n" +
+"preguntas no nos cuesta nada y no implica ningún compromiso.\n\n" + FIRMA_LARGA
+    };},
+
+    M9:function(d){return{
+      subject:d.nombre + ", una novedad que sí afecta a lo que buscaba",
+      body:
+"Hola " + d.nombre + ",\n\n" +
+"Hablamos hace unos meses sobre " + d.cap + " con " + d.obj + " y quedó en que no era el momento.\n\n" +
+"Le escribo porque ha cambiado algo que le afecta directamente: [novedad real y concreta].\n" +
+"No es una novedad genérica de mercado, es de lo suyo.\n\n" +
+"¿Le interesa que se lo cuente en quince minutos, o lo dejamos definitivamente aparcado?\n" +
+"Las dos respuestas me sirven.\n\n" + FIRMA_CORTA
+    };},
+
+    M11:function(d){return{
+      subject:d.nombre + ", le propongo que lo vea con sus propios ojos",
+      body:
+"Hola " + d.nombre + ",\n\n" +
+B_VIAJE_LARGO[d.viaje] + "\n\n" +
+B_AGENDA + "\n\n" +
+"No tiene coste de asesoramiento: usted pone el vuelo y el hotel, y no adquiere ningún\n" +
+"compromiso de compra por venir.\n\n" +
+"Lo hacemos porque es lo que convierte más rápido una duda razonable en una decisión\n" +
+"tranquila, y da igual en qué sentido. Hay inversores que vienen, lo ven y deciden que no\n" +
+"es para ellos. También nos vale: preferimos eso a que alguien firme sin estar seguro.\n\n" +
+"Y hay algo que a distancia no se consigue: sentarse delante del promotor. Ahí se habla de\n" +
+"plazos reales, de planes de pago y de condiciones que no están en ningún catálogo, y se\n" +
+"ve con quién se está tratando.\n\n" +
+"El paso previo son 20 minutos con Marc por videollamada, para elegir qué merece la pena\n" +
+"que vea. Una agenda de dos días bien montada vale más que una semana viendo inmuebles al\n" +
+"azar.\n\n" +
+"- " + d.dia1 + " a las " + d.hora1 + "\n" +
+"- " + d.dia2 + " a las " + d.hora2 + "\n\n" +
+"¿Le encaja alguno? Si prefiere elegir usted:\n" + CAL + "\n\n" + FIRMA_LARGA
+    };},
+
+    M10:function(d){return{
+      subject:"Dejo de escribirle, " + d.nombre,
+      body:
+"Hola " + d.nombre + ",\n\n" +
+"Le he escrito varias veces sin respuesta, así que dejo de hacerlo. No quiero ser una\n" +
+"molestia en su bandeja de entrada.\n\n" +
+"Su solicitud queda registrada. Si algún día quiere retomarlo, escríbame una línea a\n" +
+MAIL + " y lo recupero al momento, sin tener que empezar de cero.\n\n" +
+"Gracias por haber confiado en nosotros para preguntar.\n\n" + FIRMA_CORTA
+    };},
+
+    WA:function(d){
+      var t = d.tier === "A"
+        ? "Hola " + d.nombre + ", soy " + FIRMA + " de Horizonte Emirates. Le acabo de escribir al correo con su solicitud de análisis de Dubai. Le he propuesto dos huecos para hablar con Marc, mi socio allí. ¿Le va bien alguno o le busco otro?"
+        : "Hola " + d.nombre + ", soy " + FIRMA + " de Horizonte Emirates. Le he mandado un correo con el detalle de su solicitud. Si le resulta más cómodo por aquí, dígame y seguimos por WhatsApp.";
+      return {
+        subject:"(mensaje de WhatsApp, se envía después del correo)",
+        body:t + "\n\n---\nRecordatorio de llamada:\nHola " + d.nombre + ", mañana a las " + d.hora1 +
+          " tiene la videollamada con Marc. Si le ha surgido algo, avíseme y la movemos sin problema." +
+          "\n\nTras un no-show:\nHola " + d.nombre + ", hoy no hemos coincidido en la llamada. Sin problema. ¿Le busco hueco para " +
+          d.dia1 + " o prefiere la semana que viene?"
+      };
+    }
+  };
+
+  var PLAYBOOK = {
+    A:"Tier A: contactar en menos de 1 hora. Correo M1-A y WhatsApp justo después, sin esperar respuesta al correo.",
+    B:"Tier B: contactar hoy mismo. Correo M1-B, y la visita a Emiratos siempre dentro. WhatsApp solo si no responde en 24 h.",
+    C:"Tier C: contactar en menos de 24 horas. Correo M1-C, tono educativo. La llamada se ofrece, no se pide."
+  };
+
+  function $(id){return document.getElementById(id);}
+  function val(id){return $(id).value;}
+
+  function classify(d){
+    var s = (SCORES.capital[d.capital]||0) + (SCORES.objetivo[d.objetivo]||0) +
+            (SCORES.plazo[d.plazo]||0) + (SCORES.viaje[d.viaje]||0);
+    return {score:s, tier: s>=9 ? "A" : (s>=6 ? "B" : "C")};
+  }
+
+  function collect(){
+    var d = {
+      nombre: (val("nombre").trim() || "[Nombre]").split(/\s+/)[0],
+      email: val("email").trim(),
+      capital: val("capital"),
+      objetivo: val("objetivo"),
+      plazo: val("plazo"),
+      viaje: val("viaje"),
+      pais: val("pais"),
+      canal: val("canal"),
+      consent: val("consent"),
+      dia1: val("dia1").trim() || "[día]",
+      hora1: val("hora1").trim() || "[hora]",
+      dia2: val("dia2").trim() || "[día]",
+      hora2: val("hora2").trim() || "[hora]"
+    };
+    d.cap = CAPITAL_LABELS[d.capital];
+    d.obj = OBJETIVO_LABELS[d.objetivo];
+    var c = classify(d);
+    d.tier = c.tier;
+    d.score = c.score;
+    return d;
+  }
+
+  function build(){
+    var d = collect();
+    var pick = val("tpl");
+    var out;
+
+    if(pick === "auto"){
+      out = d.tier === "A" ? tplM1A(d) : (d.tier === "B" ? tplM1B(d) : tplM1C(d));
+      // Bloques antes de la petición de cita: la llamada siempre cierra el correo.
+      // La visita entra SIEMPRE (con la variante que marcó): es la palanca más fuerte y lo
+      // único que demuestra que hay equipo y oficinas reales detrás. Para quien dijo "no",
+      // su variante reconoce primero la compra remota y deja la invitación abierta.
+      var extras = [B_VIAJE[d.viaje], B_CANAL[d.canal]];
+      out.body = out.body.replace("{{EXTRAS}}", extras.join("\n\n") + "\n\n");
+    } else {
+      out = TPL[pick](d);
+    }
+
+    out.body = out.body.replace("{{EXTRAS}}", "").replace(/\{\{pais\}\}/g, d.pais);
+
+    $("outSubject").textContent = out.subject;
+    $("outBody").textContent = out.body;
+    $("tierBadge").textContent = "Tier " + d.tier;
+    $("tierBadge").className = "badge b-" + d.tier;
+    $("scoreTxt").textContent = d.score + " pts · " + d.cap + " · " + d.pais;
+    $("playbook").textContent = PLAYBOOK[d.tier];
+    $("warnConsent").className = (d.consent === "NO" && (pick === "M9" || pick === "M8E")) ? "warn on" : "warn";
+  }
+
+  function toast(msg){
+    var t = $("toast");
+    t.textContent = msg;
+    t.className = "toast on";
+    setTimeout(function(){ t.className = "toast"; }, 1400);
+  }
+
+  function copy(text, label){
+    function fallback(){
+      var ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand("copy"); toast(label + " copiado"); }
+      catch(e){ toast("No se pudo copiar, seleccione a mano"); }
+      document.body.removeChild(ta);
+    }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){ toast(label + " copiado"); }, fallback);
+    } else {
+      fallback();
+    }
+  }
+
+  ["nombre","email","capital","objetivo","plazo","viaje","pais","canal","consent","dia1","hora1","dia2","hora2","tpl"]
+    .forEach(function(id){
+      $(id).addEventListener("input", build);
+      $(id).addEventListener("change", build);
+    });
+
+  $("btnSubject").addEventListener("click", function(){ copy($("outSubject").textContent, "Asunto"); });
+  $("btnBody").addEventListener("click", function(){ copy($("outBody").textContent, "Cuerpo"); });
+  $("btnGmail").addEventListener("click", function(){
+    var to = val("email").trim();
+    var url = "https://mail.google.com/mail/?view=cm&fs=1" +
+      "&to=" + encodeURIComponent(to) +
+      "&su=" + encodeURIComponent($("outSubject").textContent) +
+      "&body=" + encodeURIComponent($("outBody").textContent);
+    window.open(url, "_blank", "noopener");
+  });
+
+  /**
+   * API mínima para las variantes que reciben datos de fuera (la web app de Apps Script
+   * carga los leads reales del CRM). Rellena los campos y regenera el correo.
+   */
+  window.HEGEN = {
+    build: build,
+    aplicar: function(datos){
+      Object.keys(datos || {}).forEach(function(k){
+        var el = $(k);
+        if(!el) return;
+        var v = datos[k];
+        if(v === undefined || v === null) return;
+        v = String(v);
+        // Un valor del CRM que no esté entre las opciones (un país nuevo, por ejemplo)
+        // se añade al desplegable en lugar de dejarlo vacío.
+        if(el.tagName === "SELECT"){
+          var existe = Array.prototype.some.call(el.options, function(o){ return o.value === v; });
+          if(!existe && v !== ""){
+            var op = document.createElement("option");
+            op.value = v; op.textContent = v;
+            el.appendChild(op);
+          }
+        }
+        el.value = v;
+      });
+      build();
+    }
+  };
+
+  build();
+})();
+</script>
+<script>
+(function(){
+  "use strict";
+
+  // Al copiar el correo desde el móvil, plegar la ficha para dejar la salida a la vista.
+  var fichaLead = document.getElementById("panel-lead");
+  var copiar = document.getElementById("btnBody");
+  if (fichaLead && copiar) copiar.addEventListener("click", function(){ fichaLead.open = false; });
+
+  // ── Leads del CRM ────────────────────────────────────────────────────────
+  // Solo se activa dentro de la web app de Apps Script (horizonte-webapp.gs).
+  // Fuera de ahí (página publicada, archivo local) no hay servidor que consultar
+  // y el panel permanece oculto: los datos se teclean a mano como hasta ahora.
+  var enAppsScript = typeof google !== "undefined" && google.script && google.script.run;
+  if (!enAppsScript) return;
+
+  var panel     = document.getElementById("panel-crm");
+  var lista     = document.getElementById("crmLista");
+  var msg       = document.getElementById("crmMsg");
+  var resumen   = document.getElementById("crmResumen");
+  var selDias   = document.getElementById("crmDias");
+  var btnCargar = document.getElementById("crmRecargar");
+  var btnAnotar = document.getElementById("crmAnotar");
+  var selTpl    = document.getElementById("tpl");
+  var elegido   = null;
+
+  panel.className = "panel on";
+
+  // Los enlaces deben salir del iframe en el que Apps Script sirve la página.
+  // La variante generador-mails.appsscript.html ya lo trae en el <head>; esto
+  // cubre el caso de que se pegue el HTML sin envoltorio.
+  if (!document.querySelector("base")) {
+    var base = document.createElement("base");
+    base.target = "_top";
+    document.head.appendChild(base);
+  }
+
+  function cargar(){
+    lista.innerHTML = "";
+    msg.textContent = "";
+    resumen.textContent = "Cargando leads...";
+    btnAnotar.style.display = "none";
+    elegido = null;
+    google.script.run
+      .withSuccessHandler(pintar)
+      .withFailureHandler(function(err){
+        resumen.textContent = "Sin conexión con el CRM";
+        msg.textContent = "No se pudieron leer los leads: " + (err && err.message ? err.message : err);
+      })
+      .webappGetLeads(Number(selDias.value));
+  }
+
+  function pintar(leads){
+    leads = leads || [];
+    resumen.textContent = leads.length === 1 ? "1 lead" : leads.length + " leads";
+    if (!leads.length){
+      msg.textContent = "No hay leads en este periodo. Amplíe el rango o rellene la ficha a mano.";
+      return;
+    }
+    leads.forEach(function(l){
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "lead";
+      b.setAttribute("aria-pressed", "false");
+
+      var chip = document.createElement("span");
+      chip.className = "badge b-" + (l.tier || "C");
+      chip.textContent = l.tier || "C";
+
+      var main = document.createElement("span");
+      main.className = "lead-main";
+      var nm = document.createElement("span");
+      nm.className = "lead-nm";
+      nm.textContent = l.nombre || l.email || "(sin nombre)";
+      var sub = document.createElement("span");
+      sub.className = "lead-sub";
+      sub.textContent = [l.capitalTexto, l.pais].filter(Boolean).join(" · ");
+      main.appendChild(nm);
+      main.appendChild(sub);
+
+      var when = document.createElement("span");
+      when.className = "lead-when";
+      when.textContent = l.hace || "";
+
+      b.appendChild(chip);
+      b.appendChild(main);
+      b.appendChild(when);
+      b.addEventListener("click", function(){ seleccionar(l, b); });
+      lista.appendChild(b);
+    });
+    msg.textContent = "Toque un lead para rellenar la ficha con sus datos.";
+  }
+
+  function seleccionar(l, boton){
+    Array.prototype.forEach.call(lista.querySelectorAll(".lead"), function(x){
+      x.setAttribute("aria-pressed", "false");
+    });
+    boton.setAttribute("aria-pressed", "true");
+    elegido = l;
+
+    window.HEGEN.aplicar({
+      nombre:   l.nombre,
+      email:    l.email,
+      capital:  l.capital,
+      objetivo: l.objetivo,
+      plazo:    l.plazo,
+      viaje:    l.viaje,
+      pais:     l.pais,
+      canal:    l.canal,
+      consent:  l.consentMarketing === "SI" ? "SI" : "NO"
+    });
+
+    btnAnotar.style.display = "block";
+    msg.textContent = l.notas ? ("Notas: " + l.notas) : "Ficha cargada desde el CRM.";
+    if (fichaLead) fichaLead.open = false;
+  }
+
+  btnAnotar.addEventListener("click", function(){
+    if (!elegido) return;
+    var etiqueta = selTpl.options[selTpl.selectedIndex].text.split("·")[0].trim();
+    btnAnotar.disabled = true;
+    btnAnotar.textContent = "Anotando...";
+    google.script.run
+      .withSuccessHandler(function(nota){
+        btnAnotar.disabled = false;
+        btnAnotar.textContent = "Anotar el contacto en el CRM";
+        msg.textContent = "Anotado: " + nota;
+      })
+      .withFailureHandler(function(err){
+        btnAnotar.disabled = false;
+        btnAnotar.textContent = "Anotar el contacto en el CRM";
+        msg.textContent = "No se pudo anotar: " + (err && err.message ? err.message : err);
+      })
+      .webappAnotarContacto(elegido.id, etiqueta);
+  });
+
+  btnCargar.addEventListener("click", cargar);
+  selDias.addEventListener("change", cargar);
+  cargar();
+})();
+</script>
+</body>
+</html>

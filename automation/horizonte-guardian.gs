@@ -217,6 +217,25 @@ function guardianEnviarInforme_(informe) {
     : '[Guardian HE] Funnel correcto · ' + informe.registrados.length + ' lead(s) en ' + informe.dias + ' dias';
 
   GmailApp.sendEmail(guardianDestino_(), asunto, guardianCuerpoInforme_(informe));
+  guardianForzarNoLeido_();
+}
+
+/**
+ * Deja el informe recién enviado como NO leído y destacado.
+ * Gmail marca leído todo lo que envía la propia cuenta, así que el informe aterrizaba
+ * en Recibidos sin negrita y pasaba desapercibido. Excepción acotada al principio de
+ * solo lectura: toca únicamente el correo que acaba de generar el guardián, nunca hilos de leads.
+ */
+function guardianForzarNoLeido_() {
+  try {
+    Utilities.sleep(1500);
+    GmailApp.search('subject:"Guardian HE" newer_than:1d', 0, 3).forEach(th => {
+      th.markUnread();
+      th.markImportant();
+    });
+  } catch (e) {
+    Logger.log('guardianForzarNoLeido_: ' + e.toString());
+  }
 }
 
 function guardianCuerpoInforme_(informe) {

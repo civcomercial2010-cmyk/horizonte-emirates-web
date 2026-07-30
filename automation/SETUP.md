@@ -24,6 +24,44 @@
 
 ---
 
+## MODO ACTUAL: envío manual (desde el 30-jul-2026)
+
+El envío automático de secuencias está **desactivado** a propósito. Con el volumen actual de
+leads, cada uno se trabaja a mano para maximizar la conversión a videollamada.
+
+| Qué | Dónde | Estado |
+|---|---|---|
+| Interruptor maestro | `CONFIG.AUTO_SEND_LEADS` en `horizonte-emails.gs` | `false` |
+| Acuse de recibo inmediato (W0) | `CONFIG.AUTO_SEND_WELCOME` | `true`, única excepción al interruptor |
+| Aviso de lead nuevo al asesor | `notifyAgentNewLead()` | activo, llega como no leído y destacado |
+| Aviso de Web3Forms | `CONFIG.KEEP_LEAD_MAIL_UNREAD` | se queda no leído, destacado e importante |
+| Plantillas para escribir a mano | `automation/MAILS-MANUALES.md` | fuente de verdad del texto |
+| Herramienta de montaje | `tools/generador-mails.html` | se abre en el navegador |
+| La misma desde el móvil, con los leads del CRM | `automation/horizonte-webapp.gs` + archivo HTML `generador` | web app aparte, solo lectura salvo la nota de seguimiento |
+| Cola de la hoja Cola | estado `pausado-manual` | sembrada como agenda, nunca se envía |
+
+**Qué sigue funcionando solo:** registro del lead en el CRM, scoring, briefing al asesor,
+detección de bajas, aviso de reuniones de Calendly, healthCheck y **el acuse de recibo W0**
+(sale en segundos, también de noche y en fin de semana; queda registrado en la hoja Cola con
+código `W0` para no repetirse).
+**Qué ya no ocurre:** ninguna secuencia comercial sale hacia el lead sin que alguien la escriba.
+
+Comprobar el acuse de recibo sin gastar un lead real: `previewWelcome()` lo escribe en el registro
+y `testWelcomeToSelf()` lo envía al buzón del asesor.
+
+### Reactivar la automatización
+
+1. Poner `CONFIG.AUTO_SEND_LEADS = true` en `horizonte-emails.gs` y guardar.
+2. Ejecutar `reanudarEnvioAutomatico()`: los toques `pausado-manual` con fecha futura vuelven a
+   `pendiente` y los ya vencidos se cancelan (así no sale una ráfaga de correos atrasados).
+3. Comprobar en la hoja Cola que no queda nada vencido en `pendiente` antes de la siguiente
+   pasada de `processQueue()`.
+
+Antes de reactivar conviene revisar el copy de `getTemplate()`: sus cifras de rentabilidad
+(7-8 % neto, 5-7 % neto) son anteriores a la alineación de la web al 6-12 % bruto estimado.
+
+---
+
 ## Arquitectura del sistema
 
 ```
@@ -36,8 +74,10 @@
   → Parsea datos del lead (nombre, email, capital, objetivo, plazo, viaje, tier, score)
   → Guarda en Google Sheet "Leads"
   → Programa secuencia en hoja "Cola" según tier (A/B/C)
+  → Deja el aviso de Web3Forms NO leído, destacado e importante
+  → AUTO_SEND_LEADS=false: avisa al asesor y para aquí (nada sale hacia el lead)
         ↓
-[GAS: processQueue() cada hora]
+[GAS: processQueue() cada hora]  ← inactivo mientras AUTO_SEND_LEADS=false
   → Lee cola de emails pendientes
   → Si la fecha programada ha llegado → envía email
   → Marca como "enviado" en la cola

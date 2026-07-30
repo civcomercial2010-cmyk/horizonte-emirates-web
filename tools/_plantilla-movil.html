@@ -1,0 +1,560 @@
+<title>Correos · Horizonte Emirates</title>
+<style>
+  /* ── Tokens ─────────────────────────────────────────────────
+     Paleta heredada de la identidad real: azul noche y dorado de
+     horizonteemirates.com y del wrapper de los correos. El neutro
+     lleva sesgo cálido (papel), no gris puro.                    */
+  :root{
+    --navy:#0D1B2A;
+    --gold:#C4942A;        /* solo gráfico: barras, bordes, chips */
+    --gold-ink:#8A6414;    /* dorado legible como texto en claro  */
+    --bg:#EDEAE3;
+    --surface:#FFFFFF;
+    --field:#FBFAF7;
+    --line:#DED9CF;
+    --ink:#161C24;
+    --muted:#5F6771;
+    --ok:#128A4E;
+    --a-bg:#F7E2E0; --a-fg:#8E1F1F;
+    --b-bg:#F6EBD2; --b-fg:#7A5910;
+    --c-bg:#E3E9EF; --c-fg:#33526F;
+    --warn-bg:#FBE6E4; --warn-fg:#8E1F1F;
+    --shadow:0 1px 2px rgba(13,27,42,.06), 0 8px 24px rgba(13,27,42,.06);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --gold:#D8A94A;
+      --gold-ink:#D8A94A;
+      --bg:#0B141E;
+      --surface:#141E29;
+      --field:#101923;
+      --line:#26333F;
+      --ink:#E8EAED;
+      --muted:#95A0AC;
+      --ok:#3FCB85;
+      --a-bg:#3A1A19; --a-fg:#F0A9A4;
+      --b-bg:#332711; --b-fg:#E8C583;
+      --c-bg:#1B2A38; --c-fg:#9EC2E0;
+      --warn-bg:#331815; --warn-fg:#F0A9A4;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.3);
+    }
+  }
+  /* El conmutador del visor manda sobre la preferencia del sistema */
+  :root[data-theme="dark"]{
+    --gold:#D8A94A; --gold-ink:#D8A94A; --bg:#0B141E; --surface:#141E29;
+    --field:#101923; --line:#26333F; --ink:#E8EAED; --muted:#95A0AC; --ok:#3FCB85;
+    --a-bg:#3A1A19; --a-fg:#F0A9A4; --b-bg:#332711; --b-fg:#E8C583;
+    --c-bg:#1B2A38; --c-fg:#9EC2E0; --warn-bg:#331815; --warn-fg:#F0A9A4;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.3);
+  }
+  :root[data-theme="light"]{
+    --gold:#C4942A; --gold-ink:#8A6414; --bg:#EDEAE3; --surface:#FFFFFF;
+    --field:#FBFAF7; --line:#DED9CF; --ink:#161C24; --muted:#5F6771; --ok:#128A4E;
+    --a-bg:#F7E2E0; --a-fg:#8E1F1F; --b-bg:#F6EBD2; --b-fg:#7A5910;
+    --c-bg:#E3E9EF; --c-fg:#33526F; --warn-bg:#FBE6E4; --warn-fg:#8E1F1F;
+    --shadow:0 1px 2px rgba(13,27,42,.06), 0 8px 24px rgba(13,27,42,.06);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    -webkit-text-size-adjust:100%;
+  }
+
+  /* ── Cabecera ─────────────────────────────────────────────── */
+  .hd{
+    background:var(--navy);
+    padding:14px 18px calc(14px + 2px);
+    position:relative;
+  }
+  .hd::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--gold)}
+  .wordmark{
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:19px;letter-spacing:.02em;color:#fff;line-height:1.2;
+  }
+  .wordmark span{color:var(--gold)}
+  .hd-sub{
+    margin-top:2px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    color:rgba(255,255,255,.5);font-weight:600;
+  }
+
+  main{
+    max-width:720px;margin:0 auto;
+    padding:14px 14px calc(96px + env(safe-area-inset-bottom));
+    display:flex;flex-direction:column;gap:14px;
+  }
+
+  /* ── Paneles ──────────────────────────────────────────────── */
+  .panel{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:12px;
+    box-shadow:var(--shadow);
+    overflow:hidden;
+  }
+  .panel-body{padding:14px;display:flex;flex-direction:column;gap:12px}
+
+  summary{
+    padding:14px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;
+    font-weight:700;color:var(--gold-ink);cursor:pointer;list-style:none;
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+  }
+  summary::-webkit-details-marker{display:none}
+  summary::after{
+    content:"Plegar";font-size:11px;letter-spacing:.04em;text-transform:none;
+    color:var(--muted);font-weight:600;
+  }
+  details:not([open]) summary::after{content:"Abrir"}
+
+  label{
+    display:block;font-size:12px;font-weight:600;color:var(--muted);
+    margin-bottom:5px;letter-spacing:.01em;
+  }
+  input,select{
+    width:100%;
+    /* 16px evita que iOS haga zoom al enfocar el campo */
+    font:16px/1.3 inherit;
+    padding:11px 12px;min-height:46px;
+    background:var(--field);color:var(--ink);
+    border:1px solid var(--line);border-radius:9px;
+    appearance:none;-webkit-appearance:none;
+  }
+  select{
+    background-image:linear-gradient(45deg,transparent 50%,currentColor 50%),linear-gradient(135deg,currentColor 50%,transparent 50%);
+    background-position:calc(100% - 19px) 21px,calc(100% - 14px) 21px;
+    background-size:5px 5px,5px 5px;background-repeat:no-repeat;
+    padding-right:38px;
+  }
+  input:focus-visible,select:focus-visible,button:focus-visible,summary:focus-visible{
+    outline:2px solid var(--gold);outline-offset:2px;
+  }
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+  /* ── Estado del lead ──────────────────────────────────────── */
+  .status{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    padding:12px 14px;border-bottom:1px solid var(--line);
+  }
+  /* .badge lo aplica la lógica compartida al repintar el tier: los dos deben pintar igual */
+  .chip,.badge{
+    font-size:12px;font-weight:800;letter-spacing:.06em;
+    padding:5px 12px;border-radius:100px;white-space:nowrap;
+  }
+  .b-A{background:var(--a-bg);color:var(--a-fg)}
+  .b-B{background:var(--b-bg);color:var(--b-fg)}
+  .b-C{background:var(--c-bg);color:var(--c-fg)}
+  .meta{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+  /* ── Leads del CRM (solo dentro de la web app de Apps Script) ─ */
+  #panel-crm{display:none}
+  #panel-crm.on{display:block}
+  .crm-list{display:flex;flex-direction:column;gap:8px}
+  .lead{
+    display:flex;align-items:center;gap:10px;width:100%;
+    padding:11px 12px;min-height:auto;
+    background:var(--field);border:1px solid var(--line);border-radius:10px;
+    text-align:left;cursor:pointer;color:var(--ink);font:inherit;
+  }
+  .lead:hover{border-color:var(--gold)}
+  .lead[aria-pressed="true"]{border-color:var(--gold);background:var(--surface);box-shadow:inset 3px 0 0 var(--gold)}
+  .lead-main{flex:1;min-width:0}
+  .lead-nm{font-weight:700;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .lead-sub{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .lead-when{font-size:11.5px;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+  .crm-msg{font-size:13px;color:var(--muted);padding:2px 0;line-height:1.5}
+  .crm-tools{display:flex;gap:8px;align-items:center}
+  .crm-tools select{flex:1}
+  .crm-tools button{flex:0 0 auto;min-height:46px;padding:0 16px;font-size:13px}
+
+  .playbook{
+    margin:0;padding:11px 14px;
+    background:var(--field);border-bottom:1px solid var(--line);
+    font-size:13.5px;line-height:1.5;color:var(--ink);
+    border-left:3px solid var(--gold);
+  }
+
+  /* ── Salida ───────────────────────────────────────────────── */
+  .subject{
+    font-weight:700;font-size:15px;line-height:1.35;
+    padding:12px 14px;background:var(--field);
+    border:1px solid var(--line);border-radius:9px;
+    overflow-wrap:anywhere;
+  }
+  pre{
+    margin:0;padding:14px;
+    background:var(--field);border:1px solid var(--line);border-radius:9px;
+    font:14px/1.62 ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    white-space:pre-wrap;overflow-wrap:anywhere;
+    max-height:52vh;overflow-y:auto;
+  }
+  .warn{
+    display:none;
+    padding:11px 13px;border-radius:9px;
+    background:var(--warn-bg);color:var(--warn-fg);
+    font-size:13px;line-height:1.5;border-left:3px solid currentColor;
+  }
+  .warn.on{display:block}
+  .note{font-size:12.5px;color:var(--muted);line-height:1.5;margin:0}
+
+  /* ── Barra de acciones fija (zona del pulgar) ─────────────── */
+  .actions{
+    position:fixed;left:0;right:0;bottom:0;z-index:20;
+    display:flex;gap:8px;
+    padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+    background:color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter:blur(12px);
+    border-top:1px solid var(--line);
+  }
+  button{
+    flex:1;min-height:50px;
+    font:700 14px/1 inherit;
+    border-radius:100px;cursor:pointer;
+    border:1px solid var(--navy);background:var(--navy);color:#fff;
+    display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  }
+  button.ghost{background:transparent;color:var(--ink);border-color:var(--line);flex:0 0 auto;padding:0 16px}
+  button.primary{background:var(--navy);border-color:var(--navy)}
+  @media (prefers-color-scheme: dark){
+    button.primary{background:var(--gold);border-color:var(--gold);color:#0B141E}
+  }
+  :root[data-theme="dark"] button.primary{background:var(--gold);border-color:var(--gold);color:#0B141E}
+  :root[data-theme="light"] button.primary{background:var(--navy);border-color:var(--navy);color:#fff}
+  button:active{transform:translateY(1px)}
+
+  .toast{
+    position:fixed;left:50%;bottom:calc(74px + env(safe-area-inset-bottom));
+    transform:translateX(-50%) translateY(6px);
+    background:var(--ink);color:var(--surface);
+    padding:10px 20px;border-radius:100px;font-size:13.5px;font-weight:600;
+    opacity:0;pointer-events:none;transition:opacity .18s ease,transform .18s ease;z-index:30;
+  }
+  .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+  @media (prefers-reduced-motion: reduce){
+    .toast{transition:none}
+    button:active{transform:none}
+  }
+  @media (min-width:700px){
+    .grid2{gap:12px}
+    main{padding-top:20px}
+  }
+</style>
+
+<header class="hd">
+  <div class="wordmark">Horizonte <span>Emirates</span></div>
+  <div class="hd-sub">Generador de correos</div>
+</header>
+
+<main>
+
+  <section class="panel" id="panel-crm">
+    <div class="status">
+      <span class="chip b-C" style="background:var(--field);color:var(--muted)">CRM</span>
+      <span class="meta" id="crmResumen">Cargando leads...</span>
+    </div>
+    <div class="panel-body">
+      <div class="crm-tools">
+        <select id="crmDias" aria-label="Periodo">
+          <option value="7">Últimos 7 días</option>
+          <option value="30" selected>Últimos 30 días</option>
+          <option value="90">Últimos 90 días</option>
+        </select>
+        <button class="ghost" id="crmRecargar" type="button">Recargar</button>
+      </div>
+      <div class="crm-list" id="crmLista"></div>
+      <p class="crm-msg" id="crmMsg"></p>
+      <button class="ghost" id="crmAnotar" type="button" style="display:none">Anotar el contacto en el CRM</button>
+    </div>
+  </section>
+
+  <details class="panel" id="panel-lead" open>
+    <summary>El lead</summary>
+    <div class="panel-body">
+      <div>
+        <label for="nombre">Nombre de pila</label>
+        <input id="nombre" type="text" inputmode="text" autocomplete="off" placeholder="José"/>
+      </div>
+      <div>
+        <label for="email">Email</label>
+        <input id="email" type="email" inputmode="email" autocomplete="off" autocapitalize="none" placeholder="inversor@ejemplo.com"/>
+      </div>
+      <div>
+        <label for="capital">Capital disponible</label>
+        <select id="capital">
+          <option value="150k-300k">150.000 a 300.000 €</option>
+          <option value="300k-600k" selected>300.000 a 600.000 €</option>
+          <option value="600k-1M">600.000 a 1.000.000 €</option>
+          <option value="mas1M">Más de 1.000.000 €</option>
+        </select>
+      </div>
+      <div>
+        <label for="objetivo">Objetivo principal</label>
+        <select id="objetivo">
+          <option value="alquiler" selected>Renta pasiva (alquiler)</option>
+          <option value="revalorizacion">Apreciación del capital</option>
+          <option value="diversificacion">Diversificación geográfica</option>
+          <option value="residencia">Residencia en UAE</option>
+        </select>
+      </div>
+      <div class="grid2">
+        <div>
+          <label for="plazo">Horizonte</label>
+          <select id="plazo">
+            <option value="ya">Operar ya</option>
+            <option value="6meses" selected>Menos de 6 meses</option>
+            <option value="12meses">Menos de 12 meses</option>
+            <option value="indefinido">Sin plazo</option>
+          </select>
+        </div>
+        <div>
+          <label for="viaje">Visita a Dubai</label>
+          <select id="viaje">
+            <option value="si">Sí, le interesa</option>
+            <option value="quizas" selected>Lo valora</option>
+            <option value="no">No por ahora</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid2">
+        <div>
+          <label for="pais">País</label>
+          <select id="pais">
+            <option value="España" selected>España</option>
+            <option value="Andorra">Andorra</option>
+            <option value="México">México</option>
+            <option value="Argentina">Argentina</option>
+            <option value="Colombia">Colombia</option>
+            <option value="Chile">Chile</option>
+            <option value="Perú">Perú</option>
+            <option value="Venezuela">Venezuela</option>
+            <option value="Ecuador">Ecuador</option>
+            <option value="Uruguay">Uruguay</option>
+            <option value="Otro">Otro</option>
+          </select>
+        </div>
+        <div>
+          <label for="canal">Canal preferido</label>
+          <select id="canal">
+            <option value="whatsapp" selected>WhatsApp</option>
+            <option value="llamada">Llamada</option>
+            <option value="email">Email</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label for="consent">Consentimiento de marketing</label>
+        <select id="consent">
+          <option value="SI">SI, todo el kit disponible</option>
+          <option value="NO" selected>NO, solo atender su solicitud</option>
+        </select>
+      </div>
+      <div class="grid2">
+        <div><label for="dia1">Hueco 1</label><input id="dia1" type="text" placeholder="jueves"/></div>
+        <div><label for="hora1">Hora</label><input id="hora1" type="text" inputmode="numeric" placeholder="11:30"/></div>
+      </div>
+      <div class="grid2">
+        <div><label for="dia2">Hueco 2</label><input id="dia2" type="text" placeholder="viernes"/></div>
+        <div><label for="hora2">Hora</label><input id="hora2" type="text" inputmode="numeric" placeholder="17:00"/></div>
+      </div>
+    </div>
+  </details>
+
+  <section class="panel">
+    <div class="status">
+      <span class="chip b-B" id="tierBadge">Tier B</span>
+      <span class="meta" id="scoreTxt"></span>
+    </div>
+    <p class="playbook" id="playbook"></p>
+    <div class="panel-body">
+      <div>
+        <label for="tpl">Correo a generar</label>
+        <select id="tpl">
+          <option value="auto" selected>M1 · Primer contacto (según tier)</option>
+          <option value="M11">M11 · Visita a Emiratos</option>
+          <option value="M2">M2 · 48 h sin respuesta</option>
+          <option value="M3">M3 · Selección preparada</option>
+          <option value="M4">M4 · Confirmación de llamada</option>
+          <option value="M5">M5 · Recordatorio 24 h antes</option>
+          <option value="M6">M6 · No se presentó</option>
+          <option value="M7">M7 · Después de la llamada</option>
+          <option value="M8A">M8-A · "Es una burbuja"</option>
+          <option value="M8B">M8-B · "Está muy lejos"</option>
+          <option value="M8C">M8-C · "Lo veo con mi asesor"</option>
+          <option value="M8D">M8-D · "Mándeme la info"</option>
+          <option value="M8E">M8-E · "Ahora no es el momento"</option>
+          <option value="M9">M9 · Reactivación</option>
+          <option value="M10">M10 · Cierre elegante</option>
+          <option value="WA">WhatsApp complementario</option>
+        </select>
+      </div>
+      <div class="subject" id="outSubject"></div>
+      <pre id="outBody"></pre>
+      <div class="warn" id="warnConsent">
+        Este lead no dio consentimiento de marketing: solo se le puede escribir para atender su
+        solicitud. Los correos M8-E y M9 son seguimiento comercial y no deben enviarse.
+      </div>
+      <p class="note">
+        Enviar desde hola@horizonteemirates.com, en texto normal y sin plantilla de marca.
+        Los seguimientos van en el mismo hilo, respondiendo, no en un correo nuevo.
+      </p>
+    </div>
+  </section>
+
+</main>
+
+<div class="actions">
+  <button class="primary" id="btnBody">Copiar correo</button>
+  <button class="ghost" id="btnSubject">Asunto</button>
+  <button class="ghost" id="btnGmail">Gmail</button>
+</div>
+
+<div class="toast" id="toast">Copiado</div>
+
+<script>
+/* LOGICA_COMPARTIDA: se inyecta tal cual desde tools/generador-mails.html
+   con scripts/build_generador_movil.py. Los identificadores del formulario
+   son los mismos en las dos versiones, así que los textos nunca divergen. */
+</script>
+<script>
+(function(){
+  "use strict";
+
+  // Al copiar el correo desde el móvil, plegar la ficha para dejar la salida a la vista.
+  var fichaLead = document.getElementById("panel-lead");
+  var copiar = document.getElementById("btnBody");
+  if (fichaLead && copiar) copiar.addEventListener("click", function(){ fichaLead.open = false; });
+
+  // ── Leads del CRM ────────────────────────────────────────────────────────
+  // Solo se activa dentro de la web app de Apps Script (horizonte-webapp.gs).
+  // Fuera de ahí (página publicada, archivo local) no hay servidor que consultar
+  // y el panel permanece oculto: los datos se teclean a mano como hasta ahora.
+  var enAppsScript = typeof google !== "undefined" && google.script && google.script.run;
+  if (!enAppsScript) return;
+
+  var panel     = document.getElementById("panel-crm");
+  var lista     = document.getElementById("crmLista");
+  var msg       = document.getElementById("crmMsg");
+  var resumen   = document.getElementById("crmResumen");
+  var selDias   = document.getElementById("crmDias");
+  var btnCargar = document.getElementById("crmRecargar");
+  var btnAnotar = document.getElementById("crmAnotar");
+  var selTpl    = document.getElementById("tpl");
+  var elegido   = null;
+
+  panel.className = "panel on";
+
+  // Los enlaces deben salir del iframe en el que Apps Script sirve la página.
+  // La variante generador-mails.appsscript.html ya lo trae en el <head>; esto
+  // cubre el caso de que se pegue el HTML sin envoltorio.
+  if (!document.querySelector("base")) {
+    var base = document.createElement("base");
+    base.target = "_top";
+    document.head.appendChild(base);
+  }
+
+  function cargar(){
+    lista.innerHTML = "";
+    msg.textContent = "";
+    resumen.textContent = "Cargando leads...";
+    btnAnotar.style.display = "none";
+    elegido = null;
+    google.script.run
+      .withSuccessHandler(pintar)
+      .withFailureHandler(function(err){
+        resumen.textContent = "Sin conexión con el CRM";
+        msg.textContent = "No se pudieron leer los leads: " + (err && err.message ? err.message : err);
+      })
+      .webappGetLeads(Number(selDias.value));
+  }
+
+  function pintar(leads){
+    leads = leads || [];
+    resumen.textContent = leads.length === 1 ? "1 lead" : leads.length + " leads";
+    if (!leads.length){
+      msg.textContent = "No hay leads en este periodo. Amplíe el rango o rellene la ficha a mano.";
+      return;
+    }
+    leads.forEach(function(l){
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "lead";
+      b.setAttribute("aria-pressed", "false");
+
+      var chip = document.createElement("span");
+      chip.className = "badge b-" + (l.tier || "C");
+      chip.textContent = l.tier || "C";
+
+      var main = document.createElement("span");
+      main.className = "lead-main";
+      var nm = document.createElement("span");
+      nm.className = "lead-nm";
+      nm.textContent = l.nombre || l.email || "(sin nombre)";
+      var sub = document.createElement("span");
+      sub.className = "lead-sub";
+      sub.textContent = [l.capitalTexto, l.pais].filter(Boolean).join(" · ");
+      main.appendChild(nm);
+      main.appendChild(sub);
+
+      var when = document.createElement("span");
+      when.className = "lead-when";
+      when.textContent = l.hace || "";
+
+      b.appendChild(chip);
+      b.appendChild(main);
+      b.appendChild(when);
+      b.addEventListener("click", function(){ seleccionar(l, b); });
+      lista.appendChild(b);
+    });
+    msg.textContent = "Toque un lead para rellenar la ficha con sus datos.";
+  }
+
+  function seleccionar(l, boton){
+    Array.prototype.forEach.call(lista.querySelectorAll(".lead"), function(x){
+      x.setAttribute("aria-pressed", "false");
+    });
+    boton.setAttribute("aria-pressed", "true");
+    elegido = l;
+
+    window.HEGEN.aplicar({
+      nombre:   l.nombre,
+      email:    l.email,
+      capital:  l.capital,
+      objetivo: l.objetivo,
+      plazo:    l.plazo,
+      viaje:    l.viaje,
+      pais:     l.pais,
+      canal:    l.canal,
+      consent:  l.consentMarketing === "SI" ? "SI" : "NO"
+    });
+
+    btnAnotar.style.display = "block";
+    msg.textContent = l.notas ? ("Notas: " + l.notas) : "Ficha cargada desde el CRM.";
+    if (fichaLead) fichaLead.open = false;
+  }
+
+  btnAnotar.addEventListener("click", function(){
+    if (!elegido) return;
+    var etiqueta = selTpl.options[selTpl.selectedIndex].text.split("·")[0].trim();
+    btnAnotar.disabled = true;
+    btnAnotar.textContent = "Anotando...";
+    google.script.run
+      .withSuccessHandler(function(nota){
+        btnAnotar.disabled = false;
+        btnAnotar.textContent = "Anotar el contacto en el CRM";
+        msg.textContent = "Anotado: " + nota;
+      })
+      .withFailureHandler(function(err){
+        btnAnotar.disabled = false;
+        btnAnotar.textContent = "Anotar el contacto en el CRM";
+        msg.textContent = "No se pudo anotar: " + (err && err.message ? err.message : err);
+      })
+      .webappAnotarContacto(elegido.id, etiqueta);
+  });
+
+  btnCargar.addEventListener("click", cargar);
+  selDias.addEventListener("change", cargar);
+  cargar();
+})();
+</script>
