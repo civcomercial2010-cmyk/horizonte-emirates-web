@@ -1481,26 +1481,40 @@ function getTemplate(code, lead) {
     const firma  = CONFIG.ASESOR_FIRMA || CONFIG.ASESOR_NOMBRE;
     const cuando = CONFIG.WELCOME_PROMISE || 'en las próximas 48 horas';
     const pila   = firstName(lead.nombre); // solo el nombre de pila: «Hola Jose», no «Hola Jose Diaz mellado»
-    const ficha  = `
-<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="margin:18px 0 6px;border-collapse:collapse">
+    // El lead que entra por el modal de WhatsApp solo deja nombre, email y teléfono:
+    // no tiene capital, objetivo ni país. La ficha se construye SOLO con lo que existe,
+    // porque imprimir «su capital disponible» como si fuera un dato registrado deja el
+    // correo con aspecto de plantilla a medio rellenar justo en el primer contacto.
+    const fichaFilas = [];
+    const filaFicha = (k, v) => `
   <tr>
-    <td style="padding:7px 16px 7px 0;font-size:14px;color:#646464;white-space:nowrap">Capital</td>
-    <td style="padding:7px 0;font-size:14px;color:#1A1A1A"><strong>${cap}</strong></td>
-  </tr>
-  <tr>
-    <td style="padding:7px 16px 7px 0;font-size:14px;color:#646464;white-space:nowrap">Objetivo</td>
-    <td style="padding:7px 0;font-size:14px;color:#1A1A1A"><strong>${obj}</strong></td>
-  </tr>
-  <tr>
-    <td style="padding:7px 16px 7px 0;font-size:14px;color:#646464;white-space:nowrap">Residencia</td>
-    <td style="padding:7px 0;font-size:14px;color:#1A1A1A"><strong>${pais}</strong></td>
-  </tr>
-</table>`;
+    <td style="padding:7px 16px 7px 0;font-size:14px;color:#646464;white-space:nowrap">${k}</td>
+    <td style="padding:7px 0;font-size:14px;color:#1A1A1A"><strong>${v}</strong></td>
+  </tr>`;
+    if (lead.capital)  fichaFilas.push(filaFicha('Capital', cap));
+    if (lead.objetivo) fichaFilas.push(filaFicha('Objetivo', obj));
+    if (lead.telefono) fichaFilas.push(filaFicha('Teléfono', lead.telefono));
+    if (lead.pais)     fichaFilas.push(filaFicha('Residencia', lead.pais));
+    const tieneFicha = fichaFilas.length > 0;
+    const ficha = tieneFicha
+      ? `
+<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="margin:18px 0 6px;border-collapse:collapse">${fichaFilas.join('')}
+</table>`
+      : '';
+    const introFicha = tieneFicha
+      ? 'Su solicitud ha llegado correctamente. Esto es lo que hemos registrado:'
+      : 'Su solicitud ha llegado correctamente y ya la tenemos en cola.';
+    const fichaTxt = [
+      lead.capital  ? 'Capital: ' + cap : '',
+      lead.objetivo ? 'Objetivo: ' + obj : '',
+      lead.telefono ? 'Teléfono: ' + lead.telefono : '',
+      lead.pais     ? 'Residencia: ' + lead.pais : '',
+    ].filter(Boolean).join('\n');
 
     return {
       subject: `Hemos recibido su solicitud, ${pila}`,
       html: `<p>Hola ${pila},</p>
-<p>Su solicitud ha llegado correctamente. Esto es lo que hemos registrado:</p>
+<p>${introFicha}</p>
 ${ficha}
 <p>Este correo es automático, para que sepa que no se ha perdido nada. <strong>El siguiente lo escribo yo, ${cuando}</strong>, y ahí entramos en lo concreto: qué encaja con lo que busca y qué no.</p>
 <p>Mientras tanto le dejo la guía fiscal, que es lo que más dudas resuelve al principio:</p>
@@ -1509,7 +1523,7 @@ ${guiaCard}
 <p>Si prefiere adelantar y hablar directamente con Marc, nuestro socio en Dubai, puede coger hueco aquí:</p>
 ${calBtn}
 <p style="margin:28px 0 0;padding-top:20px;border-top:1px solid #E0DBD1;font-size:14px;color:#646464;line-height:1.6">Un saludo,<br><strong style="color:#1A1A1A">${firma}</strong><br>Horizonte Emirates<br><span style="font-size:13px">Puede responder a este correo: lo leo yo.</span></p>`,
-      text: `Hola ${pila},\n\nSu solicitud ha llegado correctamente. Esto es lo que hemos registrado:\n\nCapital: ${cap}\nObjetivo: ${obj}\nResidencia: ${pais}\n\nEste correo es automático, para que sepa que no se ha perdido nada. El siguiente lo escribo yo, ${cuando}, y ahí entramos en lo concreto: qué encaja con lo que busca y qué no.\n\nMientras tanto le dejo la guía fiscal Dubai y España, que es lo que más dudas resuelve al principio (IRPF, modelo 720, plusvalías y convenio de doble imposición):\n${guiaUrl}\n\nY una cosa que suele sorprender: si en algún momento quiere ver los proyectos en persona, le montamos nosotros la agenda completa en Emiratos, incluidas las visitas a las promotoras y la reunión en nuestras oficinas de Dubai. Se lo cuento con calma en el próximo correo.\n\nSi prefiere adelantar y hablar directamente con Marc, nuestro socio en Dubai, puede coger hueco aquí:\n${calL}\n\nUn saludo,\n${firma}\nHorizonte Emirates\nPuede responder a este correo: lo leo yo.`,
+      text: `Hola ${pila},\n\n${introFicha}\n${fichaTxt ? '\n' + fichaTxt + '\n' : ''}\nEste correo es automático, para que sepa que no se ha perdido nada. El siguiente lo escribo yo, ${cuando}, y ahí entramos en lo concreto: qué encaja con lo que busca y qué no.\n\nMientras tanto le dejo la guía fiscal Dubai y España, que es lo que más dudas resuelve al principio (IRPF, modelo 720, plusvalías y convenio de doble imposición):\n${guiaUrl}\n\nY una cosa que suele sorprender: si en algún momento quiere ver los proyectos en persona, le montamos nosotros la agenda completa en Emiratos, incluidas las visitas a las promotoras y la reunión en nuestras oficinas de Dubai. Se lo cuento con calma en el próximo correo.\n\nSi prefiere adelantar y hablar directamente con Marc, nuestro socio en Dubai, puede coger hueco aquí:\n${calL}\n\nUn saludo,\n${firma}\nHorizonte Emirates\nPuede responder a este correo: lo leo yo.`,
     };
   }
 
