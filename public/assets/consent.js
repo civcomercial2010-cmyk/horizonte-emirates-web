@@ -77,9 +77,9 @@
       + "transform:translateY(100%);transition:transform .35s cubic-bezier(.22,1,.36,1);"
       + "max-height:88vh;overflow-y:auto}"
       + "#he-consent.open{transform:translateY(0)}"
-      + "#he-consent .he-c-inner{max-width:1100px;margin:0 auto;padding:18px 24px;"
-      + "display:flex;align-items:center;gap:20px;flex-wrap:wrap}"
-      + "#he-consent .he-c-txt{flex:1;min-width:260px;font-size:13.5px;line-height:1.6;color:rgba(248,246,241,.82)}"
+      + "#he-consent .he-c-inner{max-width:1100px;margin:0 auto;padding:14px 20px;"
+      + "display:flex;align-items:center;gap:16px;flex-wrap:wrap}"
+      + "#he-consent .he-c-txt{flex:1;min-width:230px;font-size:13px;line-height:1.5;color:rgba(248,246,241,.82)}"
       + "#he-consent .he-c-txt strong{color:#F8F6F1;font-weight:600}"
       + "#he-consent .he-c-txt a{color:#C4942A;text-decoration:underline}"
       + "#he-consent .he-c-actions{display:flex;gap:10px;flex-wrap:wrap}"
@@ -87,8 +87,12 @@
       + "text-transform:uppercase;padding:11px 22px;border-radius:2px;cursor:pointer;border:1px solid transparent;transition:.2s}"
       + "#he-consent .he-c-accept{background:#C4942A;color:#07121F}"
       + "#he-consent .he-c-accept:hover{filter:brightness(1.08)}"
-      + "#he-consent .he-c-reject,#he-consent .he-c-prefs{background:transparent;color:rgba(248,246,241,.85);border-color:rgba(248,246,241,.35)}"
-      + "#he-consent .he-c-reject:hover,#he-consent .he-c-prefs:hover{border-color:rgba(248,246,241,.7);color:#fff}"
+      + "#he-consent .he-c-reject{background:transparent;color:rgba(248,246,241,.85);border-color:rgba(248,246,241,.35)}"
+      + "#he-consent .he-c-reject:hover{border-color:rgba(248,246,241,.7);color:#fff}"
+      // Mientras el banner espera decisión, el CTA fijo y el flotante de WhatsApp
+      // se retiran: quedaban tapados por el banner (z-index inferior) y robaban
+      // la mitad inferior de la pantalla en la primera visita móvil.
+      + "body.he-consent-open .sticky-cta,body.he-consent-open .wa-float{display:none}"
       // Panel granular
       + "#he-consent .he-c-panel{display:none;max-width:1100px;margin:0 auto;padding:0 24px 20px}"
       + "#he-consent.prefs .he-c-panel{display:block}"
@@ -118,12 +122,10 @@
     bar.setAttribute("aria-live", "polite");
     bar.innerHTML =
       '<div class="he-c-inner">' +
-        '<div class="he-c-txt"><strong>Usamos cookies.</strong> ' +
-        'Utilizamos cookies de análisis y de publicidad (Google y Meta) para medir el uso del sitio y nuestras campañas. ' +
-        'Puede aceptarlas, rechazarlas o elegir por finalidad. Consulte nuestra <a href="' + POLICY_URL + '">política de cookies</a>.</div>' +
+        '<div class="he-c-txt"><strong>Usamos cookies</strong> de análisis y publicidad (Google y Meta) para medir el sitio y las campañas. ' +
+        '<a href="' + POLICY_URL + '">Más información</a> · <a href="#" role="button" class="he-c-prefs" aria-expanded="false">Configurar por finalidad</a></div>' +
         '<div class="he-c-actions">' +
           '<button type="button" class="he-c-reject">Rechazar</button>' +
-          '<button type="button" class="he-c-prefs" aria-expanded="false">Configurar</button>' +
           '<button type="button" class="he-c-accept">Aceptar</button>' +
         '</div>' +
       '</div>' +
@@ -147,6 +149,7 @@
         '<button type="button" class="he-c-accept he-c-save">Guardar preferencias</button>' +
       '</div>';
     document.body.appendChild(bar);
+    document.body.classList.add("he-consent-open");
 
     bar.querySelector(".he-c-accept").addEventListener("click", function () {
       decide({ analytics: "granted", ads: "granted" });
@@ -154,7 +157,8 @@
     bar.querySelector(".he-c-reject").addEventListener("click", function () {
       decide({ analytics: "denied", ads: "denied" });
     });
-    bar.querySelector(".he-c-prefs").addEventListener("click", function () {
+    bar.querySelector(".he-c-prefs").addEventListener("click", function (e) {
+      e.preventDefault();
       var open = bar.classList.toggle("prefs");
       this.setAttribute("aria-expanded", open ? "true" : "false");
     });
@@ -172,6 +176,7 @@
   function showBanner() {
     injectStyles();
     var bar = getBanner() || buildBanner();
+    document.body.classList.add("he-consent-open");
     // Al reabrir desde "Configurar cookies", precargar la decisión vigente.
     var prev = readDecision();
     if (prev) {
@@ -183,6 +188,7 @@
   function hideBanner() {
     var bar = getBanner();
     if (bar) { bar.classList.remove("open"); bar.classList.remove("prefs"); }
+    document.body.classList.remove("he-consent-open");
   }
   function decide(d) {
     writeDecision(d);

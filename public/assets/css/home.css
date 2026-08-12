@@ -27,7 +27,9 @@
   --reveal-shift:28px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+/* Los anclajes a #form y el auto-avance aterrizaban con el contenido bajo la nav fija de 64px. */
+#form,#fs1,.form-progress-wrap{scroll-margin-top:80px}
 /* Evita que el ticker (width:max-content) ensanche el viewport de layout en móvil landscape
    (700–1024px): sin esto, iOS Safari encoge el contenido a media pantalla al girar. */
 html,body{overflow-x:hidden;max-width:100%}
@@ -697,6 +699,7 @@ h1 em{font-style:italic;color:var(--gold)}
   background:#fff;
 }
 .opt-card:hover{border-color:rgba(196,148,42,.45);box-shadow:0 4px 14px rgba(13,27,42,.06)}
+.opt-card:active{transform:scale(.98);border-color:var(--gold)}
 .opt-card.sel{border-color:var(--gold);background:var(--gold-lt);transform:translateY(-1px);box-shadow:0 6px 18px rgba(13,27,42,.08)}
 .opt-icon{font-size:28px;line-height:1}
 .opt-label{font-size:15px;font-weight:600;color:var(--ink);line-height:1.2}
@@ -707,12 +710,13 @@ h1 em{font-style:italic;color:var(--gold)}
 .frow2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
 .fg{display:flex;flex-direction:column;gap:5px}
 .fg label{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink)}
-.fg input,.fg select{padding:13px 14px;border:1px solid var(--border);border-radius:4px;background:#fff;font-family:var(--sans);font-size:15px;font-weight:400;color:var(--ink);outline:none;transition:.2s}
+/* 16px como mínimo: por debajo, iOS Safari hace zoom automático al enfocar cada campo. */
+.fg input,.fg select{padding:13px 14px;border:1px solid var(--border);border-radius:4px;background:#fff;font-family:var(--sans);font-size:16px;font-weight:400;color:var(--ink);outline:none;transition:.2s}
 .fg input:focus,.fg select:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-lt)}
 .fg input::placeholder{color:rgba(0,0,0,.28)}
 .fg select option{background:#fff;color:var(--ink)}
 .phone-row{display:flex}
-.prefix-sel{width:88px;border:1px solid var(--border);border-right:none;border-radius:4px 0 0 4px;background:var(--warm2);font-size:13px;font-weight:500;color:var(--ink);padding:13px 8px;outline:none;flex-shrink:0;cursor:pointer;appearance:none;text-align:center;transition:.2s}
+.prefix-sel{width:96px;border:1px solid var(--border);border-right:none;border-radius:4px 0 0 4px;background:var(--warm2);font-size:16px;font-weight:500;color:var(--ink);padding:13px 8px;outline:none;flex-shrink:0;cursor:pointer;appearance:none;text-align:center;transition:.2s}
 .prefix-sel:focus{border-color:var(--gold)}
 .prefix-sel option{background:var(--warm2);color:var(--ink)}
 .phone-row input{border-radius:0 4px 4px 0;flex:1}
@@ -747,9 +751,16 @@ h1 em{font-style:italic;color:var(--gold)}
 .wam-basic a{color:var(--gold);text-decoration:underline}
 
 .priv{font-size:12px;color:var(--muted);text-align:center;margin-bottom:14px;line-height:1.5}
-.btn-sub{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:var(--gold);color:var(--navy);padding:18px;border-radius:4px;transition:.2s;opacity:.4;font-family:var(--sans)}
-.btn-sub.ready{opacity:1}
-.btn-sub.ready:hover{filter:brightness(1.08)}
+/* El botón nace vivo: la barrera de consentimiento se valida en el submit con
+   mensaje explícito. Un botón al 40% de opacidad parecía roto y no emitía clics. */
+.btn-sub{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:var(--gold);color:var(--navy);padding:18px;border-radius:4px;transition:.2s;font-family:var(--sans)}
+.btn-sub:hover{filter:brightness(1.08)}
+.btn-sub:disabled{opacity:.6;cursor:default}
+.btn-next{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:var(--gold);color:var(--navy);padding:16px;border-radius:4px;margin-top:18px;transition:.2s;font-family:var(--sans)}
+.btn-next:hover{filter:brightness(1.08)}
+.btn-next:active{transform:scale(.99)}
+.step-hint{display:none;margin-top:10px;padding:10px 12px;border-radius:4px;font-size:13px;line-height:1.45;background:rgba(196,58,58,.08);border:1px solid rgba(196,58,58,.3);color:#7f1d1d;text-align:center}
+.step-hint.show{display:block}
 .btn-back{font-size:13px;color:var(--muted);margin-top:10px;display:none;text-align:center;cursor:pointer;width:100%;font-family:var(--sans);transition:.2s;background:none;border:none}
 .btn-back:hover{color:var(--ink)}
 .form-status{display:none;margin:10px 0 0;padding:12px 14px;border-radius:4px;font-size:14px;line-height:1.45}
@@ -836,8 +847,10 @@ h1 em{font-style:italic;color:var(--gold)}
 .wa-s-btn:hover{background:#25D366;color:#fff}
 
 /* ── WA MODAL ─────────────────────────────────── */
-#wao{position:fixed;inset:0;background:rgba(6,15,25,.82);backdrop-filter:blur(4px);z-index:500;display:none;align-items:center;justify-content:center;padding:20px}
-#wam{background:#fff;border-radius:6px;max-width:400px;width:100%;padding:34px 30px;position:relative;box-shadow:0 28px 72px rgba(0,0,0,.3)}
+/* overflow-y + margin:auto: el modal creció con el bloque RGPD (27/07) y su botón
+   de envío quedaba inalcanzable en móvil al no poder hacerse scroll (canal muerto). */
+#wao{position:fixed;inset:0;background:rgba(6,15,25,.82);backdrop-filter:blur(4px);z-index:500;display:none;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
+#wam{background:#fff;border-radius:6px;max-width:400px;width:100%;padding:34px 30px;position:relative;box-shadow:0 28px 72px rgba(0,0,0,.3);margin:auto}
 .wam-close{position:absolute;top:10px;right:14px;font-size:22px;color:var(--muted);cursor:pointer;line-height:1;background:none;border:none;padding:4px;transition:.2s;font-weight:300}
 .wam-close:hover{color:var(--ink)}
 .wam-icon{width:40px;height:40px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
@@ -846,11 +859,11 @@ h1 em{font-style:italic;color:var(--gold)}
 #wam > p{font-size:14px;color:var(--muted);line-height:1.5;margin-bottom:18px}
 .wam-f{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
 .wam-f label{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink)}
-.wam-f input{padding:11px 12px;border:1px solid var(--border);border-radius:4px;font-family:var(--sans);font-size:14px;color:var(--ink);outline:none;transition:.2s}
+.wam-f input{padding:11px 12px;border:1px solid var(--border);border-radius:4px;font-family:var(--sans);font-size:16px;color:var(--ink);outline:none;transition:.2s}
 .wam-f input:focus{border-color:var(--gold)}
 .wam-f input::placeholder{color:rgba(0,0,0,.25)}
 .wam-prow{display:flex}
-.wam-pfx{width:76px;border:1px solid var(--border);border-right:none;border-radius:4px 0 0 4px;background:var(--warm2);font-size:13px;color:var(--ink);padding:11px 6px;outline:none;cursor:pointer;appearance:none;text-align:center;transition:.2s}
+.wam-pfx{width:88px;border:1px solid var(--border);border-right:none;border-radius:4px 0 0 4px;background:var(--warm2);font-size:16px;color:var(--ink);padding:11px 6px;outline:none;cursor:pointer;appearance:none;text-align:center;transition:.2s}
 .wam-prow input{border-radius:0 4px 4px 0;flex:1}
 .wam-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;background:#25D366;color:#fff;padding:14px;border-radius:4px;border:none;cursor:pointer;font-family:var(--sans);transition:.2s;margin-top:6px}
 .wam-btn:hover{filter:brightness(1.05)}
@@ -946,6 +959,8 @@ footer{background:var(--navy-d);padding:60px 0 24px}
 /* ── MOBILE STICKY CTA ────────────────────────── */
 .sticky-cta{display:none;position:fixed;bottom:0;left:0;right:0;z-index:190;padding:12px 18px;background:var(--navy-m);backdrop-filter:blur(8px);border-top:1px solid rgba(255,255,255,.08)}
 .sticky-cta a{display:flex;align-items:center;justify-content:center;background:var(--gold);color:var(--navy);font-size:13px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;padding:14px;border-radius:var(--r);width:100%}
+/* Oculto mientras el formulario está en pantalla (lo gestiona app.js): competía con el botón de envío real. */
+.sticky-cta.hidden{display:none}
 
 /* ── RESPONSIVE ───────────────────────────────── */
 @media(max-width:1024px){

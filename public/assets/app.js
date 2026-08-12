@@ -119,6 +119,24 @@ function goBack(){
   }
 }
 
+// Avance explícito con el botón Continuar (los pasos 1 y 2 ya no dependen
+// solo del auto-avance, que era invisible y dejaba sin salida el modo manual).
+function showStepHint(step){
+  const hint=document.getElementById('step-hint-'+step);
+  if(!hint)return;
+  hint.classList.add('show');
+  setTimeout(()=>hint.classList.remove('show'),3200);
+}
+function tryAdvance(fromStep){
+  if(fromStep===1){
+    if(!sel.capital||!sel.objetivo){showStepHint(1);return;}
+    goTo(2);
+  }else if(fromStep===2){
+    if(!sel.plazo||!sel.viaje){showStepHint(2);return;}
+    goTo(3);
+  }
+}
+
 document.querySelectorAll('.opt-card').forEach(el=>{
   el.addEventListener('click',function(){
     const dim=this.dataset.dim,v=this.dataset.v;
@@ -127,7 +145,8 @@ document.querySelectorAll('.opt-card').forEach(el=>{
     this.classList.add('sel');
     this.setAttribute('aria-pressed','true');
     sel[dim]=v;
-    if(dim==='capital'||dim==='objetivo'||dim==='plazo'||dim==='viaje')manualNav=false;
+    // manualNav NO se resetea: si el usuario usó "Paso anterior", corregir una
+    // respuesta no debe reexpulsarle hacia delante. Avanza con el botón Continuar.
     trackGAEvent('form_option_select',{
       event_category:'form',
       event_label:dim+':'+v,
@@ -167,9 +186,11 @@ function setCanal(el){
 }
 
 function checkGdpr(){
+  // El botón ya no se deshabilita: un botón muerto no emite clics y dejaba sin
+  // disparar lead_submit_attempt y sin mensaje al usuario. La barrera real de
+  // consentimiento vive en el submit (validación con aviso explícito).
   const ok=document.getElementById('gdpr-cb').checked;
   const btn=document.getElementById('btn-sub');
-  btn.disabled=!ok;
   btn.classList.toggle('ready',ok);
 }
 
@@ -235,6 +256,10 @@ function initSectionTracking(){
       const sectionId=entry.target.id;
       if(!sectionId||seenSections.has(sectionId))return;
       seenSections.add(sectionId);
+      // form_step_view del paso 1 se emite AQUI, cuando el formulario entra de
+      // verdad en pantalla. Antes se disparaba al cargar la página y el dato de
+      // GA4 ("54% ve el formulario") era ficticio.
+      if(sectionId==='form')trackFormStep(1);
       trackGAEvent('section_view',{
         event_category:'engagement',
         event_label:sectionId,
@@ -312,6 +337,24 @@ document.querySelectorAll('a[href="#form"]').forEach(link=>{
   });
 });
 
+// La validación nativa del navegador (campos required, incluida la casilla RGPD)
+// bloquea el submit ANTES de que llegue a dispararse: sin esto, esos intentos
+// no dejaban rastro en GA4 y el final del embudo era invisible.
+let lastInvalidTs=0;
+document.getElementById('mainform').addEventListener('invalid',function(ev){
+  const now=Date.now();
+  if(now-lastInvalidTs<800)return;
+  lastInvalidTs=now;
+  trackGAEvent('lead_submit_attempt',{
+    event_category:'form',
+    event_label:'blocked_by_native_validation'
+  });
+  trackGAEvent('lead_submit_validation_error',{
+    event_category:'form_error',
+    event_label:'native:'+(ev.target.name||ev.target.id||'campo')
+  });
+},true);
+
 document.getElementById('mainform').addEventListener('submit',function(e){
   e.preventDefault();
   trackGAEvent('lead_submit_attempt',{
@@ -336,8 +379,15 @@ document.getElementById('mainform').addEventListener('submit',function(e){
     showStatus('err','Introduce un email válido para continuar.');return;
   }
   const pfx=document.getElementById('phone-pfx').value||'+34';
-  const pnum=(document.getElementById('phone-num').value||'').trim();
-  if(pnum.replace(/\D/g,'').length<6){
+  // Normaliza el número: el autorrelleno del móvil suele pegar el prefijo dentro
+  // del campo y sin esto el lead llegaba como "+34 +34 600..." (no marcable).
+  let pnum=(document.getElementById('phone-num').value||'').trim().replace(/[^\d+]/g,'');
+  if(pnum.startsWith('+'))pnum=pnum.slice(1);
+  else if(pnum.startsWith('00'))pnum=pnum.slice(2);
+  pnum=pnum.replace(/\D/g,'');
+  const pfxDigits=pfx.replace(/\D/g,'');
+  if(pfxDigits&&pnum.startsWith(pfxDigits)&&pnum.length-pfxDigits.length>=6)pnum=pnum.slice(pfxDigits.length);
+  if(pnum.length<6){
     trackGAEvent('lead_submit_validation_error',{
       event_category:'form_error',
       event_label:'invalid_phone'
@@ -796,15 +846,30 @@ initTicker();
 });
 calcROI();
 updProg(1);
-trackFormStep(1);
 initSectionTracking();
 initLeadMagnetTracking();
 captureUTM();
+// Estado visual del botón de envío coherente tras recarga o vuelta desde el
+// bfcache del móvil (la casilla puede venir marcada del estado restaurado).
+checkGdpr();
+window.addEventListener('pageshow',function(){checkGdpr();});
 
 // M25/M26 - listeners que sustituyen a los onclick/onchange inline (CSP sin unsafe-inline)
 document.querySelectorAll('.canal-o').forEach(function(el){ el.addEventListener('click', function(){ setCanal(this); }); });
 (function(){ var g=document.getElementById('gdpr-cb'); if(g) g.addEventListener('change', checkGdpr); })();
 (function(){ var b=document.getElementById('btn-back'); if(b) b.addEventListener('click', goBack); })();
+(function(){ var n1=document.getElementById('btn-next-1'); if(n1) n1.addEventListener('click', function(){ tryAdvance(1); }); })();
+(function(){ var n2=document.getElementById('btn-next-2'); if(n2) n2.addEventListener('click', function(){ tryAdvance(2); }); })();
+// A9 - el CTA fijo desaparece cuando el formulario está en pantalla: competía
+// visualmente con el botón de envío real y tapaba el final del paso 3.
+(function(){
+  var cta=document.querySelector('.sticky-cta');
+  var form=document.getElementById('form');
+  if(!cta||!form||!('IntersectionObserver' in window))return;
+  new IntersectionObserver(function(entries){
+    entries.forEach(function(en){cta.classList.toggle('hidden',en.isIntersecting);});
+  },{threshold:0.05}).observe(form);
+})();
 (function(){ var w=document.getElementById('wa-success-link'); if(w) w.addEventListener('click', function(e){ e.preventDefault(); openWaDirect(savedLead); }); })();
 (function(){ var c=document.querySelector('.wam-close'); if(c) c.addEventListener('click', closeWaModal); })();
 (function(){ var f=document.querySelector('.wa-float a'); if(f) f.addEventListener('click', function(e){ e.preventDefault(); openWaModal(null); }); })();
@@ -826,7 +891,9 @@ document.querySelectorAll('.canal-o').forEach(function(el){ el.addEventListener(
       pfx: (document.getElementById('phone-pfx') || {}).value || '',
       tel: (document.getElementById('phone-num') || {}).value || '',
       pais: (form.querySelector('[name="pais"]') || {}).value || '',
-      canal: (document.getElementById('h-can') || {}).value || ''
+      canal: (document.getElementById('h-can') || {}).value || '',
+      gdpr: !!(document.getElementById('gdpr-cb') || {}).checked,
+      mkt: !!(document.getElementById('gdpr-mkt') || {}).checked
     };
   }
   function save() {
@@ -864,6 +931,9 @@ document.querySelectorAll('.canal-o').forEach(function(el){ el.addEventListener(
         c.classList.toggle('sel', on); c.setAttribute('aria-pressed', on ? 'true' : 'false');
       });
     }
+    if (st.gdpr) { var g = document.getElementById('gdpr-cb'); if (g) g.checked = true; }
+    if (st.mkt) { var m = document.getElementById('gdpr-mkt'); if (m) m.checked = true; }
+    if (typeof checkGdpr === 'function') checkGdpr();
     if (st.cur && st.cur >= 1 && st.cur <= 3) {
       for (var s = 1; s <= 3; s++) {
         var fs = document.getElementById('fs' + s);
