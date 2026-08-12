@@ -95,12 +95,14 @@ function classify(){
   return{score:s,tier:s>=6?'A':s>=4?'B':'C'};
 }
 
+// El formulario pasó a 2 pasos el 12/08: las tres preguntas de perfil viven en
+// la misma pantalla y el paso 2 son ya los datos de contacto.
 function updProg(step){
   const fill=document.getElementById('form-progress-fill');
   const lab=document.getElementById('form-step-label');
-  const pct=step<=1?33.33:step===2?66.66:100;
+  const pct=step<=1?50:100;
   if(fill)fill.style.width=pct+'%';
-  if(lab)lab.textContent='Paso '+step+' de 3';
+  if(lab)lab.textContent='Paso '+step+' de 2';
   const backBtn=document.getElementById('btn-back');
   if(backBtn)backBtn.style.display=step>1?'block':'none';
 }
@@ -132,11 +134,8 @@ function showStepHint(step){
 }
 function tryAdvance(fromStep){
   if(fromStep===1){
-    if(!sel.capital){showStepHint(1);return;}
+    if(!sel.capital||!sel.plazo||!sel.viaje){showStepHint(1);return;}
     goTo(2);
-  }else if(fromStep===2){
-    if(!sel.plazo||!sel.viaje){showStepHint(2);return;}
-    goTo(3);
   }
 }
 
@@ -158,8 +157,7 @@ document.querySelectorAll('.opt-card').forEach(el=>{
     });
     const map={capital:'h-cap',plazo:'h-pla',viaje:'h-via'};
     if(map[dim])document.getElementById(map[dim]).value=v;
-    if(cur===1&&sel.capital&&!manualNav)setTimeout(()=>goTo(2),DELAY);
-    if(cur===2&&sel.plazo&&sel.viaje&&!manualNav)setTimeout(()=>goTo(3),DELAY);
+    if(cur===1&&sel.capital&&sel.plazo&&sel.viaje&&!manualNav)setTimeout(()=>goTo(2),DELAY);
   });
 });
 
@@ -962,7 +960,6 @@ document.querySelectorAll('.canal-o').forEach(function(el){ el.addEventListener(
 (function(){ var g=document.getElementById('gdpr-cb'); if(g) g.addEventListener('change', checkGdpr); })();
 (function(){ var b=document.getElementById('btn-back'); if(b) b.addEventListener('click', goBack); })();
 (function(){ var n1=document.getElementById('btn-next-1'); if(n1) n1.addEventListener('click', function(){ tryAdvance(1); }); })();
-(function(){ var n2=document.getElementById('btn-next-2'); if(n2) n2.addEventListener('click', function(){ tryAdvance(2); }); })();
 // A9 - el CTA fijo desaparece cuando el formulario está en pantalla: competía
 // visualmente con el botón de envío real y tapaba el final del paso 3.
 (function(){
@@ -1037,8 +1034,8 @@ document.querySelectorAll('.canal-o').forEach(function(el){ el.addEventListener(
     if (st.gdpr) { var g = document.getElementById('gdpr-cb'); if (g) g.checked = true; }
     if (st.mkt) { var m = document.getElementById('gdpr-mkt'); if (m) m.checked = true; }
     if (typeof checkGdpr === 'function') checkGdpr();
-    if (st.cur && st.cur >= 1 && st.cur <= 3) {
-      for (var s = 1; s <= 3; s++) {
+    if (st.cur && st.cur >= 1 && st.cur <= 2) {
+      for (var s = 1; s <= 2; s++) {
         var fs = document.getElementById('fs' + s);
         if (fs) fs.classList.toggle('active', s === st.cur);
       }
