@@ -779,8 +779,11 @@ h1 em{font-style:italic;color:var(--gold)}
 .guia-row input::placeholder{color:rgba(0,0,0,.28)}
 .guia-row .btn-gold{flex-shrink:0;white-space:nowrap;border:none;cursor:pointer;font-family:var(--sans)}
 .guia-row .btn-gold:disabled{opacity:.6;cursor:default}
-.guia-gdpr{margin-bottom:0}
-.guia-gdpr label{font-size:12px}
+.guia-gdpr{margin-bottom:10px;align-items:flex-start}
+.guia-gdpr:last-of-type{margin-bottom:0}
+.guia-gdpr label{font-size:12px;text-align:left}
+/* La etiqueta del estado va en la misma línea del texto, sin romper el bloque. */
+.guia-gdpr .gdpr-req,.guia-gdpr .gdpr-opt{margin-left:6px;vertical-align:baseline}
 @media(max-width:700px){
   .guia-row{flex-direction:column}
   .guia-row .btn-gold{width:100%;justify-content:center}

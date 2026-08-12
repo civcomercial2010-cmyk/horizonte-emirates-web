@@ -525,6 +525,12 @@ const CONSENT_TEXT_GUIA='Acepto la política de privacidad y que me envíen la g
   if(!form)return;
   const status=document.getElementById('guia-status');
   const setStatus=(kind,msg)=>{if(status){status.className='form-status show '+kind;status.textContent=msg;}};
+  // El botón nace como type="button" para que, si este script no llega a
+  // ejecutarse (caché antigua, fallo de red, error previo), pulsarlo no lance
+  // un submit nativo que recargue la página y borre lo escrito. Al enganchar
+  // el manejador lo devolvemos a submit, que es lo correcto con JS disponible.
+  const btnInit=document.getElementById('guia-btn');
+  if(btnInit)btnInit.setAttribute('type','submit');
   form.addEventListener('submit',function(e){
     e.preventDefault();
     const email=(document.getElementById('guia-email').value||'').trim();

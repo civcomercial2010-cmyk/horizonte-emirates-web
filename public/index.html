@@ -38,15 +38,15 @@
 <link rel="preload" as="image" href="assets/img/hero-dubai-1280.webp" imagesrcset="assets/img/hero-dubai-768.webp 768w, assets/img/hero-dubai-1280.webp 1280w, assets/img/hero-dubai-1920.webp 1920w" imagesizes="100vw" fetchpriority="high"/>
 <!-- Preload de la fuente del H1 (LCP): Cormorant Garamond latin normal. La itálica no se usa en esta página (B7). -->
 <link rel="preload" as="font" type="font/woff2" href="assets/fonts/co3bmX5slCNuHLi8bLeY9MK7whWMhyjYqXtK.woff2" crossorigin/>
-<link rel="stylesheet" href="assets/css/tokens.css"/>
-<link rel="stylesheet" href="assets/css/fonts.css"/>
-<link rel="stylesheet" href="assets/css/home.css"/>
+<link rel="stylesheet" href="assets/css/tokens.css?v=20260812"/>
+<link rel="stylesheet" href="assets/css/fonts.css?v=20260812"/>
+<link rel="stylesheet" href="assets/css/home.css?v=20260812"/>
 <!-- Consent Mode v2 + Google Analytics 4 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-BK37V83363"></script>
-<script src="assets/gtag-init.js"></script>
+<script src="assets/gtag-init.js?v=20260812"></script>
 <!-- Google Tag Manager (GTM-NZV6VJDC) -->
-<script src="assets/gtm-init.js"></script>
-<script src="assets/consent.js" defer></script>
+<script src="assets/gtm-init.js?v=20260812"></script>
+<script src="assets/consent.js?v=20260812" defer></script>
 </head>
 <body>
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NZV6VJDC" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -628,7 +628,10 @@
         <div class="guia-row">
           <label class="sr-only" for="guia-email">Su email</label>
           <input type="email" id="guia-email" name="email" placeholder="su@email.com" autocomplete="email" required/>
-          <button type="submit" class="btn-gold" id="guia-btn" data-he-lead-magnet="guia-fiscal">Descargar la guía &nbsp;→</button>
+          <!-- type="button" a propósito: app.js lo pasa a submit al enganchar su
+               manejador. Si el script no llega (caché antigua, fallo de red), el
+               botón no dispara un submit nativo que recargue la página. -->
+          <button type="button" class="btn-gold" id="guia-btn" data-he-lead-magnet="guia-fiscal">Descargar la guía &nbsp;→</button>
         </div>
         <div class="gdpr guia-gdpr">
           <input type="checkbox" id="guia-gdpr" required/>
@@ -636,7 +639,7 @@
         </div>
         <div class="gdpr guia-gdpr">
           <input type="checkbox" id="guia-mkt"/>
-          <label for="guia-mkt">Además, deseo recibir información comercial sobre oportunidades inmobiliarias en Emiratos. <span class="gdpr-opt">Opcional, puede retirarlo en cualquier momento</span></label>
+          <label for="guia-mkt">Deseo recibir información comercial sobre oportunidades inmobiliarias en Emiratos por email o WhatsApp. <span class="gdpr-opt">Opcional</span></label>
         </div>
         <div class="form-status" id="guia-status" role="status" aria-live="polite"></div>
       </form>
@@ -856,7 +859,7 @@
 <!-- MOBILE STICKY CTA -->
 <div class="sticky-cta"><a href="#form">Solicitar análisis gratuito →</a></div>
 
-<script src="assets/common.js" defer></script>
-<script src="assets/app.js" defer></script>
+<script src="assets/common.js?v=20260812" defer></script>
+<script src="assets/app.js?v=20260812" defer></script>
 </body>
 </html>
