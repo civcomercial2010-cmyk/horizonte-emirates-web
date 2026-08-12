@@ -54,7 +54,7 @@ function initCarousel(id) {
   var set = imgs.map(function (im) { return { src: im.src, alt: im.alt }; });
   imgs.forEach(function (im, i) { im.addEventListener('click', function () { openLightbox(set, i); }); });
 }
-['1', '2', '3'].forEach(initCarousel);
+['1', '2', '3', '4', '5', '6', '7'].forEach(initCarousel);
 
 function goSlide(id, idx) {
   var track = document.getElementById('track-' + id);

@@ -77,7 +77,8 @@ window.addEventListener('scroll',()=>{
 
 // ── FORM STATE
 const SCORES={
-  capital:{'150k-300k':1,'300k-600k':2,'600k-1M':3,'mas1M':4},
+  // 'menos150k' puntúa 0 (tier C): un lead C vale 40 EUR; un descarte silencioso, 0.
+  capital:{'menos150k':0,'150k-300k':1,'300k-600k':2,'600k-1M':3,'mas1M':4},
   objetivo:{'alquiler':3,'revalorizacion':3,'diversificacion':2,'residencia':1},
   plazo:{'ya':4,'6meses':3,'12meses':2,'indefinido':1},
   viaje:{'si':2,'quizas':1,'no':0}
@@ -419,7 +420,13 @@ document.getElementById('mainform').addEventListener('submit',function(e){
     puntuacion:String(score),
     canal:document.getElementById('h-can').value||'whatsapp'
   });
-  fetch(W3F_EP,{method:'POST',body:payload}).then(r=>r.json().catch(()=>({success:false}))).then(d=>{
+  // B5 - timeout explícito: sin señal, un POST que no responde dejaba el botón
+  // en "Enviando..." para siempre. keepalive permite que el envío sobreviva si
+  // el usuario navega justo después de pulsar.
+  const ctrl=('AbortController' in window)?new AbortController():null;
+  const tOut=ctrl?setTimeout(()=>ctrl.abort(),15000):null;
+  fetch(W3F_EP,{method:'POST',body:payload,keepalive:true,signal:ctrl?ctrl.signal:undefined}).then(r=>r.json().catch(()=>({success:false}))).then(d=>{
+    if(tOut)clearTimeout(tOut);
     if(d.success){
       savedLead={
         nombre,
@@ -433,19 +440,8 @@ document.getElementById('mainform').addEventListener('submit',function(e){
         tier,
         score
       };
-      trackGAEvent('generate_lead',{
-        form_name:'contact_form',
-        lead_source:'website',
-        event_category:'form',
-        event_label:'mainform_submit_success',
-        value:leadValueEUR(tier),
-        currency:'EUR',
-        lead_tier:tier,
-        lead_score:score,
-        lead_country:pais || 'sin_pais'
-      });
-      trackAdsLeadConversion(savedLead);
-      if(typeof window.fbq==='function')window.fbq('track','Lead',{value:leadValueEUR(tier),currency:'EUR'});
+      // B6 - la pantalla de éxito se muestra ANTES del tracking: un fallo en la
+      // medición nunca debe enseñar un error a un lead que ya entró.
       document.getElementById('mainform').style.display='none';
       const pw=document.querySelector('.form-progress-wrap');
       if(pw)pw.style.display='none';
@@ -459,6 +455,21 @@ document.getElementById('mainform').addEventListener('submit',function(e){
         calBtn.href='https://calendly.com/hola-horizonteemirates/llamada-estrategica-horizonte-emirates-30-minutos?'+cp.toString();
       }
       document.getElementById('success').classList.add('show');
+      try{
+        trackGAEvent('generate_lead',{
+          form_name:'contact_form',
+          lead_source:'website',
+          event_category:'form',
+          event_label:'mainform_submit_success',
+          value:leadValueEUR(tier),
+          currency:'EUR',
+          lead_tier:tier,
+          lead_score:score,
+          lead_country:pais || 'sin_pais'
+        });
+        trackAdsLeadConversion(savedLead);
+        if(typeof window.fbq==='function')window.fbq('track','Lead',{value:leadValueEUR(tier),currency:'EUR'});
+      }catch(e){/* la medición nunca rompe la experiencia del lead */}
     }else{
       trackGAEvent('lead_submit_error',{
         event_category:'form_error',
@@ -467,10 +478,11 @@ document.getElementById('mainform').addEventListener('submit',function(e){
       showStatus('err',d.message||'No se pudo enviar el formulario. Inténtalo de nuevo.');
       btn.disabled=false;btn.textContent='Solicitar análisis gratuito →';
     }
-  }).catch(()=>{
+  }).catch(err=>{
+    if(tOut)clearTimeout(tOut);
     trackGAEvent('lead_submit_error',{
       event_category:'form_error',
-      event_label:'network_error'
+      event_label:(err&&err.name==='AbortError')?'timeout':'network_error'
     });
     showStatus('err','Error de conexión. Revisa tu conexión e inténtalo de nuevo.');
     btn.disabled=false;btn.textContent='Solicitar análisis gratuito →';
@@ -551,8 +563,32 @@ document.getElementById('waf').addEventListener('submit',function(e){
   Object.entries(trackingParams).forEach(([k,v])=>fd.append(k,v));
   fd.append('fecha_registro',new Date().toLocaleString('es-ES',{timeZone:'Europe/Madrid'}));
   fd.append('botcheck','');
-  fetch(W3F_EP,{method:'POST',body:fd}).catch(()=>{});
+  // keepalive: el envío sobrevive aunque el usuario salte a WhatsApp al instante.
+  // window.open debe seguir siendo síncrono (esperar la respuesta haría que el
+  // navegador bloquease la ventana emergente), así que el resultado se registra aparte.
+  fetch(W3F_EP,{method:'POST',body:fd,keepalive:true})
+    .then(r=>r.json().catch(()=>({success:false})))
+    .then(d=>{
+      if(!d.success)trackGAEvent('lead_submit_error',{event_category:'form_error',event_label:'whatsapp_web3forms_rejected'});
+    })
+    .catch(()=>{trackGAEvent('lead_submit_error',{event_category:'form_error',event_label:'whatsapp_network_error'});});
   savedLead={nombre:n,email:em};
+  try{
+    // Un lead del modal de WhatsApp es un lead real (nombre, email y teléfono
+    // capturados): cuenta como generate_lead con valor de tier C. Antes este
+    // canal no atribuía ninguna conversión.
+    trackGAEvent('generate_lead',{
+      form_name:'whatsapp_modal',
+      lead_source:'website_whatsapp',
+      event_category:'contact',
+      event_label:'whatsapp_modal_submit_success',
+      value:leadValueEUR('C'),
+      currency:'EUR',
+      lead_tier:'C'
+    });
+    trackAdsLeadConversion({tier:'C',email:em});
+    if(typeof window.fbq==='function')window.fbq('track','Lead',{value:leadValueEUR('C'),currency:'EUR'});
+  }catch(e){}
   trackGAEvent('whatsapp_lead_submit',{
     event_category:'contact',
     event_label:'whatsapp_modal_submit'

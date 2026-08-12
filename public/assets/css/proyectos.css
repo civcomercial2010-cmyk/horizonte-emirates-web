@@ -52,7 +52,8 @@
     }
     .page-hero::before {
       content: ''; position: absolute; inset: 0;
-      background: url('assets/img/hero-dubai-1280.webp') center/cover;
+      /* Ruta relativa al CSS (antes resolvía a /assets/css/assets/... y daba 404 silencioso) */
+      background: url('../img/hero-dubai-1280.webp') center/cover;
       opacity: .16;
     }
     .page-hero-inner { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 0 24px; }

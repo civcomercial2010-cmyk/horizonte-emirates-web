@@ -1,16 +1,9 @@
-/* A06/M31: métricas de fallback calibradas para reducir CLS al font-swap */
+/* A06/M31: métricas de fallback calibradas para reducir CLS al font-swap.
+   B7: src ampliado. Android (85% del tráfico) no trae Georgia y el fallback
+   nunca aplicaba: el CLS del swap seguía intacto justo donde más pesa. */
 @font-face {
   font-family: 'Cormorant Garamond Fallback';
-  src: local('Georgia');
-  size-adjust: 98%;
-  ascent-override: 95%;
-  descent-override: 25%;
-  line-gap-override: 0%;
-}
-/* A06/M31: métricas de fallback calibradas para reducir CLS al font-swap */
-@font-face {
-  font-family: 'Cormorant Garamond Fallback';
-  src: local('Georgia');
+  src: local('Georgia'), local('Noto Serif'), local('Droid Serif'), local('Times New Roman');
   size-adjust: 98%;
   ascent-override: 95%;
   descent-override: 25%;

@@ -36,9 +36,8 @@
 {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"¿Es legal comprar en Dubai siendo residente en España?","acceptedAnswer":{"@type":"Answer","text":"Totalmente legal y habitual entre inversores españoles. El comprador no residente opera bajo el marco regulado por RERA, el organismo oficial del Gobierno de Dubai que supervisa todas las transacciones inmobiliarias. Como residente fiscal en España, deberá declarar el activo en el Modelo 720 a partir de 50.000€. Le indicamos los puntos clave a revisar con su asesor fiscal. Horizonte Emirates no presta asesoramiento fiscal ni jurídico."}},{"@type":"Question","name":"¿Cuánto cuesta el servicio?","acceptedAnswer":{"@type":"Answer","text":"El inversor no paga nada. Nunca. Nuestros honorarios los abona el promotor, no el comprador. No existe comisión de apertura, fee de análisis, coste de acompañamiento ni cargo de ningún tipo. Ni al inicio, ni durante la visita a Dubai, ni en el momento del cierre."}},{"@type":"Question","name":"¿Cómo funciona el viaje para ver las promociones que me interesan?","acceptedAnswer":{"@type":"Answer","text":"Incluido, sin coste: agenda personalizada, visitas a los proyectos que más le interesen, coordinación con promotores, traslados entre citas y acompañamiento en español con equipo local. Por su cuenta: su vuelo, alojamiento y dietas. El objetivo es que verifique cada detalle relevante del proyecto con información de primera mano antes de invertir. La visita es recomendable; cerrar en remoto sigue siendo posible en muchos casos. Queremos que esté plénamente convencido de su inversión."}},{"@type":"Question","name":"¿Necesito viajar a Dubai para cerrar la operación?","acceptedAnswer":{"@type":"Answer","text":"No es imprescindible, aunque lo recomendamos para activos de mayor ticket. Muchas operaciones sobre plano se cierran de forma remota mediante poder notarial. Si decide viajar, organizamos la agenda completa con nuestro equipo local, en español y sin coste adicional. El vuelo y alojamiento van por su cuenta."}},{"@type":"Question","name":"¿Qué impuestos pago según mi residencia fiscal?","acceptedAnswer":{"@type":"Answer","text":"Depende de su país de residencia fiscal. España: IRPF sobre rentas y plusvalías, Convenio de Doble Imposición España-EAU y modelo 720 (sólo informativo). Andorra: marco andorrano según su situación. LatAm y otros: las reglas varían por país (renta mundial, declaración de activos en el extranjero, retenciones). En todos los casos, en UAE no hay imposición local sobre alquiler ni plusvalías de persona física."}},{"@type":"Question","name":"¿Cuál es el capital mínimo para invertir?","acceptedAnswer":{"@type":"Answer","text":"En proyectos off-plan, la entrada inicial es del 10–20% del valor del activo. Con 30.000€ puede acceder a propiedades desde 150.000€. Para mercado secundario recomendamos capital desde 150.000€. Estos datos son orientativos. Las condiciones reales dependen del activo y el promotor."}}]}
 </script>
 <link rel="preload" as="image" href="assets/img/hero-dubai-1280.webp" imagesrcset="assets/img/hero-dubai-768.webp 768w, assets/img/hero-dubai-1280.webp 1280w, assets/img/hero-dubai-1920.webp 1920w" imagesizes="100vw" fetchpriority="high"/>
-<!-- Preload de la fuente del H1 (LCP): Cormorant Garamond latin, normal + italic -->
+<!-- Preload de la fuente del H1 (LCP): Cormorant Garamond latin normal. La itálica no se usa en esta página (B7). -->
 <link rel="preload" as="font" type="font/woff2" href="assets/fonts/co3bmX5slCNuHLi8bLeY9MK7whWMhyjYqXtK.woff2" crossorigin/>
-<link rel="preload" as="font" type="font/woff2" href="assets/fonts/co3ZmX5slCNuHLi8bLeY9MK7whWMhyjYrEtImSo.woff2" crossorigin/>
 <link rel="stylesheet" href="assets/css/tokens.css"/>
 <link rel="stylesheet" href="assets/css/fonts.css"/>
 <link rel="stylesheet" href="assets/css/home.css"/>
@@ -86,11 +85,11 @@
     <div class="hero-label">
       <span class="eyebrow">Inversión inmobiliaria · UAE</span>
     </div>
-    <h1>Invierte en inmuebles en Dubai,<br/>con acompañamiento en español.</h1>
-    <p class="hero-sub">Inversión inmobiliaria en Dubai y UAE con rentabilidad bruta estimada del 6–12% anual, sin impuestos locales sobre alquiler ni plusvalías, y menor exposición al riesgo de ocupación que en España.</p>
+    <h1>Invierte en pisos y apartamentos<br/>en Dubai, desde 150.000€.</h1>
+    <p class="hero-sub">Obra nueva con entrada del 10–20% (desde 30.000€), rentabilidad bruta estimada del 6–12% anual y sin impuestos locales sobre alquiler ni plusvalías. Acompañamiento en español de principio a fin.</p>
     <div class="hero-ctas">
       <a href="#form" class="btn-gold">Solicitar análisis gratuito &nbsp;→</a>
-      <a href="#como" class="btn-outline-w">Cómo funciona</a>
+      <a href="/proyectos.html" class="btn-outline-w">Ver inmuebles disponibles</a>
     </div>
     <div class="hero-badge">
       <span class="badge">Servicio íntegro en español</span>
@@ -433,6 +432,10 @@
           <div class="fq-label">1) Capital disponible para invertir</div>
           <div class="fhint">Seleccione el rango que mejor representa su situación actual</div>
           <div class="opt-cards" id="opts-cap">
+            <div class="opt-card" data-dim="capital" data-v="menos150k">
+              <span class="opt-label">Menos de 150.000€</span>
+              <span class="opt-sub">Obra nueva con plan de pagos del promotor: entrada del 10-20%</span>
+            </div>
             <div class="opt-card" data-dim="capital" data-v="150k-300k">
               <span class="opt-label">150.000 – 300.000€</span>
               <span class="opt-sub">Inmuebles off-plan premium y residencial consolidado en Dubai</span>
@@ -581,14 +584,19 @@
             </ul>
           </div>
           <!-- Información básica en capa 1 (art. 13 RGPD). El texto de las casillas se registra
-               literalmente en el envío: si se modifica, subir CONSENT_VERSION en app.js. -->
-          <div class="gdpr-basic">
+               literalmente en el envío: si se modifica, subir CONSENT_VERSION en app.js.
+               B4: colapsada en details (el texto es idéntico, accesible con un toque):
+               el paso 3 cargaba ~390px de bloque legal antes del botón de envío. -->
+          <details class="gdpr-basic">
+            <summary>Información básica sobre protección de datos</summary>
+            <div class="gdpr-basic-body">
             <strong>Responsable:</strong> Propulse SLU (Andorra), marca Horizonte Emirates.
             <strong>Finalidad:</strong> atender su solicitud de análisis de inversión y contactarle por el canal que elija.
             <strong>Destinatarios:</strong> nuestro socio inmobiliario en Emiratos Árabes Unidos, país que no cuenta con decisión de adecuación de la Unión Europea, para elaborar la selección de inmuebles.
             <strong>Derechos:</strong> acceso, rectificación, supresión, oposición y portabilidad escribiendo a <a href="mailto:hola@horizonteemirates.com">hola@horizonteemirates.com</a>.
             Detalle completo en la <a href="legal.html#politica-privacidad" target="_blank" rel="noopener">política de privacidad</a>.
-          </div>
+            </div>
+          </details>
           <div class="gdpr">
             <input type="checkbox" id="gdpr-cb" name="consentimiento_privacidad" value="SI" required/>
             <label for="gdpr-cb">He leído y acepto la <a href="legal.html#politica-privacidad" target="_blank" rel="noopener">política de privacidad</a> y consiento que mis datos se comuniquen al socio de Horizonte Emirates en Emiratos Árabes Unidos para preparar mi análisis de inversión. <span class="gdpr-req">Obligatorio</span></label>
