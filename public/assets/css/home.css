@@ -770,6 +770,22 @@ h1 em{font-style:italic;color:var(--gold)}
 .form-status.ok{background:rgba(45,106,79,.12);border:1px solid rgba(45,106,79,.35);color:#14532d}
 .form-status.err{background:rgba(196,58,58,.1);border:1px solid rgba(196,58,58,.35);color:#7f1d1d}
 
+/* Lead magnet: guía fiscal con captura de un solo campo */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.guia-form{margin-top:22px;text-align:left}
+.guia-row{display:flex;gap:10px;margin-bottom:14px}
+.guia-row input{flex:1;min-width:0;padding:16px 16px;border:1px solid var(--border);border-radius:4px;background:#fff;font-family:var(--sans);font-size:16px;color:var(--ink);outline:none;transition:.2s}
+.guia-row input:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-lt)}
+.guia-row input::placeholder{color:rgba(0,0,0,.28)}
+.guia-row .btn-gold{flex-shrink:0;white-space:nowrap;border:none;cursor:pointer;font-family:var(--sans)}
+.guia-row .btn-gold:disabled{opacity:.6;cursor:default}
+.guia-gdpr{margin-bottom:0}
+.guia-gdpr label{font-size:12px}
+@media(max-width:700px){
+  .guia-row{flex-direction:column}
+  .guia-row .btn-gold{width:100%;justify-content:center}
+}
+
 /* Success screen (V6) */
 .success{display:none;padding:48px 20px 56px}
 .success.show{display:flex;flex-direction:column;align-items:center}

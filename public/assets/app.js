@@ -76,21 +76,23 @@ window.addEventListener('scroll',()=>{
 });
 
 // ── FORM STATE
+// La pregunta de objetivo se retiró del formulario (12/08): aportaba poco al
+// cribado y sumaba fricción en el paso 1. Se pregunta en el primer correo.
+// Máximo ahora 10 puntos (antes 15), con los umbrales de tier reescalados.
 const SCORES={
   // 'menos150k' puntúa 0 (tier C): un lead C vale 40 EUR; un descarte silencioso, 0.
   capital:{'menos150k':0,'150k-300k':1,'300k-600k':2,'600k-1M':3,'mas1M':4},
-  objetivo:{'alquiler':3,'revalorizacion':3,'diversificacion':2,'residencia':1},
   plazo:{'ya':4,'6meses':3,'12meses':2,'indefinido':1},
   viaje:{'si':2,'quizas':1,'no':0}
 };
-let cur=1,sel={capital:null,objetivo:null,plazo:null,viaje:null};
+let cur=1,sel={capital:null,plazo:null,viaje:null};
 let manualNav=false;
 const DELAY=340;
 
 function classify(){
-  const s=(SCORES.capital[sel.capital]||0)+(SCORES.objetivo[sel.objetivo]||0)+
-          (SCORES.plazo[sel.plazo]||0)+(SCORES.viaje[sel.viaje]||0);
-  return{score:s,tier:s>=9?'A':s>=6?'B':'C'};
+  const s=(SCORES.capital[sel.capital]||0)+(SCORES.plazo[sel.plazo]||0)+(SCORES.viaje[sel.viaje]||0);
+  // Umbrales reescalados sobre 10 puntos manteniendo la proporción anterior (60% y 40%).
+  return{score:s,tier:s>=6?'A':s>=4?'B':'C'};
 }
 
 function updProg(step){
@@ -130,7 +132,7 @@ function showStepHint(step){
 }
 function tryAdvance(fromStep){
   if(fromStep===1){
-    if(!sel.capital||!sel.objetivo){showStepHint(1);return;}
+    if(!sel.capital){showStepHint(1);return;}
     goTo(2);
   }else if(fromStep===2){
     if(!sel.plazo||!sel.viaje){showStepHint(2);return;}
@@ -154,9 +156,9 @@ document.querySelectorAll('.opt-card').forEach(el=>{
       form_dimension:dim,
       form_value:v
     });
-    const map={capital:'h-cap',objetivo:'h-obj',plazo:'h-pla',viaje:'h-via'};
+    const map={capital:'h-cap',plazo:'h-pla',viaje:'h-via'};
     if(map[dim])document.getElementById(map[dim]).value=v;
-    if(cur===1&&sel.capital&&sel.objetivo&&!manualNav)setTimeout(()=>goTo(2),DELAY);
+    if(cur===1&&sel.capital&&!manualNav)setTimeout(()=>goTo(2),DELAY);
     if(cur===2&&sel.plazo&&sel.viaje&&!manualNav)setTimeout(()=>goTo(3),DELAY);
   });
 });
@@ -493,6 +495,71 @@ function showStatus(kind,msg){
   const box=document.getElementById('form-status');
   box.className=`form-status show ${kind}`;box.textContent=msg;
 }
+
+// ── LEAD MAGNET: guía fiscal con un solo campo ─────────────────
+// La descarga se abre SIEMPRE, aunque el registro falle: el usuario ya ha
+// cumplido su parte y retenerle el PDF por un error nuestro no tiene sentido.
+const GUIA_URL='guias/guia-fiscal-dubai-espana.pdf';
+const CONSENT_TEXT_GUIA='Acepto la política de privacidad y recibir la guía fiscal e información sobre inversión inmobiliaria en Emiratos.';
+(function initGuiaForm(){
+  const form=document.getElementById('guiaform');
+  if(!form)return;
+  const status=document.getElementById('guia-status');
+  const setStatus=(kind,msg)=>{if(status){status.className='form-status show '+kind;status.textContent=msg;}};
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    const email=(document.getElementById('guia-email').value||'').trim();
+    const okGdpr=!!document.getElementById('guia-gdpr').checked;
+    trackGAEvent('lead_magnet_submit_attempt',{event_category:'lead_magnet',event_label:'guia_fiscal'});
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){
+      trackGAEvent('lead_magnet_validation_error',{event_category:'form_error',event_label:'invalid_email'});
+      setStatus('err','Introduce un email válido para recibir la guía.');return;
+    }
+    if(!okGdpr){
+      trackGAEvent('lead_magnet_validation_error',{event_category:'form_error',event_label:'missing_consent'});
+      setStatus('err','Debe aceptar la política de privacidad para descargar la guía.');return;
+    }
+    const btn=document.getElementById('guia-btn');
+    btn.disabled=true;btn.textContent='Preparando...';
+    const fd=new FormData();
+    fd.append('access_key',W3F_KEY);
+    fd.append('subject','[Guia fiscal] '+email+' · Horizonte Emirates');
+    fd.append('from_name','Horizonte Emirates');
+    fd.append('replyto',email);
+    fd.append('Email',email);
+    fd.append('Origen','Descarga guía fiscal');
+    fd.append('Canal','email');
+    fd.append('Tier','C');
+    fd.append('Consentimiento privacidad','SI');
+    fd.append('Consentimiento marketing','SI');
+    fd.append('Consentimiento version',CONSENT_VERSION);
+    fd.append('Consentimiento fecha',new Date().toISOString());
+    fd.append('Consentimiento texto',CONSENT_TEXT_GUIA);
+    Object.entries(getTrackingParams()).forEach(([k,v])=>fd.append(k,v));
+    fd.append('botcheck','');
+    fetch(W3F_EP,{method:'POST',body:fd,keepalive:true})
+      .then(r=>r.json().catch(()=>({success:false})))
+      .then(d=>{if(!d.success)trackGAEvent('lead_submit_error',{event_category:'form_error',event_label:'guia_web3forms_rejected'});})
+      .catch(()=>{trackGAEvent('lead_submit_error',{event_category:'form_error',event_label:'guia_network_error'});});
+    try{
+      trackGAEvent('generate_lead',{
+        form_name:'lead_magnet_guia',
+        lead_source:'website_guia',
+        event_category:'lead_magnet',
+        event_label:'guia_fiscal_descarga',
+        value:leadValueEUR('C'),
+        currency:'EUR',
+        lead_tier:'C'
+      });
+      trackAdsLeadConversion({tier:'C',email:email});
+      if(typeof window.fbq==='function')window.fbq('track','Lead',{value:leadValueEUR('C'),currency:'EUR'});
+    }catch(err){}
+    window.open(GUIA_URL,'_blank','noopener');
+    form.querySelector('.guia-row').style.display='none';
+    form.querySelector('.guia-gdpr').style.display='none';
+    setStatus('ok','Guía abierta en una pestaña nueva. También se la enviamos a ' + email + '.');
+  });
+})();
 
 // ── WA MODAL
 function buildWaMsg(data){
@@ -945,13 +1012,13 @@ document.querySelectorAll('.canal-o').forEach(function(el){ el.addEventListener(
     if (!raw) return;
     var st; try { st = JSON.parse(raw); } catch (e) { return; }
     if (!st) return;
-    ['capital', 'objetivo', 'plazo', 'viaje'].forEach(function (dim) {
+    ['capital', 'plazo', 'viaje'].forEach(function (dim) {
       var v = st.sel && st.sel[dim];
       if (!v) return;
       sel[dim] = v;
       var card = document.querySelector('.opt-card[data-dim="' + dim + '"][data-v="' + v + '"]');
       if (card) { card.classList.add('sel'); card.setAttribute('aria-pressed', 'true'); }
-      var map = { capital: 'h-cap', objetivo: 'h-obj', plazo: 'h-pla', viaje: 'h-via' };
+      var map = { capital: 'h-cap', plazo: 'h-pla', viaje: 'h-via' };
       var h = document.getElementById(map[dim]); if (h) h.value = v;
     });
     var setVal = function (q, val) { var el = form.querySelector(q); if (el && val) el.value = val; };

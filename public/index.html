@@ -453,35 +453,13 @@
               <span class="opt-sub">Cartera multi-inmueble y operaciones exclusivas</span>
             </div>
           </div>
-          <div class="fq-gap">
-            <div class="fq-label">2) Objetivo principal</div>
-            <div class="fhint">Definimos la estrategia inmobiliaria según su objetivo</div>
-            <div class="opt-cards" id="opts-obj">
-              <div class="opt-card" data-dim="objetivo" data-v="alquiler">
-                <span class="opt-label">Renta pasiva</span>
-                <span class="opt-sub">Alquiler de inmueble gestionado. Flujo mensual en un marco regulado.</span>
-              </div>
-              <div class="opt-card" data-dim="objetivo" data-v="revalorizacion">
-                <span class="opt-label">Apreciación del capital</span>
-                <span class="opt-sub">Compra de inmueble sobre plano o en zona de alto crecimiento</span>
-              </div>
-              <div class="opt-card" data-dim="objetivo" data-v="diversificacion">
-                <span class="opt-label">Diversificación geográfica</span>
-                <span class="opt-sub">Patrimonio inmobiliario fuera del euro y de la regulación española</span>
-              </div>
-              <div class="opt-card" data-dim="objetivo" data-v="residencia">
-                <span class="opt-label">Residencia en UAE</span>
-                <span class="opt-sub">Golden Visa mediante compra de inmueble en UAE</span>
-              </div>
-            </div>
-          </div>
           <button type="button" class="btn-next" id="btn-next-1">Continuar &nbsp;→</button>
-          <div class="step-hint" id="step-hint-1">Seleccione una opción en las dos preguntas para continuar.</div>
+          <div class="step-hint" id="step-hint-1">Seleccione un rango de capital para continuar.</div>
         </div>
 
         <!-- PASO 2: Plazo + Visita -->
         <div class="fstep" id="fs2">
-          <div class="fq-label">3) Horizonte de decisión</div>
+          <div class="fq-label">2) Horizonte de decisión</div>
           <div class="fhint">Elegimos el activo y ritmo según su plazo real</div>
           <div class="opt-cards" id="opts-pla">
             <div class="opt-card" data-dim="plazo" data-v="ya">
@@ -502,7 +480,7 @@
             </div>
           </div>
           <div class="fq-gap">
-            <div class="fq-label">4) Visita presencial en Dubai</div>
+            <div class="fq-label">3) Visita presencial en Dubai</div>
             <div class="fhint">Organizamos acompañamientos sin coste para validar proyectos en persona</div>
             <div class="viaje-cards" id="opts-via">
               <div class="opt-card" data-dim="viaje" data-v="si">
@@ -525,7 +503,7 @@
 
         <!-- PASO 3: Contacto -->
         <div class="fstep" id="fs3">
-          <div class="fq-label">5) Datos de contacto</div>
+          <div class="fq-label">4) Datos de contacto</div>
           <div class="fhint">Le contactaremos en menos de 48h por el canal que prefiera</div>
           <div class="ffields">
             <div class="fg"><label for="f-nombre">Nombre *</label><input id="f-nombre" type="text" name="nombre" placeholder="Nombre completo" required autocomplete="name"/></div>
@@ -642,12 +620,23 @@
 <section class="section alt" id="guia-fiscal">
   <div class="wrap container-narrow">
     <div class="cta-inline fade">
-      <span class="c-tag">Recurso gratuito</span>
+      <span class="c-tag">Descarga gratuita</span>
       <h2>Guía fiscal del inversor: Dubai ↔ España</h2>
-      <p>Modelo 720, IRPF, plusvalías y errores frecuentes al invertir en UAE siendo residente fiscal en España. Te la enviamos al solicitar tu análisis, sin coste.</p>
-      <div class="cta-row">
-        <a href="#form" class="btn-gold" data-he-lead-magnet="guia-fiscal">Solicitar análisis y recibir la guía &nbsp;→</a>
-      </div>
+      <p>Modelo 720, IRPF, plusvalías y errores frecuentes al invertir en UAE siendo residente fiscal en España. Deje su email y la descarga se abre al momento, sin más pasos.</p>
+      <!-- Lead magnet real (12/08): un solo campo y entrega inmediata. Antes este
+           botón llevaba al formulario de 3 pasos, así que no era una descarga. -->
+      <form id="guiaform" class="guia-form" novalidate>
+        <div class="guia-row">
+          <label class="sr-only" for="guia-email">Su email</label>
+          <input type="email" id="guia-email" name="email" placeholder="su@email.com" autocomplete="email" required/>
+          <button type="submit" class="btn-gold" id="guia-btn" data-he-lead-magnet="guia-fiscal">Descargar la guía &nbsp;→</button>
+        </div>
+        <div class="gdpr guia-gdpr">
+          <input type="checkbox" id="guia-gdpr" required/>
+          <label for="guia-gdpr">Acepto la <a href="legal.html#politica-privacidad" target="_blank" rel="noopener">política de privacidad</a> y recibir la guía y información sobre inversión en Emiratos. Puedo darme de baja cuando quiera.</label>
+        </div>
+        <div class="form-status" id="guia-status" role="status" aria-live="polite"></div>
+      </form>
     </div>
   </div>
 </section>
