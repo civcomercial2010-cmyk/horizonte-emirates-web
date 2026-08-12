@@ -92,7 +92,13 @@ const DELAY=340;
 function classify(){
   const s=(SCORES.capital[sel.capital]||0)+(SCORES.plazo[sel.plazo]||0)+(SCORES.viaje[sel.viaje]||0);
   // Umbrales reescalados sobre 10 puntos manteniendo la proporción anterior (60% y 40%).
-  return{score:s,tier:s>=6?'A':s>=4?'B':'C'};
+  let t=s>=6?'A':s>=4?'B':'C';
+  // Techo por capital: quien declara menos de 150.000 EUR no puede ser tier A
+  // por mucha prisa o disposición a viajar que tenga. Sin esto, menos150k (0) +
+  // "operar ya" (4) + "sí a la visita" (2) daba 6 puntos y máxima prioridad,
+  // además de mandar 300 EUR de valor a Google Ads.
+  if(sel.capital==='menos150k'&&t==='A')t='B';
+  return{score:s,tier:t};
 }
 
 // El formulario pasó a 2 pasos el 12/08: las tres preguntas de perfil viven en
@@ -208,6 +214,12 @@ function trackAdsLeadConversion(leadData){
     value:leadValueEUR(leadData?.tier),
     currency:'EUR'
   };
+  // Deduplicación por persona: hay tres vías de conversión (formulario, modal
+  // de WhatsApp y descarga de la guía) y un mismo visitante puede recorrer
+  // varias. Con transaction_id, Google Ads cuenta una sola conversión por
+  // email en lugar de tres, sin perder la de mayor valor.
+  const dedupe=String(leadData?.email||'').trim().toLowerCase();
+  if(dedupe)conv.transaction_id='he-'+dedupe;
   // El email NUNCA se envía en claro (dato personal identificable, prohibido además
   // por la política de PII de Google Ads). Enhanced conversions exige SHA-256 en
   // user_data y solo procede si el usuario aceptó las cookies publicitarias.
@@ -497,8 +509,17 @@ function showStatus(kind,msg){
 // ── LEAD MAGNET: guía fiscal con un solo campo ─────────────────
 // La descarga se abre SIEMPRE, aunque el registro falle: el usuario ya ha
 // cumplido su parte y retenerle el PDF por un error nuestro no tiene sentido.
+//
+// IMPORTANTE (el asunto NO debe parecer un lead del funnel): pollGmail descarta
+// por email duplicado (leadExists), así que si esta descarga entrase como lead,
+// el MISMO usuario ya no podría registrarse después con el formulario completo.
+// Perderíamos justo al lead más cualificado: el que primero se informa y luego
+// se decide. Por eso el asunto evita «Horizonte Emirates», «Lead HE» y el
+// marcador [X|Npts] que reconoce isHorizonteWeb3Lead.
 const GUIA_URL='guias/guia-fiscal-dubai-espana.pdf';
-const CONSENT_TEXT_GUIA='Acepto la política de privacidad y recibir la guía fiscal e información sobre inversión inmobiliaria en Emiratos.';
+// Debe coincidir LITERALMENTE con la etiqueta de la casilla en index.html
+// (prueba del consentimiento, art. 7.1 RGPD). Si se cambia una, cambiar la otra.
+const CONSENT_TEXT_GUIA='Acepto la política de privacidad y que me envíen la guía por email.';
 (function initGuiaForm(){
   const form=document.getElementById('guiaform');
   if(!form)return;
@@ -521,41 +542,62 @@ const CONSENT_TEXT_GUIA='Acepto la política de privacidad y recibir la guía fi
     btn.disabled=true;btn.textContent='Preparando...';
     const fd=new FormData();
     fd.append('access_key',W3F_KEY);
-    fd.append('subject','[Guia fiscal] '+email+' · Horizonte Emirates');
-    fd.append('from_name','Horizonte Emirates');
+    // Asunto deliberadamente fuera del patrón del funnel: ver comentario de arriba.
+    fd.append('subject','[Descarga guia fiscal] '+email);
+    fd.append('from_name','Descargas web');
     fd.append('replyto',email);
     fd.append('Email',email);
     fd.append('Origen','Descarga guía fiscal');
     fd.append('Canal','email');
-    fd.append('Tier','C');
+    const okMkt=!!(document.getElementById('guia-mkt')||{}).checked;
     fd.append('Consentimiento privacidad','SI');
-    fd.append('Consentimiento marketing','SI');
+    fd.append('Consentimiento marketing',okMkt?'SI':'NO');
     fd.append('Consentimiento version',CONSENT_VERSION);
     fd.append('Consentimiento fecha',new Date().toISOString());
     fd.append('Consentimiento texto',CONSENT_TEXT_GUIA);
+    if(okMkt)fd.append('Consentimiento texto marketing',CONSENT_TEXTS.marketing);
     Object.entries(getTrackingParams()).forEach(([k,v])=>fd.append(k,v));
     fd.append('botcheck','');
-    fetch(W3F_EP,{method:'POST',body:fd,keepalive:true})
-      .then(r=>r.json().catch(()=>({success:false})))
-      .then(d=>{if(!d.success)trackGAEvent('lead_submit_error',{event_category:'form_error',event_label:'guia_web3forms_rejected'});})
-      .catch(()=>{trackGAEvent('lead_submit_error',{event_category:'form_error',event_label:'guia_network_error'});});
-    try{
-      trackGAEvent('generate_lead',{
-        form_name:'lead_magnet_guia',
-        lead_source:'website_guia',
-        event_category:'lead_magnet',
-        event_label:'guia_fiscal_descarga',
-        value:leadValueEUR('C'),
-        currency:'EUR',
-        lead_tier:'C'
-      });
-      trackAdsLeadConversion({tier:'C',email:email});
-      if(typeof window.fbq==='function')window.fbq('track','Lead',{value:leadValueEUR('C'),currency:'EUR'});
-    }catch(err){}
+    // La descarga se abre de forma síncrona: si se esperase a la respuesta del
+    // registro, el navegador bloquearía la pestaña emergente.
     window.open(GUIA_URL,'_blank','noopener');
     form.querySelector('.guia-row').style.display='none';
-    form.querySelector('.guia-gdpr').style.display='none';
-    setStatus('ok','Guía abierta en una pestaña nueva. También se la enviamos a ' + email + '.');
+    document.querySelectorAll('.guia-gdpr').forEach(el=>{el.style.display='none';});
+    // El enlace se muestra SIEMPRE: con 'noopener', window.open devuelve null
+    // por especificación aunque la pestaña se haya abierto, así que no hay forma
+    // fiable de detectar un bloqueo. Dejar el enlace a mano cubre los dos casos.
+    setStatus('ok','Su guía se ha abierto en una pestaña nueva. Si no la ve, ');
+    const a=document.createElement('a');
+    a.href=GUIA_URL;a.target='_blank';a.rel='noopener';
+    a.textContent='ábrala aquí';
+    a.style.textDecoration='underline';a.style.fontWeight='600';
+    if(status){
+      status.appendChild(a);
+      status.appendChild(document.createTextNode('. También se la enviamos a '+email+'.'));
+    }
+    fetch(W3F_EP,{method:'POST',body:fd,keepalive:true})
+      .then(r=>r.json().catch(()=>({success:false})))
+      .then(d=>{
+        if(!d.success){
+          trackGAEvent('lead_submit_error',{event_category:'form_error',event_label:'guia_web3forms_rejected'});
+          return;
+        }
+        // La conversión solo se cuenta si el registro llegó de verdad.
+        try{
+          trackGAEvent('generate_lead',{
+            form_name:'lead_magnet_guia',
+            lead_source:'website_guia',
+            event_category:'lead_magnet',
+            event_label:'guia_fiscal_descarga',
+            value:leadValueEUR('C'),
+            currency:'EUR',
+            lead_tier:'C'
+          });
+          trackAdsLeadConversion({tier:'C',email:email});
+          if(typeof window.fbq==='function')window.fbq('track','Lead',{value:leadValueEUR('C'),currency:'EUR'});
+        }catch(err){}
+      })
+      .catch(()=>{trackGAEvent('lead_submit_error',{event_category:'form_error',event_label:'guia_network_error'});});
   });
 })();
 

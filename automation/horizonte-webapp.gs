@@ -64,6 +64,7 @@ const WEBAPP_CFG = {
 
 // ── Etiquetas legibles (copia local para no depender del motor de correos) ──
 const WEBAPP_CAPITAL = {
+  'menos150k': 'menos de 150.000 €',
   '150k-300k': '150.000 a 300.000 €',
   '300k-600k': '300.000 a 600.000 €',
   '600k-1M':   '600.000 a 1.000.000 €',

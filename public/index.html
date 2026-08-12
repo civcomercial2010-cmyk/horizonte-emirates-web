@@ -419,6 +419,9 @@
         <input type="hidden" name="redirect" value=""/>
         <input type="checkbox" name="botcheck" style="display:none"/>
         <input type="hidden" id="h-cap" name="capital"/>
+        <!-- La pregunta de objetivo se retiró del formulario el 12/08/2026. El campo
+             se conserva vacío porque la hoja Leads y el parser del Apps Script esperan
+             la columna; el objetivo se recoge ahora en el primer correo. -->
         <input type="hidden" id="h-obj" name="objetivo"/>
         <input type="hidden" id="h-pla" name="plazo"/>
         <input type="hidden" id="h-via" name="visita_dubai"/>
@@ -629,7 +632,11 @@
         </div>
         <div class="gdpr guia-gdpr">
           <input type="checkbox" id="guia-gdpr" required/>
-          <label for="guia-gdpr">Acepto la <a href="legal.html#politica-privacidad" target="_blank" rel="noopener">política de privacidad</a> y recibir la guía y información sobre inversión en Emiratos. Puedo darme de baja cuando quiera.</label>
+          <label for="guia-gdpr">Acepto la <a href="legal.html#politica-privacidad" target="_blank" rel="noopener">política de privacidad</a> y que me envíen la guía por email. <span class="gdpr-req">Obligatorio</span></label>
+        </div>
+        <div class="gdpr guia-gdpr">
+          <input type="checkbox" id="guia-mkt"/>
+          <label for="guia-mkt">Además, deseo recibir información comercial sobre oportunidades inmobiliarias en Emiratos. <span class="gdpr-opt">Opcional, puede retirarlo en cualquier momento</span></label>
         </div>
         <div class="form-status" id="guia-status" role="status" aria-live="polite"></div>
       </form>

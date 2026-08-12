@@ -35,6 +35,7 @@ const WEIGHTS = {
 // ── MATRIZ CAPITAL → PERFIL PROYECTO ──────────────────────────
 // Cuántos puntos (de 30) suma cada combinación capital/perfil
 const CAPITAL_PERFIL_SCORE = {
+  'menos150k': { 'Entrada baja': 30, 'Alta rentabilidad': 12, 'Revalorización': 8, 'Lujo': 0 },
   '150k-300k': { 'Entrada baja': 30, 'Alta rentabilidad': 18, 'Revalorización': 10, 'Lujo': 0 },
   '300k-600k': { 'Alta rentabilidad': 30, 'Revalorización': 25, 'Entrada baja': 15, 'Lujo': 8 },
   '600k-1M':   { 'Revalorización': 30, 'Alta rentabilidad': 22, 'Lujo': 18, 'Entrada baja': 5 },
@@ -152,11 +153,23 @@ function _scoreLeadVsProject(lead, project) {
   const perfil        = project.perfil_inversor || '';
 
   const scoreCapital  = capitalTable[perfil]   || 0;
-  const scoreObjetivo = objetivoTable[perfil]  || 0;
   const scoreTiming   = _timingScore(lead.plazo, parseInt(project.handover_anyo));
   const scoreDev      = DEV_SCORE_LOOKUP[project.promotora] || 5;
 
-  const total = scoreCapital + scoreObjetivo + scoreTiming + scoreDev;
+  // El formulario dejó de preguntar el objetivo el 12/08/2026. Sin ese dato,
+  // sumar 0 restaría 30 de los 100 puntos a TODOS los proyectos por igual y
+  // dejaría los totales incomparables con los del histórico. Se reparte esa
+  // dimensión de forma proporcional entre las que sí tenemos, de modo que el
+  // total siga en la misma escala. Cuando el objetivo se recoja por correo,
+  // basta con rellenar lead.objetivo para recuperar el cálculo original.
+  const hasObjetivo   = !!lead.objetivo && Object.keys(objetivoTable).length > 0;
+  const scoreObjetivo = hasObjetivo ? (objetivoTable[perfil] || 0) : 0;
+
+  let total = scoreCapital + scoreObjetivo + scoreTiming + scoreDev;
+  if (!hasObjetivo) {
+    const baseSinObjetivo = WEIGHTS.capital + WEIGHTS.timing + WEIGHTS.developer; // 70
+    total = Math.round(total * 100 / baseSinObjetivo);
+  }
 
   const reasons = _buildReasons(lead, project, scoreCapital, scoreObjetivo, scoreTiming, scoreDev);
 

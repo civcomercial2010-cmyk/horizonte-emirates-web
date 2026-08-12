@@ -108,6 +108,7 @@ const CONFIG = {
 
 // Etiquetas legibles para variables del email
 const CAPITAL_LABELS = {
+  'menos150k': 'menos de 150.000 €',
   '150k-300k': '150.000 a 300.000 €',
   '300k-600k': '300.000 a 600.000 €',
   '600k-1M':   '600.000 a 1.000.000 €',

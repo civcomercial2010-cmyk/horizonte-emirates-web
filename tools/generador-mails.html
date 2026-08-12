@@ -82,6 +82,7 @@
 
     <label for="capital">1) Capital disponible</label>
     <select id="capital">
+      <option value="menos150k">menos de 150.000 €</option>
       <option value="150k-300k">150.000 a 300.000 €</option>
       <option value="300k-600k" selected>300.000 a 600.000 €</option>
       <option value="600k-1M">600.000 a 1.000.000 €</option>
@@ -219,13 +220,14 @@
   var DESCARGO = "Horizonte Emirates no presta asesoramiento fiscal ni jurídico. La información es orientativa.";
 
   var SCORES = {
-    capital:{"150k-300k":1,"300k-600k":2,"600k-1M":3,"mas1M":4},
+    capital:{"menos150k":0,"150k-300k":1,"300k-600k":2,"600k-1M":3,"mas1M":4},
     objetivo:{alquiler:3,revalorizacion:3,diversificacion:2,residencia:1},
     plazo:{ya:4,"6meses":3,"12meses":2,indefinido:1},
     viaje:{si:2,quizas:1,no:0}
   };
 
   var CAPITAL_LABELS = {
+    "menos150k":"menos de 150.000 €",
     "150k-300k":"150.000 a 300.000 €",
     "300k-600k":"300.000 a 600.000 €",
     "600k-1M":"600.000 a 1.000.000 €",
@@ -265,6 +267,12 @@
   };
 
   var B_CAPITAL = {
+    "menos150k":
+"Su rango encaja con obra nueva y plan de pagos del promotor: se entra con el 10 al 20 %
+" +
+"y el resto se escalona hasta la entrega, así que el capital necesario hoy es menor de lo
+" +
+"que parece. Trabajamos proyectos desde 150.000 € con esa estructura.",
     "150k-300k":
 "Con su rango se trabaja bien en off-plan premium y en residencial consolidado de Dubai.\n" +
 "La clave está en el plan de pagos: hay proyectos donde se entra con el 20 % y el resto\n" +
@@ -680,7 +688,9 @@ MAIL + " y lo recupero al momento, sin tener que empezar de cero.\n\n" +
   function classify(d){
     var s = (SCORES.capital[d.capital]||0) + (SCORES.objetivo[d.objetivo]||0) +
             (SCORES.plazo[d.plazo]||0) + (SCORES.viaje[d.viaje]||0);
-    return {score:s, tier: s>=9 ? "A" : (s>=6 ? "B" : "C")};
+    var t = s>=9 ? "A" : (s>=6 ? "B" : "C");
+    if (d.capital === "menos150k" && t === "A") t = "B";
+    return {score:s, tier:t};
   }
 
   function collect(){
