@@ -338,6 +338,64 @@ function buildWeb3LeadPayload(formEl, leadData){
   return fd;
 }
 
+// ── PUENTE HERO -> FORMULARIO ───────────────────────────────
+// Las tarjetas de capital del hero no son un formulario aparte: marcan la
+// respuesta en el formulario REAL y llevan a él. Así el usuario responde la
+// primera pregunta sin teclado y sin scroll, y el resto del embudo (scoring,
+// validación, envío) sigue siendo el mismo código.
+(function initHeroCapture(){
+  const botones=document.querySelectorAll('.hero-cap-o');
+  if(!botones.length)return;
+  botones.forEach(function(b){
+    b.addEventListener('click',function(){
+      const v=this.dataset.cap;
+      if(!v)return;
+      const tarjeta=document.querySelector('.opt-card[data-dim="capital"][data-v="'+v+'"]');
+      trackGAEvent('hero_capital_select',{
+        event_category:'form',
+        event_label:'capital:'+v,
+        form_dimension:'capital',
+        form_value:v
+      });
+      // Reutiliza el manejador de la tarjeta real: marca, puntúa y persiste igual.
+      if(tarjeta)tarjeta.click();
+      const destino=document.getElementById('form');
+      if(destino)destino.scrollIntoView({behavior:'smooth',block:'start'});
+      const caja=document.querySelector('.form-wrap')||destino;
+      if(caja){
+        caja.classList.remove('form-llega');
+        void caja.offsetWidth;
+        caja.classList.add('form-llega');
+        setTimeout(function(){caja.classList.remove('form-llega');},1300);
+      }
+    });
+  });
+})();
+
+// Mientras la captura del hero está en pantalla, el CTA fijo y el flotante de
+// WhatsApp se apartan: son el mismo objetivo y le tapaban opciones.
+(function initHeroCapVisible(){
+  const cap=document.querySelector('.hero-cap');
+  if(!cap||!('IntersectionObserver' in window))return;
+  new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      document.body.classList.toggle('hero-cap-vista',en.isIntersecting);
+    });
+  },{threshold:0.15}).observe(cap);
+})();
+
+// Mide los clics en los inmuebles del hero (la ruta de "mirar").
+(function initHeroProps(){
+  document.querySelectorAll('.hprop').forEach(function(a){
+    a.addEventListener('click',function(){
+      trackGAEvent('hero_property_click',{
+        event_category:'engagement',
+        event_label:this.dataset.trackProject||'sin_nombre'
+      });
+    });
+  });
+})();
+
 // CTA principal: mide clics que llevan al formulario.
 document.querySelectorAll('a[href="#form"]').forEach(link=>{
   link.addEventListener('click',function(){
