@@ -30,6 +30,22 @@
 html{scroll-behavior:smooth;scroll-padding-top:80px}
 /* Los anclajes a #form y el auto-avance aterrizaban con el contenido bajo la nav fija de 64px. */
 #form,#fs1,.form-progress-wrap{scroll-margin-top:80px}
+/* Al responder el capital desde el hero se aterriza sobre la propia respuesta:
+   la tarjeta elegida queda justo bajo la barra (feedback de lo que se acaba de
+   marcar) y debajo aparece la pregunta siguiente. Anclar a la pregunta 2 no
+   servía porque la respuesta puede caer en cualquiera de las tres filas. */
+.opt-card{scroll-margin-top:96px}
+/* Pregunta ya respondida desde el hero: se muestra solo la respuesta, con un
+   enlace para cambiarla. Sin esto quedaban dos filas resueltas ocupando pantalla
+   y la pregunta siguiente caía fuera de vista. */
+/* La instrucción de la pregunta sobra en cuanto está respondida */
+.fhint.resuelto{display:none}
+.opt-cards.resuelto{grid-template-columns:1fr}
+.opt-cards.resuelto .opt-card:not(.sel){display:none}
+.opt-cards.resuelto .opt-card.sel{cursor:default;transform:none}
+.fq-cambiar{background:none;border:none;padding:0;margin-top:10px;font-family:var(--sans);font-size:13px;font-weight:600;color:var(--gold-text);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.fq-cambiar:hover{color:var(--gold)}
+@media(max-width:700px){.opt-card{scroll-margin-top:88px}}
 /* Evita que el ticker (width:max-content) ensanche el viewport de layout en móvil landscape
    (700–1024px): sin esto, iOS Safari encoge el contenido a media pantalla al girar. */
 html,body{overflow-x:hidden;max-width:100%}
@@ -208,7 +224,11 @@ nav.scrolled{background:var(--navy-m);backdrop-filter:blur(12px);border-color:rg
 }
 .hero-label{display:flex;align-items:center;gap:12px;margin-bottom:22px}
 .hero-label .eyebrow{color:rgba(196,148,42,.9)}
-#hero h1{font-family:var(--serif);font-size:clamp(34px,3.6vw,50px);font-weight:500;line-height:1.1;letter-spacing:-.01em;color:#fff;margin-bottom:6px;max-width:860px;min-height:calc(2 * 1.1 * clamp(36px,4.2vw,58px))}
+#hero h1{font-family:var(--serif);font-size:clamp(34px,3.6vw,50px);font-weight:500;line-height:1.1;letter-spacing:-.01em;color:#fff;margin-bottom:6px;max-width:860px;min-height:calc(2 * 1.1 * clamp(34px,3.6vw,50px))}
+/* En pantallas anchas el titular cabe en una línea: reservar dos dejaba un
+   hueco muerto bajo él. La reserva sigue en móvil, que es donde ocupa dos
+   y donde el font-swap sí mueve el contenido. */
+@media(min-width:1000px){#hero h1{min-height:0}}
 h1{font-family:var(--serif);font-size:clamp(46px,5.8vw,80px);font-weight:500;line-height:1.07;letter-spacing:-.01em;color:#fff;margin-bottom:6px;max-width:860px}
 h1 em{font-style:italic;color:var(--gold)}
 .hero-sub{font-size:19px;font-weight:300;color:rgba(255,255,255,.9);line-height:1.5;max-width:760px;margin:12px 0 0}

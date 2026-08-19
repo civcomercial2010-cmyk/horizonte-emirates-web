@@ -359,7 +359,35 @@ function buildWeb3LeadPayload(formEl, leadData){
       });
       // Reutiliza el manejador de la tarjeta real: marca, puntúa y persiste igual.
       if(tarjeta)tarjeta.click();
-      const destino=document.getElementById('form');
+      // La pregunta ya respondida se colapsa a su respuesta: así el usuario ve
+      // confirmado lo que eligió y, justo debajo, la pregunta siguiente entera.
+      // Sin colapsar, las otras dos filas la empujaban fuera de la pantalla.
+      const rejilla=document.getElementById('opts-cap');
+      if(rejilla&&tarjeta){
+        rejilla.classList.add('resuelto');
+        const pista=rejilla.previousElementSibling;
+        if(pista&&pista.classList.contains('fhint'))pista.classList.add('resuelto');
+        if(!document.getElementById('cap-cambiar')){
+          const cambiar=document.createElement('button');
+          cambiar.type='button';
+          cambiar.id='cap-cambiar';
+          cambiar.className='fq-cambiar';
+          cambiar.textContent='Cambiar el importe';
+          cambiar.addEventListener('click',function(){
+            rejilla.classList.remove('resuelto');
+            const p=rejilla.previousElementSibling;
+            if(p&&p.classList.contains('fhint'))p.classList.remove('resuelto');
+            this.remove();
+            rejilla.scrollIntoView({behavior:'smooth',block:'start'});
+            trackGAEvent('form_capital_cambiar',{event_category:'form',event_label:'desde_hero'});
+          });
+          rejilla.insertAdjacentElement('afterend',cambiar);
+        }
+      }
+      // Se aterriza sobre la respuesta recién marcada, no en la cabecera de la
+      // sección: el usuario ve confirmado lo que acaba de elegir y justo debajo
+      // la pregunta siguiente, sin tener que buscar por dónde continuar.
+      const destino=tarjeta||document.getElementById('q-plazo')||document.getElementById('form');
       if(destino)destino.scrollIntoView({behavior:'smooth',block:'start'});
       const caja=document.querySelector('.form-wrap')||destino;
       if(caja){
