@@ -456,6 +456,10 @@ h1 em{font-style:italic;color:var(--gold)}
 .trust-card{background:#fff;border:1px solid var(--border);border-radius:6px;padding:30px 28px}
 .trust-card h3{font-family:var(--serif);font-size:clamp(24px,2.6vw,30px);font-weight:500;color:var(--ink);margin-bottom:12px;line-height:1.15}
 .trust-card p{font-size:15px;color:var(--muted);line-height:1.65;text-align:justify;text-wrap:pretty}
+.trust-card p+p{margin-top:14px}
+.trust-link{text-align:left!important}
+.trust-link a{color:var(--gold-text);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.trust-link a:hover{color:var(--gold)}
 .trust-partner{margin-top:24px;font-size:14px;color:var(--muted);line-height:1.6;text-align:center;max-width:72ch;margin-inline:auto}
 .trust-partner a{color:var(--gold-text);text-decoration:underline}
 
