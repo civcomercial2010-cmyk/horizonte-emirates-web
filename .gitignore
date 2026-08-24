@@ -7,13 +7,16 @@ Thumbs.db
 .claude/
 
 # Carpetas locales sincronizadas (no forman parte de la web)
-Diario actividad proyecto/
+_archivo/
 
 # Toolchain local de procesamiento de imágenes (no en producción)
 tools/imgproc/
 
 # Dependencias de Node (wrangler). Se reinstalan con npm install
 node_modules/
+
+# Caché local de la CLI Wrangler
+.wrangler/
 
 # Capturas de depuración generadas en la raíz durante pruebas locales
 /ticker-*.png
