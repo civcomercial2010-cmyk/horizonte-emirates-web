@@ -85,10 +85,15 @@
       + "#he-consent .he-c-actions{display:flex;gap:10px;flex-wrap:wrap}"
       + "#he-consent button{font-family:inherit;font-size:12px;font-weight:600;letter-spacing:.06em;"
       + "text-transform:uppercase;padding:11px 22px;border-radius:2px;cursor:pointer;border:1px solid transparent;transition:.2s}"
-      + "#he-consent .he-c-accept{background:#C4942A;color:#07121F}"
+      // Aceptar y Rechazar comparten peso visual: mismo relleno sólido, mismo
+      // tamaño y contraste equivalente. La Guía de Cookies de la AEPD exige que
+      // rechazar sea tan sencillo como aceptar, y un botón fantasma frente a uno
+      // sólido es el patrón que señala como no conforme. No igualar el color:
+      // lo que la norma pide es igual facilidad, no idéntico diseño.
+      + "#he-consent .he-c-accept{background:#C4942A;color:#07121F;border-color:#C4942A}"
       + "#he-consent .he-c-accept:hover{filter:brightness(1.08)}"
-      + "#he-consent .he-c-reject{background:transparent;color:rgba(248,246,241,.85);border-color:rgba(248,246,241,.35)}"
-      + "#he-consent .he-c-reject:hover{border-color:rgba(248,246,241,.7);color:#fff}"
+      + "#he-consent .he-c-reject{background:#F8F6F1;color:#07121F;border-color:#F8F6F1}"
+      + "#he-consent .he-c-reject:hover{filter:brightness(.94)}"
       // Mientras el banner espera decisión, el CTA fijo y el flotante de WhatsApp
       // se retiran: quedaban tapados por el banner (z-index inferior) y robaban
       // la mitad inferior de la pantalla en la primera visita móvil.
