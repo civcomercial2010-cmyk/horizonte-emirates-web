@@ -1,4 +1,4 @@
-# Auditoría — Guía fiscal Dubai ↔ España (M19)
+# Auditoría: Guía fiscal Dubai ↔ España (M19)
 
 **Fecha:** 9 junio 2026  
 **Documento auditado:** `public/guias/guia-fiscal-dubai-espana.html` + PDF generado  
@@ -31,7 +31,7 @@
 | Patrimonio | 1 párrafo | Mínimos exentos orientativos, variación por CCAA, cuándo declarar aunque no pagues |
 | CDI España-EAU | 1 párrafo | Artículos relevantes, crédito fiscal (por qué no aplica en la práctica), residencia fiscal mixta |
 | Residencia fiscal | 1 párrafo genérico | Criterios 183 días, Golden Visa ≠ residencia fiscal, certificado TRC, planificación de salida de España |
-| Compra en UAE | Solo mencionada en calendario | Tabla de costes (DLD ~4%, admin, service charge) — ya existe en el blog |
+| Compra en UAE | Solo mencionada en calendario | Tabla de costes (DLD ~4%, admin, service charge): ya existe en el blog |
 
 ### 2. Ausencias respecto al cluster fiscal del blog
 

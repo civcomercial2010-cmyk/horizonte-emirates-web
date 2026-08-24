@@ -1,4 +1,4 @@
-# Horizonte Emirates — Sistema de Email Automation
+# Horizonte Emirates: Sistema de Email Automation
 ## Guía de Setup y Decisiones de Plataforma
 
 ---
@@ -8,7 +8,7 @@
 ### Fase 1–2 (ahora → primeros 50 leads): Gmail + Google Apps Script
 **Por qué:**
 - Coste cero. Gmail ya está activo, GAS es gratuito hasta 100 emails/día.
-- Emails salen desde la cuenta Gmail de Horizonte Emirates — no desde un dominio extraño para el receptor.
+- Emails salen desde la cuenta Gmail de Horizonte Emirates, no desde un dominio extraño para el receptor.
 - Control total: lógica de scoring, tiers, cola de envíos y CRM en un solo archivo.
 - Sin contratos, sin configuración de dominio adicional, sin curva de aprendizaje.
 
@@ -20,7 +20,7 @@
 - Cuando se quiera A/B testing de subject lines o análisis de aperturas/clics por secuencia.
 - Cuando el volumen justifique los ~49€/mes de ActiveCampaign.
 
-**Cómo migrar:** Los 20 templates del GAS se importan a ActiveCampaign como automations. El Spreadsheet de Leads se exporta como CSV y se importa como lista. El scoring ya está definido — solo hay que replicar los tiers A/B/C como listas o tags.
+**Cómo migrar:** Los 20 templates del GAS se importan a ActiveCampaign como automations. El Spreadsheet de Leads se exporta como CSV y se importa como lista. El scoring ya está definido: solo hay que replicar los tiers A/B/C como listas o tags.
 
 ---
 
@@ -84,23 +84,23 @@ Antes de reactivar conviene revisar el copy de `getTemplate()`: sus cifras de re
   → Respeta estado del lead (baja/cerrado → cancela)
         ↓
 [Lead recibe secuencia personalizada según su tier]
-  Tier A (score ≥9): 5 emails en 5 días — urgencia alta
-  Tier B (score ≥6): 7 emails en 35 días — nurturing medio
-  Tier C (score <6): 8 emails en 90 días — educación + reactivación
+  Tier A (score ≥9): 5 emails en 5 días, urgencia alta
+  Tier B (score ≥6): 7 emails en 35 días, nurturing medio
+  Tier C (score <6): 8 emails en 90 días, educación + reactivación
 ```
 
 ---
 
 ## Setup paso a paso
 
-### Paso 1 — Crear el Google Sheet CRM
+### Paso 1: Crear el Google Sheet CRM
 
 1. Ir a [sheets.google.com](https://sheets.google.com) con la cuenta `la cuenta Gmail del proyecto`
-2. Crear una hoja de cálculo vacía → nombrarla **"HE CRM — Leads"**
+2. Crear una hoja de cálculo vacía → nombrarla **"HE CRM, Leads"**
 3. Copiar el **ID** de la URL: `https://docs.google.com/spreadsheets/d/`**ESTE-ES-EL-ID**`/edit`
-4. Guardar ese ID en **Apps Script → ⚙ Configuración del proyecto → Propiedades de la secuencia de comandos** como `HE_SPREADSHEET_ID` (ya **no** se pega en el código — M03). Añadir también `HE_AGENT_EMAIL` = email donde recibir los briefings de leads.
+4. Guardar ese ID en **Apps Script → ⚙ Configuración del proyecto → Propiedades de la secuencia de comandos** como `HE_SPREADSHEET_ID` (ya **no** se pega en el código, M03). Añadir también `HE_AGENT_EMAIL` = email donde recibir los briefings de leads.
 
-### Paso 2 — Crear el proyecto en Google Apps Script
+### Paso 2: Crear el proyecto en Google Apps Script
 
 1. Ir a [script.google.com](https://script.google.com)
 2. Nuevo proyecto → nombrar **"HE Email Automation"**
@@ -108,14 +108,14 @@ Antes de reactivar conviene revisar el copy de `getTemplate()`: sus cifras de re
 4. Pegar el contenido completo de `automation/horizonte-emails.gs`
 5. Guardar (Ctrl+S)
 
-### Paso 3 — Inicializar las hojas del Spreadsheet
+### Paso 3: Inicializar las hojas del Spreadsheet
 
 1. En el editor de Apps Script, seleccionar la función `initSheets` en el desplegable
 2. Hacer clic en **Ejecutar**
 3. Autorizar los permisos que solicite (Gmail + Sheets + Ejecutar como tú)
 4. Verificar que en el Spreadsheet se crearon dos hojas: **Leads** y **Cola**
 
-### Paso 4 — Activar los triggers automáticos
+### Paso 4: Activar los triggers automáticos
 
 1. En el editor, seleccionar la función `createTriggers`
 2. Hacer clic en **Ejecutar**
@@ -123,11 +123,11 @@ Antes de reactivar conviene revisar el copy de `getTemplate()`: sus cifras de re
    - `pollGmail` → cada 10 minutos
    - `processQueue` → cada hora
 
-### Paso 5 — Crear la etiqueta en Gmail
+### Paso 5: Crear la etiqueta en Gmail
 
 El script crea automáticamente la etiqueta `HE-procesado` la primera vez que procesa un email. No es necesario crearla manualmente.
 
-### Paso 6 — Verificar el email de notificación de Web3Forms
+### Paso 6: Verificar el email de notificación de Web3Forms
 
 Comprobar que los formularios (V3 y botón WA) envían los datos a `la cuenta Gmail del proyecto`. Verificar en Web3Forms dashboard que:
 - Access key: `3861d49c-5f0a-4dc3-a9e9-08b1758a110a`
@@ -137,16 +137,16 @@ Comprobar que los formularios (V3 y botón WA) envían los datos a `la cuenta Gm
 
 ## Estructura de secuencias
 
-### Tier A — Lead caliente (score ≥ 9 puntos)
+### Tier A: Lead caliente (score ≥ 9 puntos)
 | Email | Delay | Asunto / Objetivo |
 |---|---|---|
 | A1 | Inmediato | Confirmación + análisis en preparación |
 | A2 | +5 horas | 3 activos concretos con rentabilidades |
 | A3 | +24 horas | Urgencia real: ventanas de entrada limitadas |
-| A4 | +48 horas | Visita Dubai — el argumento de conversión presencial |
+| A4 | +48 horas | Visita Dubai: el argumento de conversión presencial |
 | A5 | +5 días | Pregunta directa: ¿sigue siendo una prioridad? |
 
-### Tier B — Lead cualificado (score ≥ 6 puntos)
+### Tier B: Lead cualificado (score ≥ 6 puntos)
 | Email | Delay | Asunto / Objetivo |
 |---|---|---|
 | B1 | Inmediato | Confirmación + análisis en preparación |
@@ -157,7 +157,7 @@ Comprobar que los formularios (V3 y botón WA) envían los datos a `la cuenta Gm
 | B6 | +20 días | Check-in + propuesta sin compromiso |
 | B7 | +35 días | Cierre del seguimiento activo |
 
-### Tier C — Lead en exploración (score < 6 puntos)
+### Tier C: Lead en exploración (score < 6 puntos)
 | Email | Delay | Asunto / Objetivo |
 |---|---|---|
 | C1 | Inmediato | Bienvenida + contenido educativo |
@@ -182,7 +182,7 @@ Comprobar que los formularios (V3 y botón WA) envían los datos a `la cuenta Gm
 | Objetivo | Alquiler o revalorización | 3 |
 | Objetivo | Diversificación | 2 |
 | Objetivo | Residencia | 1 |
-| Plazo | Capital listo — operar ya | 4 |
+| Plazo | Capital listo: operar ya | 4 |
 | Plazo | Capital en menos de 6 meses | 3 |
 | Plazo | Decisión activa (< 6 meses) | 3 |
 | Plazo | < 12 meses | 2 |
@@ -237,8 +237,8 @@ En Apps Script, editar `previewEmail('A1')` y luego usar `sendEmail('A1', leadDe
 
 | Frecuencia | Acción |
 |---|---|
-| Semanal | Revisar hoja Cola — emails con estado "error" |
-| Semanal | Revisar hoja Leads — leads nuevos, tiers, estados |
+| Semanal | Revisar hoja Cola: emails con estado "error" |
+| Semanal | Revisar hoja Leads: leads nuevos, tiers, estados |
 | Mensual | Comprobar cuota de Gmail (Configuración → About) |
 | Al migrar a AC | Exportar Leads como CSV, importar como lista |
 

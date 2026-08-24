@@ -1,4 +1,4 @@
-# Auditoría técnica — Horizonte Emirates
+# Auditoría técnica: Horizonte Emirates
 
 > **Fecha:** 2026-06-09
 > **Auditor:** Auditoría senior (arquitectura web + SEO + seguridad + performance + CRO)
@@ -22,7 +22,7 @@ Eres un agente de código trabajando en la raíz del repositorio. Tu tarea es **
 
 **Contexto del stack (no asumir otra cosa):**
 - Sitio **estático** HTML + CSS vanilla + JS vanilla. **Sin build, sin framework, sin npm runtime.**
-- Desplegado en **Cloudflare Workers (Assets)** — `wrangler.jsonc` con `html_handling: "none"` y `not_found_handling: "404-page"`.
+- Desplegado en **Cloudflare Workers (Assets)**, `wrangler.jsonc` con `html_handling: "none"` y `not_found_handling: "404-page"`.
 - `public/_headers` y `public/_redirects` **SÍ se aplican** de forma nativa (verificado en vivo). Solo se publica `public/`.
 - Backend de leads: **Web3Forms → Google Apps Script → Google Sheets** + Calendly + WhatsApp.
 - Tracking: GA4 `G-BK37V83363` + Google Ads `AW-586671676` + Meta Pixel (post-consentimiento) + Consent Mode v2.
@@ -66,25 +66,25 @@ Eres un agente de código trabajando en la raíz del repositorio. Tu tarea es **
 
 ## C. PLAN DE ACCIÓN POR FASES
 
-### FASE 1 — Errores críticos y quick wins (< 1 día, alto ROI)
+### FASE 1: Errores críticos y quick wins (< 1 día, alto ROI)
 - **F1** Caché larga inmutable en `/assets/*`.
 - **F2** Web3Forms: domain restriction + captcha. `[ACCIÓN MANUAL]` en dashboard + ajuste opcional de código.
 - **F3** HSTS unificado a 2 años. `[ACCIÓN MANUAL]` en Cloudflare.
 - **F5** Asociar labels en formularios.
 
-### FASE 2 — Mejoras técnicas y SEO importantes
+### FASE 2: Mejoras técnicas y SEO importantes
 - **F4** Canonical `/` sin 301.
 - **F7** README + actualizar doc de cabeceras.
 - **F9** `twitter:title` / `twitter:description`.
 - **F10** `hreflang` (es + x-default) + matizar copy.
 - **F11** `href` reales en wa-float / logo footer.
 
-### FASE 3 — Optimización avanzada y escalabilidad
+### FASE 3: Optimización avanzada y escalabilidad
 - **F6** Extraer `common.js` (de-dup JS).
 - **F12** Fingerprint/versionado de assets.
 - **F8** Eliminar `style-src 'unsafe-inline'` (mover estilos a clases).
 
-### FASE 4 — Excelencia (automatización, testing, observabilidad, crecimiento)
+### FASE 4: Excelencia (automatización, testing, observabilidad, crecimiento)
 - **F13** Conversions API server-side (Meta/Google) + dashboard de funnel (CPL, CVR, lead→cierre, € por tier).
 - Testing automatizado mínimo: validador de JSON-LD + linter de HTML/enlaces rotos en CI.
 - Observabilidad: alertas de uptime + budget de performance (Lighthouse CI).
@@ -94,7 +94,7 @@ Eres un agente de código trabajando en la raíz del repositorio. Tu tarea es **
 
 ## D. PROPUESTAS CONCRETAS DE IMPLEMENTACIÓN
 
-### F1 — Caché de assets (`public/_headers`)
+### F1: Caché de assets (`public/_headers`)
 Añadir estas reglas **antes** del bloque `/*` (Cloudflare aplica la primera coincidencia más específica; mantener `/*` con las de seguridad):
 
 ```
@@ -129,7 +129,7 @@ Añadir estas reglas **antes** del bloque `/*` (Cloudflare aplica la primera coi
 
 ---
 
-### F2 — Endurecer el endpoint del formulario `[ACCIÓN MANUAL + código]`
+### F2: Endurecer el endpoint del formulario `[ACCIÓN MANUAL + código]`
 - **Dashboard Web3Forms:** activar **Domain Restriction** (solo `horizonteemirates.com`) y **hCaptcha/Cloudflare Turnstile**.
 - **Código (si se añade Turnstile):** incluir el widget en los dos formularios (`#mainform` y `#waf`) y permitir su dominio en la CSP `script-src`/`frame-src`. Mantener el honeypot `botcheck` existente.
 - Si se mantiene solo Domain Restriction (sin captcha), no hay cambio de código; basta la config del panel.
@@ -138,7 +138,7 @@ Añadir estas reglas **antes** del bloque `/*` (Cloudflare aplica la primera coi
 
 ---
 
-### F3 — HSTS único a 2 años `[ACCIÓN MANUAL]`
+### F3: HSTS único a 2 años `[ACCIÓN MANUAL]`
 El valor correcto ya está en `public/_headers`:
 ```
 Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
@@ -149,7 +149,7 @@ Acción real: **desactivar el HSTS gestionado del dashboard de Cloudflare** (SSL
 
 ---
 
-### F4 — Canonical sin redirección
+### F4: Canonical sin redirección
 Opciones (elegir una; preferible la primera):
 - **A (recomendada):** que `/` devuelva **200** sirviendo `index.html` sin 301. Añadir a `public/_redirects` un rewrite del raíz, igual que se hizo con `/blog`:
   ```
@@ -162,7 +162,7 @@ Opciones (elegir una; preferible la primera):
 
 ---
 
-### F5 — Labels asociados (formularios)
+### F5: Labels asociados (formularios)
 Patrón a aplicar en `public/index.html` (`#mainform` y modal `#waf`):
 ```html
 <div class="fg">
@@ -176,7 +176,7 @@ Aplicar `for`/`id` en: nombre, email, `phone-num` (`<label for="phone-num">`), `
 
 ---
 
-### F6 — Estructura de JS sugerida
+### F6: Estructura de JS sugerida
 ```
 public/assets/
   common.js      # menú móvil, nav-auto-hide, captura UTM, FAQ accordion, helper track()
@@ -190,23 +190,23 @@ Cargar `common.js` con `defer` **antes** del específico en cada página. Migrar
 
 ---
 
-### F9 — Twitter Cards (por página)
+### F9: Twitter Cards (por página)
 ```html
 <meta name="twitter:title" content="<mismo que og:title de la página>"/>
 <meta name="twitter:description" content="<mismo que og:description de la página>"/>
 ```
 
-### F10 — hreflang (en `<head>` de cada página, con su URL canónica)
+### F10: hreflang (en `<head>` de cada página, con su URL canónica)
 ```html
 <link rel="alternate" hreflang="es" href="https://www.horizonteemirates.com/"/>
 <link rel="alternate" hreflang="x-default" href="https://www.horizonteemirates.com/"/>
 ```
 
-### F11 — Enlaces reales
+### F11: Enlaces reales
 - `wa-float`: `href="https://wa.me/971554722025"` (JS puede seguir interceptando para abrir modal).
 - Logo del footer: `href="/"` en vez de `href="#"`.
 
-### F8 — Retirar `style-src 'unsafe-inline'`
+### F8: Retirar `style-src 'unsafe-inline'`
 Mover los `style="..."` del HTML a clases en las hojas existentes (`home.css`, `blog.css`, `proyectos.css`, `legal.css`) y, una vez **cero** estilos inline, cambiar en `public/_headers` y en cualquier `<meta>` CSP:
 ```
 style-src 'self';
@@ -217,25 +217,25 @@ style-src 'self';
 
 ## E. CHECKLIST EJECUTABLE
 
-### Fase 1 — Crítico / Quick wins
+### Fase 1: Crítico / Quick wins
 - [ ] **F1** Caché larga inmutable en `/assets/*` (`public/_headers`)
-- [x] **F2** Web3Forms anti-spam — **cerrada 2026-06-09**: Spam Protection Level → Strict + honeypot (Turnstile/Domain Restriction son PRO; hCaptcha descartado por fricción). Sin código.
-- [x] **F3** HSTS — **cerrada 2026-06-09**: `_headers` alineado a `max-age=31536000` (Cloudflare topa en 12 meses). Preload evaluado y **no registrado** por decisión: hstspreload.org rechaza por orden de redirecciones (apex http→https://www directo) y el compromiso es casi irreversible; HSTS ya protege a usuarios reales.
+- [x] **F2** Web3Forms anti-spam: **cerrada 2026-06-09**: Spam Protection Level → Strict + honeypot (Turnstile/Domain Restriction son PRO; hCaptcha descartado por fricción). Sin código.
+- [x] **F3** HSTS: **cerrada 2026-06-09**: `_headers` alineado a `max-age=31536000` (Cloudflare topa en 12 meses). Preload evaluado y **no registrado** por decisión: hstspreload.org rechaza por orden de redirecciones (apex http→https://www directo) y el compromiso es casi irreversible; HSTS ya protege a usuarios reales.
 - [ ] **F5** Labels `for`/`id` en formularios (home + modal WA)
 
-### Fase 2 — Técnica / SEO
+### Fase 2: Técnica / SEO
 - [ ] **F4** Canonical `/` sin 301 (o alinear sitemap/canonical)
 - [ ] **F7** README real + actualizar `docs/SEGURIDAD_CABECERAS.md`
 - [ ] **F9** `twitter:title` / `twitter:description` en todas las páginas
 - [ ] **F10** `hreflang` (es + x-default)
 - [ ] **F11** `href` reales en wa-float y logo footer
 
-### Fase 3 — Refactor / Escalabilidad
-- [x] **F6** Extraer `common.js` (de-dup JS) — **hecho 2026-06-09**: menú móvil + nav-auto-ocultable unificados en `assets/common.js`, retirados de app/proyectos/blog.js, cargado en las 20 páginas con nav. `node --check` OK.
-- [~] **F12** Fingerprint/versionado de assets — **descartado 2026-06-09**: en un sitio sin build y de despliegue frecuente, el `immutable` exige re-estampar hash en ~22 ficheros en cada cambio (riesgo de servir CSS/JS viejo). El esquema actual `max-age=86400 + stale-while-revalidate` ya es seguro y auto-actualizable. Sin ROI positivo.
+### Fase 3: Refactor / Escalabilidad
+- [x] **F6** Extraer `common.js` (de-dup JS): **hecho 2026-06-09**: menú móvil + nav-auto-ocultable unificados en `assets/common.js`, retirados de app/proyectos/blog.js, cargado en las 20 páginas con nav. `node --check` OK.
+- [~] **F12** Fingerprint/versionado de assets: **descartado 2026-06-09**: en un sitio sin build y de despliegue frecuente, el `immutable` exige re-estampar hash en ~22 ficheros en cada cambio (riesgo de servir CSS/JS viejo). El esquema actual `max-age=86400 + stale-while-revalidate` ya es seguro y auto-actualizable. Sin ROI positivo.
 - [ ] **F8** Eliminar `style-src 'unsafe-inline'` (mover estilos a clases)
 
-### Fase 4 — Excelencia
+### Fase 4: Excelencia
 - [ ] **F13** Conversions API server-side + dashboard de funnel
 - [ ] Testing en CI: validador JSON-LD + linter de enlaces rotos
 - [ ] Lighthouse CI con presupuesto de performance

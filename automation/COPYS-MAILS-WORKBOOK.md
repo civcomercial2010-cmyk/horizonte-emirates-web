@@ -47,7 +47,7 @@ Estado sugerido por bloque:
 - **Motivo:** reduce tono ambiguo y mejora claridad.
 - **Prioridad:** ALTA
 
-- **Copy actual (text):** `No pido decisión — pido 20 min...`
+- **Copy actual (text):** `No pido decisión, pido 20 min...`
 - **Propuesta (text):** `No le pido decidir ahora. Solo 20 minutos para revisar datos y decidir con criterio, sin presion.`
 - **Motivo:** suaviza friccion comercial.
 - **Prioridad:** MEDIA
@@ -71,7 +71,7 @@ Estado sugerido por bloque:
 - **Motivo:** foco en decision inversora.
 - **Prioridad:** MEDIA
 
-- **Copy actual (text):** `Si no, lo entiendo — solo dígamelo.`
+- **Copy actual (text):** `Si no, lo entiendo: solo dígamelo.`
 - **Propuesta (text):** `Si ahora no es el momento, lo dejamos aqui sin problema.`
 - **Motivo:** menos presion, mejor cierre.
 - **Prioridad:** MEDIA

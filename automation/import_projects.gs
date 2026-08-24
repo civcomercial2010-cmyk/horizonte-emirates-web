@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════
-// HORIZONTE EMIRATES — Projects Importer
+// HORIZONTE EMIRATES: Projects Importer
 // Lee el archivo .pipe desde Google Drive y puebla la pestaña
 // projects_master en el mismo Spreadsheet del CRM de leads.
 //
@@ -252,14 +252,14 @@ function _parsePipeData(raw) {
       scores.lujo,
       scores.entradaBaja,
       goldenVisa,
-      '',    // precio_desde_aed — pendiente de enriquecer con datos de RRS
-      '',    // precio_desde_eur — pendiente
+      '',    // precio_desde_aed, pendiente de enriquecer con datos de RRS
+      '',    // precio_desde_eur, pendiente
       devInfo.score,
       'Sí',  // activo_web
       'No',  // destacado_web
       'PropertyFinder',
-      '',    // fuente_url — URL página oficial del proyecto (recomendado)
-      '',    // foto_url — URL directa .jpg/.png/.webp (ver telegram_oportunidades.gs)
+      '',    // fuente_url, URL página oficial del proyecto (recomendado)
+      '',    // foto_url, URL directa .jpg/.png/.webp (ver telegram_oportunidades.gs)
       today,
       '',    // notas_internas
     ]);
@@ -341,7 +341,7 @@ function _extractSubZona(zonaRaw) {
 }
 
 function _sendImportSummary(imported, reviewed) {
-  const subject = '✅ Horizonte Emirates — Importación proyectos completada';
+  const subject = '✅ Horizonte Emirates, Importación proyectos completada';
   const body = [
     'Se ha completado la importación inicial de proyectos.',
     '',

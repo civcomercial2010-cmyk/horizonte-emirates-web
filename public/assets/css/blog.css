@@ -89,7 +89,7 @@ nav#nav.at-top{background:transparent;border-color:transparent}
 .nav-links a:hover,.nav-links a.active{color:#fff}
 .nav-cta{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;background:var(--gold);color:var(--navy);padding:10px 22px;border-radius:var(--r);transition:.2s}
 .nav-cta:hover{filter:brightness(1.08)}
-/* Menú móvil (hamburguesa) — oculto en desktop */
+/* Menú móvil (hamburguesa): oculto en desktop */
 .nav-burger{display:none;flex-direction:column;justify-content:center;gap:5px;width:42px;height:42px;background:none;border:none;cursor:pointer;padding:9px;margin-left:auto}
 .nav-burger span{display:block;height:2px;width:24px;background:#fff;border-radius:2px;transition:transform .25s,opacity .2s}
 .nav-burger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}

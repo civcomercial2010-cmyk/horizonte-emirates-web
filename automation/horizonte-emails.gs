@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════
-// HORIZONTE EMIRATES — Email Automation Engine
+// HORIZONTE EMIRATES: Email Automation Engine
 // Google Apps Script · Propulse SLU · Andorra
 //
 // SETUP RÁPIDO:
@@ -13,7 +13,7 @@
 
 // ── CONFIGURACIÓN ──────────────────────────────────────────────
 const CONFIG = {
-  // M03 — ID del CRM y email del agente fuera del repo público.
+  // M03: ID del CRM y email del agente fuera del repo público.
   // Apps Script → ⚙ Configuración del proyecto → Propiedades de la secuencia de comandos:
   //   HE_SPREADSHEET_ID = <ID del Google Sheet de leads>
   //   HE_AGENT_EMAIL    = <email donde recibir los briefings de leads>
@@ -24,7 +24,7 @@ const CONFIG = {
   WA_NUMBER:       '+971 55 472 2025',
   WA_LINK:         'https://wa.me/971554722025',
   CALENDLY_URL:    'https://calendly.com/hola-horizonteemirates/llamada-estrategica-horizonte-emirates-30-minutos',
-  // M19 — Lead magnet: guía fiscal entregada en el email de bienvenida (A1/B1/C1).
+  // M19: Lead magnet: guía fiscal entregada en el email de bienvenida (A1/B1/C1).
   GUIDE_URL:       'https://www.horizonteemirates.com/guias/guia-fiscal-dubai-espana.html',
   CALENDAR_ID:     'primary', // calendario donde Calendly crea las reuniones
   CALENDLY_EVENT_KEYWORD: 'Llamada estratégica Horizonte Emirates',
@@ -100,9 +100,9 @@ const CONFIG = {
   BUSINESS_HOUR_END: 19,
   /** Si true, sábado y domingo no hay envíos de secuencia. */
   BUSINESS_WEEKDAYS_ONLY: true,
-  /** M08 — pon true cuando haya campañas/tráfico activo: habilita la alerta de "sin leads en N horas". */
+  /** M08: pon true cuando haya campañas/tráfico activo: habilita la alerta de "sin leads en N horas". */
   EXPECT_TRAFFIC: false,
-  /** M08 — horas sin nuevos leads que disparan alerta (solo si EXPECT_TRAFFIC=true). */
+  /** M08: horas sin nuevos leads que disparan alerta (solo si EXPECT_TRAFFIC=true). */
   NO_LEAD_ALERT_HOURS: 72,
 };
 
@@ -125,13 +125,13 @@ const OBJETIVO_LABELS = {
 // Se normalizan sin tilde para comparar.
 // Ante la duda → masculino (comportamiento por defecto).
 const FEMALE_NAMES = new Set([
-  // España — nombres clásicos y frecuentes
+  // España: nombres clásicos y frecuentes
   'maria','ana','carmen','isabel','pilar','teresa','dolores','rosa','josefa',
   'francisca','manuela','concepcion','encarnacion','remedios','inmaculada',
   'asuncion','amparo','purificacion','trinidad','angeles','milagros','gloria',
   'esperanza','mercedes','victoria','consuelo','aurora','lourdes','montserrat',
   'fatima','blanca','paloma','paz','luz','mar','sol','fe','maite','itziar',
-  // España — frecuentes modernas
+  // España: frecuentes modernas
   'laura','patricia','elena','cristina','marta','sandra','sara','lucia',
   'alicia','beatriz','raquel','silvia','nuria','irene','paula','andrea',
   'natalia','monica','sofia','claudia','veronica','ines','lorena','rebeca',
@@ -143,7 +143,7 @@ const FEMALE_NAMES = new Set([
   'yolanda','marisol','miriam','vanessa','melissa','rocio','susana','julia',
   'araceli','paquita','lola','pepa','charo','encarna','nerea','amaia','nagore',
   'garazi','miren','iratxe','aiora','jaione','itxaso','uxue','onintze','ane',
-  // LATAM — frecuentes
+  // LATAM: frecuentes
   'valentina','camila','isabella','ximena','antonella','florencia','agustina',
   'melina','melisa','romina','micaela','silvina','mariela','brenda','priscila',
   'sabrina','valeria','evelyn','yanira','ingrid','xiomara','karla','giuliana',
@@ -501,7 +501,7 @@ function notifyCalendlyBookings() {
 }
 
 
-// Secuencias por tier — delay en HORAS desde la creación del lead
+// Secuencias por tier: delay en HORAS desde la creación del lead
 const SEQUENCES = {
   A: [
     { code: 'A1', delay: 0   },   // inmediato
@@ -533,7 +533,7 @@ const SEQUENCES = {
 
 
 // ══════════════════════════════════════════════════════════════
-// 1. POLL GMAIL — trigger cada 10 minutos
+// 1. POLL GMAIL: trigger cada 10 minutos
 // ══════════════════════════════════════════════════════════════
 function htmlToPlainForParse(html) {
   return String(html || '')
@@ -600,10 +600,10 @@ function isHorizonteWeb3Lead(subject, body) {
 }
 
 function pollGmail() {
-  PropertiesService.getScriptProperties().setProperty('HE_LAST_POLL_TS', String(Date.now())); // M08 — heartbeat para healthCheck
+  PropertiesService.getScriptProperties().setProperty('HE_LAST_POLL_TS', String(Date.now())); // M08, heartbeat para healthCheck
   let threads = GmailApp.search(CONFIG.POLL_QUERY, 0, 50);
   if (CONFIG.POLL_QUERY_FALLBACK) {
-    // M09 — unir SIEMPRE el fallback (Web3Forms recientes sin etiqueta de procesado,
+    // M09: unir SIEMPRE el fallback (Web3Forms recientes sin etiqueta de procesado,
     // aunque estén marcados como leídos). Evita perder leads cuyo aviso se abrió/leyó
     // antes de que corriera el trigger (el guard de etiqueta dentro del bucle evita reprocesos).
     const seen = {};
@@ -641,7 +641,7 @@ function pollGmail() {
       // Verificar que es un lead de Horizonte Emirates
       const isHE = isHorizonteWeb3Lead(subject, body);
       if (!isHE) {
-        // No es nuestro — marcar leído y saltar sin etiquetar
+        // No es nuestro: marcar leído y saltar sin etiquetar
         Logger.log('pollGmail: descartado (sin keyword HE): ' + subject);
         msg.markRead();
         return;
@@ -739,7 +739,7 @@ function diagnoseFormPipeline() {
 }
 
 // ══════════════════════════════════════════════════════════════
-// 2. DETECTAR BAJAS POR RESPUESTA — trigger cada 10 min
+// 2. DETECTAR BAJAS POR RESPUESTA: trigger cada 10 min
 // ══════════════════════════════════════════════════════════════
 function pollUnsubscribes() {
   const threads = GmailApp.search(CONFIG.UNSUBSCRIBE_QUERY, 0, 30);
@@ -946,7 +946,7 @@ function forzarPollGmail() {
  * RECUPERACIÓN: procesa TODOS los threads Web3Forms recientes, incluyendo los ya
  * etiquetados y los marcados como leídos. Guarda en Sheets cualquier lead que no exista aún
  * y dispara su email de bienvenida. Usar después de actualizar el script en Apps Script.
- * @param {number} [days=30] — ventana de búsqueda hacia atrás. Por defecto 30 días para cubrir
+ * @param {number} [days=30]: ventana de búsqueda hacia atrás. Por defecto 30 días para cubrir
  *   la regresión c3fdeb6 (asunto sin «V6» → detección rota desde 2026-06-08). Ej.: recuperarLeadsPerdidos(45).
  */
 function recuperarLeadsPerdidos(days) {
@@ -1004,7 +1004,7 @@ function recuperarLeadsPerdidos(days) {
 }
 
 // ══════════════════════════════════════════════════════════════
-// 3. GOOGLE SHEETS — Leads y Cola
+// 3. GOOGLE SHEETS: Leads y Cola
 // ══════════════════════════════════════════════════════════════
 function getSheet(name) {
   return SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID).getSheetByName(name);
@@ -1189,11 +1189,11 @@ function isWelcomeSequenceEmail(code) {
 
 
 // ══════════════════════════════════════════════════════════════
-// 4. PROCESAR COLA — trigger cada hora; pollGmail pasa { immediateWelcomeAfterPoll: true } para enviar A1/B1/C1 al instante
+// 4. PROCESAR COLA: trigger cada hora; pollGmail pasa { immediateWelcomeAfterPoll: true } para enviar A1/B1/C1 al instante
 // ══════════════════════════════════════════════════════════════
 /**
  * @param {Object} [opts]
- * @param {boolean} [opts.immediateWelcomeAfterPoll] — true solo desde pollGmail tras nuevo lead: A1/B1/C1 ignoran ventana laboral.
+ * @param {boolean} [opts.immediateWelcomeAfterPoll]: true solo desde pollGmail tras nuevo lead: A1/B1/C1 ignoran ventana laboral.
  */
 function processQueue(opts) {
   opts = opts || {};
@@ -1281,9 +1281,9 @@ function buildEmailPlainBody(tplText) {
 
 /**
  * @param {Object} [opts]
- * @param {boolean} [opts.bypassBusinessHours] — true: prueba manual (simulateLeadEmail) o bienvenida inmediata tras form (pollGmail).
- * @param {boolean} [opts.manual] — true: envío pedido a mano por el asesor (simulateLeadEmail).
- * @param {boolean} [opts.welcome] — true: acuse de recibo W0, permitido por CONFIG.AUTO_SEND_WELCOME.
+ * @param {boolean} [opts.bypassBusinessHours]: true: prueba manual (simulateLeadEmail) o bienvenida inmediata tras form (pollGmail).
+ * @param {boolean} [opts.manual]: true: envío pedido a mano por el asesor (simulateLeadEmail).
+ * @param {boolean} [opts.welcome]: true: acuse de recibo W0, permitido por CONFIG.AUTO_SEND_WELCOME.
  */
 function sendEmail(code, lead, opts) {
   opts = opts || {};
@@ -1327,7 +1327,7 @@ function sendEmail(code, lead, opts) {
 
 
 // ══════════════════════════════════════════════════════════════
-// 6. WRAPPER HTML — envuelve el contenido en plantilla de marca
+// 6. WRAPPER HTML: envuelve el contenido en plantilla de marca
 // ══════════════════════════════════════════════════════════════
 function wrapHtml(bodyHtml, subject) {
   // compose en Gmail (evita mailto en Windows); texto del enlace más neutro que «marketing masivo».
@@ -1470,7 +1470,7 @@ function getTemplate(code, lead) {
   </tr>
 </table>`;
 
-  // ── W0 — ACUSE DE RECIBO INMEDIATO ───────────────────────────
+  // ── W0: ACUSE DE RECIBO INMEDIATO ───────────────────────────
   // Único correo automático activo. Reglas de este texto:
   //   1. No vende. Confirma lo recibido y devuelve el eco del perfil (prueba de que llegó bien).
   //   2. Dice la verdad sobre su naturaleza: es automático, y el siguiente lo escribe una persona.
@@ -1528,7 +1528,7 @@ ${calBtn}
     };
   }
 
-  // ── TIER A — 5 emails ────────────────────────────────────────
+  // ── TIER A: 5 emails ────────────────────────────────────────
 
   if (code === 'A1') return {
     subject: `Hola ${n}, ya estamos revisando su consulta sobre Dubai`,
@@ -1587,7 +1587,7 @@ ${waBtn}${firma}`,
     text: `Hola ${n},\n\nQuería saber si Dubai sigue siendo una opción que está considerando para invertir.\n\nSi sí, podemos retomar la conversación cuando le venga bien.\nSi no es el momento, no hay problema, lo dejamos aquí.\n\nEnvíeme un mensaje por WhatsApp ${wa} si quiere.\n\nSaludos,\nEquipo Horizonte Emirates`,
   };
 
-  // ── TIER B — 7 emails ────────────────────────────────────────
+  // ── TIER B: 7 emails ────────────────────────────────────────
 
   if (code === 'B1') return {
     subject: `Hola ${n}, hemos recibido su consulta`,
@@ -1627,7 +1627,7 @@ ${waBtn}${firma}`,
     html: `<p>${sal} ${n},</p>
 <p>Muchos inversores aceleran su decisión tras visitar Dubai en persona.</p>
 <p>Ver el activo en persona, entender el entorno y hablar directamente con el promotor elimina las dudas que ningún PDF puede resolver. Es la diferencia entre analizar una oportunidad y comprenderla de verdad.</p>
-<p>Por eso organizamos ese viaje para nuestros inversores: agenda de visitas, reuniones con promotoras verificadas y acompañamiento de nuestro equipo local en Dubai. <strong>Sin coste para el inversor</strong> — solo vuelo y alojamiento.</p>
+<p>Por eso organizamos ese viaje para nuestros inversores: agenda de visitas, reuniones con promotoras verificadas y acompañamiento de nuestro equipo local en Dubai. <strong>Sin coste para el inversor</strong>, solo vuelo y alojamiento.</p>
 ${waBtn}${calBtn}${firma}`,
     text: `${sal} ${n},\n\nMuchos inversores aceleran su decisión tras visitar Dubai en persona.\n\nVer el activo, el entorno y al promotor de primera mano reduce dudas que no se resuelven bien a distancia.\n\nOrganizamos el viaje: agenda, promotoras verificadas y equipo local.\n\nWhatsApp ${wa} / ${calL}\n\nEquipo Horizonte Emirates`,
   };
@@ -1668,19 +1668,19 @@ ${calBtn}${waBtn}${firma}`,
     subject: `${n}, un último mensaje antes de hacer una pausa`,
     html: `<p>${sal} ${n},</p>
 <p>Voy a pausar el seguimiento activo, pero quiero dejarle algo antes de hacerlo.</p>
-<p>Si en algún momento —en tres meses, en seis, en un año— decide explorar en serio la inversión en Dubai, encontrará nuestro contacto en este email. El mercado de Dubai no va a desaparecer. Cuando esté listo para hablar, seguiremos aquí.</p>
+<p>Si en algún momento (en tres meses, en seis, en un año) decide explorar en serio la inversión en Dubai, encontrará nuestro contacto en este email. El mercado de Dubai no va a desaparecer. Cuando esté listo para hablar, seguiremos aquí.</p>
 <p>Gracias por su tiempo, ${n}.</p>
 ${waBtn}${firma}`,
     text: `${sal} ${n},\n\nPausamos seguimiento activo. Cuando quiera retomarlo, estaremos encantados de ayudarle.\n\n${CONFIG.REPLY_TO} / WhatsApp ${wa}\n\nGracias.\nEquipo Horizonte Emirates`,
   };
 
-  // ── TIER C — 8 emails ────────────────────────────────────────
+  // ── TIER C: 8 emails ────────────────────────────────────────
 
   if (code === 'C1') return {
     subject: `Gracias por su consulta sobre inversión en Dubai, ${n}`,
     html: `<p>${sal} ${n},</p>
 <p>Gracias por contactar con Horizonte Emirates.</p>
-<p>Entendemos que en esta etapa lo más valioso es información clara y honesta — no una propuesta comercial precipitada.</p>
+<p>Entendemos que en esta etapa lo más valioso es información clara y honesta, no una propuesta comercial precipitada.</p>
 <p>En los próximos días le enviaremos contenido que le ayudará a:</p>
 <ul style="margin:12px 0;padding-left:20px;color:#3a3a3a;line-height:1.8">
   <li>Entender cómo funciona el mercado inmobiliario en UAE</li>
@@ -1735,11 +1735,11 @@ ${firma}`,
     html: `<p>${sal} ${n},</p>
 <p>Uno de los mayores frenos es no entender cómo funciona el proceso de compra desde ${pais}. Hoy se lo explico en cinco pasos concretos:</p>
 <ol style="margin:16px 0;padding-left:20px;color:#3a3a3a;line-height:2">
-  <li><strong>Selección de activos.</strong> Presentamos oportunidades verificadas adaptadas a su perfil — no catálogos genéricos.</li>
+  <li><strong>Selección de activos.</strong> Presentamos oportunidades verificadas adaptadas a su perfil, no catálogos genéricos.</li>
   <li><strong>Due diligence en RERA.</strong> Verificamos el promotor y la situación legal de cada proyecto antes de presentarlo.</li>
   <li><strong>Reserva + SPA.</strong> Depósito inicial (5.000–10.000 AED) y firma del Sales Purchase Agreement.</li>
   <li><strong>Pagos escalonados.</strong> En off-plan: típicamente 30/30/40 hasta entrega. Sin inmovilizar capital completo.</li>
-  <li><strong>Obligaciones en ${pais}.</strong> Modelo 720 a partir de 50.000€ + tributar rentas en IRPF. <em>Consulte asesor fiscal internacional — nosotros no lo prestamos.</em></li>
+  <li><strong>Obligaciones en ${pais}.</strong> Modelo 720 a partir de 50.000€ + tributar rentas en IRPF. <em>Consulte asesor fiscal internacional, nosotros no lo prestamos.</em></li>
 </ol>
 <p>¿Alguna duda sobre alguno de estos pasos?</p>
 ${waBtn}${firma}`,
@@ -1765,7 +1765,7 @@ ${waBtn}${firma}`,
   if (code === 'C5') return {
     subject: `${n}, nota sobre Ras Al Khaimah y el calendario del mercado`,
     html: `<p>${sal} ${n},</p>
-<p>En 2027 abre en Ras Al Khaimah el <strong>primer resort-casino de la región MENA</strong>, desarrollado por Wynn Resorts. Los activos comprados hoy —antes del evento— tienen proyecciones de apreciación del <strong>20–35%</strong> antes de la apertura.</p>
+<p>En 2027 abre en Ras Al Khaimah el <strong>primer resort-casino de la región MENA</strong>, desarrollado por Wynn Resorts. Los activos comprados hoy (antes del evento) tienen proyecciones de apreciación del <strong>20–35%</strong> antes de la apertura.</p>
 <p>La ventana de entrada a precios actuales se está cerrando de forma progresiva e irreversible.</p>
 <p>Para un perfil como el suyo (<strong>${cap}</strong>, <strong>${obj}</strong>), RAK puede ser la pieza de mayor potencial de apreciación en un portfolio UAE bien estructurado.</p>
 <p>¿Le interesa ver las opciones de entrada que tenemos disponibles ahora?</p>
@@ -1824,7 +1824,7 @@ ${waBtn}${firma}`,
 // ══════════════════════════════════════════════════════════════
 // 8. GESTIÓN DE BAJAS
 // ══════════════════════════════════════════════════════════════
-/** Columna «Estado» (1-based) en hoja Leads — debe coincidir con initSheets. */
+/** Columna «Estado» (1-based) en hoja Leads: debe coincidir con initSheets. */
 function updateLeadEstadoInSheet(email, estado, logLine) {
   const sheet = getSheet('Leads');
   const data  = sheet.getDataRange().getValues();
@@ -1852,7 +1852,7 @@ function markClosed(email) {
 
 
 // ══════════════════════════════════════════════════════════════
-// 9. SETUP INICIAL — ejecutar una sola vez
+// 9. SETUP INICIAL: ejecutar una sola vez
 // ══════════════════════════════════════════════════════════════
 function initSheets() {
   const ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
@@ -1928,7 +1928,7 @@ function migrarColumnasConsentimiento() {
 }
 
 // ══════════════════════════════════════════════════════════════
-// 9b. HEALTHCHECK DEL PIPELINE (M08) — trigger cada hora
+// 9b. HEALTHCHECK DEL PIPELINE (M08): trigger cada hora
 //     Detecta fallos silenciosos: leads atascados, pollGmail caído,
 //     errores en la Cola y (opcional) inactividad de leads.
 // ══════════════════════════════════════════════════════════════
@@ -1968,7 +1968,7 @@ function healthCheck() {
     if (errs > 0) problems.push(errs + ' email(s) en la Cola con estado de error.');
   } catch (e) { problems.push('No se pudo leer la hoja Cola: ' + e.message); }
 
-  // 4. (Opcional) Inactividad de leads — solo si se espera tráfico activo.
+  // 4. (Opcional) Inactividad de leads: solo si se espera tráfico activo.
   if (CONFIG.EXPECT_TRAFFIC) {
     const maxH = Number(CONFIG.NO_LEAD_ALERT_HOURS || 72);
     try {
@@ -1999,7 +1999,7 @@ function healthCheck() {
   forceUnreadBySubjectToken('Healthcheck del funnel');
   props.setProperty('HE_LAST_HEALTH_ALERT', sig);
   props.setProperty('HE_LAST_HEALTH_ALERT_TS', String(Date.now()));
-  Logger.log('healthCheck: alerta enviada — ' + sig);
+  Logger.log('healthCheck: alerta enviada, ' + sig);
 }
 
 function createTriggers() {
@@ -2215,4 +2215,4 @@ function runRealSendA1() {
   simulateLeadEmail(CONFIG.AGENT_BRIEFING_EMAIL, 'A1', true);
 }
 
-// HE_EMAILS_GS_EOF — Si no ves esta línea al final de Código.gs, el pegado está truncado (provoca «Unexpected end of input»).
+// HE_EMAILS_GS_EOF: Si no ves esta línea al final de Código.gs, el pegado está truncado (provoca «Unexpected end of input»).

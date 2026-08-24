@@ -1,4 +1,4 @@
-# Tokenización e inversión fraccionada (&lt;150k€) — Evaluación Nexis
+# Tokenización e inversión fraccionada (&lt;150k€): Evaluación Nexis
 
 Documento interno · Horizonte Emirates (Propulse SLU)  
 Estado: **pendiente de conversación con Jesús** · no publicar en web hasta acuerdo comercial
@@ -31,10 +31,10 @@ El funnel actual filtra desde **150.000–300.000 €** de capital disponible (`
 
 Puntos a cerrar con Jesús / Nexis:
 
-1. **Comisión por transacción** — % o fee fijo por operación referida.
-2. **Ventana de atribución** — cookie / UTM / código referral, duración (30/90 días).
-3. **Productos elegibles** — qué activos/proyectos pueden tokenizarse y si encajan con la narrativa HE (UAE, RERA, etc.).
-4. **SPV de gestión** — si el volumen lo justifica, evaluar estructura propia más adelante (feedback: “si hay muchos podría montarse una SPV”).
+1. **Comisión por transacción**, % o fee fijo por operación referida.
+2. **Ventana de atribución**, cookie / UTM / código referral, duración (30/90 días).
+3. **Productos elegibles**, qué activos/proyectos pueden tokenizarse y si encajan con la narrativa HE (UAE, RERA, etc.).
+4. **SPV de gestión**, si el volumen lo justifica, evaluar estructura propia más adelante (feedback: “si hay muchos podría montarse una SPV”).
 
 ---
 

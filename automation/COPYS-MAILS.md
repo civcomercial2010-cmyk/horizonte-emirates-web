@@ -52,7 +52,7 @@ Equipo Horizonte Emirates
 ```text
 Estimado/a ${n},
 
-Los activos para ${cap} · ${obj} tienen ventanas de entrada limitadas. No pido decisión — pido 20 min para que tenga la información completa.
+Los activos para ${cap} · ${obj} tienen ventanas de entrada limitadas. No pido decisión, pido 20 min para que tenga la información completa.
 
 ${cal} / WhatsApp ${wa}
 
@@ -83,7 +83,7 @@ Estimado/a ${n},
 ¿Sigue siendo Dubai una prioridad?
 
 Si sigue interesado, responda este email o WhatsApp ${wa}. En 24h lo tengo preparado.
-Si no, lo entiendo — solo dígamelo.
+Si no, lo entiendo: solo dígamelo.
 
 Equipo Horizonte Emirates
 ```
@@ -93,7 +93,7 @@ Equipo Horizonte Emirates
 ## Tier B (B1-B7)
 
 ### B1
-- **Subject:** `Recibida su consulta, ${n} — análisis en preparación`
+- **Subject:** `Recibida su consulta, ${n}: análisis en preparación`
 - **Text:**
 ```text
 Estimado/a ${n},

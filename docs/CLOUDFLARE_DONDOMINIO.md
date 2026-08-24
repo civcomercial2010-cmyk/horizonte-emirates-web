@@ -1,4 +1,4 @@
-# Migrar a Cloudflare con dominio en Dondominio — Horizonte Emirates
+# Migrar a Cloudflare con dominio en Dondominio: Horizonte Emirates
 
 Objetivo: poner Cloudflare delante de `horizonteemirates.com` (alojado en GitHub Pages)
 para poder enviar las **cabeceras de seguridad HTTP** (HSTS, X-Frame-Options, etc.) que
@@ -47,7 +47,7 @@ o subdominios. Si existen, cópialos también a Cloudflare. (Hoy NO hay registro
 3. Ajusta el **proxy** de cada registro según la columna de la tabla:
    - Los 4 `A` y el `CNAME www` → nube **naranja (Proxied)**.
    - `MX` y todos los `TXT` → nube **gris (DNS only)**.
-4. (Opcional recomendado) Añade **DMARC** en modo monitor — hoy no tienes:
+4. (Opcional recomendado) Añade **DMARC** en modo monitor, hoy no tienes:
    - Tipo `TXT`, Nombre `_dmarc`, Valor: `v=DMARC1; p=none; rua=mailto:hola@horizonteemirates.com`
 
 ## 3. Cambiar los nameservers en Dondominio

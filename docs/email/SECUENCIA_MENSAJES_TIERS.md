@@ -63,7 +63,7 @@ Variables dinamicas usadas en plantillas:
 
 ### B1 - delay 0h
 
-- Asunto: `Recibida su consulta, [NOMBRE] — análisis en preparación`
+- Asunto: `Recibida su consulta, [NOMBRE]: análisis en preparación`
 - Texto:
   - Consulta recibida para `[CAPITAL]` y `[OBJETIVO]`.
   - En 24h: activos seleccionados, comparativa de zonas y siguientes pasos.

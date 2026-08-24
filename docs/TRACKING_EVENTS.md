@@ -1,4 +1,4 @@
-# Taxonomía de eventos — Horizonte Emirates (GA4 G-BK37V83363)
+# Taxonomía de eventos: Horizonte Emirates (GA4 G-BK37V83363)
 
 Fuente de verdad de los eventos que **realmente** dispara el sitio. Antes de crear un
 evento clave, una audiencia o una conversión en GA4/Ads, consultar esta lista.
@@ -21,7 +21,7 @@ Regla: **no inventar nombres nuevos** para algo ya cubierto aquí; reutilizar el
 | `generate_lead_click` | Clic en cualquier CTA que lleva a `#form` | `event_label` (texto del CTA), `link_target` |
 | `form_step_view` | Se muestra un paso del formulario (1/2/3) | `step_number` |
 | `form_option_select` | Se selecciona una opción (capital/objetivo/plazo/viaje) | `form_dimension`, `form_value` |
-| `lead_submit_attempt` | Pulsa "Enviar" | — |
+| `lead_submit_attempt` | Pulsa "Enviar" | - |
 | `lead_submit_validation_error` | Email o teléfono inválido | `event_label` (invalid_email / invalid_phone) |
 | `lead_submit_error` | Web3Forms rechaza o error de red | `event_label` (web3forms_rejected / network_error) |
 

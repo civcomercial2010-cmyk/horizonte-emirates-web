@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════
-// HORIZONTE EMIRATES — Telegram Oportunidades v2
+// HORIZONTE EMIRATES: Telegram Oportunidades v2
 // Canal privado de oportunidades inmobiliarias en Dubai.
 //
 // Programación: día sí / día no (una publicación cada 2 días civil en SCHEDULE_TIMEZONE).
@@ -23,17 +23,17 @@
 // SETUP:
 //   Valores por defecto en TG_CONFIG (Apps Script: copiar tal cual o ajustar).
 //   1. initProjectsSheet() + importProjectsFromDrive() deben haberse ejecutado ya
-//   2. testTelegramConnection() — un mensaje corto al canal
-//   3. testWeeklyMessagePreview() — solo Logger (sin Telegram): textos del próximo envío
-//   4. createTelegramTrigger() — cada hora (zona del proyecto = SCHEDULE_TIMEZONE)
+//   2. testTelegramConnection(): un mensaje corto al canal
+//   3. testWeeklyMessagePreview(): solo Logger (sin Telegram): textos del próximo envío
+//   4. createTelegramTrigger(): cada hora (zona del proyecto = SCHEDULE_TIMEZONE)
 //
 // PRUEBAS EN CANAL (mensajes reales):
-//   • sendOportunidadesForzado() — envío completo ya mismo; ignora calendario/ventana/duplicado.
+//   • sendOportunidadesForzado(): envío completo ya mismo; ignora calendario/ventana/duplicado.
 //     Avanza TG_THEME_INDEX (igual que un envío real).
-//   • sendOportunidadesPruebaSinRotar() — mismo envío forzado pero NO incrementa TG_THEME_INDEX
+//   • sendOportunidadesPruebaSinRotar(): mismo envío forzado pero NO incrementa TG_THEME_INDEX
 //     (repite tema y slot de hora de la próxima ronda programada; útil para testear muchas veces).
-//   • sendProjectAlert('project_id') — un solo proyecto + CTA (desde hoja projects_master).
-//   • testSendPhoto(url) — probar sendPhoto con URL fija o fake caption.
+//   • sendProjectAlert('project_id'): un solo proyecto + CTA (desde hoja projects_master).
+//   • testSendPhoto(url): probar sendPhoto con URL fija o fake caption.
 //
 // ÍNDICE DE FUNCIONES (todas se usan salvo las marcadas “solo diagnóstico”):
 //   Programación: _oportunidades*, _isAlternatingSendDay, _get/_advance Theme*, _currentHourInTz,
@@ -162,8 +162,8 @@ function _shouldRunScheduledSendNow(date, tz) {
 
 // ══════════════════════════════════════════════════════════════
 // ENVÍO PROGRAMADO (día sí / día no, 2 proyectos, tema rotativo)
-// @param {boolean} [forzar] — true: ignora calendario y “ya enviado hoy” (uso manual)
-// @param {boolean} [pruebaSinAvanzarTema] — solo si forzar=true: no incrementa TG_THEME_INDEX
+// @param {boolean} [forzar]: true: ignora calendario y “ya enviado hoy” (uso manual)
+// @param {boolean} [pruebaSinAvanzarTema]: solo si forzar=true: no incrementa TG_THEME_INDEX
 // ══════════════════════════════════════════════════════════════
 function sendWeeklyOportunidades(forzar, pruebaSinAvanzarTema) {
   const force = forzar === true;
@@ -231,7 +231,7 @@ function sendWeeklyOportunidades(forzar, pruebaSinAvanzarTema) {
     (noAdvanceTheme ? ' (forzado, prueba sin rotar tema)' : force ? ' (forzado)' : ''));
 }
 
-/** Ignora día sí/no y duplicado del mismo día — solo uso manual desde el editor */
+/** Ignora día sí/no y duplicado del mismo día: solo uso manual desde el editor */
 function sendOportunidadesForzado() {
   sendWeeklyOportunidades(true, false);
 }
@@ -242,7 +242,7 @@ function sendOportunidadesPruebaSinRotar() {
 }
 
 // ══════════════════════════════════════════════════════════════
-// ALERTA PUNTUAL — un proyecto concreto
+// ALERTA PUNTUAL: un proyecto concreto
 // Uso: sendProjectAlert('EMAAR_GOLFHI_001')
 // ══════════════════════════════════════════════════════════════
 function sendProjectAlert(projectId) {
@@ -252,7 +252,7 @@ function sendProjectAlert(projectId) {
     return;
   }
   const html = [
-    '🚨 <b>ALERTA OPORTUNIDAD — Horizonte Emirates</b>',
+    '🚨 <b>ALERTA OPORTUNIDAD, Horizonte Emirates</b>',
     '',
     '────────────',
     _buildProjectBlockHtml(project),
@@ -289,7 +289,7 @@ function sendInternalLeadsSummary(chatId) {
   const tierC  = nuevos.filter(l => l.tier === 'C').length;
 
   const msg = [
-    '📊 <b>Resumen semanal — Horizonte Emirates</b>',
+    '📊 <b>Resumen semanal, Horizonte Emirates</b>',
     '',
     '🔔 Leads captados esta semana: <b>' + nuevos.length + '</b>',
     '  • Tier A: ' + tierA + '  • Tier B: ' + tierB + '  • Tier C: ' + tierC,
@@ -321,11 +321,11 @@ function _hrefForTelegramHtml(url) {
 /** Nombre para el texto precargado de WhatsApp */
 function _projectNameForWa(project) {
   const n = _investorDisplay(project.nombre_proyecto, false);
-  if (n && n !== '—') return n.length <= 100 ? n : n.substring(0, 99) + '…';
+  if (n && n !== '-') return n.length <= 100 ? n : n.substring(0, 99) + '…';
   return 'el proyecto de este mensaje';
 }
 
-/** wa.me con saludo y pedido de dossier del proyecto concreto — texto breve para el aviso de Telegram */
+/** wa.me con saludo y pedido de dossier del proyecto concreto: texto breve para el aviso de Telegram */
 function _waPrefillHrefForProject(project) {
   const nombre = _projectNameForWa(project);
   const body = [
@@ -341,7 +341,7 @@ function _waPrefillHrefForProject(project) {
   return TG_CONFIG.WA_LINK + '?text=' + encodeURIComponent(body);
 }
 
-/** wa.me para el CTA general del pie — sin proyecto concreto */
+/** wa.me para el CTA general del pie: sin proyecto concreto */
 function _waPrefillHrefTeamGeneral() {
   const body = [
     'Hola,',
@@ -356,11 +356,11 @@ function _waPrefillHrefTeamGeneral() {
 
 /**
  * Cabecera de la entrega fusionada con la 1ª ficha (o compacta si va en caption de foto).
- * @param {boolean} compact — menos líneas para caber en caption 1024 junto al proyecto
+ * @param {boolean} compact: menos líneas para caber en caption 1024 junto al proyecto
  */
 function _buildIssueLeadIn(theme, publicacionNum, compact) {
   const INTRO_BY_THEME = {
-    'entrada_baja':      'Esta semana nos centramos en proyectos con entrada accesible — los que permiten entrar al mercado de Dubai con menos capital inicial sin renunciar a calidad de promotora.',
+    'entrada_baja':      'Esta semana nos centramos en proyectos con entrada accesible, los que permiten entrar al mercado de Dubai con menos capital inicial sin renunciar a calidad de promotora.',
     'alta_rentabilidad': 'Esta semana, proyectos con mayor potencial de rentabilidad por alquiler. Zonas con demanda real, promotoras fiables y planes de pago que encajan con un perfil de renta pasiva.',
     'revalorizacion':    'Esta semana priorizamos proyectos en zonas con fuerte recorrido de revalorización. Off-plan en áreas de expansión donde el precio de compra todavía tiene margen.',
     'lujo':              'Esta semana, producto premium. Proyectos de promotoras de primer nivel, en ubicaciones consolidadas, para perfiles que buscan activos de alta gama en Dubai.',
@@ -388,7 +388,7 @@ function _buildCtaMessage() {
     '────────────',
     '¿Alguno encaja con lo que buscas?',
     '',
-    'Cuéntanos tu presupuesto y objetivo — te preparamos una selección personalizada y te explicamos las condiciones reales. Sin compromiso.',
+    'Cuéntanos tu presupuesto y objetivo, te preparamos una selección personalizada y te explicamos las condiciones reales. Sin compromiso.',
     '',
     '📞 <a href="' + _hrefForTelegramHtml(TG_CONFIG.CALENDLY_URL) + '">Reservar llamada con el equipo</a>',
     '💬 <a href="' + _hrefForTelegramHtml(_waPrefillHrefTeamGeneral()) + '">Escribirnos por WhatsApp</a>',
@@ -461,7 +461,7 @@ function _truncateTelegramHtml(html, maxLen) {
 }
 
 // Tarjeta de proyecto: foto + caption si hay foto_url, si no texto.
-// issueContext: solo en el 1er proyecto del envío programado — fusiona cabecera de la entrega.
+// issueContext: solo en el 1er proyecto del envío programado: fusiona cabecera de la entrega.
 function _sendProjectCard(project, rank, issueContext) {
   const rawFoto = project.foto_url;
   const fotoUrl = (_isSheetDate(rawFoto) ? '' : String(rawFoto || '').trim());
@@ -494,7 +494,7 @@ function _buildWhyLine(project) {
   if (perfil === 'Alta rentabilidad') {
     if (isPremium) return 'Zona con alta demanda de alquiler y promotora con historial sólido de entrega.';
     if (postHO)    return 'Buena rentabilidad estimada por alquiler con pago post-entrega que facilita la operación.';
-    return 'Zona con demanda real de alquiler — encaja bien con estrategia de renta pasiva.';
+    return 'Zona con demanda real de alquiler, encaja bien con estrategia de renta pasiva.';
   }
   if (perfil === 'Revalorización') {
     if (isPremium) return 'Promotora de primer nivel en zona con fuerte recorrido de revalorización a medio plazo.';
@@ -506,13 +506,13 @@ function _buildWhyLine(project) {
     return 'Segmento lujo con buena ubicación y acabados que sostienen el valor a largo plazo.';
   }
   if (perfil === 'Entrada baja') {
-    if (postHO) return 'Acceso al mercado de Dubai con entrada reducida y pago post-entrega — menor exposición inicial.';
-    return 'Precio de entrada competitivo con promotora activa — buen punto de inicio para diversificar.';
+    if (postHO) return 'Acceso al mercado de Dubai con entrada reducida y pago post-entrega, menor exposición inicial.';
+    return 'Precio de entrada competitivo con promotora activa, buen punto de inicio para diversificar.';
   }
   return 'Seleccionado por su equilibrio entre zona, promotora y condiciones de pago.';
 }
 
-/** Bloque HTML de un proyecto — post unificado, alerta y pruebas */
+/** Bloque HTML de un proyecto: post unificado, alerta y pruebas */
 function _buildProjectBlockHtml(project) {
   const precio = _formatPrice(project);
   const lines  = [];
@@ -619,18 +619,18 @@ function _isSheetDate(value) {
 
 /**
  * Texto para el canal: sin fechas ni horas visibles.
- * Valores Date de Sheets o dumps tipo "Sun Apr … GMT" → no se publican (— o vacío).
+ * Valores Date de Sheets o dumps tipo "Sun Apr … GMT" → no se publican (guion o vacío).
  */
 function _investorDisplay(value, useDashIfEmpty) {
   if (value === null || value === undefined || value === '') {
-    return useDashIfEmpty ? '—' : '';
+    return useDashIfEmpty ? '-' : '';
   }
   if (_isSheetDate(value)) {
-    return useDashIfEmpty ? '—' : '';
+    return useDashIfEmpty ? '-' : '';
   }
   const s = String(value).trim();
   if (/GMT[+-]\d{4}|Central European|Coordinated Universal|Daylight Time/i.test(s)) {
-    return useDashIfEmpty ? '—' : '';
+    return useDashIfEmpty ? '-' : '';
   }
   return s;
 }
@@ -663,7 +663,7 @@ function _formatZona(project) {
 
 function _formatTipos(tipos) {
   const cell = _investorDisplay(tipos, false);
-  if (!cell) return '—';
+  if (!cell) return '-';
   const parts = cell.split('|');
   const beds  = (parts[0] || '').trim().split(',').map(b => {
     const n = b.trim();
@@ -798,7 +798,7 @@ function testTelegramConnection() {
     return;
   }
   const result = _sendTelegramMessage(
-    '🔧 <b>Test de conexión — Horizonte Emirates</b>\nSistema activo. Precio y fotos habilitados en v2.',
+    '🔧 <b>Test de conexión, Horizonte Emirates</b>\nSistema activo. Precio y fotos habilitados en v2.',
     'HTML'
   );
   Logger.log(result.ok ? '✅ Conexión OK.' : '❌ Error: ' + JSON.stringify(result));
@@ -814,16 +814,16 @@ function testWeeklyMessagePreview() {
   const theme      = MESSAGE_THEMES[themeRound % MESSAGE_THEMES.length];
   const selected   = _selectProjectsForTheme(projects, theme);
 
-  Logger.log('=== PREVIEW — CABECERA (HTML) · TG_THEME_INDEX=' + themeRound + ' ===');
+  Logger.log('=== PREVIEW: CABECERA (HTML) · TG_THEME_INDEX=' + themeRound + ' ===');
   Logger.log(_buildIssueLeadIn(theme, themeRound + 1, false));
-  Logger.log('=== PREVIEW — FLUJO UNA A UNA (HTML) ===');
+  Logger.log('=== PREVIEW: FLUJO UNA A UNA (HTML) ===');
   for (let i = 0; i < selected.length; i++) {
     Logger.log('--- BLOQUE EDUCATIVO ' + (i + 1) + ' ---');
     Logger.log(_buildEducationalEntry(theme, selected[i], i + 1, selected.length));
     Logger.log('--- FICHA PROYECTO ' + (i + 1) + ' (texto fallback) ---');
     Logger.log(_buildProjectText(selected[i], i + 1, ''));
   }
-  Logger.log('=== PREVIEW — CTA FINAL ===');
+  Logger.log('=== PREVIEW: CTA FINAL ===');
   Logger.log(_buildCtaMessage());
 }
 

@@ -97,7 +97,7 @@ Equipo Horizonte Emirates
 ## Tier B
 
 ### B1
-**Asunto:** `Recibida su consulta, ${n} — análisis en preparación`
+**Asunto:** `Recibida su consulta, ${n}: análisis en preparación`
 
 **Cuerpo (texto):**
 ```text

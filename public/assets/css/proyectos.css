@@ -32,7 +32,7 @@
     .nav a { color: rgba(255,255,255,.75); font-size: .875rem; transition: color var(--transition); }
     .nav a:hover { color: var(--white); }
     .btn-nav { background: var(--gold); color: var(--navy) !important; font-weight: 600 !important; padding: 8px 20px; border-radius: var(--radius); }
-    /* Menú móvil (hamburguesa) — oculto en desktop */
+    /* Menú móvil (hamburguesa): oculto en desktop */
     .nav-burger { display: none; flex-direction: column; justify-content: center; gap: 5px; width: 42px; height: 42px; background: none; border: none; cursor: pointer; padding: 9px; }
     .nav-burger span { display: block; height: 2px; width: 24px; background: #fff; border-radius: 2px; transition: transform .25s, opacity .2s; }
     .nav-burger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }

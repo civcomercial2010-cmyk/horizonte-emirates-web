@@ -1,8 +1,8 @@
-# Base de Datos Maestra — Horizonte Emirates
+# Base de Datos Maestra: Horizonte Emirates
 # Google Sheets Schema · v1.0 · Abril 2026
 
 **Spreadsheet ID:** `133X4oyXfvAusuhvme7eYISNPfSZ1N0BkIt3oq1WKxXc`
-(misma hoja que el CRM de leads — añadir las nuevas pestañas aquí)
+(misma hoja que el CRM de leads, añadir las nuevas pestañas aquí)
 
 ---
 
@@ -18,7 +18,7 @@
 | `sources` | 10–20 | URLs fuente para actualización automática. |
 | `change_log` | acumulativa | Registro de cambios de valor en proyectos. |
 | `manual_review` | variable | Proyectos marcados para revisión manual. |
-| `dashboard` | — | Pestaña de fórmulas y gráficas para el panel interno. |
+| `dashboard` | - | Pestaña de fórmulas y gráficas para el panel interno. |
 
 ---
 
@@ -155,7 +155,7 @@ Generada automáticamente por `matching_engine.gs`. Una fila por recomendación.
 | J | `razon_2` | string | Segunda razón |
 | K | `razon_3` | string | Tercera razón (puede estar vacía) |
 | L | `rank` | integer | Posición en el ranking (1 = mejor match) |
-| M | `enviado_lead` | string | Sí / No — si se ha enviado al lead |
+| M | `enviado_lead` | string | Sí / No: si se ha enviado al lead |
 | N | `fecha_envio` | date | Fecha de envío |
 | O | `email_abierto` | string | Sí / No |
 | P | `clic_proyecto` | string | Sí / No |
@@ -213,7 +213,7 @@ Proyectos que no superan el control de calidad automático y requieren revisión
 
 ---
 
-## Control de calidad — reglas de entrada
+## Control de calidad: reglas de entrada
 
 Un proyecto pasa a `projects_master` solo si cumple todas estas reglas.
 Si falla alguna, va a `manual_review` con el motivo.

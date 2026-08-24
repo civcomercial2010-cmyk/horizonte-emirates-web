@@ -1,4 +1,4 @@
-# Estrategia SEO & Contenidos — Horizonte Emirates
+# Estrategia SEO & Contenidos: Horizonte Emirates
 
 > Informe de consultoría · SEO Lead / Content Strategist / Technical SEO Architect
 > Fecha: 2026-06-07 · Stack analizado: HTML estático + Cloudflare Workers Assets
@@ -133,7 +133,7 @@ Dos rutas, ambas respetan el stack de hosting:
 
 ## 5. Estrategia SEO
 
-### 5.1 SEO Transaccional (BOFU/MOFU — alta intención comercial)
+### 5.1 SEO Transaccional (BOFU/MOFU: alta intención comercial)
 
 > Nota: la oferta core actual es **inversión inmobiliaria UAE**. Las keywords de "crear empresa/residencia/golden visa" son demanda adyacente con altísimo valor de lead y solapamiento de buyer persona (el inversor inmobiliario suele plantearse también residencia/empresa). Se recomienda capturarlas como **clusters informacionales que nutren el lead core**, y como páginas de servicio **solo si el negocio decide ofrecer ese servicio** (ver §9, riesgo de relevancia). Tipo de página por defecto: página de servicio si hay oferta, guía pilar si es captación de demanda adyacente.
 
@@ -150,11 +150,11 @@ Dos rutas, ambas respetan el stack de hosting:
 | **Corporate services** | corporate services Dubai | constitución sociedades UAE, servicios corporativos Emiratos | Transaccional | Página de servicio (si aplica) | 🟢 Media |
 | **Fiscalidad inversor** | impuestos inversión Dubai España | Modelo 720 Dubai, declarar inmueble Dubai en España, doble imposición UAE España | Transaccional (intención de lead) | Guía pilar + lead magnet | 🔴 Alta |
 
-### 5.2 SEO Informacional — 24 clusters temáticos
+### 5.2 SEO Informacional: 24 clusters temáticos
 
 Cada cluster = 1 pillar page + N artículos de soporte. Estructura de contenidos sugerida por cluster: *costes reales · pasos · tiempos · errores frecuentes · comparativas · casos reales · FAQ*.
 
-**Bloque A — Inversión inmobiliaria (core)**
+**Bloque A: Inversión inmobiliaria (core)**
 1. **Cómo invertir en inmuebles en Dubai** (PILAR) → costes reales, proceso paso a paso, plazos, errores, comparativa España vs Dubai, casos.
 2. **Rentabilidad inmobiliaria en Dubai** → yields por zona, neto vs bruto, gastos ocultos, comparativa con España/Europa.
 3. **Comprar sobre plano (off-plan) en Dubai** → cómo funciona, planes de pago, riesgos, garantías RERA/escrow, hitos.
@@ -164,7 +164,7 @@ Cada cluster = 1 pillar page + N artículos de soporte. Estructura de contenidos
 7. **Comprar propiedad en Dubai siendo no residente** → legalidad, proceso remoto, poder notarial, freehold vs leasehold.
 8. **Financiación/hipoteca para comprar en Dubai** → opciones para extranjeros, LTV, requisitos.
 
-**Bloque B — Fiscalidad y residencia (alto valor de lead)**
+**Bloque B: Fiscalidad y residencia (alto valor de lead)**
 9. **Residencia fiscal en Emiratos para españoles** (PILAR) → cómo se obtiene, 183 días, certificado, ventajas, errores.
 10. **Impuestos al invertir en Dubai desde España** → 0% en origen, IRPF, plusvalías, Modelo 720, convenio doble imposición.
 11. **Modelo 720 y bienes en el extranjero** → qué declarar, umbrales, sanciones, cómo cumplir.
@@ -172,13 +172,13 @@ Cada cluster = 1 pillar page + N artículos de soporte. Estructura de contenidos
 13. **Cómo conseguir la residencia en Dubai** → vías (inversión, empresa, empleo), pasos, coste, tiempos.
 14. **Salir de la residencia fiscal española** → implicaciones, exit tax, errores frecuentes (contenido de captación, sin asesorar).
 
-**Bloque C — Empresa y negocio**
+**Bloque C: Empresa y negocio**
 15. **Crear una empresa en Dubai** (PILAR) → mainland vs free zone, costes reales, pasos, tiempos, errores.
 16. **Free zones de Emiratos comparadas** → IFZA, DMCC, Meydan, RAKEZ; cuál según actividad/coste.
 17. **Free zone vs mainland** → diferencias, propiedad 100%, restricciones, cuál elegir.
 18. **Coste real de montar una empresa en Dubai** → desglose, ocultos, mantenimiento anual.
 
-**Bloque D — Vida, comparativas y decisión**
+**Bloque D: Vida, comparativas y decisión**
 19. **Vivir en Dubai siendo español** → coste de vida, sanidad, educación, comunidad hispana.
 20. **España vs Dubai para invertir/vivir** (comparativa pilar) → fiscalidad, rentabilidad, seguridad jurídica, calidad de vida.
 21. **Mitos sobre invertir en Dubai** → desmonta objeciones (burbuja, opacidad, seguridad) con datos.
@@ -190,11 +190,11 @@ Cada cluster = 1 pillar page + N artículos de soporte. Estructura de contenidos
 
 ## 6. Plan de contenidos SEO (12 meses)
 
-Cadencia objetivo: **4 piezas/mes** (mix de pilares y soporte). Prioriza pilares de clusters de mayor valor de lead primero. Potenciales en escala relativa (Alto/Medio/Bajo) por falta de datos de volumen verificados — validar con Search Console/Keyword Planner antes de ejecutar.
+Cadencia objetivo: **4 piezas/mes** (mix de pilares y soporte). Prioriza pilares de clusters de mayor valor de lead primero. Potenciales en escala relativa (Alto/Medio/Bajo) por falta de datos de volumen verificados, validar con Search Console/Keyword Planner antes de ejecutar.
 
 > Leyenda: **Funnel** TOFU (atrae) · MOFU (considera) · BOFU (decide). **Tráfico/Lead** = potencial estimado.
 
-### Trimestre 1 (mes 1-3) — Cimientos: pilares de alto valor + páginas de servicio
+### Trimestre 1 (mes 1-3): Cimientos: pilares de alto valor + páginas de servicio
 
 | # | Título SEO | Keyword principal | Objetivo | Funnel | Tráfico | Lead | CTA |
 |---|---|---|---|---|---|---|---|
@@ -211,7 +211,7 @@ Cadencia objetivo: **4 piezas/mes** (mix de pilares y soporte). Prioriza pilares
 | 11 | Comprar propiedad en Dubai siendo no residente | comprar Dubai no residente | Resolver objeción | MOFU | Alto | Alto | Análisis personalizado |
 | 12 | España vs Dubai: dónde conviene invertir en 2026 | España vs Dubai invertir | Comparativa decisión | MOFU | Alto | Medio | Calculadora ROI |
 
-### Trimestre 2 (mes 4-6) — Profundidad: empresa, residencia, free zones
+### Trimestre 2 (mes 4-6): Profundidad: empresa, residencia, free zones
 
 | # | Título SEO | Keyword principal | Funnel | Tráfico | Lead | CTA |
 |---|---|---|---|---|---|---|
@@ -228,7 +228,7 @@ Cadencia objetivo: **4 piezas/mes** (mix de pilares y soporte). Prioriza pilares
 | 23 | Vivir en Dubai siendo español: coste de vida y calidad | vivir en Dubai español | TOFU | Alto | Bajo | Roadmap expatriación |
 | 24 | Glosario del inversor inmobiliario en UAE | glosario inversión Dubai | TOFU | Medio | Bajo | (enlazado interno) |
 
-### Trimestre 3 (mes 7-9) — Long-tail, casos y refresco
+### Trimestre 3 (mes 7-9): Long-tail, casos y refresco
 
 Foco: artículos de soporte de cada cluster (long-tail), **casos de éxito/estudios propios** (EEAT), y actualización (`dateModified`) de los pilares del T1 con nuevos datos.
 
@@ -241,7 +241,7 @@ Foco: artículos de soporte de cada cluster (long-tail), **casos de éxito/estud
 | Salir de la residencia fiscal española (sin asesorar, captación) | BOFU | Lead premium |
 | Comparativas zona a zona (Marina vs Downtown vs JVC) | MOFU | Decisión + enlazado |
 
-### Trimestre 4 (mes 10-12) — Escala, autoridad y conversión
+### Trimestre 4 (mes 10-12): Escala, autoridad y conversión
 
 Foco: completar clusters, doblar producción si hay tracción, **herramienta gratuita** (calculadora ROI / coste de empresa como activo SEO + lead magnet), guest posting / digital PR para backlinks, y optimización CRO de los artículos top por tráfico (mejorar CTA, A/B de lead magnets).
 
@@ -293,7 +293,7 @@ Modelo hub-and-spoke. Cada pilar es la URL canónica del tema; los artículos de
 - Cada artículo → 1 enlace a la **página de conversión** relevante (servicio o lead magnet).
 - Usar el **glosario** (#24) como nodo de enlazado interno masivo hacia pilares.
 
-### EEAT — palancas concretas
+### EEAT: palancas concretas
 - **Experience:** casos reales anonimizados, "cómo lo hacemos", fotos propias de proyectos (ya tenéis assets en `/assets/projects/`).
 - **Expertise:** bloque de autor en artículos + identificación registral en `legal.html` + bloque confianza en home.
 - **Authoritativeness:** estudios/datos propios (dossier de mercado trimestral) → genera citaciones y backlinks; digital PR en medios hispanos de expatriación/inversión.
@@ -316,7 +316,7 @@ Mapa contenido → CTA → lead magnet → automatización → siguiente paso. T
 | **TOFU** (mitos, vivir en Dubai, glosario) | "Descarga la guía/roadmap" (soft) | Roadmap expatriación / Guía inversión | Email capturado → secuencia educativa (nurturing) ActiveCampaign | Recibe valor, entra en lista, se calienta |
 | **MOFU** (rentabilidad, zonas, off-plan, comparativas) | "Calcula tu ROI" / "Comparativa" | Calculadora ROI / Dossier mercado | Tag por interés → secuencia de consideración + retargeting (Meta Pixel ya activo) | Evalúa, vuelve, se acerca a la decisión |
 | **BOFU** (impuestos, residencia fiscal, due diligence, servicio) | "Solicita tu análisis personalizado 48h" | Guía fiscal / Checklist due diligence | Lead → scoring tier → alerta a comercial (ya existe healthCheck/pipeline) | Solicita análisis, agenda llamada |
-| **Páginas de servicio** | "Solicitar análisis" (formulario actual) | — (conversión directa) | Lead directo al pipeline + scoring | Conversión a oportunidad |
+| **Páginas de servicio** | "Solicitar análisis" (formulario actual) |: (conversión directa) | Lead directo al pipeline + scoring | Conversión a oportunidad |
 
 **Embudo completo:**
 ```
@@ -338,10 +338,10 @@ Decisión de negocio (no técnica): definir si "crear empresa / corporate servic
 ### Impacto alto / esfuerzo bajo (hacer ya)
 1. **Dar de alta el sitio en Google Search Console** y enviar el sitemap (si no está). Base de toda medición SEO.
 2. **Crear la estructura `/blog/` con índice + publicar las 2 primeras guías pilar** (HTML manual, plantilla §4). Desbloquea captación.
-3. **Validar el JSON-LD existente** en Rich Results Test (M31 parcial) — ya tenéis `FAQPage`/`ItemList`, asegurad rich snippets.
+3. **Validar el JSON-LD existente** en Rich Results Test (M31 parcial), ya tenéis `FAQPage`/`ItemList`, asegurad rich snippets.
 4. **Mantener bloque de autor** en artículos y bloque confianza en home (palanca EEAT; sin página de equipo dedicada).
 5. **Lead magnet #1 (guía fiscal) en PDF + captura** conectado al funnel (resuelve M19).
-6. **Optimizar INP de la animación KPI** (M28) — último CWV pendiente.
+6. **Optimizar INP de la animación KPI** (M28), último CWV pendiente.
 7. **Internal linking desde home y proyectos hacia los nuevos artículos** en cuanto existan.
 
 ### Impacto alto / esfuerzo medio
@@ -380,7 +380,7 @@ Decisión de negocio (no técnica): definir si "crear empresa / corporate servic
 | **Disclaimers fiscales/legales** | Media | Medio-alto | Mantener el disclaimer ya presente ("no presta asesoramiento fiscal/jurídico") en todo el contenido fiscal; contenido informativo, no asesor |
 | **Mantenibilidad del blog en HTML manual** | Media | Medio | Migrar a SSG (genera a `public/`) al superar ~15 piezas; no es cambio de hosting |
 | **Canibalización entre artículos del cluster** | Media | Medio | Jerarquía pilar/soporte clara, una keyword principal por URL, enlazado consistente |
-| **Dependencia de un solo partner (concentración)** | — | Alto (negocio) | Fuera de SEO, ya en roadmap (M32). El contenido no debe sobre-prometer disponibilidad |
+| **Dependencia de un solo partner (concentración)** | - | Alto (negocio) | Fuera de SEO, ya en roadmap (M32). El contenido no debe sobre-prometer disponibilidad |
 | **Sitemap desactualizado al escalar** | Media | Medio | Automatizar generación en build/CI |
 | **Datos de mercado sin verificar en artículos** | Media | Alto (EEAT/confianza) | Mantener disciplina de fuentes citadas (ya es práctica de la casa, `#fuentes`) |
 
@@ -390,7 +390,7 @@ Decisión de negocio (no técnica): definir si "crear empresa / corporate servic
 
 El stack actual de Horizonte Emirates **no es un obstáculo para el SEO: es una ventaja**. HTML estático sobre Cloudflare es la arquitectura que Google indexa de forma más limpia y rápida, y ya tenéis resuelto lo difícil de la base técnica (metadata, JSON-LD, CWV, sitemap, robots, canonicals, seguridad). **No procede ninguna migración.**
 
-El crecimiento orgánico está bloqueado por una sola causa: **falta de superficie de contenido**. Con 3 URLs no hay techo de tráfico. La estrategia es construir encima del stack —blog estático, páginas de servicio, lead magnets y autoridad temática— para pasar de 3 a 80-120 URLs indexables en 12 meses, capturando demanda en todo el funnel y alimentando la máquina de conversión que **ya existe y funciona**.
+El crecimiento orgánico está bloqueado por una sola causa: **falta de superficie de contenido**. Con 3 URLs no hay techo de tráfico. La estrategia es construir encima del stack (blog estático, páginas de servicio, lead magnets y autoridad temática) para pasar de 3 a 80-120 URLs indexables en 12 meses, capturando demanda en todo el funnel y alimentando la máquina de conversión que **ya existe y funciona**.
 
 **El cuello de botella no es la tecnología. Es la producción de contenido con EEAT.** Ahí es donde debe ir el esfuerzo. La acción de mayor impacto inmediato: **lanzar `/blog/` con los 3 primeros pilares (invertir en Dubai, fiscalidad, golden visa) + la guía fiscal como lead magnet, en los próximos 30 días.**
 

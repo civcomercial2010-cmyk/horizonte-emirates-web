@@ -1,5 +1,5 @@
 /*
- * Google Tag Manager — loader del contenedor GTM-NZV6VJDC.
+ * Google Tag Manager: loader del contenedor GTM-NZV6VJDC.
  * Externalizado (servido con 'self') para cumplir la CSP sin 'unsafe-inline' en script-src,
  * igual que gtag-init.js. Debe cargarse DESPUES de gtag-init.js, que fija el Consent Mode v2
  * (denegado por defecto), de modo que las etiquetas gestionadas dentro de GTM hereden el

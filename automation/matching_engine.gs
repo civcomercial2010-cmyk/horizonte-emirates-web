@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════
-// HORIZONTE EMIRATES — Matching Engine
+// HORIZONTE EMIRATES: Matching Engine
 // Motor de recomendación lead → proyectos con scoring 0–100 pts.
 //
 // Integración con horizonte-emails.gs:
@@ -140,7 +140,7 @@ function _buildReasons(lead, project, scoreCapital, scoreObjetivo, scoreTiming, 
 
   // Golden Visa
   if (project.golden_visa_fit === 'Sí' && lead.objetivo === 'residencia') {
-    reasons.push('Elegible para Golden Visa UAE — residencia de 10 años');
+    reasons.push('Elegible para Golden Visa UAE, residencia de 10 años');
   }
 
   return reasons.slice(0, 3);
@@ -390,12 +390,12 @@ function buildProjectsHtmlBlock(leadId, maxProjects) {
 
   top.forEach((m, i) => {
     const p = m.project;
-    const nombre     = p.nombre_proyecto || '—';
-    const promotora  = p.promotora       || '—';
-    const zona       = p.zona_principal  || '—';
-    const handover   = p.handover_raw    || '—';
-    const plan       = p.plan_pago_raw   || '—';
-    const perfil     = p.perfil_inversor || '—';
+    const nombre     = p.nombre_proyecto || '-';
+    const promotora  = p.promotora       || '-';
+    const zona       = p.zona_principal  || '-';
+    const handover   = p.handover_raw    || '-';
+    const plan       = p.plan_pago_raw   || '-';
+    const perfil     = p.perfil_inversor || '-';
     const razon      = m.razon_1         || '';
 
     html += `
@@ -448,7 +448,7 @@ function testMatching() {
   }).sort((a, b) => b.total - a.total).slice(0, 5);
 
   scored.forEach((r, i) => {
-    Logger.log((i + 1) + '. [' + r.total + ' pts] ' + r.nombre + ' (' + r.promotora + ') — ' + r.perfil);
+    Logger.log((i + 1) + '. [' + r.total + ' pts] ' + r.nombre + ' (' + r.promotora + '), ' + r.perfil);
     Logger.log('   Capital:' + r.scoreCapital + ' Objetivo:' + r.scoreObjetivo + ' Timing:' + r.scoreTiming + ' Dev:' + r.scoreDev);
     Logger.log('   → ' + r.reasons.join(' | '));
   });

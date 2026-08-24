@@ -1,4 +1,4 @@
-# robots.txt — Horizonte Emirates
+# robots.txt de Horizonte Emirates
 # Indexación abierta. Se permiten también los rastreadores de IA generativa
 # (GPTBot, Google-Extended, PerplexityBot, ClaudeBot) para ganar visibilidad en
 # respuestas de IA. Para bloquear alguno, cambiar su "Allow: /" por "Disallow: /".

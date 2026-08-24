@@ -1,5 +1,5 @@
 /**
- * horizonte-medicion.gs — Medición de leads del lado del servidor
+ * horizonte-medicion.gs: Medición de leads del lado del servidor
  * Horizonte Emirates / Propulse SLU
  *
  * POR QUÉ EXISTE ESTE ARCHIVO

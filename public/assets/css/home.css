@@ -195,7 +195,7 @@ nav.scrolled{background:var(--navy-m);backdrop-filter:blur(12px);border-color:rg
 .nav-links a:hover{color:#fff}
 .nav-cta{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;background:var(--gold);color:var(--navy);padding:10px 22px;border-radius:var(--r);transition:.2s}
 .nav-cta:hover{filter:brightness(1.08)}
-/* Menú móvil (hamburguesa) — oculto en desktop */
+/* Menú móvil (hamburguesa): oculto en desktop */
 .nav-burger{display:none;flex-direction:column;justify-content:center;gap:5px;width:42px;height:42px;background:none;border:none;cursor:pointer;padding:9px;margin-left:auto}
 .nav-burger span{display:block;height:2px;width:24px;background:#fff;border-radius:2px;transition:transform .25s,opacity .2s}
 .nav-burger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
@@ -536,7 +536,7 @@ h1 em{font-style:italic;color:var(--gold)}
 .zone-c h3{font-family:var(--serif);font-size:30px;font-weight:500;color:var(--ink);margin-bottom:10px}
 .zone-c p{font-size:15px;color:var(--muted);line-height:1.65;margin-bottom:0;flex:1}
 
-/* A1 — rentabilidades en filas label | valor alineadas */
+/* A1: rentabilidades en filas label | valor alineadas */
 .zone-yield-list{
   margin-top:auto;
   padding-top:18px;
@@ -578,7 +578,7 @@ h1 em{font-style:italic;color:var(--gold)}
 .zones-footnote a{color:var(--gold-text);text-decoration:underline}
 .zones-footnote--rak{margin-top:6px}
 
-/* Zonas apiladas A2 — imagen+texto izquierda · tabla 3 cols derecha */
+/* Zonas apiladas A2: imagen+texto izquierda · tabla 3 cols derecha */
 .zones-stack{display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border)}
 .zone-row{
   display:grid;
