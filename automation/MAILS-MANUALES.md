@@ -131,16 +131,16 @@ envía la máquina. Interruptor propio: `CONFIG.AUTO_SEND_WELCOME`.
    correo». Deja el tema abierto para el M1 o el M11.
 5. **Da salida al lead impaciente** con el enlace de Calendly, sin convertirlo en la petición
    principal. Quien quiere hablar ya, puede.
-6. **Promete 48 horas, siempre.** Está en `CONFIG.WELCOME_PROMISE` y es lo mismo que dice la web,
+6. **Promete 24 horas, siempre.** Está en `CONFIG.WELCOME_PROMISE` y es lo mismo que dice la web,
    así que el lead lee el mismo compromiso en los dos sitios. Es un techo, no un objetivo: se
-   promete holgado y se cumple mucho antes. Un tier A que pide 48 horas y recibe respuesta en una
+   promete holgado y se cumple mucho antes. Un tier A que pide 24 horas y recibe respuesta en una
    se lleva una impresión que ninguna frase de marketing consigue. Al revés no funciona.
 
 **Consecuencia para los correos manuales:** cuando usted escribe, el lead ya tiene su nombre y ya
 sabe que le va a escribir. Por eso los tres M1 arrancan encadenando («soy el que firmaba el correo
 de confirmación») en lugar de presentarse otra vez y volver a dar las gracias por la solicitud.
 
-**Las 48 horas son el límite, no el plan.** El ritmo real sigue siendo el de la tabla de tiers:
+**Las 24 horas son el límite, no el plan.** El ritmo real sigue siendo el de la tabla de tiers:
 menos de una hora en A, mismo día en B, menos de 24 horas en C. Lo único que cambia es que el
 lead no ha leído esa exigencia, así que un retraso puntual no le deja a usted en evidencia.
 
@@ -542,7 +542,7 @@ Ha indicado que prefiere que le llamemos. Dígame qué franja le viene bien y le
 cuando usted diga: no llamamos a nadie sin avisar antes.
 ```
 
-**Email**
+**Email** (solo leads anteriores al 24-ago-2026: el formulario ya no ofrece esta opción)
 
 ```text
 Ha indicado el correo como canal preferido, así que por aquí seguimos. Si en algún

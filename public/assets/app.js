@@ -12,7 +12,7 @@ const LEAD_VALUE_EUR={A:300,B:120,C:40};
  * fecha, de modo que sea demostrable qué consintió exactamente y cuándo.
  * Si se cambia la redacción de las casillas en index.html, SUBIR la versión:
  * de lo contrario el registro dejaría de corresponderse con lo aceptado.       */
-const CONSENT_VERSION='v2-2026-07';
+const CONSENT_VERSION='v3-2026-08';
 const CONSENT_TEXTS={
   privacidad:'He leído y acepto la política de privacidad y consiento que mis datos se comuniquen al socio de Horizonte Emirates en Emiratos Árabes Unidos para preparar mi análisis de inversión.',
   marketing:'Deseo recibir información comercial sobre oportunidades inmobiliarias en Emiratos por email o WhatsApp.'
@@ -1159,6 +1159,9 @@ document.querySelectorAll('.canal-o').forEach(function(el){ el.addEventListener(
     if (st.pfx) { var pf = document.getElementById('phone-pfx'); if (pf) pf.value = st.pfx; }
     if (st.tel) { var pn = document.getElementById('phone-num'); if (pn) pn.value = st.tel; }
     if (st.canal) {
+      // La opción "email" se retiró del selector: un valor guardado en una
+      // sesión anterior dejaría el hidden con un canal sin botón visible.
+      if (!document.querySelector('.canal-o[data-canal="' + st.canal + '"]')) st.canal = 'whatsapp';
       var hc = document.getElementById('h-can'); if (hc) hc.value = st.canal;
       document.querySelectorAll('.canal-o').forEach(function (c) {
         var on = c.dataset.canal === st.canal;

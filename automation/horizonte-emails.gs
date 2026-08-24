@@ -71,12 +71,12 @@ const CONFIG = {
   ASESOR_FIRMA: 'Jesús Ibáñez',
   /**
    * Plazo que promete el acuse de recibo para el correo personal del asesor.
-   * 48 horas es lo que ya promete la web ("respuesta en menos de 48 horas"), así que el lead
+   * 24 horas es lo que ya promete la web ("respuesta en menos de 24 horas"), así que el lead
    * lee lo mismo en los dos sitios. Se promete holgado y se cumple antes: el ritmo real de
    * trabajo (menos de 1 hora en tier A) está en automation/MAILS-MANUALES.md.
    * Si algún día se quiere prometer más rápido, se cambia solo esta línea.
    */
-  WELCOME_PROMISE: 'en las próximas 48 horas',
+  WELCOME_PROMISE: 'en las próximas 24 horas',
   /** Con envío manual: avisar al asesor de cada lead nuevo con su ficha y el guion sugerido. */
   NOTIFY_AGENT_ON_NEW_LEAD: true,
   /** No marcar como leído el aviso de Web3Forms de un lead válido (para que se vea en negrita). */
@@ -332,7 +332,7 @@ function notifyAgentNewLead(leadId, lead) {
     CONFIG.AUTO_SEND_WELCOME !== false
       ? '<p style="margin:0 0 16px;padding:12px 14px;background:#EEF2F6;border-left:3px solid #3E5A75;font-size:13.5px;color:#1A1A1A;line-height:1.55">' +
         'El lead ya ha recibido el acuse de recibo automático con su ficha y la guía fiscal, y ahí se le dice que ' +
-        '<strong>usted le escribe ' + (CONFIG.WELCOME_PROMISE || 'en las próximas 48 horas') + '</strong>. Ese es el plazo máximo que ha leído el lead, no el objetivo: el ritmo de trabajo lo marca el tier. Su correo no debe repetir el saludo.</p>'
+        '<strong>usted le escribe ' + (CONFIG.WELCOME_PROMISE || 'en las próximas 24 horas') + '</strong>. Ese es el plazo máximo que ha leído el lead, no el objetivo: el ritmo de trabajo lo marca el tier. Su correo no debe repetir el saludo.</p>'
       : '',
     '<table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;margin:0 0 18px">',
     row('Email', lead.email),
@@ -865,7 +865,7 @@ function parseLeadFromEmail(body, subject) {
 
   lead.nombre = lead.nombre || 'Inversor';
   lead.pais   = lead.pais   || 'España';
-  lead.canal  = lead.canal  || 'email';
+  lead.canal  = lead.canal  || 'whatsapp';
   lead.origen = lead.origen || 'Formulario web';
 
   return lead.email ? lead : null;
@@ -1480,7 +1480,7 @@ function getTemplate(code, lead) {
   //   5. Da salida al lead impaciente con Calendly, sin convertirlo en la petición principal.
   if (code === 'W0') {
     const firma  = CONFIG.ASESOR_FIRMA || CONFIG.ASESOR_NOMBRE;
-    const cuando = CONFIG.WELCOME_PROMISE || 'en las próximas 48 horas';
+    const cuando = CONFIG.WELCOME_PROMISE || 'en las próximas 24 horas';
     const pila   = firstName(lead.nombre); // solo el nombre de pila: «Hola Jose», no «Hola Jose Diaz mellado»
     // El lead que entra por el modal de WhatsApp solo deja nombre, email y teléfono:
     // no tiene capital, objetivo ni país. La ficha se construye SOLO con lo que existe,

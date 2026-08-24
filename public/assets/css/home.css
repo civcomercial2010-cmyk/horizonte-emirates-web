@@ -778,7 +778,7 @@ h1 em{font-style:italic;color:var(--gold)}
 .phone-row input{border-radius:0 4px 4px 0;flex:1}
 
 /* Canal */
-.canal-g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.canal-g{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:16px}
 .canal-lbl{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
 .canal-o{border:1px solid var(--border);border-radius:var(--r);padding:11px 8px;cursor:pointer;text-align:center;background:var(--warm);transition:.2s}
 .canal-o:hover{border-color:var(--gold-bd)}
