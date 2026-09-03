@@ -1,21 +1,80 @@
 # robots.txt de Horizonte Emirates
-# Indexación abierta. Se permiten también los rastreadores de IA generativa
-# (GPTBot, Google-Extended, PerplexityBot, ClaudeBot) para ganar visibilidad en
-# respuestas de IA. Para bloquear alguno, cambiar su "Allow: /" por "Disallow: /".
+#
+# POLITICA: indexacion abierta + visibilidad en buscadores de IA (GEO), sin
+# ceder el contenido para entrenamiento de modelos.
+#
+#   search=yes     se puede indexar y mostrar en resultados de busqueda
+#   ai-input=yes   se puede usar como fuente en respuestas generativas (RAG,
+#                  grounding, AI Overviews). ESTO es lo que hace que GEO funcione
+#   ai-train=no    NO se puede usar para entrenar ni afinar modelos.
+#                  Reserva expresa de derechos bajo el articulo 4 de la
+#                  Directiva europea 2019/790
+#
+# AVISO IMPORTANTE (verificado el 31-ago-2026):
+# Cloudflare puede inyectar su propio bloque gestionado POR DELANTE de este
+# archivo, con la funcion "AI Crawl Control". Cuando lo hace, produccion sirve
+# reglas que contradicen a las de aqui y este archivo deja de mandar.
+# Comprobar con:  python scripts/verificar-robots.py
+# o a mano:       curl -s https://www.horizonteemirates.com/robots.txt | head -5
+# Si aparece "BEGIN Cloudflare Managed content", hay que desactivarlo en el
+# panel: Cloudflare > horizonteemirates.com > AI Crawl Control.
 
 User-agent: *
+Content-Signal: search=yes,ai-input=yes,ai-train=no
 Allow: /
 
+# --- Rastreadores de IA permitidos: aportan visibilidad y trafico ---
+
+# OpenAI: GPTBot indexa para ChatGPT, OAI-SearchBot alimenta ChatGPT Search,
+# ChatGPT-User es la navegacion en vivo cuando un usuario pregunta por ti
 User-agent: GPTBot
 Allow: /
 
-User-agent: Google-Extended
+User-agent: OAI-SearchBot
 Allow: /
 
+User-agent: ChatGPT-User
+Allow: /
+
+# Anthropic
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+# Perplexity
 User-agent: PerplexityBot
 Allow: /
 
-User-agent: ClaudeBot
+User-agent: Perplexity-User
 Allow: /
+
+# Google: controla Gemini y AI Overviews. No afecta a la indexacion normal
+# de Google Search, que va por el bloque User-agent: * de arriba
+User-agent: Google-Extended
+Allow: /
+
+# Apple Intelligence y Siri
+User-agent: Applebot-Extended
+Allow: /
+
+# Microsoft Copilot
+User-agent: bingbot
+Allow: /
+
+# --- Rastreadores bloqueados: extraen contenido y no devuelven visibilidad ---
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: Amazonbot
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: meta-externalagent
+Disallow: /
 
 Sitemap: https://www.horizonteemirates.com/sitemap.xml

@@ -17,6 +17,14 @@
     p,li{font-size:16px;line-height:1.75;color:var(--muted)}
     ul{padding-left:22px}
     a{color:#9a7016}
+    /* La tabla de cookies (4 columnas) desbordaba 142px en moviles de 390px.
+       Mismo patron que .prose .table-wrap en blog.css: el scroll queda dentro
+       del contenedor, no lo hereda la pagina. */
+    .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:12px 0;
+      border:1px solid var(--border);border-radius:6px}
+    .table-wrap table{margin:0;border:0;min-width:520px}
+    .table-wrap th:first-child,.table-wrap td:first-child{border-left:0}
+    .table-wrap th:last-child,.table-wrap td:last-child{border-right:0}
     table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
     th,td{border:1px solid var(--border);padding:9px 11px;text-align:left;color:var(--muted)}
     th{background:#faf7f0;color:var(--ink);font-weight:600}

@@ -128,7 +128,7 @@
     bar.innerHTML =
       '<div class="he-c-inner">' +
         '<div class="he-c-txt"><strong>Usamos cookies</strong> de análisis y publicidad (Google y Meta) para medir el sitio y las campañas. ' +
-        '<a href="' + POLICY_URL + '">Más información</a> · <a href="#" role="button" class="he-c-prefs" aria-expanded="false">Configurar por finalidad</a></div>' +
+        '<a href="' + POLICY_URL + '">Política de cookies</a> · <a href="#" role="button" class="he-c-prefs" aria-expanded="false">Configurar por finalidad</a></div>' +
         '<div class="he-c-actions">' +
           '<button type="button" class="he-c-reject">Rechazar</button>' +
           '<button type="button" class="he-c-accept">Aceptar</button>' +

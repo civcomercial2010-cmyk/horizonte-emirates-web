@@ -1,0 +1,59 @@
+# Horizonte Emirates
+
+> Generación de leads para inversión inmobiliaria en Emiratos Árabes Unidos,
+> dirigida a inversores hispanohablantes de España y Latinoamérica. Operado por
+> Propulse SLU (Andorra). El cierre de la operación lo ejecuta un partner con
+> licencia RERA en Dubái.
+
+Qué encontrarás aquí: guías sobre rentabilidad real, fiscalidad española de un
+inmueble en Emiratos, residencia y Golden Visa, compra sobre plano y selección
+de promociones en Dubái, Abu Dabi y Ras Al Khaimah.
+
+Qué no es: no es una agencia inmobiliaria, no presta asesoramiento fiscal ni
+jurídico, y no publica datos comerciales sin material oficial del promotor. Las
+rentabilidades se expresan siempre como brutas, sin impuestos locales.
+
+Uso del contenido: se permite citarlo e indexarlo, incluso como fuente en
+respuestas generativas. No se permite su uso para entrenar modelos
+(Content-Signal: search=yes, ai-input=yes, ai-train=no). Al citar, enlaza la URL
+de origen.
+
+
+## Páginas principales
+
+- [Invertir en Dubai desde España](https://www.horizonteemirates.com/): Inversión inmobiliaria en Dubai y UAE para inversores hispanohablantes. Partner RERA. Análisis personalizado en 24h, sin coste para el inversor.
+- [Blog de inversión inmobiliaria en Dubai y Emiratos](https://www.horizonteemirates.com/blog/): Guías para invertir en inmuebles en Dubai y Emiratos desde España y Latinoamérica: rentabilidad, fiscalidad, Golden Visa y proceso de compra.
+- [Pisos para invertir en Dubai, Abu Dhabi y Ras Al Khaimah](https://www.horizonteemirates.com/proyectos.html): Siete inmuebles seleccionados para invertir en Emiratos: SAAS Hills, NH Collection, W Residences, BRABUS Island y más. Análisis en español.
+
+
+## Guías de inversión
+
+- [Cómo invertir en inmuebles en Dubai desde España](https://www.horizonteemirates.com/blog/como-invertir-inmuebles-dubai.html): Cuánto capital necesitas, rentabilidad realista, sobre plano frente a secundario, proceso paso a paso, costes y errores frecuentes.
+- [Comprar propiedad en Dubai siendo no residente](https://www.horizonteemirates.com/blog/comprar-propiedad-dubai-no-residente.html): Si es legal, zonas freehold frente a leasehold, compra en remoto con poder notarial, financiación y fiscalidad. Guía práctica 2026.
+- [Comprar sobre plano en Dubai: cómo funciona y riesgos](https://www.horizonteemirates.com/blog/comprar-sobre-plano-dubai.html): Cómo funciona la compra off-plan en Dubai: planes de pago, cuentas escrow, garantías RERA, riesgos reales y cómo protegerte.
+- [España o Dubai para invertir en inmuebles: comparativa](https://www.horizonteemirates.com/blog/espana-vs-dubai-invertir.html): Comparativa 2026: fiscalidad, rentabilidad, seguridad jurídica, ocupación y liquidez. Datos con fuente, sin sesgos.
+- [Impuestos al invertir en Dubai desde España](https://www.horizonteemirates.com/blog/impuestos-invertir-dubai-espana.html): IRPF sobre alquiler y plusvalías, Modelo 720, convenio de doble imposición España-Emiratos y errores frecuentes. Guía informativa.
+- [Invertir en Abu Dhabi: mercado, zonas y diferencias](https://www.horizonteemirates.com/blog/invertir-abu-dhabi.html): Cómo es su mercado inmobiliario, zonas de inversión extranjera (Yas Island, Saadiyat, Al Reem), rentabilidad y diferencias con Dubai.
+- [Invertir en Ras Al Khaimah: el efecto Wynn Al Marjan](https://www.horizonteemirates.com/blog/invertir-ras-al-khaimah.html): Por qué es la apuesta emergente de Emiratos: el efecto del resort Wynn Al Marjan (2027), revalorización y comparativa con Dubai.
+- [Mejores zonas para invertir en Dubai en 2026](https://www.horizonteemirates.com/blog/mejores-zonas-invertir-dubai.html): Marina, Downtown, Business Bay, JVC, Palm Jumeirah y Dubai Hills: perfil, tipo de inversor y qué buscar en cada zona.
+- [Rentabilidad inmobiliaria en Dubai: yields por zona](https://www.horizonteemirates.com/blog/rentabilidad-inmobiliaria-dubai.html): Yields por zona, neto frente a bruto, gastos que reducen el rendimiento y comparativa con España. Datos de mercado con fuente.
+
+
+## Fiscalidad y residencia
+
+- [Golden Visa de Emiratos: requisitos y cómo obtenerla](https://www.horizonteemirates.com/blog/golden-visa-emiratos-guia.html): Requisitos por inversión inmobiliaria, umbral desde 2M AED, qué incluye a la familia, plazos y qué pasa si vendes el inmueble.
+- [Modelo 720: cómo declarar tu inmueble de Dubai](https://www.horizonteemirates.com/blog/modelo-720-declarar-inmueble-dubai.html): Qué es, cuándo estás obligado (umbral de 50.000 €), qué pasa si no lo presentas, plazos y errores frecuentes. Para residentes en España.
+- [Cómo conseguir la residencia en Dubai: todas las vías](https://www.horizonteemirates.com/blog/residencia-en-dubai.html): Vías por inversión, empresa, empleo y Golden Visa, proceso paso a paso, Emirates ID, coste y por qué no es la residencia fiscal.
+- [Residencia fiscal en Emiratos para españoles](https://www.horizonteemirates.com/blog/residencia-fiscal-emiratos-espanoles.html): Qué es, cómo se obtiene, la regla de los 183 días, el certificado de residencia fiscal y la diferencia con la Golden Visa.
+
+
+## Vivir y operar en Emiratos
+
+- [Crear una empresa en Dubai: mainland o free zone (2026)](https://www.horizonteemirates.com/blog/crear-empresa-en-dubai.html): Mainland frente a free zone, tipos de licencia, costes reales, pasos, tiempos y errores frecuentes. Guía informativa 2026.
+- [Free zones de Emiratos comparadas: cuál elegir en 2026](https://www.horizonteemirates.com/blog/free-zones-emiratos-comparadas.html): IFZA, DMCC, Meydan, RAKEZ y más. Cómo elegir según actividad, coste y necesidad de visados. Guía práctica para hispanohablantes.
+- [Vivir en Dubai siendo español: coste de vida y guía](https://www.horizonteemirates.com/blog/vivir-en-dubai-espanol.html): Coste de vida real, vivienda, sanidad, educación, comunidad hispana, clima y seguridad. Guía honesta para quien valora mudarse.
+
+
+## Legal
+
+- [Aviso legal, privacidad y cookies](https://www.horizonteemirates.com/legal.html): Política de privacidad, aviso legal y cookies de Horizonte Emirates (Propulse SLU, Andorra): tratamiento de datos, encargados y derechos.
