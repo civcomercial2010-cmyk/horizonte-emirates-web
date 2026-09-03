@@ -67,21 +67,29 @@ plazo y un criterio de reversión acordados de antemano. Nuestro umbral sigue si
 CPL por debajo de 150 €. Si te parece, fijamos la ventana de evaluación y la revisamos
 con esa referencia.
 
-**4. Las páginas en blanco: buen aviso, y es un fallo real**
+**4. Las páginas en blanco: buen aviso, era un fallo real y ya está corregido**
 
-Lo he reproducido y localizado. El 68% de la altura de la home (11.336 px de 16.602)
-está oculto por CSS hasta que un script nuestro lo hace visible al hacer scroll. Si ese
-script no llega a ejecutarse, la página queda literalmente en blanco de la mitad hacia
-abajo.
+Lo reproduje y lo localicé. El 68% de la altura de la home (11.336 px de 16.602) estaba
+oculto por CSS hasta que un script nuestro lo hacía visible al hacer scroll. Si ese
+script no llegaba a ejecutarse, la página quedaba literalmente en blanco de la mitad
+hacia abajo.
 
-El detonante es de caché: el HTML se revalida en cada carga, pero el CSS y el
-JavaScript se sirven hasta 24 horas desde la caché del navegador, y estamos
+El detonante era de caché: el HTML se revalida en cada carga, pero el CSS y el
+JavaScript se sirven hasta 24 horas desde la caché del navegador, y estábamos
 desplegando cambios sin cambiar el número de versión del fichero. Resultado: HTML nuevo
-con script viejo. Por eso F5 no lo arregla y Ctrl+F5 sí.
+con script viejo. Por eso F5 no lo arreglaba y Ctrl+F5 sí.
 
-Lo corregimos por nuestro lado esta semana, en dos frentes: que la página sea legible
-aunque el script falle, y versionar bien los assets en cada despliegue. Gracias por
-detectarlo, porque llevaba tiempo ahí y no lo habíamos visto.
+Ya está desplegado el arreglo, en dos frentes: la página ahora es legible aunque el
+script falle (con una red de seguridad que la muestra entera si el JavaScript no
+responde en 3 segundos), y los assets vuelven a estar versionados de forma uniforme.
+Medido después del despliegue, bloqueando el script a propósito y recargando desde
+varios puntos de la página: 0% de pantalla en blanco, donde antes había un 68% de la
+página invisible.
+
+De paso apareció otra cosa: el contador del bloque de KPIs de la home seguía prometiendo
+48 horas de plazo cuando el resto del sitio promete 24. Corregido también.
+
+Gracias por detectarlo, porque llevaba tiempo ahí y no lo habíamos visto.
 
 Un saludo,
 Jesús
