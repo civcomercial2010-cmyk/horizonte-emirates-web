@@ -933,6 +933,9 @@ function calcROI(){
     threshold:[0,0.1],
   });
   document.querySelectorAll('.fade, .reveal-stagger').forEach(el=>io.observe(el));
+  // Avisa a boot.js de que el reveal esta en marcha: sin esta marca, a los 3 s
+  // de cargar la pagina el CSS muestra todo el contenido sin esperar al scroll.
+  document.documentElement.classList.add('reveal-ok');
 })();
 
 // ── KPI +334.000 - rodillos verticales (tragaperras)

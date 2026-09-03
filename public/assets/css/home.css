@@ -137,6 +137,20 @@ img{display:block;max-width:100%}
   opacity:1;
   transform:translate3d(0,0,0);
 }
+/* Sin JavaScript vivo no se oculta nada. boot.js pone html.js antes del primer
+   pintado y app.js anade reveal-ok al registrar el observer; si falta cualquiera
+   de las dos, el contenido se muestra ya. Antes de esto, el 68% de la altura de
+   la home quedaba invisible si app.js no llegaba a ejecutarse (2-sep-2026,
+   docs/auditorias/DIAGNOSTICO_DAYVO_2026-09-02.md). */
+html:not(.js) .fade,
+html:not(.js) .fade .rule,
+html:not(.js) .reveal-stagger,
+html:not(.js) .reveal-stagger > *{
+  opacity:1!important;
+  transform:none!important;
+  filter:none!important;
+  transition:none!important;
+}
 @media (prefers-reduced-motion:reduce){
   .fade,.fade .rule,.reveal-stagger,.reveal-stagger > *{
     opacity:1!important;
@@ -575,7 +589,10 @@ h1 em{font-style:italic;color:var(--gold)}
 .zone-yield-row--total dd{font-size:22px;color:var(--gold-text)}
 .zone-asterisk{font-family:var(--sans);font-size:14px;font-weight:600;color:var(--gold-text);vertical-align:super;line-height:0;margin-left:1px}
 .zones-footnote{margin:14px 0 0;font-size:12px;color:var(--muted);line-height:1.5}
-.zones-footnote a{color:var(--gold-text);text-decoration:underline}
+/* M39 - #9A7016 (--gold-text) da 3.81:1 sobre el fondo de esta sección (#f0ede5),
+   por debajo del 4.5:1 AA. Oscurecido solo aquí (5.6:1) sin tocar el token global,
+   que sí es AA en el resto de fondos donde se usa. */
+.zones-footnote a{color:#7C5810;text-decoration:underline}
 .zones-footnote--rak{margin-top:6px}
 
 /* Zonas apiladas A2: imagen+texto izquierda · tabla 3 cols derecha */

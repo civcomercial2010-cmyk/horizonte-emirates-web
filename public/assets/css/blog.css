@@ -54,6 +54,13 @@ img{display:block;max-width:100%}
 .btn-outline-w:hover{border-color:rgba(255,255,255,.75)}
 
 /* ── REVEAL ANIMATIONS ────────────────────────────────────── */
+/* Sin JavaScript vivo no se oculta nada: boot.js pone html.js antes del primer
+   pintado y blog.js anade reveal-ok al resolver el reveal. Si falta cualquiera
+   de las dos, el contenido se muestra ya en lugar de quedarse en blanco
+   (2-sep-2026, docs/auditorias/DIAGNOSTICO_DAYVO_2026-09-02.md). */
+html:not(.js) .fade,
+html:not(.js) .reveal-stagger,
+html:not(.js) .reveal-stagger > *{opacity:1!important;transform:none!important;transition:none!important}
 .fade{opacity:0;transform:translate3d(0,22px,0);transition:opacity .9s var(--ease-out-expo),transform .9s var(--ease-out-expo)}
 .fade.in{opacity:1;transform:none}
 .reveal-stagger > *{opacity:0;transform:translate3d(0,22px,0);transition:opacity .8s var(--ease-out-expo),transform .8s var(--ease-out-expo)}

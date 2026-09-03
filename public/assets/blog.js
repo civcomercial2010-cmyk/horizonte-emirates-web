@@ -38,6 +38,9 @@
   } else {
     revealEls.forEach(function (el) { el.classList.add('in'); });
   }
+  // Avisa a boot.js de que el reveal esta resuelto por cualquiera de las dos
+  // vias. Sin esta marca, a los 3 s el CSS muestra todo el contenido.
+  document.documentElement.classList.add('reveal-ok');
 
   /* ── FAQ accordion ── */
   var faqItems = [].slice.call(document.querySelectorAll('.faq-item'));
