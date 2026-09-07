@@ -1701,12 +1701,12 @@ ${waBtn}${firma}`,
     subject: `${n}, algunas opciones que podrían interesarle`,
     html: `<p>Hola ${n},</p>
 <p>Basándome en su perfil de <strong>${cap}</strong> y <strong>${obj}</strong>, he seleccionado tres opciones que podrían encajar bien.</p>
-<p>Dubai Marina/Business Bay: alrededor del 7-8% neto anual.</p>
-<p>Ras Al Khaimah (antes del Wynn): potencial de plusvalía del 20-30% desde 200.000€.</p>
-<p>Abu Dhabi (Aldar): 5-7% neto, más estable.</p>
+<p>Dubai Marina/Business Bay: alrededor del 7-8% bruto anual.</p>
+<p>Ras Al Khaimah (antes del Wynn): escenario orientativo de plusvalía del 20-30% desde 200.000€, sin resultados garantizados.</p>
+<p>Abu Dhabi (Aldar): 5-7% bruto, más estable.</p>
 <p>Si quiere que hablemos de alguna en detalle, podemos agendar 30 minutos por Calendly ${calL} o por WhatsApp.</p>
 ${waBtn}${firma}`,
-    text: `Hola ${n},\n\nBasándome en su perfil de ${cap} y ${obj}, he seleccionado tres opciones que podrían encajar bien.\n\nDubai Marina/Business Bay: alrededor del 7-8% neto anual.\nRas Al Khaimah (antes del Wynn): potencial de plusvalía del 20-30% desde 200.000€.\nAbu Dhabi (Aldar): 5-7% neto, más estable.\n\nSi quiere que hablemos de alguna en detalle, podemos agendar 30 minutos por Calendly ${calL} o por WhatsApp ${wa}.\n\nSaludos,\nEquipo Horizonte Emirates`,
+    text: `Hola ${n},\n\nBasándome en su perfil de ${cap} y ${obj}, he seleccionado tres opciones que podrían encajar bien.\n\nDubai Marina/Business Bay: alrededor del 7-8% bruto anual.\nRas Al Khaimah (antes del Wynn): escenario orientativo de plusvalía del 20-30% desde 200.000€, sin resultados garantizados.\nAbu Dhabi (Aldar): 5-7% bruto, más estable.\n\nSi quiere que hablemos de alguna en detalle, podemos agendar 30 minutos por Calendly ${calL} o por WhatsApp ${wa}.\n\nSaludos,\nEquipo Horizonte Emirates`,
   };
 
   if (code === 'A3') return {
@@ -1793,20 +1793,20 @@ ${waBtn}${calBtn}${firma}`,
 <table width="100%" cellpadding="12" cellspacing="0" border="0" style="margin:16px 0;border-collapse:collapse;font-size:14px">
   <tr style="background:#F8F6F1">
     <td style="border:1px solid #E0DBD1;font-weight:700;color:#0D1B2A;width:38%">Dubai Marina / JVC</td>
-    <td style="border:1px solid #E0DBD1;color:#3a3a3a">Entrada desde 15%. Entrega 2026–2027. Rentabilidad estimada <strong>7–8% neto</strong>.</td>
+    <td style="border:1px solid #E0DBD1;color:#3a3a3a">Entrada desde 15%. Entrega 2026-2027. Rentabilidad estimada <strong>7-8% bruto</strong>.</td>
   </tr>
   <tr>
     <td style="border:1px solid #E0DBD1;font-weight:700;color:#0D1B2A">RAK pre-apertura Wynn</td>
-    <td style="border:1px solid #E0DBD1;color:#3a3a3a">Mejor precio de entrada antes del evento 2027. Ticket desde 200.000€.</td>
+    <td style="border:1px solid #E0DBD1;color:#3a3a3a">Mejor precio de entrada antes del evento 2027. Ticket desde 200.000€. Escenario orientativo, sin resultados garantizados.</td>
   </tr>
   <tr style="background:#F8F6F1">
     <td style="border:1px solid #E0DBD1;font-weight:700;color:#0D1B2A">Abu Dhabi consolidado</td>
-    <td style="border:1px solid #E0DBD1;color:#3a3a3a">Rentabilidad inmediata. <strong>5–7% neto</strong>. Baja volatilidad.</td>
+    <td style="border:1px solid #E0DBD1;color:#3a3a3a">Rentabilidad inmediata. <strong>5-7% bruto</strong>. Baja volatilidad.</td>
   </tr>
 </table>
 <p>¿30 minutos para presentarle los números reales de cada opción?</p>
 ${calBtn}${waBtn}${firma}`,
-    text: `${sal} ${n},\n\nDisponible esta semana para ${cap} · ${obj}:\n- Dubai Marina/JVC: 7-8% neto\n- RAK pre-Wynn: máxima apreciación\n- Abu Dhabi: 5-7% neto, estable\n\n30 min para los números reales. ${cal} / WhatsApp ${wa}\n\nEquipo Horizonte Emirates`,
+    text: `${sal} ${n},\n\nDisponible esta semana para ${cap} · ${obj}:\n- Dubai Marina/JVC: 7-8% bruto\n- RAK pre-Wynn: máxima apreciación (escenario orientativo, sin garantía)\n- Abu Dhabi: 5-7% bruto, estable\n\n30 min para los números reales. ${cal} / WhatsApp ${wa}\n\nEquipo Horizonte Emirates`,
   };
 
   if (code === 'B6') return {
@@ -1858,9 +1858,9 @@ ${waBtn}${firma}`,
     <th style="border:1px solid #E0DBD1;background:#0D1B2A;text-align:left;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#C4942A;font-weight:600;padding:10px 14px">Dubai</th>
   </tr>
   <tr>
-    <td style="border:1px solid #E0DBD1;color:#3a3a3a">Rentabilidad neta alquiler</td>
-    <td style="border:1px solid #E0DBD1;color:#888">2,5 – 4%</td>
-    <td style="border:1px solid #E0DBD1;font-weight:700;color:#1A1A1A">6 – 9%</td>
+    <td style="border:1px solid #E0DBD1;color:#3a3a3a">Rentabilidad bruta alquiler</td>
+    <td style="border:1px solid #E0DBD1;color:#888">3-5%</td>
+    <td style="border:1px solid #E0DBD1;font-weight:700;color:#1A1A1A">6-12%</td>
   </tr>
   <tr style="background:#F8F6F1">
     <td style="border:1px solid #E0DBD1;color:#3a3a3a">Impuesto sobre rentas</td>
@@ -1869,19 +1869,20 @@ ${waBtn}${firma}`,
   </tr>
   <tr>
     <td style="border:1px solid #E0DBD1;color:#3a3a3a">Impuesto sobre plusvalías</td>
-    <td style="border:1px solid #E0DBD1;color:#888">19 – 28%</td>
+    <td style="border:1px solid #E0DBD1;color:#888">19-28%</td>
     <td style="border:1px solid #E0DBD1;font-weight:700;color:#1A1A1A">0%</td>
   </tr>
   <tr style="background:#F8F6F1">
-    <td style="border:1px solid #E0DBD1;color:#3a3a3a">Riesgo de ocupación</td>
-    <td style="border:1px solid #E0DBD1;color:#888">Alto / lento desahucio</td>
-    <td style="border:1px solid #E0DBD1;font-weight:700;color:#1A1A1A">Nulo bajo RERA</td>
+    <td style="border:1px solid #E0DBD1;color:#3a3a3a">Riesgo de ocupación ilegal</td>
+    <td style="border:1px solid #E0DBD1;color:#888">Alto, procesos lentos</td>
+    <td style="border:1px solid #E0DBD1;font-weight:700;color:#1A1A1A">Muy bajo, marco RERA</td>
   </tr>
 </table>
+<p style="font-size:12px;color:#888">Cifras orientativas de mercado (JLL, Knight Frank, DLD). La fiscalidad depende de su situación personal.</p>
 <p>No estoy diciendo que Dubai sea para todo el mundo. Estoy diciendo que estos números merecen ser comparados con criterio.</p>
 <p>¿Quiere la comparativa completa adaptada a su perfil? Responda a este email.</p>
 ${firma}`,
-    text: `${sal} ${n},\n\nEspaña: 2,5-4% neto · hasta 45% IRPF · riesgo de ocupación alto\nDubai: 6-9% neto · 0% impuestos · RERA protege al propietario\n\n¿Comparativa para su perfil? Responda o WhatsApp ${wa}\n\nEquipo Horizonte Emirates`,
+    text: `${sal} ${n},\n\nEspaña: 3-5% bruto · hasta 45% IRPF · riesgo de ocupación ilegal alto\nDubai: 6-12% bruto · 0% impuestos · RERA protege al propietario\n\nCifras orientativas de mercado (JLL, Knight Frank, DLD). La fiscalidad depende de su situación personal.\n\n¿Comparativa para su perfil? Responda o WhatsApp ${wa}\n\nEquipo Horizonte Emirates`,
   };
 
   if (code === 'C3') return {
@@ -1891,10 +1892,11 @@ ${firma}`,
 <ol style="margin:16px 0;padding-left:20px;color:#3a3a3a;line-height:2">
   <li><strong>Selección de activos.</strong> Presentamos oportunidades verificadas adaptadas a su perfil, no catálogos genéricos.</li>
   <li><strong>Due diligence en RERA.</strong> Verificamos el promotor y la situación legal de cada proyecto antes de presentarlo.</li>
-  <li><strong>Reserva + SPA.</strong> Depósito inicial (5.000–10.000 AED) y firma del Sales Purchase Agreement.</li>
+  <li><strong>Reserva + SPA.</strong> Depósito inicial (5.000-10.000 AED) y firma del Sales Purchase Agreement.</li>
   <li><strong>Pagos escalonados.</strong> En off-plan: típicamente 30/30/40 hasta entrega. Sin inmovilizar capital completo.</li>
   <li><strong>Obligaciones en ${pais}.</strong> Modelo 720 a partir de 50.000€ + tributar rentas en IRPF. <em>Consulte asesor fiscal internacional, nosotros no lo prestamos.</em></li>
 </ol>
+<p style="font-size:12px;color:#888">Pasos orientativos que pueden variar según proyecto y promotor.</p>
 <p>¿Alguna duda sobre alguno de estos pasos?</p>
 ${waBtn}${firma}`,
     text: `${sal} ${n},\n\nProceso de compra en Dubai desde ${pais}:\n1. Selección verificada\n2. Due diligence RERA\n3. Depósito + SPA\n4. Pagos escalonados 30/30/40\n5. ${pais}: Modelo 720 + IRPF rentas\n\nPasos orientativos que pueden variar según proyecto y promotor.\n\nDudas: WhatsApp ${wa}\n\nEquipo Horizonte Emirates`,
@@ -1907,20 +1909,20 @@ ${waBtn}${firma}`,
 <p style="background:#F8F6F1;border-left:3px solid #C4942A;padding:16px 20px;margin:20px 0;font-size:15px;color:#2a3a4a;line-height:1.7">
   <strong>Perfil:</strong> Residente en España, 47 años. Capital: 200.000€. Objetivo: diversificación + renta pasiva.<br><br>
   <strong>Decisión:</strong> Dos activos off-plan en Dubai (Business Bay + RAK) con entrada combinada de 60.000€ (30%). El resto en cuotas hasta la entrega en 2026.<br><br>
-  <strong>Proyección:</strong> 7,2% neto en alquiler · +18–22% plusvalía en RAK pre-Wynn.<br><br>
+  <strong>Proyección:</strong> 7,2% bruto en alquiler · +18-22% plusvalía en RAK pre-Wynn.<br><br>
   <strong>Proceso:</strong> 6 semanas · 2 videoconferencias + visita presencial de 3 días · Todo en español, sin coste.
 </p>
 <p>¿Hay opciones similares para su perfil? Responda aquí o escríbame por WhatsApp.</p>
 <p><em style="font-size:12px;color:#888">Datos orientativos. Las rentabilidades futuras no están garantizadas.</em></p>
 ${waBtn}${firma}`,
-    text: `${sal} ${n},\n\nCaso real: inversor español, 200k€, entrada 60k€ en dos off-plan.\nProyección: 7,2% neto alquiler + 18-22% plusvalía RAK.\n6 semanas, todo en español.\n\n¿Opciones similares? WhatsApp ${wa}\n(Datos orientativos, no garantizados)\n\nEquipo Horizonte Emirates`,
+    text: `${sal} ${n},\n\nCaso real: inversor español, 200k€, entrada 60k€ en dos off-plan.\nProyección: 7,2% bruto alquiler + 18-22% plusvalía RAK.\n6 semanas, todo en español.\n\n¿Opciones similares? WhatsApp ${wa}\n(Datos orientativos, no garantizados)\n\nEquipo Horizonte Emirates`,
   };
 
   if (code === 'C5') return {
     subject: `${n}, nota sobre Ras Al Khaimah y el calendario del mercado`,
     html: `<p>${sal} ${n},</p>
-<p>En 2027 abre en Ras Al Khaimah el <strong>primer resort-casino de la región MENA</strong>, desarrollado por Wynn Resorts. Los activos comprados hoy (antes del evento) tienen proyecciones de apreciación del <strong>20–35%</strong> antes de la apertura.</p>
-<p>La ventana de entrada a precios actuales se está cerrando de forma progresiva e irreversible.</p>
+<p>En 2027 abre en Ras Al Khaimah el <strong>primer resort-casino de la región MENA</strong>, desarrollado por Wynn Resorts. Los activos comprados hoy (antes del evento) tienen proyecciones de apreciación del <strong>20-35%</strong> antes de la apertura, un escenario orientativo y sin resultados garantizados.</p>
+<p>La ventana de entrada a precios actuales se está cerrando de forma progresiva.</p>
 <p>Para un perfil como el suyo (<strong>${cap}</strong>, <strong>${obj}</strong>), RAK puede ser la pieza de mayor potencial de apreciación en un portfolio UAE bien estructurado.</p>
 <p>¿Le interesa ver las opciones de entrada que tenemos disponibles ahora?</p>
 ${waBtn}${calBtn}${firma}`,
@@ -1946,9 +1948,9 @@ ${calBtn}${waBtn}${firma}`,
     html: `<p>${sal} ${n},</p>
 <p>Actualización breve del mercado para su zona de interés:</p>
 <ul style="margin:12px 0;padding-left:20px;color:#3a3a3a;line-height:1.8">
-  <li>Zonas Prime (Marina, Downtown, Palm): <strong>+4–6%</strong> en lo que va de 2026</li>
+  <li>Zonas Prime (Marina, Downtown, Palm): <strong>+4-6%</strong> en lo que va de 2026</li>
   <li>RAK: sigue siendo la zona con mayor potencial de apreciación antes de 2027</li>
-  <li>Off-plan: la opción más accesible para capital inicial de 150.000–300.000€</li>
+  <li>Off-plan: la opción más accesible para capital inicial de 150.000-300.000€</li>
 </ul>
 <p>Para su perfil (<strong>${cap} · ${obj}</strong>), tenemos activos disponibles que encajan con lo que nos indicó en su consulta.</p>
 <p>¿Se los presento? Responda a este email o escríbame por WhatsApp.</p>
@@ -1962,7 +1964,7 @@ ${waBtn}${firma}`,
 <p>Hace tres meses nos dejó su consulta. No sé si el momento fue el adecuado entonces, ni si lo es ahora.</p>
 <p>Lo que sí sé es que el mercado ha seguido moviéndose:</p>
 <ul style="margin:12px 0;padding-left:20px;color:#3a3a3a;line-height:1.8">
-  <li>Off-plan en zonas emergentes: <strong>+8–12%</strong> en 90 días</li>
+  <li>Off-plan en zonas emergentes: <strong>+8-12%</strong> en 90 días</li>
   <li>Ventana pre-Wynn en RAK: reduciéndose</li>
   <li>Demanda de alquiler en Dubai Prime: en máximos históricos</li>
 </ul>
