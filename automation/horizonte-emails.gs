@@ -67,6 +67,19 @@ const CONFIG = {
    * false → tampoco sale este y el lead no recibe absolutamente nada hasta que se le escriba.
    */
   AUTO_SEND_WELCOME: true,
+  /**
+   * CAPA DE NURTURING AUTOMÁTICO (2026-09-07), independiente del interruptor anterior.
+   * Motivo: Marc contacta por WhatsApp y muchos leads no contestan; no hay integración
+   * con WATI (pendiente) para saber si hubo respuesta, así que no hay señal que consultar.
+   * En su lugar, este interruptor reactiva SOLO la parte de la cola que no es primer
+   * contacto (nunca A1/B1/C1: esos duplicarían el M1 que ya se escribe a mano) para
+   * leads con Consent marketing: SI. El kit manual M1-M11 sigue exactamente igual.
+   * false = como ahora: nada sale solo salvo W0.
+   * true  = tras activarlo, ejecutar UNA vez activarNurtureAutomatico() (ver más abajo,
+   *         cerca de reanudarEnvioAutomatico). Sin eso, el interruptor no hace nada:
+   *         la cola sigue en «pausado-manual» hasta que esa función la reactiva.
+   */
+  AUTO_SEND_NURTURE: false,
   /** Persona que firma los correos (el acuse de recibo va en su nombre). */
   ASESOR_FIRMA: 'Jesús Ibáñez',
   /**
@@ -1269,6 +1282,59 @@ function reanudarEnvioAutomatico() {
   Logger.log('reanudarEnvioAutomatico: reactivados=' + reactivados + ' · cancelados por vencidos=' + cancelados);
 }
 
+/**
+ * Activa SOLO la capa de nurturing automático (CONFIG.AUTO_SEND_NURTURE), sin tocar
+ * el kit manual M1-M11 ni reactivar A1/B1/C1 (el primer contacto sigue siendo manual).
+ * Pasos: 1) poner CONFIG.AUTO_SEND_NURTURE = true en CONFIG  2) ejecutar esta función
+ * una sola vez. Para volver a pausar: CONFIG.AUTO_SEND_NURTURE = false (processQueue
+ * deja de enviar nada de esta capa al instante, aunque queden ítems en «pendiente»).
+ *
+ * Qué hace, ítem por ítem de la hoja Cola:
+ *   - Si es A1/B1/C1 (primer contacto): se ignora siempre. Sigue en «pausado-manual».
+ *   - Si el lead no tiene «Consent marketing: SI»: se ignora (RGPD, MAILS-MANUALES §1).
+ *     Sigue en «pausado-manual», visible para retomarlo a mano si hace falta.
+ *   - Si ya venció su fecha (el lead lleva tiempo sembrado en la cola, antes de activar
+ *     esto): se cancela en vez de mandarlo de golpe, mismo criterio que
+ *     reanudarEnvioAutomatico().
+ *   - Si no: pasa a «pendiente» y processQueue() lo envía en su próxima pasada horaria.
+ */
+function activarNurtureAutomatico() {
+  if (CONFIG.AUTO_SEND_NURTURE !== true) {
+    Logger.log('activarNurtureAutomatico: CONFIG.AUTO_SEND_NURTURE sigue en false. Cámbialo a true y vuelve a ejecutar.');
+    return;
+  }
+  const qSh = getSheet('Cola');
+  const lSh = getSheet('Leads');
+  const qData = qSh.getDataRange().getValues();
+  const lData = lSh.getDataRange().getValues();
+
+  // Columna 27 (índice 26) = «Consent marketing», ver initSheets().
+  const consentByLead = {};
+  for (let i = 1; i < lData.length; i++) consentByLead[lData[i][0]] = lData[i][26];
+
+  const now = new Date();
+  let reactivados = 0, sinConsentimiento = 0, cancelados = 0;
+  for (let i = 1; i < qData.length; i++) {
+    const [leadId, emailCode, scheduledAt, status] = qData[i];
+    if (status !== 'pausado-manual') continue;
+    if (isWelcomeSequenceEmail(emailCode)) continue; // A1/B1/C1: nunca por esta capa
+
+    if (consentByLead[leadId] !== 'SI') { sinConsentimiento++; continue; }
+
+    const when = new Date(scheduledAt);
+    if (!isNaN(when) && when > now) {
+      qSh.getRange(i + 1, 4).setValue('pendiente');
+      reactivados++;
+    } else {
+      qSh.getRange(i + 1, 4).setValue('cancelado (nurture, vencido)');
+      cancelados++;
+    }
+  }
+  Logger.log('activarNurtureAutomatico: reactivados=' + reactivados +
+    ' · sin consentimiento (siguen pausados)=' + sinConsentimiento +
+    ' · cancelados por vencidos=' + cancelados);
+}
+
 /** Fin de semana por nombre localizado (respaldo si «u» ISO no está disponible en el runtime). */
 function isWeekendByLocaleName(date, tz) {
   const w = Utilities.formatDate(date, tz, 'EEEE')
@@ -1351,9 +1417,11 @@ function isWelcomeSequenceEmail(code) {
  */
 function processQueue(opts) {
   opts = opts || {};
-  // Interruptor maestro: con envío manual no sale ningún correo, ni el de bienvenida.
-  if (CONFIG.AUTO_SEND_LEADS === false) {
-    Logger.log('processQueue: envío automático desactivado (CONFIG.AUTO_SEND_LEADS=false). Los correos se envían a mano.');
+  // Dos interruptores independientes: AUTO_SEND_LEADS (kit completo, A1 incluido) y
+  // AUTO_SEND_NURTURE (solo A2+/B2+/C2+, ver activarNurtureAutomatico). Si los dos
+  // están apagados, no sale nada por aquí y todo se escribe a mano.
+  if (CONFIG.AUTO_SEND_LEADS !== true && CONFIG.AUTO_SEND_NURTURE !== true) {
+    Logger.log('processQueue: envío automático desactivado (AUTO_SEND_LEADS y AUTO_SEND_NURTURE en false). Los correos se envían a mano.');
     return;
   }
   const qSheet = getSheet('Cola');
@@ -1402,7 +1470,9 @@ function processQueue(opts) {
       if (!CONFIG.TEST_MODE) {
         const bypassHours = CONFIG.BUSINESS_HOURS_ONLY !== false && !inWin &&
           Boolean(opts.immediateWelcomeAfterPoll) && isWelcome;
-        sendEmail(emailCode, lead, { bypassBusinessHours: bypassHours });
+        // nurture:true solo importa cuando AUTO_SEND_LEADS está en false (caso de hoy):
+        // es lo que permite que la capa de nurturing envíe sin reactivar el kit completo.
+        sendEmail(emailCode, lead, { bypassBusinessHours: bypassHours, nurture: true });
       } else {
         Logger.log('[TEST] ' + emailCode + ' → ' + lead.email);
       }
@@ -1438,10 +1508,14 @@ function buildEmailPlainBody(tplText) {
  * @param {boolean} [opts.bypassBusinessHours]: true: prueba manual (simulateLeadEmail) o bienvenida inmediata tras form (pollGmail).
  * @param {boolean} [opts.manual]: true: envío pedido a mano por el asesor (simulateLeadEmail).
  * @param {boolean} [opts.welcome]: true: acuse de recibo W0, permitido por CONFIG.AUTO_SEND_WELCOME.
+ * @param {boolean} [opts.nurture]: true: envío de la capa de nurturing (A2+/B2+/C2+),
+ *   permitido por CONFIG.AUTO_SEND_NURTURE aunque AUTO_SEND_LEADS siga en false.
  */
 function sendEmail(code, lead, opts) {
   opts = opts || {};
-  const allowed = opts.manual || (opts.welcome && CONFIG.AUTO_SEND_WELCOME !== false);
+  const allowed = opts.manual ||
+    (opts.welcome && CONFIG.AUTO_SEND_WELCOME !== false) ||
+    (opts.nurture && CONFIG.AUTO_SEND_NURTURE === true);
   if (CONFIG.AUTO_SEND_LEADS === false && !allowed) {
     throw new Error('Envío automático desactivado (CONFIG.AUTO_SEND_LEADS=false). Usa las plantillas de automation/MAILS-MANUALES.md.');
   }

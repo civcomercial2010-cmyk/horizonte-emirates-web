@@ -277,6 +277,41 @@ toques, no se pasan a la cadencia M8-E/M9 de reactivación trimestral.
 
 ---
 
+## 3 quater. Nurturing automático de leads que no contestan (A2+/B2+/C2+)
+
+**Qué es:** una capa automática, independiente del kit manual de arriba, para cuando
+Marc escribe por WhatsApp y el lead no contesta. No hay integración con WATI todavía,
+así que no hay forma de saber si hubo respuesta: en vez de eso, esta capa manda por
+correo, en una cadencia ya espaciada en días, el contenido A2 en adelante / B2 en
+adelante / C2 en adelante de cada tier (comparativas, caso real, RAK/Wynn, actualización
+de mercado, reactivación) revisado en P3. **Nunca envía A1/B1/C1**: eso duplicaría el
+M1 que ya se escribe a mano.
+
+**Requisito obligatorio:** solo a leads con `Consent marketing: SI`. Sin ese
+consentimiento, un correo periódico no solicitado sería contenido comercial sin base
+legal (misma regla del apartado 1).
+
+**Cómo activarlo** (`horizonte-emails.gs`, editor de Apps Script):
+1. Cambiar `CONFIG.AUTO_SEND_NURTURE` de `false` a `true`.
+2. Ejecutar una vez la función `activarNurtureAutomatico()`. A partir de ahí lo hace
+   solo el trigger horario de `processQueue()` que ya existe.
+
+**Cómo pausarlo:** volver a poner `CONFIG.AUTO_SEND_NURTURE` en `false`. Deja de enviar
+al instante, aunque queden ítems marcados «pendiente» en la hoja Cola.
+
+**Cómo parar la cadencia para un lead concreto** (en cuanto responde, agenda llamada o
+avanza por cualquier vía): marcarlo `cerrado` en la columna Estado de la hoja Leads, o
+ejecutar `markClosed('email@ejemplo.com')` en Apps Script. `processQueue()` ya cancela
+automáticamente cualquier correo pendiente de un lead `cerrado` o `baja`.
+
+**El riesgo que hay que vigilar:** al no haber señal de WhatsApp, un lead con el que
+Marc sigue conversando activamente pero que Jesús no ha marcado `cerrado` puede recibir
+igualmente un correo de esta capa. Se mitiga con el tono (informativo, nunca "¿hablamos
+ahora?") y con el hábito de marcar `cerrado` en cuanto hay conversación real, no solo al
+cerrar la venta.
+
+---
+
 ## 4. M1 · Primer contacto
 
 ### M1-A · Tier A (capital listo, plazo corto)
