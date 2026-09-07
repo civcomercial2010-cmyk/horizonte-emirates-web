@@ -375,6 +375,34 @@ function notifyAgentNewLead(leadId, lead) {
   Logger.log('notifyAgentNewLead: aviso enviado para ' + leadId + ' (' + lead.email + ')');
 }
 
+/**
+ * A-103/A-209: avisa de una descarga nueva de la guía fiscal. Antes de esto, la única
+ * forma de enterarse era leer a mano el correo «[Descarga guia fiscal] ...» en Gmail.
+ * No dispara ningún envío al lead (AUTO_SEND_LEADS sigue en false): el nurturing de
+ * 2 correos (automation/MAILS-MANUALES.md) se manda a mano tras leer este aviso.
+ */
+function notifyAgentNewDownload(d) {
+  if (!CONFIG.NOTIFY_AGENT_ON_NEW_LEAD) return;
+  if (!d || !d.email) return;
+
+  const subject = '📄 Nueva descarga guía fiscal · ' + d.email;
+  const body = [
+    'Email: ' + d.email,
+    'Fecha: ' + new Date().toLocaleString('es-ES'),
+    'Origen: guía fiscal (home, formulario de 1 campo)',
+    '',
+    'Siguiente paso (A-103/A-209): enviar el email de nurturing 1 en 24-48h',
+    '(plantillas "Descarga guía, email 1/2" en automation/MAILS-MANUALES.md).',
+    'Marcar el estado en la hoja «Descargas» tras enviarlo.',
+  ].join('\n');
+
+  GmailApp.sendEmail(CONFIG.AGENT_BRIEFING_EMAIL, subject, body, {
+    name:    CONFIG.ASESOR_NOMBRE,
+    replyTo: CONFIG.REPLY_TO,
+  });
+  Logger.log('notifyAgentNewDownload: aviso enviado (' + d.email + ')');
+}
+
 function extractMeetingLinkFromEvent(event) {
   const direct = event.getHangoutLink && event.getHangoutLink();
   if (direct) return direct;
@@ -599,6 +627,17 @@ function isHorizonteWeb3Lead(subject, body) {
   return false;
 }
 
+/**
+ * true si el aviso corresponde a una descarga de la guía fiscal (formulario de 1 solo
+ * campo en #guia-fiscal, ver app.js). Deliberadamente NO coincide con isHorizonteWeb3Lead:
+ * así el mismo email puede completar después el formulario largo sin chocar con
+ * leadExists(), que solo mira la hoja Leads (comentario de app.js sobre por qué el
+ * asunto evita el patrón «[X|Npts]»/«Lead HE»).
+ */
+function isGuiaDownload(subject) {
+  return /^\[Descarga guia fiscal\]/i.test(String(subject || '').trim());
+}
+
 function pollGmail() {
   PropertiesService.getScriptProperties().setProperty('HE_LAST_POLL_TS', String(Date.now())); // M08, heartbeat para healthCheck
   let threads = GmailApp.search(CONFIG.POLL_QUERY, 0, 50);
@@ -637,6 +676,29 @@ function pollGmail() {
       const subject = msg.getSubject();
       const body    = getMessageBodyForLeadParse(msg);
       Logger.log('pollGmail: FROM=' + msg.getFrom() + ' | SUBJECT=' + subject);
+
+      // A-209 (parte 1/3): las descargas de la guía fiscal no son leads del funnel
+      // principal (ver isGuiaDownload). Se registran en su propia hoja «Descargas»
+      // para dejar de perderse, sin tocar isHorizonteWeb3Lead ni leadExists().
+      if (isGuiaDownload(subject)) {
+        const descarga = parseLeadFromEmail(body, subject);
+        if (descarga && descarga.email) {
+          if (!descargaExists(descarga.email)) {
+            saveDescarga(descarga);
+            try { notifyAgentNewDownload(descarga); } catch (nErr) {
+              Logger.log('pollGmail: fallo al avisar de la descarga de ' + descarga.email + ': ' + nErr.toString());
+            }
+            Logger.log('✓ descarga guía fiscal: ' + descarga.email);
+          } else {
+            Logger.log('= descarga guía fiscal repetida: ' + descarga.email);
+          }
+        } else {
+          Logger.log('pollGmail: descarga de guía sin email parseable: ' + subject);
+        }
+        thread.addLabel(label);
+        msg.markRead();
+        return;
+      }
 
       // Verificar que es un lead de Horizonte Emirates
       const isHE = isHorizonteWeb3Lead(subject, body);
@@ -1003,6 +1065,52 @@ function recuperarLeadsPerdidos(days) {
     ' | ya existían=' + yaExistian + ' | saltados=' + saltados);
 }
 
+/**
+ * A-209: backfill de descargas de la guía fiscal que pollGmail() venía descartando
+ * como «saltados» antes de existir la rama isGuiaDownload. Ejecutar UNA vez a mano
+ * desde el editor de Apps Script con un lookback que cubra el 12-ago-2026 (fecha del
+ * cambio a formulario de 1 campo con entrega inmediata).
+ * Ej.: recuperarDescargasPerdidas(30)
+ */
+function recuperarDescargasPerdidas(days) {
+  const lookback = Math.max(1, parseInt(days, 10) || 30);
+  const threads = GmailApp.search('from:web3forms.com newer_than:' + lookback + 'd', 0, 100);
+  sortThreadsByLatestMessage(threads);
+
+  const label = ensureGmailLabel(CONFIG.LABEL_PROCESADO);
+  let guardadas = 0, yaExistian = 0, saltados = 0;
+
+  threads.forEach(thread => {
+    const msg = getLatestThreadMessage(thread);
+    if (!msg) return;
+
+    const subject = msg.getSubject();
+    if (!isGuiaDownload(subject)) { saltados++; return; }
+
+    const body    = getMessageBodyForLeadParse(msg);
+    const descarga = parseLeadFromEmail(body, subject);
+    if (!descarga || !descarga.email) {
+      Logger.log('recuperarDescargasPerdidas: no parseable · ' + subject);
+      saltados++;
+      return;
+    }
+
+    if (descargaExists(descarga.email)) {
+      thread.addLabel(label);
+      yaExistian++;
+      return;
+    }
+
+    saveDescarga(descarga);
+    thread.addLabel(label);
+    guardadas++;
+    Logger.log('✓ descarga recuperada: ' + descarga.email);
+  });
+
+  Logger.log('recuperarDescargasPerdidas RESUMEN → guardadas=' + guardadas +
+    ' | ya existían=' + yaExistian + ' | saltados=' + saltados);
+}
+
 // ══════════════════════════════════════════════════════════════
 // 3. GOOGLE SHEETS: Leads y Cola
 // ══════════════════════════════════════════════════════════════
@@ -1016,6 +1124,35 @@ function leadExists(email) {
     if ((data[i][2] || '').toString().toLowerCase() === email.toLowerCase()) return true;
   }
   return false;
+}
+
+/**
+ * A-209 (parte 2/3): hoja «Descargas», independiente de «Leads». leadExists() no la
+ * consulta, así que un email que ya descargó la guía puede completar después el
+ * formulario largo sin quedar bloqueado por duplicado.
+ */
+function descargaExists(email) {
+  const sh = getSheet('Descargas');
+  if (!sh) return false;
+  const data = sh.getDataRange().getValues();
+  for (let i = 1; i < data.length; i++) {
+    if ((data[i][0] || '').toString().toLowerCase() === String(email || '').toLowerCase()) return true;
+  }
+  return false;
+}
+
+function saveDescarga(d) {
+  getSheet('Descargas').appendRow([
+    d.email,
+    new Date(),
+    'Guía fiscal (home)',
+    'pendiente-email-1',
+    '',
+    d.utm_source   || '',
+    d.utm_medium   || '',
+    d.utm_campaign || '',
+    d.cons_marketing || '',
+  ]);
 }
 
 /** Compacta el teléfono para Sheets: quita espacios y separadores (+34 600 123 456 → +34600123456). */
@@ -1039,6 +1176,10 @@ function saveLead(data) {
   const now   = new Date();
   const phone = normalizeTelefono(data.telefono) || '';
   const sh    = getSheet('Leads');
+  // A-209 (parte 3/3): contexto no bloqueante para el guion de venta. No afecta a
+  // leadExists() (que solo mira «Leads»), así que no reintroduce el bloqueo de duplicados
+  // que motivó excluir las descargas del pipeline principal.
+  const notaDescarga = descargaExists(data.email) ? 'Ya descargó la guía fiscal antes de este formulario.' : '';
   sh.appendRow([
     id,
     data.nombre,
@@ -1056,7 +1197,7 @@ function saveLead(data) {
     data.origen      || 'Formulario web',
     now,
     'activo',
-    '',
+    notaDescarga,
     data.utm_source  || '',
     data.utm_medium  || '',
     data.utm_campaign|| '',
@@ -1880,7 +2021,17 @@ function initSheets() {
     qsh.getRange('1:1').setFontWeight('bold').setBackground('#0D1B2A').setFontColor('#ffffff');
   }
 
-  Logger.log('✓ Hojas inicializadas: Leads + Cola');
+  // A-209: descargas de la guía fiscal (formulario de 1 campo), separadas de Leads
+  // a propósito. Ver isGuiaDownload/descargaExists/saveDescarga.
+  let dsh = ss.getSheetByName('Descargas') || ss.insertSheet('Descargas');
+  if (dsh.getLastRow() === 0) {
+    dsh.appendRow(['Email','Fecha','Origen','Estado nurturing','Nota',
+                   'UTM Source','UTM Medium','UTM Campaign','Consent marketing']);
+    dsh.setFrozenRows(1);
+    dsh.getRange('1:1').setFontWeight('bold').setBackground('#0D1B2A').setFontColor('#ffffff');
+  }
+
+  Logger.log('✓ Hojas inicializadas: Leads + Cola + Descargas');
 }
 
 /**

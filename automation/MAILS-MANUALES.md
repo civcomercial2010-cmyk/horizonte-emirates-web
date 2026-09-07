@@ -109,6 +109,8 @@ puntúa el tier y avisa al asesor. Lo que ya no hace es escribir al lead. Eso se
 | M9 | 45 a 90 días de silencio (solo con consentimiento de marketing) | Reabrir con una razón real |
 | M10 | Cuarto toque sin respuesta | Cerrar con elegancia y dejar la puerta abierta |
 | **M11** | **Segundo o tercer toque, o cuando pide más documentación** | **La visita a Emiratos: es la palanca más fuerte** |
+| **D1** | **24 a 48 h después de descargar la guía fiscal (hoja Descargas, no CRM de Leads)** | **Aportar valor real, sin pedir nada todavía** |
+| **D2** | **4 a 5 días después de D1, sin respuesta** | **Invitar al análisis completo o a la llamada** |
 
 ---
 
@@ -147,6 +149,88 @@ lead no ha leído esa exigencia, así que un retraso puntual no le deja a usted 
 **Para verlo antes de que lo reciba un lead:** ejecutar `previewWelcome()` en Apps Script (lo
 escribe en el registro, sin enviar nada) o `testWelcomeToSelf()` (lo envía a su propio buzón tal
 como llega, con la plantilla de marca).
+
+---
+
+## 3 ter. D1/D2 · Nurturing de descargas de la guía fiscal (A-103/A-209)
+
+**Quién los recibe:** solo el email que dejó al descargar la guía fiscal desde la home
+(`#guia-fiscal`, un solo campo). No es un lead del CRM: vive en la hoja **Descargas**
+del Sheet, no en **Leads**, y por eso no tiene nombre, capital, objetivo ni país. Si
+después completa el formulario largo, ahí sí se le trata con el M1 correspondiente
+(la ficha de Leads lleva la nota "Ya descargó la guía fiscal antes de este formulario").
+
+**Disparador:** el aviso `📄 Nueva descarga guía fiscal · [email]` de
+`notifyAgentNewDownload()`. Al enviar D1, marcar `enviado-1` en la columna **Estado
+nurturing** de la hoja Descargas; al enviar D2, `enviado-2`. Si responde o completa el
+formulario largo antes de D2, no se manda D2.
+
+**Por qué solo dos correos y sin presión:** es un contacto en frío que ni siquiera ha
+dicho su nombre. El objetivo no es cerrar nada, es que la segunda vez que oiga hablar de
+Horizonte Emirates no sea la primera.
+
+### D1 · A las 24-48 h de la descarga
+
+**Asunto:** `Un par de cosas que la guía no llega a explicar`
+
+```text
+Hola,
+
+Soy Jesús Ibáñez, de Horizonte Emirates. Le escribo porque hace un par de días
+descargó la guía fiscal sobre invertir en Dubai siendo residente en España.
+
+Dos matices que en un PDF general no caben porque dependen de cada caso:
+
+1. El modelo 720 no se declara por tener el inmueble, se declara si su valor
+   supera el umbral, y hay un plazo concreto para no incurrir en sanción.
+2. El convenio de doble imposición evita pagar dos veces, pero en la práctica el
+   crédito fiscal casi nunca compensa el 100 por cien: conviene saberlo antes de
+   hacer números, no después.
+
+Si quiere, se lo explico aplicado a su caso concreto en una llamada corta de 20
+minutos, sin ningún compromiso. Y si por ahora solo quería informarse, ninguna
+prisa: la guía queda ahí para cuando la necesite.
+
+Un saludo,
+Jesús Ibáñez
+Horizonte Emirates
+hola@horizonteemirates.com · WhatsApp +971 55 472 2025
+
+Horizonte Emirates no presta asesoramiento fiscal ni jurídico. La información es orientativa.
+```
+
+### D2 · A los 4-5 días, sin respuesta a D1
+
+**Asunto:** `¿Sigue mirando Dubai o lo dejamos aquí?`
+
+```text
+Hola,
+
+Le escribí hace unos días a raíz de la guía fiscal que descargó. No he sabido nada
+y lo entiendo: a veces uno descarga algo para leerlo más adelante y ahí se queda.
+
+Le dejo dos caminos, sin ningún compromiso en ninguno de los dos:
+
+- Si quiere ver números concretos (rentabilidad, plan de pagos, comparativa por
+  zona), aquí puede pedir un análisis con su capital y objetivo:
+  https://www.horizonteemirates.com/#guia-fiscal
+- Si prefiere hablar antes de rellenar nada, veinte minutos con Marc, nuestro
+  socio en Dubai: https://calendly.com/hola-horizonteemirates/llamada-estrategica-horizonte-emirates-30-minutos
+
+Y si ya no le interesa, no hace falta que me responda para decírmelo: no vuelvo a
+escribirle por este asunto.
+
+Un saludo,
+Jesús Ibáñez
+Horizonte Emirates
+hola@horizonteemirates.com · WhatsApp +971 55 472 2025
+```
+
+**Nota de RGPD:** estos dos correos se justifican por el interés legítimo de responder
+a quien pidió expresamente la guía (art. 6.1.f RGPD), no por el consentimiento de
+marketing del formulario largo (que este contacto nunca ha marcado, porque no lo ha
+visto). Por eso van sin contenido comercial de proyectos concretos y se paran en dos
+toques, no se pasan a la cadencia M8-E/M9 de reactivación trimestral.
 
 ---
 
