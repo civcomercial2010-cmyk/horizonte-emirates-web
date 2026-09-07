@@ -1130,11 +1130,24 @@ function leadExists(email) {
  * A-209 (parte 2/3): hoja «Descargas», independiente de «Leads». leadExists() no la
  * consulta, así que un email que ya descargó la guía puede completar después el
  * formulario largo sin quedar bloqueado por duplicado.
+ * No asume que initSheets() ya se ejecutó: si la pestaña no existe todavía, la crea
+ * aquí mismo (mismo formato que initSheets, para no depender del orden de ejecución).
  */
+function getOrCreateDescargasSheet() {
+  const ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
+  let sh = ss.getSheetByName('Descargas');
+  if (!sh) {
+    sh = ss.insertSheet('Descargas');
+    sh.appendRow(['Email','Fecha','Origen','Estado nurturing','Nota',
+                  'UTM Source','UTM Medium','UTM Campaign','Consent marketing']);
+    sh.setFrozenRows(1);
+    sh.getRange('1:1').setFontWeight('bold').setBackground('#0D1B2A').setFontColor('#ffffff');
+  }
+  return sh;
+}
+
 function descargaExists(email) {
-  const sh = getSheet('Descargas');
-  if (!sh) return false;
-  const data = sh.getDataRange().getValues();
+  const data = getOrCreateDescargasSheet().getDataRange().getValues();
   for (let i = 1; i < data.length; i++) {
     if ((data[i][0] || '').toString().toLowerCase() === String(email || '').toLowerCase()) return true;
   }
@@ -1142,7 +1155,7 @@ function descargaExists(email) {
 }
 
 function saveDescarga(d) {
-  getSheet('Descargas').appendRow([
+  getOrCreateDescargasSheet().appendRow([
     d.email,
     new Date(),
     'Guía fiscal (home)',
@@ -2022,14 +2035,10 @@ function initSheets() {
   }
 
   // A-209: descargas de la guía fiscal (formulario de 1 campo), separadas de Leads
-  // a propósito. Ver isGuiaDownload/descargaExists/saveDescarga.
-  let dsh = ss.getSheetByName('Descargas') || ss.insertSheet('Descargas');
-  if (dsh.getLastRow() === 0) {
-    dsh.appendRow(['Email','Fecha','Origen','Estado nurturing','Nota',
-                   'UTM Source','UTM Medium','UTM Campaign','Consent marketing']);
-    dsh.setFrozenRows(1);
-    dsh.getRange('1:1').setFontWeight('bold').setBackground('#0D1B2A').setFontColor('#ffffff');
-  }
+  // a propósito. Ver isGuiaDownload/descargaExists/saveDescarga. La creación real vive
+  // en getOrCreateDescargasSheet(), que también se autoinvoca si initSheets() no se
+  // ha ejecutado todavía (no depender del orden de ejecución).
+  getOrCreateDescargasSheet();
 
   Logger.log('✓ Hojas inicializadas: Leads + Cola + Descargas');
 }
