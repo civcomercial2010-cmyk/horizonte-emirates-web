@@ -379,7 +379,7 @@ function notifyAgentNewLead(leadId, lead) {
  * A-103/A-209: avisa de una descarga nueva de la guía fiscal. Antes de esto, la única
  * forma de enterarse era leer a mano el correo «[Descarga guia fiscal] ...» en Gmail.
  * No dispara ningún envío al lead (AUTO_SEND_LEADS sigue en false): el nurturing de
- * 2 correos (automation/MAILS-MANUALES.md) se manda a mano tras leer este aviso.
+ * hasta 3 correos (D1-D3, automation/MAILS-MANUALES.md) se manda a mano tras leer este aviso.
  */
 function notifyAgentNewDownload(d) {
   if (!CONFIG.NOTIFY_AGENT_ON_NEW_LEAD) return;
@@ -391,8 +391,8 @@ function notifyAgentNewDownload(d) {
     'Fecha: ' + new Date().toLocaleString('es-ES'),
     'Origen: guía fiscal (home, formulario de 1 campo)',
     '',
-    'Siguiente paso (A-103/A-209): enviar el email de nurturing 1 en 24-48h',
-    '(plantillas "Descarga guía, email 1/2" en automation/MAILS-MANUALES.md).',
+    'Siguiente paso (A-103/A-209): enviar D1 (email de nurturing 1) en 24-48h',
+    '(plantillas D1-D3 en automation/MAILS-MANUALES.md).',
     'Marcar el estado en la hoja «Descargas» tras enviarlo.',
   ].join('\n');
 

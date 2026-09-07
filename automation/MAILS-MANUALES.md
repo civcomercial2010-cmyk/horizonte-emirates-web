@@ -110,7 +110,8 @@ puntúa el tier y avisa al asesor. Lo que ya no hace es escribir al lead. Eso se
 | M10 | Cuarto toque sin respuesta | Cerrar con elegancia y dejar la puerta abierta |
 | **M11** | **Segundo o tercer toque, o cuando pide más documentación** | **La visita a Emiratos: es la palanca más fuerte** |
 | **D1** | **24 a 48 h después de descargar la guía fiscal (hoja Descargas, no CRM de Leads)** | **Aportar valor real, sin pedir nada todavía** |
-| **D2** | **4 a 5 días después de D1, sin respuesta** | **Invitar al análisis completo o a la llamada** |
+| **D2** | **4 a 5 días después de D1, sin respuesta** | **Segundo valor: el error que más caro sale (Golden Visa vs. residencia fiscal)** |
+| **D3** | **5 a 6 días después de D2, sin respuesta** | **Invitar al análisis completo o a la llamada, y cerrar** |
 
 ---
 
@@ -152,7 +153,7 @@ como llega, con la plantilla de marca).
 
 ---
 
-## 3 ter. D1/D2 · Nurturing de descargas de la guía fiscal (A-103/A-209)
+## 3 ter. D1-D3 · Nurturing de descargas de la guía fiscal (A-103/A-209)
 
 **Quién los recibe:** solo el email que dejó al descargar la guía fiscal desde la home
 (`#guia-fiscal`, un solo campo). No es un lead del CRM: vive en la hoja **Descargas**
@@ -161,13 +162,16 @@ después completa el formulario largo, ahí sí se le trata con el M1 correspond
 (la ficha de Leads lleva la nota "Ya descargó la guía fiscal antes de este formulario").
 
 **Disparador:** el aviso `📄 Nueva descarga guía fiscal · [email]` de
-`notifyAgentNewDownload()`. Al enviar D1, marcar `enviado-1` en la columna **Estado
-nurturing** de la hoja Descargas; al enviar D2, `enviado-2`. Si responde o completa el
-formulario largo antes de D2, no se manda D2.
+`notifyAgentNewDownload()`. Al enviar cada correo, marcar `enviado-1`, `enviado-2` o
+`enviado-3` en la columna **Estado nurturing** de la hoja Descargas. Si responde o
+completa el formulario largo en cualquier momento, se para ahí: no se manda el
+siguiente correo de la cadena.
 
-**Por qué solo dos correos y sin presión:** es un contacto en frío que ni siquiera ha
-dicho su nombre. El objetivo no es cerrar nada, es que la segunda vez que oiga hablar de
-Horizonte Emirates no sea la primera.
+**Por qué tres correos y no más:** es un contacto en frío que ni siquiera ha dicho su
+nombre. El objetivo no es cerrar nada, es que la guía no sea el único contacto con
+Horizonte Emirates. Cada correo aporta algo que la guía por sí sola no resuelve
+(un matiz aplicado, el error más caro, o la invitación a pasar a números concretos),
+nunca repite lo que ya está en el PDF con otras palabras.
 
 ### D1 · A las 24-48 h de la descarga
 
@@ -201,13 +205,52 @@ Horizonte Emirates no presta asesoramiento fiscal ni jurídico. La información 
 
 ### D2 · A los 4-5 días, sin respuesta a D1
 
+El segundo valor. En vez de insistir sobre lo mismo, se saca el error más caro y más
+frecuente de la guía (capítulo "Residencia fiscal: España vs Emiratos" y el aviso
+"Error frecuente" que lo acompaña): confundir la Golden Visa con la residencia fiscal.
+Es el que más dinero cuesta cuando se descubre tarde, y el que más engancha porque
+suena a algo que a uno mismo podría pasarle.
+
+**Asunto:** `La confusión que más caro sale (y que casi nadie corrige a tiempo)`
+
+```text
+Hola,
+
+Sigo con Horizonte Emirates. Le escribo por algo que en la guía dejamos apuntado
+pero que merece una línea aparte, porque es el error que más veces vemos y el que
+más caro sale corregir tarde.
+
+La Golden Visa de Emiratos no le convierte automáticamente en residente fiscal
+allí. Son dos trámites distintos: uno es migratorio (le permite vivir y quedarse),
+el otro es fiscal (determina dónde tributa). Tener la visa y seguir residiendo
+fiscalmente en España es perfectamente posible, y de hecho es lo habitual si no
+se ha hecho una planificación específica de salida.
+
+Si en algún momento valora trasladar su residencia fiscal, no en la migratoria,
+es de las pocas cosas que conviene planificar con doce o veinticuatro meses de
+antelación, no sobre la marcha.
+
+Si quiere que lo miremos aplicado a su situación, veinte minutos con Marc bastan
+para saber si hoy le compensa o no:
+https://calendly.com/hola-horizonteemirates/llamada-estrategica-horizonte-emirates-30-minutos
+
+Un saludo,
+Jesús Ibáñez
+Horizonte Emirates
+hola@horizonteemirates.com · WhatsApp +971 55 472 2025
+
+Horizonte Emirates no presta asesoramiento fiscal ni jurídico. La información es orientativa.
+```
+
+### D3 · A los 5-6 días, sin respuesta a D2
+
 **Asunto:** `¿Sigue mirando Dubai o lo dejamos aquí?`
 
 ```text
 Hola,
 
-Le escribí hace unos días a raíz de la guía fiscal que descargó. No he sabido nada
-y lo entiendo: a veces uno descarga algo para leerlo más adelante y ahí se queda.
+Le he escrito un par de veces a raíz de la guía fiscal que descargó. No he sabido
+nada y lo entiendo: a veces uno descarga algo para leerlo más adelante y ahí se queda.
 
 Le dejo dos caminos, sin ningún compromiso en ninguno de los dos:
 
@@ -226,10 +269,10 @@ Horizonte Emirates
 hola@horizonteemirates.com · WhatsApp +971 55 472 2025
 ```
 
-**Nota de RGPD:** estos dos correos se justifican por el interés legítimo de responder
+**Nota de RGPD:** estos tres correos se justifican por el interés legítimo de responder
 a quien pidió expresamente la guía (art. 6.1.f RGPD), no por el consentimiento de
 marketing del formulario largo (que este contacto nunca ha marcado, porque no lo ha
-visto). Por eso van sin contenido comercial de proyectos concretos y se paran en dos
+visto). Por eso van sin contenido comercial de proyectos concretos y se paran en tres
 toques, no se pasan a la cadencia M8-E/M9 de reactivación trimestral.
 
 ---
