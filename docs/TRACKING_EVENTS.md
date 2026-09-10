@@ -25,6 +25,26 @@ Regla: **no inventar nombres nuevos** para algo ya cubierto aquí; reutilizar el
 | `lead_submit_validation_error` | Email o teléfono inválido | `event_label` (invalid_email / invalid_phone) |
 | `lead_submit_error` | Web3Forms rechaza o error de red | `event_label` (web3forms_rejected / network_error) |
 
+## Lead magnet: guía fiscal (index.html, bloque `#guia-fiscal`)
+
+Formulario de un solo campo. La conversión sigue siendo `generate_lead`, con
+`form_name=lead_magnet_guia` y `lead_tier=C`, y solo se cuenta si Web3Forms responde OK.
+
+| Evento | Cuándo | Parámetros clave |
+|---|---|---|
+| `lead_magnet_click` | Clic en un CTA que lleva a la guía | `event_label` |
+| `lead_magnet_submit_attempt` | Pulsa "Descargar" | `event_label`=guia_fiscal |
+| `lead_magnet_validation_error` | Email inválido o casilla sin marcar | `event_label` (invalid_email / missing_consent) |
+| `lead_magnet_pdf_fallback_click` | Clic en el enlace de rescate «ábrala aquí» del mensaje de confirmación | `event_label`=guia_fiscal |
+| `lead_submit_error` | Web3Forms rechaza o error de red en este formulario | `event_label` (guia_web3forms_rejected / guia_network_error) |
+
+**Cómo se lee `lead_magnet_pdf_fallback_click`:** la entrega del PDF va por `<a download>`
+dentro del gesto del usuario, así que quien la recibe bien no necesita pulsar ese enlace.
+Si el evento sube respecto a `generate_lead` (de un residual a una parte apreciable), el
+problema está en la entrega del fichero en ciertos navegadores, no en el copy del
+formulario. No es una medida exacta de fallos: alguien puede pulsarlo por costumbre, y
+quien se queda sin guía y cierra la página no genera ningún evento.
+
 ## Eventos de contacto (index.html)
 
 | Evento | Cuándo | Parámetros |
