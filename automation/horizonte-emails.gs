@@ -26,6 +26,9 @@ const CONFIG = {
   CALENDLY_URL:    'https://calendly.com/hola-horizonteemirates/llamada-estrategica-horizonte-emirates-30-minutos',
   // M19: Lead magnet: guía fiscal entregada en el email de bienvenida (A1/B1/C1).
   GUIDE_URL:       'https://www.horizonteemirates.com/guias/guia-fiscal-dubai-espana.html',
+  // Mismo contenido en PDF: es lo que abre el formulario de la home (app.js, GUIA_URL),
+  // y lo que espera encontrar en el correo quien descargó y cerró la pestaña sin guardarlo.
+  GUIDE_PDF_URL:   'https://www.horizonteemirates.com/guias/guia-fiscal-dubai-espana.pdf',
   CALENDAR_ID:     'primary', // calendario donde Calendly crea las reuniones
   CALENDLY_EVENT_KEYWORD: 'Llamada estratégica Horizonte Emirates',
   UNSUBSCRIBE_URL: 'mailto:hola@horizonteemirates.com?subject=BAJA%20COMUNICACIONES',
@@ -67,6 +70,18 @@ const CONFIG = {
    * false → tampoco sale este y el lead no recibe absolutamente nada hasta que se le escriba.
    */
   AUTO_SEND_WELCOME: true,
+  /**
+   * ACUSE DE RECIBO DE LAS DESCARGAS DE LA GUÍA (código W0D), interruptor propio.
+   * El formulario de la home solo pide el email, así que quien descarga no deja teléfono
+   * ni ningún otro dato: si no se le escribe, no hay forma de contactarle y el contacto
+   * se pierde entero. Además la web le promete por escrito que se la enviamos («También
+   * se la enviamos a su-email», app.js) y la casilla que marca dice literalmente «que me
+   * envíen la guía por email», que es la base legal de este correo (art. 6.1.b/f RGPD).
+   * No vende: entrega la guía, abre la puerta a responder y ofrece la llamada como salida.
+   * Los tres correos de nurturing D1-D3 se siguen escribiendo a mano (MAILS-MANUALES.md).
+   * false → la descarga solo se registra en la hoja Descargas y se avisa al asesor.
+   */
+  AUTO_SEND_WELCOME_DESCARGA: true,
   /**
    * CAPA DE NURTURING AUTOMÁTICO (2026-09-07), independiente del interruptor anterior.
    * Motivo: Marc contacta por WhatsApp y muchos leads no contestan; no hay integración
@@ -391,18 +406,27 @@ function notifyAgentNewLead(leadId, lead) {
 /**
  * A-103/A-209: avisa de una descarga nueva de la guía fiscal. Antes de esto, la única
  * forma de enterarse era leer a mano el correo «[Descarga guia fiscal] ...» en Gmail.
- * No dispara ningún envío al lead (AUTO_SEND_LEADS sigue en false): el nurturing de
- * hasta 3 correos (D1-D3, automation/MAILS-MANUALES.md) se manda a mano tras leer este aviso.
+ * El acuse de recibo con la guía (W0D) lo envía sendWelcomeDescarga antes de este aviso;
+ * aquí solo se informa de si salió. El nurturing D1-D3 (automation/MAILS-MANUALES.md)
+ * se sigue escribiendo a mano tras leer este correo.
+ * @param {Object} d descarga registrada.
+ * @param {boolean} [bienvenidaEnviada] true si el W0D salió en esta misma pasada.
  */
-function notifyAgentNewDownload(d) {
+function notifyAgentNewDownload(d, bienvenidaEnviada) {
   if (!CONFIG.NOTIFY_AGENT_ON_NEW_LEAD) return;
   if (!d || !d.email) return;
 
   const subject = '📄 Nueva descarga guía fiscal · ' + d.email;
+  const acuse = bienvenidaEnviada
+    ? 'Acuse automático (W0D) con la guía: ENVIADO. Ya tiene la guía y sabe que puede responder.'
+    : 'Acuse automático (W0D) con la guía: NO ENVIADO (repetido, desactivado o con error). ' +
+      'Revisar el registro y, si procede, ejecutar enviarBienvenidasDescargasPendientes().';
   const body = [
     'Email: ' + d.email,
     'Fecha: ' + new Date().toLocaleString('es-ES'),
     'Origen: guía fiscal (home, formulario de 1 campo)',
+    '',
+    acuse,
     '',
     'Siguiente paso (A-103/A-209): enviar D1 (email de nurturing 1) en 24-48h',
     '(plantillas D1-D3 en automation/MAILS-MANUALES.md).',
@@ -698,7 +722,16 @@ function pollGmail() {
         if (descarga && descarga.email) {
           if (!descargaExists(descarga.email)) {
             saveDescarga(descarga);
-            try { notifyAgentNewDownload(descarga); } catch (nErr) {
+            // El acuse con la guía va primero: es lo único que esa persona espera, y su email
+            // es el único dato que ha dejado. Si falla, la descarga ya está registrada y el
+            // aviso al asesor sale igualmente (dice que el correo no ha salido).
+            let bienvenidaEnviada = false;
+            try {
+              bienvenidaEnviada = sendWelcomeDescarga(descarga);
+            } catch (wErr) {
+              Logger.log('pollGmail: fallo al enviar el acuse W0D a ' + descarga.email + ': ' + wErr.toString());
+            }
+            try { notifyAgentNewDownload(descarga, bienvenidaEnviada); } catch (nErr) {
               Logger.log('pollGmail: fallo al avisar de la descarga de ' + descarga.email + ': ' + nErr.toString());
             }
             Logger.log('✓ descarga guía fiscal: ' + descarga.email);
@@ -1122,6 +1155,13 @@ function recuperarDescargasPerdidas(days) {
 
   Logger.log('recuperarDescargasPerdidas RESUMEN → guardadas=' + guardadas +
     ' | ya existían=' + yaExistian + ' | saltados=' + saltados);
+  // Esta función solo recupera el registro. El acuse con la guía (W0D) de las descargas
+  // recuperadas lo envía enviarBienvenidasDescargasPendientes(), que aplica su propia
+  // ventana de días para no escribir a quien descargó hace semanas.
+  if (guardadas > 0) {
+    Logger.log('recuperarDescargasPerdidas: ejecutar enviarBienvenidasDescargasPendientes() ' +
+      'para enviar la guía a las descargas recién recuperadas.');
+  }
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1146,17 +1186,59 @@ function leadExists(email) {
  * No asume que initSheets() ya se ejecutó: si la pestaña no existe todavía, la crea
  * aquí mismo (mismo formato que initSheets, para no depender del orden de ejecución).
  */
+// A-209: cabeceras de la hoja Descargas en un solo sitio (las usan getOrCreateDescargasSheet
+// y ensureDescargasBienvenidaColumn). «Bienvenida» es la última y guarda la fecha del W0D.
+const DESCARGAS_COL_BIENVENIDA = 'Bienvenida';
+// Ventana de recuperación del acuse W0D: días hacia atrás en los que todavía tiene sentido
+// escribir a una descarga que se quedó sin correo. Más allá, ni se envía ni se alerta:
+// un acuse que llega semanas después confunde más de lo que aporta.
+const DESCARGAS_ACUSE_DIAS = 30;
+const DESCARGAS_HEADERS = ['Email','Fecha','Origen','Estado nurturing','Nota',
+                           'UTM Source','UTM Medium','UTM Campaign','Consent marketing',
+                           DESCARGAS_COL_BIENVENIDA];
+
 function getOrCreateDescargasSheet() {
   const ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
   let sh = ss.getSheetByName('Descargas');
   if (!sh) {
     sh = ss.insertSheet('Descargas');
-    sh.appendRow(['Email','Fecha','Origen','Estado nurturing','Nota',
-                  'UTM Source','UTM Medium','UTM Campaign','Consent marketing']);
+    sh.appendRow(DESCARGAS_HEADERS.slice());
     sh.setFrozenRows(1);
     sh.getRange('1:1').setFontWeight('bold').setBackground('#0D1B2A').setFontColor('#ffffff');
   }
   return sh;
+}
+
+/**
+ * Índice (1-based) de la columna «Bienvenida», creándola si la hoja es anterior al
+ * acuse de recibo automático de descargas. Ahí se sella la fecha de envío del W0D:
+ * es la prueba de que a ese email se le escribió, y lo que hace idempotente el envío.
+ * Idempotente: si la columna ya existe, no toca nada.
+ */
+function ensureDescargasBienvenidaColumn(sheet) {
+  const sh = sheet || getOrCreateDescargasSheet();
+  const lastCol = Math.max(1, sh.getLastColumn());
+  const headers = sh.getRange(1, 1, 1, lastCol).getValues()[0].map(h => String(h).trim());
+  const idx = headers.indexOf(DESCARGAS_COL_BIENVENIDA);
+  if (idx !== -1) return idx + 1;
+
+  const col = lastCol + 1;
+  sh.getRange(1, col).setValue(DESCARGAS_COL_BIENVENIDA)
+    .setFontWeight('bold').setBackground('#0D1B2A').setFontColor('#ffffff');
+  sh.setColumnWidth(col, 150);
+  Logger.log('ensureDescargasBienvenidaColumn: columna «' + DESCARGAS_COL_BIENVENIDA + '» añadida en la posición ' + col);
+  return col;
+}
+
+/** Fila (1-based) de un email en la hoja Descargas, o 0 si no está. */
+function findDescargaRow(sheet, email) {
+  const target = String(email || '').trim().toLowerCase();
+  if (!target) return 0;
+  const data = (sheet || getOrCreateDescargasSheet()).getDataRange().getValues();
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][0] || '').trim().toLowerCase() === target) return i + 1;
+  }
+  return 0;
 }
 
 function descargaExists(email) {
@@ -1402,6 +1484,93 @@ function sendWelcomeEmail(leadId, lead) {
   return true;
 }
 
+/**
+ * Acuse de recibo de una descarga de la guía fiscal (W0D). Se envía en la misma pasada
+ * que detecta la descarga, sin esperar ventana laboral: quien acaba de pedir la guía en
+ * la web está delante del ordenador, y la propia web le acaba de prometer que se la
+ * enviamos por email.
+ *
+ * Por qué existe: el formulario de la home pide un solo campo. Si a ese email no se le
+ * escribe, no queda ninguna otra vía de contacto (no hay nombre ni teléfono) y el
+ * contacto se pierde entero. No sustituye a D1-D3, que se siguen escribiendo a mano.
+ *
+ * Idempotencia: la columna «Bienvenida» de la hoja Descargas guarda la fecha de envío.
+ * Con valor, no se repite. Un fallo aquí nunca debe impedir el registro de la descarga
+ * ni el aviso al asesor (quien llama envuelve en try/catch).
+ *
+ * @param {Object} d descarga con al menos {email}.
+ * @return {boolean} true solo si el correo ha salido en esta llamada.
+ */
+function sendWelcomeDescarga(d) {
+  if (CONFIG.AUTO_SEND_WELCOME_DESCARGA === false) {
+    Logger.log('sendWelcomeDescarga: desactivado (AUTO_SEND_WELCOME_DESCARGA=false)');
+    return false;
+  }
+  if (!d || !d.email) return false;
+
+  const sh  = getOrCreateDescargasSheet();
+  const col = ensureDescargasBienvenidaColumn(sh);
+  const row = findDescargaRow(sh, d.email);
+
+  if (row && String(sh.getRange(row, col).getValue() || '').trim() !== '') {
+    Logger.log('sendWelcomeDescarga: ya enviado antes a ' + d.email + ', omitido');
+    return false;
+  }
+
+  if (CONFIG.TEST_MODE) {
+    Logger.log('[TEST] W0D → ' + d.email);
+    return false;
+  }
+
+  sendEmail('W0D', { email: d.email }, { welcomeDescarga: true, bypassBusinessHours: true });
+
+  if (row) {
+    sh.getRange(row, col).setValue(new Date());
+  } else {
+    // No debería ocurrir (saveDescarga escribe la fila antes), pero el correo ya ha salido:
+    // dejarlo sin registrar sería peor que registrarlo sin fila propia.
+    Logger.log('sendWelcomeDescarga: enviado a ' + d.email + ' pero no se encontró su fila en Descargas');
+  }
+  Logger.log('✓ W0D (guía + acuse de recibo) → ' + d.email);
+  return true;
+}
+
+/**
+ * Envía el W0D a las descargas ya registradas que se quedaron sin correo: las anteriores
+ * a esta automatización y cualquiera que fallase en su momento. Ejecutar a mano desde
+ * Apps Script.
+ * @param {number} [dias] ventana hacia atrás (por defecto DESCARGAS_ACUSE_DIAS). Más allá
+ *   no se escribe: un acuse que llega semanas después de la descarga confunde más que aporta.
+ */
+function enviarBienvenidasDescargasPendientes(dias) {
+  const lookback = Math.max(1, parseInt(dias, 10) || DESCARGAS_ACUSE_DIAS);
+  const desde = new Date(Date.now() - lookback * 24 * 3600 * 1000);
+  const sh   = getOrCreateDescargasSheet();
+  const col  = ensureDescargasBienvenidaColumn(sh);
+  const data = sh.getDataRange().getValues();
+
+  let enviados = 0, yaTenian = 0, fueraDeVentana = 0, errores = 0;
+
+  for (let i = 1; i < data.length; i++) {
+    const email = String(data[i][0] || '').trim();
+    if (!email) continue;
+    if (String(data[i][col - 1] || '').trim() !== '') { yaTenian++; continue; }
+
+    const fecha = new Date(data[i][1]);
+    if (!isNaN(fecha) && fecha < desde) { fueraDeVentana++; continue; }
+
+    try {
+      if (sendWelcomeDescarga({ email: email })) enviados++;
+    } catch (e) {
+      errores++;
+      Logger.log('enviarBienvenidasDescargasPendientes: ERROR con ' + email + ': ' + e.toString());
+    }
+  }
+
+  Logger.log('enviarBienvenidasDescargasPendientes RESUMEN (últimos ' + lookback + ' días) → enviados=' +
+    enviados + ' | ya tenían=' + yaTenian + ' | fuera de ventana=' + fueraDeVentana + ' | errores=' + errores);
+}
+
 /** Primer email de cada tier (tras registro en web). Puede enviarse fuera de horario solo cuando processQueue viene de pollGmail. */
 function isWelcomeSequenceEmail(code) {
   return code === 'A1' || code === 'B1' || code === 'C1';
@@ -1508,6 +1677,8 @@ function buildEmailPlainBody(tplText) {
  * @param {boolean} [opts.bypassBusinessHours]: true: prueba manual (simulateLeadEmail) o bienvenida inmediata tras form (pollGmail).
  * @param {boolean} [opts.manual]: true: envío pedido a mano por el asesor (simulateLeadEmail).
  * @param {boolean} [opts.welcome]: true: acuse de recibo W0, permitido por CONFIG.AUTO_SEND_WELCOME.
+ * @param {boolean} [opts.welcomeDescarga]: true: acuse de recibo W0D de una descarga de la guía,
+ *   permitido por CONFIG.AUTO_SEND_WELCOME_DESCARGA.
  * @param {boolean} [opts.nurture]: true: envío de la capa de nurturing (A2+/B2+/C2+),
  *   permitido por CONFIG.AUTO_SEND_NURTURE aunque AUTO_SEND_LEADS siga en false.
  */
@@ -1515,6 +1686,7 @@ function sendEmail(code, lead, opts) {
   opts = opts || {};
   const allowed = opts.manual ||
     (opts.welcome && CONFIG.AUTO_SEND_WELCOME !== false) ||
+    (opts.welcomeDescarga && CONFIG.AUTO_SEND_WELCOME_DESCARGA !== false) ||
     (opts.nurture && CONFIG.AUTO_SEND_NURTURE === true);
   if (CONFIG.AUTO_SEND_LEADS === false && !allowed) {
     throw new Error('Envío automático desactivado (CONFIG.AUTO_SEND_LEADS=false). Usa las plantillas de automation/MAILS-MANUALES.md.');
@@ -1753,6 +1925,47 @@ ${guiaCard}
 ${calBtn}
 <p style="margin:28px 0 0;padding-top:20px;border-top:1px solid #E0DBD1;font-size:14px;color:#646464;line-height:1.6">Un saludo,<br><strong style="color:#1A1A1A">${firma}</strong><br>Horizonte Emirates<br><span style="font-size:13px">Puede responder a este correo: lo leo yo.</span></p>`,
       text: `Hola ${pila},\n\n${introFicha}\n${fichaTxt ? '\n' + fichaTxt + '\n' : ''}\nEste correo es automático, para que sepa que no se ha perdido nada. El siguiente lo escribo yo, ${cuando}, y ahí entramos en lo concreto: qué encaja con lo que busca y qué no.\n\nMientras tanto le dejo la guía fiscal Dubai y España, que es lo que más dudas resuelve al principio (IRPF, modelo 720, plusvalías y convenio de doble imposición):\n${guiaUrl}\n\nY una cosa que suele sorprender: si en algún momento quiere ver los proyectos en persona, le montamos nosotros la agenda completa en Emiratos, incluidas las visitas a las promotoras y la reunión en nuestras oficinas de Dubai. Se lo cuento con calma en el próximo correo.\n\nSi prefiere adelantar y hablar directamente con Marc, nuestro socio en Dubai, puede coger hueco aquí:\n${calL}\n\nUn saludo,\n${firma}\nHorizonte Emirates\nPuede responder a este correo: lo leo yo.`,
+    };
+  }
+
+  // ── W0D: ACUSE DE RECIBO DE UNA DESCARGA DE LA GUÍA ─────────
+  // Quien descarga la guía en la home deja SOLO su email: sin este correo no hay
+  // ninguna otra vía para contactarle, y la web ya le ha prometido por escrito que
+  // se la enviamos («También se la enviamos a su-email», app.js). Reglas del texto:
+  //   1. Entrega la guía (página y PDF) y nada más: es lo que ha pedido.
+  //   2. No hay nombre ni perfil, así que no se finge cercanía: «Hola,» a secas.
+  //   3. Admite que es automático y abre la puerta a responder («lo leo yo»):
+  //      convertir la descarga en conversación es todo el objetivo del correo.
+  //   4. La llamada se ofrece como salida opcional, nunca como la petición principal:
+  //      es un contacto en frío que ni siquiera ha dicho su nombre.
+  //   5. Recuerda por qué recibe el correo (casilla marcada al descargar): el correo
+  //      se sostiene sobre lo que esa persona pidió, no sobre marketing.
+  if (code === 'W0D') {
+    const firma   = CONFIG.ASESOR_FIRMA || CONFIG.ASESOR_NOMBRE;
+    const pdfUrl  = CONFIG.GUIDE_PDF_URL || guiaUrl;
+    const guiaCardDescarga = `
+<table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="margin:22px 0 6px">
+  <tr>
+    <td style="background:#F8F6F1;border:1px solid #E0DBD1;border-radius:10px;padding:20px 22px">
+      <p style="margin:0 0 4px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#C4942A;font-weight:700">Su descarga</p>
+      <p style="margin:0 0 14px;font-size:15px;color:#1A1A1A;line-height:1.5"><strong>Guía fiscal del inversor: Dubai &harr; España.</strong> IRPF, Modelo 720, plusvalías, convenio de doble imposición y los errores que salen caros.</p>
+      <a href="${pdfUrl}" rel="noopener noreferrer" style="display:inline-block;background:#0D1B2A;color:#E9D9B0;font-family:'Helvetica Neue',Arial,sans-serif;font-size:13.5px;font-weight:700;letter-spacing:.02em;text-decoration:none;padding:11px 26px;border-radius:50px">Descargar el PDF &rarr;</a>
+      <p style="margin:12px 0 0;font-size:13px;color:#646464;line-height:1.6">O leerla en el navegador: <a href="${guiaUrl}" rel="noopener noreferrer" style="color:#C4942A;text-decoration:none">versión web de la guía</a></p>
+    </td>
+  </tr>
+</table>`;
+
+    return {
+      subject: 'Su guía fiscal Dubai y España, como le prometimos',
+      html: `<p>Hola,</p>
+<p>Acaba de descargar nuestra guía fiscal en horizonteemirates.com. Se la dejamos aquí también, para que la tenga a mano cuando la necesite y no dependa de la pestaña que se le abrió:</p>
+${guiaCardDescarga}
+<p>Es lo que más dudas resuelve al principio: qué se declara en España cuando se compra en Dubai, en qué plazos y qué errores se pagan caros cuando se descubren tarde.</p>
+<p>Este correo es automático, para que la guía no se le pierda. No le vamos a llenar el buzón. Ahora bien, si al leerla le surge una duda concreta sobre su caso, <strong>puede responder directamente a este correo: lo leo yo</strong> y le contesto sin compromiso.</p>
+<p>Y si prefiere resolverlo hablando, Marc, nuestro socio en Dubai, atiende llamadas de treinta minutos sin ningún compromiso:</p>
+${calBtn}
+<p style="margin:28px 0 0;padding-top:20px;border-top:1px solid #E0DBD1;font-size:14px;color:#646464;line-height:1.6">Un saludo,<br><strong style="color:#1A1A1A">${firma}</strong><br>Horizonte Emirates<br><span style="font-size:13px">Recibe este correo porque pidió la guía en nuestra web y aceptó que se la enviásemos por email.</span></p>`,
+      text: `Hola,\n\nAcaba de descargar nuestra guía fiscal en horizonteemirates.com. Se la dejamos aquí también, para que la tenga a mano cuando la necesite y no dependa de la pestaña que se le abrió.\n\nDescargar el PDF:\n${pdfUrl}\n\nO leerla en el navegador:\n${guiaUrl}\n\nEs lo que más dudas resuelve al principio: qué se declara en España cuando se compra en Dubai (IRPF, modelo 720, plusvalías), cómo funciona el convenio de doble imposición y qué errores se pagan caros cuando se descubren tarde.\n\nEste correo es automático, para que la guía no se le pierda. No le vamos a llenar el buzón. Ahora bien, si al leerla le surge una duda concreta sobre su caso, puede responder directamente a este correo: lo leo yo y le contesto sin compromiso.\n\nY si prefiere resolverlo hablando, Marc, nuestro socio en Dubai, atiende llamadas de treinta minutos sin ningún compromiso:\n${calL}\n\nUn saludo,\n${firma}\nHorizonte Emirates\nRecibe este correo porque pidió la guía en nuestra web y aceptó que se la enviásemos por email.`,
     };
   }
 
@@ -2204,6 +2417,32 @@ function healthCheck() {
     if (errs > 0) problems.push(errs + ' email(s) en la Cola con estado de error.');
   } catch (e) { problems.push('No se pudo leer la hoja Cola: ' + e.message); }
 
+  // 4 bis. Descargas de la guía registradas y sin acuse (W0D) pasadas 2 h. Es exactamente
+  // el fallo silencioso que hubo que descubrir a mano: la descarga entra, se registra y
+  // esa persona (de la que solo se tiene el email) no recibe nada.
+  if (CONFIG.AUTO_SEND_WELCOME_DESCARGA !== false) {
+    try {
+      const sh   = getOrCreateDescargasSheet();
+      const col  = ensureDescargasBienvenidaColumn(sh);
+      const dData = sh.getDataRange().getValues();
+      const limite = new Date(Date.now() - 2 * 3600 * 1000);
+      // Solo dentro de la ventana de recuperación: una descarga antigua sin acuse ya no se
+      // va a enviar, así que alertar de ella sería una incidencia que nadie puede cerrar.
+      const suelo = new Date(Date.now() - DESCARGAS_ACUSE_DIAS * 24 * 3600 * 1000);
+      let sinAcuse = 0;
+      for (let i = 1; i < dData.length; i++) {
+        if (!String(dData[i][0] || '').trim()) continue;
+        if (String(dData[i][col - 1] || '').trim() !== '') continue;
+        const f = new Date(dData[i][1]);
+        if (!isNaN(f) && f < limite && f > suelo) sinAcuse++;
+      }
+      if (sinAcuse > 0) {
+        problems.push(sinAcuse + ' descarga(s) de la guía sin acuse W0D pasadas 2 h. ' +
+          'Ejecutar enviarBienvenidasDescargasPendientes() en Apps Script.');
+      }
+    } catch (e) { problems.push('No se pudo revisar la hoja Descargas: ' + e.message); }
+  }
+
   // 4. (Opcional) Inactividad de leads: solo si se espera tráfico activo.
   if (CONFIG.EXPECT_TRAFFIC) {
     const maxH = Number(CONFIG.NO_LEAD_ALERT_HOURS || 72);
@@ -2429,6 +2668,21 @@ function previewWelcome() {
   Logger.log('Plazo prometido (CONFIG.WELCOME_PROMISE): ' + CONFIG.WELCOME_PROMISE);
   Logger.log('Asunto: ' + tpl.subject);
   Logger.log('\n' + buildEmailPlainBody(tpl.text));
+}
+
+/** Vista previa del acuse de la descarga de la guía (W0D), sin enviar nada. */
+function previewWelcomeDescarga() {
+  const tpl = getTemplate('W0D', { email: 'ejemplo@ejemplo.com' });
+  Logger.log('=== W0D · acuse de descarga de la guía ===');
+  Logger.log('Asunto: ' + tpl.subject);
+  Logger.log('\n' + buildEmailPlainBody(tpl.text));
+}
+
+/** Envío real del W0D a la dirección del asesor, para verlo tal cual llega. */
+function testWelcomeDescargaToSelf() {
+  sendEmail('W0D', { email: CONFIG.AGENT_BRIEFING_EMAIL },
+    { welcomeDescarga: true, bypassBusinessHours: true });
+  Logger.log('✓ W0D de prueba enviado a ' + CONFIG.AGENT_BRIEFING_EMAIL);
 }
 
 /** Envío real del acuse de recibo a la dirección del asesor, para verlo en el buzón tal cual llega. */
