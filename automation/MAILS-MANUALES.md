@@ -167,7 +167,9 @@ el D1, esa persona ya tiene la guía en su buzón y ya sabe que puede responder.
 no vuelve a mandar la guía ni a presentarse desde cero.
 
 **Disparador:** el aviso `📄 Nueva descarga guía fiscal · [email]` de
-`notifyAgentNewDownload()`, que además indica si el W0D salió. Al enviar cada correo,
+`notifyAgentNewDownload()`, que además indica si el W0D salió. Ese aviso y el
+correo de Web3Forms de la misma descarga llegan **en negrita** (no leídos,
+destacados e importantes) y se quedan así hasta que usted los abre. Al enviar cada correo,
 marcar `enviado-1`, `enviado-2` o `enviado-3` en la columna **Estado nurturing** de la
 hoja Descargas (la columna **Bienvenida** es del W0D automático, no se toca a mano). Si
 responde o completa el formulario largo en cualquier momento, se para ahí: no se manda

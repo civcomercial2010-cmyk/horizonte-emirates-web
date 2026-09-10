@@ -35,7 +35,8 @@ leads, cada uno se trabaja a mano para maximizar la conversión a videollamada.
 | Acuse de recibo inmediato (W0) | `CONFIG.AUTO_SEND_WELCOME` | `true`, excepción al interruptor |
 | Acuse de la descarga de la guía (W0D) | `CONFIG.AUTO_SEND_WELCOME_DESCARGA` | `true`, excepción al interruptor |
 | Aviso de lead nuevo al asesor | `notifyAgentNewLead()` | activo, llega como no leído y destacado |
-| Aviso de Web3Forms | `CONFIG.KEEP_LEAD_MAIL_UNREAD` | se queda no leído, destacado e importante |
+| Aviso de Web3Forms (leads **y** descargas de la guía) | `CONFIG.KEEP_LEAD_MAIL_UNREAD` | se queda no leído, destacado e importante |
+| Avisos internos al asesor (lead nuevo, descarga, healthcheck) | `forceUnreadBySubjectToken()` | vuelven a no leído: Gmail marca leído lo que envía la propia cuenta |
 | Plantillas para escribir a mano | `automation/MAILS-MANUALES.md` | fuente de verdad del texto |
 | Herramienta de montaje | `tools/generador-mails.html` | se abre en el navegador |
 | La misma desde el móvil, con los leads del CRM | `automation/horizonte-webapp.gs` + archivo HTML `generador` | web app aparte, solo lectura salvo la nota de seguimiento |
@@ -66,6 +67,7 @@ detecta la descarga, sin esperar a la ventana laboral.
 | Prueba de envío | columna **Bienvenida** de la hoja Descargas (fecha del envío). Con valor, no se repite |
 | Recuperación | `enviarBienvenidasDescargasPendientes(dias)` escribe a las descargas registradas sin acuse (por defecto, las de los últimos 30 días) |
 | Vigilancia | `healthCheck()` avisa si una descarga lleva más de 2 h registrada sin acuse |
+| Estado en Recibidos | los dos correos de la descarga (el de Web3Forms y el aviso `📄 Nueva descarga guía fiscal`) quedan **no leídos**, destacados e importantes hasta que se abren. Lo que evita reprocesar el hilo es la etiqueta `HE-procesado`, no el estado de leído |
 
 El nurturing **D1-D3 no cambia**: se sigue escribiendo a mano con `automation/MAILS-MANUALES.md`
 a partir del aviso `📄 Nueva descarga guía fiscal`, que ahora dice si el W0D salió o no.

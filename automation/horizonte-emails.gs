@@ -107,7 +107,12 @@ const CONFIG = {
   WELCOME_PROMISE: 'en las próximas 24 horas',
   /** Con envío manual: avisar al asesor de cada lead nuevo con su ficha y el guion sugerido. */
   NOTIFY_AGENT_ON_NEW_LEAD: true,
-  /** No marcar como leído el aviso de Web3Forms de un lead válido (para que se vea en negrita). */
+  /**
+   * No marcar como leído el aviso de Web3Forms (para que se vea en negrita en Recibidos).
+   * Se aplica igual a los leads del formulario largo y a las descargas de la guía fiscal:
+   * en los dos casos el correo se queda no leído, destacado e importante hasta que se abre.
+   * Lo que evita reprocesarlo es la etiqueta HE-procesado, nunca el estado de leído.
+   */
   KEEP_LEAD_MAIL_UNREAD: true,
   /**
    * Nombre mostrado como remitente (Gmail «De:»). Vacío → se usa ASESOR_NOMBRE.
@@ -437,6 +442,13 @@ function notifyAgentNewDownload(d, bienvenidaEnviada) {
     name:    CONFIG.ASESOR_NOMBRE,
     replyTo: CONFIG.REPLY_TO,
   });
+
+  // Gmail marca como leído todo lo que envía la propia cuenta, así que este aviso aterrizaba
+  // en Recibidos sin negrita: justo lo que hace que una descarga pase inadvertida. El email
+  // del que descarga es único y está en el asunto, así que sirve de token de búsqueda.
+  // De paso alcanza también el aviso de Web3Forms del mismo email («[Descarga guia fiscal] …»),
+  // que es igual de deseable: los dos correos de esa descarga quedan en negrita y destacados.
+  forceUnreadBySubjectToken(d.email);
   Logger.log('notifyAgentNewDownload: aviso enviado (' + d.email + ')');
 }
 
@@ -742,7 +754,16 @@ function pollGmail() {
           Logger.log('pollGmail: descarga de guía sin email parseable: ' + subject);
         }
         thread.addLabel(label);
-        msg.markRead();
+        if (CONFIG.KEEP_LEAD_MAIL_UNREAD) {
+          // Mismo trato que el aviso de un lead: la descarga se queda en negrita, destacada
+          // y en Recibidos hasta que alguien la abre. La etiqueta HE-procesado es lo que
+          // evita que se reprocese, no el estado de leído (ver el guard del principio del bucle).
+          msg.markUnread();
+          msg.star();
+          thread.markImportant();
+        } else {
+          msg.markRead();
+        }
         return;
       }
 
