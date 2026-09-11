@@ -606,6 +606,31 @@ const GUIA_URL='guias/guia-fiscal-dubai-espana.pdf';
 // Debe coincidir LITERALMENTE con la etiqueta de la casilla en index.html
 // (prueba del consentimiento, art. 7.1 RGPD). Si se cambia una, cambiar la otra.
 const CONSENT_TEXT_GUIA='Acepto la política de privacidad y que me envíen la guía por email.';
+// Entrega del PDF sin depender de window.open. Motivo: en móvil los bloqueadores
+// de emergentes cortan window.open con bastante frecuencia y, con 'noopener', la
+// llamada devuelve null por especificación tanto si se abrió como si se bloqueó,
+// así que la web no puede detectarlo ni reintentarlo: el visitante se queda sin la
+// guía y nosotros sin enterarnos. Un <a download> no abre ventana (no hay nada que
+// bloquear) y guarda el fichero directamente; si el navegador ignora 'download',
+// target="_blank" lo abre en una pestaña, que es el comportamiento de siempre.
+// Nunca navega fuera de la página: el formulario debe seguir mostrando su mensaje.
+// Debe llamarse dentro del gesto del usuario (el submit), no tras un await/then.
+function abrirGuiaFiscal(){
+  try{
+    const a=document.createElement('a');
+    a.href=GUIA_URL;
+    a.download='guia-fiscal-dubai-espana.pdf';
+    a.target='_blank';
+    a.rel='noopener';
+    a.style.display='none';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(()=>{try{document.body.removeChild(a);}catch(e){}},0);
+  }catch(err){
+    // Navegador que no deja crear/pulsar el enlace: se intenta como antes.
+    window.open(GUIA_URL,'_blank','noopener');
+  }
+}
 (function initGuiaForm(){
   const form=document.getElementById('guiaform');
   if(!form)return;
@@ -650,18 +675,28 @@ const CONSENT_TEXT_GUIA='Acepto la política de privacidad y que me envíen la g
     if(okMkt)fd.append('Consentimiento texto marketing',CONSENT_TEXTS.marketing);
     Object.entries(getTrackingParams()).forEach(([k,v])=>fd.append(k,v));
     fd.append('botcheck','');
-    // La descarga se abre de forma síncrona: si se esperase a la respuesta del
-    // registro, el navegador bloquearía la pestaña emergente.
-    window.open(GUIA_URL,'_blank','noopener');
+    // La descarga se lanza de forma síncrona: si se esperase a la respuesta del
+    // registro, el navegador ya no la trataría como gesto del usuario.
+    abrirGuiaFiscal();
     form.querySelector('.guia-row').style.display='none';
     document.querySelectorAll('.guia-gdpr').forEach(el=>{el.style.display='none';});
-    // El enlace se muestra SIEMPRE: con 'noopener', window.open devuelve null
-    // por especificación aunque la pestaña se haya abierto, así que no hay forma
-    // fiable de detectar un bloqueo. Dejar el enlace a mano cubre los dos casos.
-    setStatus('ok','Su guía se ha abierto en una pestaña nueva. Si no la ve, ');
+    // El enlace se muestra SIEMPRE: el navegador no informa de si la entrega llegó
+    // a producirse (ni con <a download>, ni con window.open, que con 'noopener'
+    // devuelve null por especificación aunque la pestaña se haya abierto), así que
+    // no hay forma fiable de detectar el fallo. Dejar el enlace a mano lo cubre.
+    // El texto no promete una pestaña: con <a download> el navegador guarda el
+    // fichero, y solo abre pestaña si ignora el atributo. «Se está descargando»
+    // describe bien los dos casos y el enlace de rescate cubre el tercero.
+    setStatus('ok','Su guía se está descargando. Si no la ve, ');
     const a=document.createElement('a');
     a.href=GUIA_URL;a.target='_blank';a.rel='noopener';
     a.textContent='ábrala aquí';
+    // Único indicio medible de que la entrega automática no funcionó en ese
+    // navegador: quien la recibió bien no necesita pulsar aquí. Si este evento
+    // sube, hay que revisar la entrega del PDF, no el copy del formulario.
+    a.addEventListener('click',function(){
+      trackGAEvent('lead_magnet_pdf_fallback_click',{event_category:'lead_magnet',event_label:'guia_fiscal'});
+    });
     a.style.textDecoration='underline';a.style.fontWeight='600';
     if(status){
       status.appendChild(a);

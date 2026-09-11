@@ -9,7 +9,10 @@ el envío automático de estas secuencias; el trabajo real de primer contacto y 
 lo hace el kit manual de `automation/MAILS-MANUALES.md` (M1-M11, D1-D3). Estas plantillas
 A1-C8 se mantienen revisadas y alineadas con las reglas de estilo vigentes por si algún
 día se reactiva la automatización (ver `reanudarEnvioAutomatico()`), pero **hoy no le
-llega ni un correo a ningún lead desde aquí**. El único correo que sí sale solo es W0.
+llega ni un correo a ningún lead desde aquí**. Los dos únicos correos que sí salen solos
+son **W0** (acuse de recibo del formulario) y **W0D** (entrega de la guía a quien la descarga
+en la home); el copy de los dos está en `getTemplate()` y se documenta en
+`automation/MAILS-MANUALES.md`.
 
 ## Variables dinámicas usadas en los copys
 

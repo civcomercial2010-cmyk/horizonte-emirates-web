@@ -32,22 +32,48 @@ leads, cada uno se trabaja a mano para maximizar la conversión a videollamada.
 | Qué | Dónde | Estado |
 |---|---|---|
 | Interruptor maestro | `CONFIG.AUTO_SEND_LEADS` en `horizonte-emails.gs` | `false` |
-| Acuse de recibo inmediato (W0) | `CONFIG.AUTO_SEND_WELCOME` | `true`, única excepción al interruptor |
+| Acuse de recibo inmediato (W0) | `CONFIG.AUTO_SEND_WELCOME` | `true`, excepción al interruptor |
+| Acuse de la descarga de la guía (W0D) | `CONFIG.AUTO_SEND_WELCOME_DESCARGA` | `true`, excepción al interruptor |
 | Aviso de lead nuevo al asesor | `notifyAgentNewLead()` | activo, llega como no leído y destacado |
-| Aviso de Web3Forms | `CONFIG.KEEP_LEAD_MAIL_UNREAD` | se queda no leído, destacado e importante |
+| Aviso de Web3Forms (leads **y** descargas de la guía) | `CONFIG.KEEP_LEAD_MAIL_UNREAD` | se queda no leído, destacado e importante |
+| Avisos internos al asesor (lead nuevo, descarga, healthcheck) | `forceUnreadBySubjectToken()` | vuelven a no leído: Gmail marca leído lo que envía la propia cuenta |
 | Plantillas para escribir a mano | `automation/MAILS-MANUALES.md` | fuente de verdad del texto |
 | Herramienta de montaje | `tools/generador-mails.html` | se abre en el navegador |
 | La misma desde el móvil, con los leads del CRM | `automation/horizonte-webapp.gs` + archivo HTML `generador` | web app aparte, solo lectura salvo la nota de seguimiento |
 | Cola de la hoja Cola | estado `pausado-manual` | sembrada como agenda, nunca se envía |
 
 **Qué sigue funcionando solo:** registro del lead en el CRM, scoring, briefing al asesor,
-detección de bajas, aviso de reuniones de Calendly, healthCheck y **el acuse de recibo W0**
+detección de bajas, aviso de reuniones de Calendly, healthCheck, **el acuse de recibo W0**
 (sale en segundos, también de noche y en fin de semana; queda registrado en la hoja Cola con
-código `W0` para no repetirse).
+código `W0` para no repetirse) y **el acuse de la descarga de la guía W0D** (ver abajo).
 **Qué ya no ocurre:** ninguna secuencia comercial sale hacia el lead sin que alguien la escriba.
 
 Comprobar el acuse de recibo sin gastar un lead real: `previewWelcome()` lo escribe en el registro
-y `testWelcomeToSelf()` lo envía al buzón del asesor.
+y `testWelcomeToSelf()` lo envía al buzón del asesor. Para el de descargas, lo mismo con
+`previewWelcomeDescarga()` y `testWelcomeDescargaToSelf()`.
+
+### W0D · Acuse automático de la descarga de la guía fiscal
+
+Quien descarga la guía en la home deja **solo su email**: no hay nombre ni teléfono, así que si
+no se le escribe no queda ninguna vía para contactarle. Y la web ya le promete por escrito que se
+la enviamos («También se la enviamos a su-email»), con una casilla que dice literalmente «que me
+envíen la guía por email». Por eso el W0D sale solo, en la misma pasada de `pollGmail()` que
+detecta la descarga, sin esperar a la ventana laboral.
+
+| Qué | Dónde |
+|---|---|
+| Envío | `sendWelcomeDescarga()`, llamado desde `pollGmail()` justo después de `saveDescarga()` |
+| Texto | `getTemplate('W0D', …)` en `horizonte-emails.gs` (entrega PDF + versión web, invita a responder, ofrece la llamada como salida) |
+| Prueba de envío | columna **Bienvenida** de la hoja Descargas (fecha del envío). Con valor, no se repite |
+| Recuperación | `enviarBienvenidasDescargasPendientes(dias)` escribe a las descargas registradas sin acuse (por defecto, las de los últimos 30 días) |
+| Vigilancia | `healthCheck()` avisa si una descarga lleva más de 2 h registrada sin acuse |
+| Estado en Recibidos | los dos correos de la descarga (el de Web3Forms y el aviso `📄 Nueva descarga guía fiscal`) quedan **no leídos**, destacados e importantes hasta que se abren. Lo que evita reprocesar el hilo es la etiqueta `HE-procesado`, no el estado de leído |
+
+El nurturing **D1-D3 no cambia**: se sigue escribiendo a mano con `automation/MAILS-MANUALES.md`
+a partir del aviso `📄 Nueva descarga guía fiscal`, que ahora dice si el W0D salió o no.
+
+La primera vez que se ejecuta sobre un Sheet anterior a esta versión, la columna «Bienvenida» se
+crea sola (`ensureDescargasBienvenidaColumn()`): no hay que tocar la hoja a mano.
 
 ### Reactivar la automatización
 

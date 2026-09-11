@@ -109,6 +109,7 @@ puntúa el tier y avisa al asesor. Lo que ya no hace es escribir al lead. Eso se
 | M9 | 45 a 90 días de silencio (solo con consentimiento de marketing) | Reabrir con una razón real |
 | M10 | Cuarto toque sin respuesta | Cerrar con elegancia y dejar la puerta abierta |
 | **M11** | **Segundo o tercer toque, o cuando pide más documentación** | **La visita a Emiratos: es la palanca más fuerte** |
+| **W0D** | **Automático, en segundos tras descargar la guía fiscal** | **Entregar la guía por email y abrir la puerta a responder. No se escribe a mano** |
 | **D1** | **24 a 48 h después de descargar la guía fiscal (hoja Descargas, no CRM de Leads)** | **Aportar valor real, sin pedir nada todavía** |
 | **D2** | **4 a 5 días después de D1, sin respuesta** | **Segundo valor: el error que más caro sale (Golden Visa vs. residencia fiscal)** |
 | **D3** | **5 a 6 días después de D2, sin respuesta** | **Invitar al análisis completo o a la llamada, y cerrar** |
@@ -161,11 +162,18 @@ del Sheet, no en **Leads**, y por eso no tiene nombre, capital, objetivo ni paí
 después completa el formulario largo, ahí sí se le trata con el M1 correspondiente
 (la ficha de Leads lleva la nota "Ya descargó la guía fiscal antes de este formulario").
 
+**Antes de estos tres va el W0D automático** (apartado siguiente): cuando usted escriba
+el D1, esa persona ya tiene la guía en su buzón y ya sabe que puede responder. El D1
+no vuelve a mandar la guía ni a presentarse desde cero.
+
 **Disparador:** el aviso `📄 Nueva descarga guía fiscal · [email]` de
-`notifyAgentNewDownload()`. Al enviar cada correo, marcar `enviado-1`, `enviado-2` o
-`enviado-3` en la columna **Estado nurturing** de la hoja Descargas. Si responde o
-completa el formulario largo en cualquier momento, se para ahí: no se manda el
-siguiente correo de la cadena.
+`notifyAgentNewDownload()`, que además indica si el W0D salió. Ese aviso y el
+correo de Web3Forms de la misma descarga llegan **en negrita** (no leídos,
+destacados e importantes) y se quedan así hasta que usted los abre. Al enviar cada correo,
+marcar `enviado-1`, `enviado-2` o `enviado-3` en la columna **Estado nurturing** de la
+hoja Descargas (la columna **Bienvenida** es del W0D automático, no se toca a mano). Si
+responde o completa el formulario largo en cualquier momento, se para ahí: no se manda
+el siguiente correo de la cadena.
 
 **Por qué tres correos y no más:** es un contacto en frío que ni siquiera ha dicho su
 nombre. El objetivo no es cerrar nada, es que la guía no sea el único contacto con
@@ -268,6 +276,34 @@ Jesús Ibáñez
 Horizonte Emirates
 hola@horizonteemirates.com · WhatsApp +971 55 472 2025
 ```
+
+### W0D · Automático, en segundos tras la descarga (no se escribe a mano)
+
+**Por qué existe:** el formulario de la guía pide un solo campo. Sin este correo, de esa
+persona solo queda una línea en una hoja: ni nombre, ni teléfono, ni ninguna otra vía de
+contacto. Además la web le promete al enviar que «también se la enviamos» a su email, y
+la casilla que marca dice «que me envíen la guía por email»: no mandarlo era, literalmente,
+incumplir lo que la página promete.
+
+**Qué hace:** entrega la guía (PDF y versión web), admite que es automático, invita a
+responder con la duda concreta («lo leo yo») y ofrece la llamada con Marc como salida
+opcional, nunca como la petición principal. No vende nada: es un contacto en frío que
+todavía no ha dicho ni su nombre.
+
+**Dónde vive:** `getTemplate('W0D', …)` en `horizonte-emails.gs`; lo envía
+`sendWelcomeDescarga()` desde `pollGmail()`. Interruptor propio:
+`CONFIG.AUTO_SEND_WELCOME_DESCARGA`. La fecha de envío queda en la columna
+**Bienvenida** de la hoja Descargas, que es lo que impide repetirlo.
+
+**Si alguna descarga se quedó sin él** (las anteriores a esta automatización, o un fallo
+puntual): ejecutar `enviarBienvenidasDescargasPendientes()` en Apps Script. Escribe solo
+a las que siguen sin acuse y, por defecto, solo a las de los últimos 30 días. `healthCheck()`
+avisa por su cuenta si una descarga lleva más de 2 h sin acuse.
+
+**Para verlo antes de que lo reciba nadie:** `previewWelcomeDescarga()` (lo escribe en el
+registro) o `testWelcomeDescargaToSelf()` (lo envía al buzón del asesor tal como llega).
+
+---
 
 **Nota de RGPD:** estos tres correos se justifican por el interés legítimo de responder
 a quien pidió expresamente la guía (art. 6.1.f RGPD), no por el consentimiento de
