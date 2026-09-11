@@ -1560,6 +1560,9 @@ function sendWelcomeDescarga(d) {
  * Envía el W0D a las descargas ya registradas que se quedaron sin correo: las anteriores
  * a esta automatización y cualquiera que fallase en su momento. Ejecutar a mano desde
  * Apps Script.
+ * OJO: escribe a TODAS las filas sin sello dentro de la ventana, incluidas las que se
+ * atendieron a mano (no hay forma de distinguirlas mirando la hoja). Si alguna ya está
+ * resuelta, séllala antes con marcarDescargasSinAcuse() y esta función la saltará.
  * @param {number} [dias] ventana hacia atrás (por defecto DESCARGAS_ACUSE_DIAS). Más allá
  *   no se escribe: un acuse que llega semanas después de la descarga confunde más que aporta.
  */
@@ -1590,6 +1593,38 @@ function enviarBienvenidasDescargasPendientes(dias) {
 
   Logger.log('enviarBienvenidasDescargasPendientes RESUMEN (últimos ' + lookback + ' días) → enviados=' +
     enviados + ' | ya tenían=' + yaTenian + ' | fuera de ventana=' + fueraDeVentana + ' | errores=' + errores);
+}
+
+/**
+ * Sella la columna «Bienvenida» de las descargas que no tienen acuse, SIN ENVIAR NADA.
+ * Para las que ya se atendieron por otra vía (un correo escrito a mano) o son anteriores
+ * al W0D y no se les va a escribir: deja constancia de que están cerradas y, sobre todo,
+ * impide que enviarBienvenidasDescargasPendientes() les escriba más adelante, que es
+ * como alguien acabaría recibiendo la guía dos veces.
+ * Ejecutar a mano desde Apps Script. Es idempotente: solo toca filas sin sello.
+ * OJO: sella TODAS las filas sin acuse en ese momento, así que una descarga recién
+ * llegada que todavía espera su W0D también quedaría cerrada en falso. Ejecutarla
+ * cuando no haya descargas de las últimas horas pendientes (el registro dice a cuáles
+ * ha afectado, y el healthcheck deja de vigilar las que se sellan).
+ * @param {string} [nota] texto a escribir en la columna. Por defecto, el motivo genérico.
+ */
+function marcarDescargasSinAcuse(nota) {
+  const texto = String(nota || '').trim() || 'Sin acuse automático (atendida a mano o anterior al W0D)';
+  const sh   = getOrCreateDescargasSheet();
+  const col  = ensureDescargasBienvenidaColumn(sh);
+  const data = sh.getDataRange().getValues();
+  const emails = [];
+
+  for (let i = 1; i < data.length; i++) {
+    const email = String(data[i][0] || '').trim();
+    if (!email) continue;
+    if (String(data[i][col - 1] || '').trim() !== '') continue;
+    sh.getRange(i + 1, col).setValue(texto);
+    emails.push(email);
+  }
+
+  Logger.log('marcarDescargasSinAcuse → filas marcadas=' + emails.length +
+    (emails.length ? ' · ' + emails.join(', ') : ''));
 }
 
 /** Primer email de cada tier (tras registro en web). Puede enviarse fuera de horario solo cuando processQueue viene de pollGmail. */
@@ -2447,15 +2482,26 @@ function healthCheck() {
       const col  = ensureDescargasBienvenidaColumn(sh);
       const dData = sh.getDataRange().getValues();
       const limite = new Date(Date.now() - 2 * 3600 * 1000);
-      // Solo dentro de la ventana de recuperación: una descarga antigua sin acuse ya no se
-      // va a enviar, así que alertar de ella sería una incidencia que nadie puede cerrar.
-      const suelo = new Date(Date.now() - DESCARGAS_ACUSE_DIAS * 24 * 3600 * 1000);
+      // Línea base: la hoja ya tenía descargas anteriores al W0D, atendidas a mano o no
+      // atendidas, y ninguna lleva sello en la columna «Bienvenida». Sin esta marca, el
+      // healthcheck avisaría de todas ellas en cada pasada: una alerta que nadie puede
+      // cerrar y que acabaría enseñando a ignorar el healthcheck entero. La primera
+      // ejecución tras desplegar el código sella «desde aquí cuento», así que no hay que
+      // preparar la hoja a mano. Para dejar constancia en las filas viejas, hay una
+      // función aparte: marcarDescargasSinAcuse().
+      let desde = Number(props.getProperty('HE_W0D_DESDE') || 0);
+      if (!desde) {
+        desde = Date.now();
+        props.setProperty('HE_W0D_DESDE', String(desde));
+        Logger.log('healthCheck: línea base del acuse W0D fijada en ' + new Date(desde) +
+          '. Las descargas anteriores no generan alerta.');
+      }
       let sinAcuse = 0;
       for (let i = 1; i < dData.length; i++) {
         if (!String(dData[i][0] || '').trim()) continue;
         if (String(dData[i][col - 1] || '').trim() !== '') continue;
         const f = new Date(dData[i][1]);
-        if (!isNaN(f) && f < limite && f > suelo) sinAcuse++;
+        if (!isNaN(f) && f < limite && f.getTime() > desde) sinAcuse++;
       }
       if (sinAcuse > 0) {
         problems.push(sinAcuse + ' descarga(s) de la guía sin acuse W0D pasadas 2 h. ' +

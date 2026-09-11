@@ -65,8 +65,9 @@ detecta la descarga, sin esperar a la ventana laboral.
 | Envío | `sendWelcomeDescarga()`, llamado desde `pollGmail()` justo después de `saveDescarga()` |
 | Texto | `getTemplate('W0D', …)` en `horizonte-emails.gs` (entrega PDF + versión web, invita a responder, ofrece la llamada como salida) |
 | Prueba de envío | columna **Bienvenida** de la hoja Descargas (fecha del envío). Con valor, no se repite |
-| Recuperación | `enviarBienvenidasDescargasPendientes(dias)` escribe a las descargas registradas sin acuse (por defecto, las de los últimos 30 días) |
-| Vigilancia | `healthCheck()` avisa si una descarga lleva más de 2 h registrada sin acuse |
+| Recuperación | `enviarBienvenidasDescargasPendientes(dias)` escribe a las descargas registradas sin acuse (por defecto, las de los últimos 30 días). Escribe a **todas** las que no tengan sello, incluidas las atendidas a mano |
+| Cerrar sin escribir | `marcarDescargasSinAcuse(nota)` sella las filas sin acuse **sin enviar nada**: para las descargas anteriores al W0D o ya atendidas por otra vía. Después, la recuperación las salta |
+| Vigilancia | `healthCheck()` avisa si una descarga lleva más de 2 h registrada sin acuse. Solo mira las posteriores a la línea base (ver abajo) |
 | Estado en Recibidos | los dos correos de la descarga (el de Web3Forms y el aviso `📄 Nueva descarga guía fiscal`) quedan **no leídos**, destacados e importantes hasta que se abren. Lo que evita reprocesar el hilo es la etiqueta `HE-procesado`, no el estado de leído |
 
 El nurturing **D1-D3 no cambia**: se sigue escribiendo a mano con `automation/MAILS-MANUALES.md`
@@ -74,6 +75,13 @@ a partir del aviso `📄 Nueva descarga guía fiscal`, que ahora dice si el W0D 
 
 La primera vez que se ejecuta sobre un Sheet anterior a esta versión, la columna «Bienvenida» se
 crea sola (`ensureDescargasBienvenidaColumn()`): no hay que tocar la hoja a mano.
+
+**Línea base del healthcheck.** Al desplegar, la hoja ya tiene descargas antiguas y ninguna lleva
+sello, así que el healthcheck avisaría de todas ellas en cada pasada: una alerta que nadie puede
+cerrar y que acaba enseñando a ignorar el healthcheck entero. Su primera ejecución guarda la marca
+`HE_W0D_DESDE` en las propiedades del script y solo vigila las descargas posteriores. No hay que
+preparar nada a mano. Si además se quiere dejar constancia en las filas viejas (y que la
+recuperación no les escriba nunca), ejecutar una vez `marcarDescargasSinAcuse()`.
 
 ### Reactivar la automatización
 
