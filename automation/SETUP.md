@@ -36,6 +36,7 @@ leads, cada uno se trabaja a mano para maximizar la conversión a videollamada.
 | Acuse de la descarga de la guía (W0D) | `CONFIG.AUTO_SEND_WELCOME_DESCARGA` | `true`, excepción al interruptor |
 | Aviso de lead nuevo al asesor | `notifyAgentNewLead()` | activo, llega como no leído y destacado |
 | Aviso de Web3Forms (leads **y** descargas de la guía) | `CONFIG.KEEP_LEAD_MAIL_UNREAD` | se queda no leído, destacado e importante |
+| Regla de lectura de todo el script | `cerrarHiloProcesado()` | **nada se marca como leído**: ver abajo |
 | Avisos internos al asesor (lead nuevo, descarga, healthcheck) | `forceUnreadBySubjectToken()` | vuelven a no leído: Gmail marca leído lo que envía la propia cuenta |
 | Plantillas para escribir a mano | `automation/MAILS-MANUALES.md` | fuente de verdad del texto |
 | Herramienta de montaje | `tools/generador-mails.html` | se abre en el navegador |
@@ -51,6 +52,26 @@ código `W0` para no repetirse) y **el acuse de la descarga de la guía W0D** (v
 Comprobar el acuse de recibo sin gastar un lead real: `previewWelcome()` lo escribe en el registro
 y `testWelcomeToSelf()` lo envía al buzón del asesor. Para el de descargas, lo mismo con
 `previewWelcomeDescarga()` y `testWelcomeDescargaToSelf()`.
+
+### Qué hace el script con el estado de leído de sus correos
+
+Un proceso automático no debe dejar leído un correo que usted no ha abierto: es la forma más
+silenciosa de perder un aviso. Toda la decisión vive en una sola función,
+`cerrarHiloProcesado()`, y se reduce a tres casos:
+
+| Correo | Qué le pasa |
+|---|---|
+| Lead nuevo · descarga nueva · descarga de la que no se pudo sacar el email | Etiqueta `HE-procesado` + **no leído, destacado e importante**. Exige acción y tiene que saltar a la vista |
+| Descarga repetida · lead duplicado · solicitud de baja · correo de Web3Forms ajeno al embudo | Etiqueta `HE-procesado` y **el estado de lectura no se toca**: se queda como estaba |
+| Con `CONFIG.KEEP_LEAD_MAIL_UNREAD = false` | Vuelve el comportamiento antiguo: se marca leído todo lo procesado |
+
+Lo que evita que un hilo se reprocese es **la etiqueta**, nunca el estado de leído: las dos
+consultas de `pollGmail()` excluyen `-label:HE-procesado`. Por eso el correo ajeno al embudo
+también se etiqueta (antes solo se marcaba leído): es lo que lo saca del lote de cada pasada
+sin tocar su bandeja.
+
+Se destaca solo lo que pide acción. Destacar también lo que no la pide entrena a ignorar lo
+destacado, y ahí es donde se pierde el lead siguiente.
 
 ### W0D · Acuse automático de la descarga de la guía fiscal
 

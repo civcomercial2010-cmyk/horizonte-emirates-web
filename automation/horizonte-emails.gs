@@ -108,10 +108,13 @@ const CONFIG = {
   /** Con envío manual: avisar al asesor de cada lead nuevo con su ficha y el guion sugerido. */
   NOTIFY_AGENT_ON_NEW_LEAD: true,
   /**
-   * No marcar como leído el aviso de Web3Forms (para que se vea en negrita en Recibidos).
-   * Se aplica igual a los leads del formulario largo y a las descargas de la guía fiscal:
-   * en los dos casos el correo se queda no leído, destacado e importante hasta que se abre.
-   * Lo que evita reprocesarlo es la etiqueta HE-procesado, nunca el estado de leído.
+   * REGLA DE LECTURA de toda la automatización (ver cerrarHiloProcesado).
+   * true  = NADA se marca como leído. Los avisos que exigen acción (lead nuevo y descarga
+   *         de la guía) se dejan además destacados e importantes; el resto de correos que
+   *         toca el script (Web3Forms ajeno al embudo, duplicados, bajas) se quedan
+   *         exactamente como estaban. Lo que evita reprocesar un hilo es la etiqueta
+   *         HE-procesado, nunca el estado de leído.
+   * false = comportamiento antiguo: el script marca leído todo lo que procesa.
    */
   KEEP_LEAD_MAIL_UNREAD: true,
   /**
@@ -687,6 +690,46 @@ function isGuiaDownload(subject) {
   return /^\[Descarga guia fiscal\]/i.test(String(subject || '').trim());
 }
 
+/**
+ * Cierra el tratamiento de un hilo por parte de la automatización: le pone su etiqueta
+ * y decide el estado de lectura. REGLA ÚNICA, y la única que hay que recordar:
+ * esta automatización NUNCA marca como leído un correo. Lo que evita reprocesar un
+ * hilo es la etiqueta, no el estado de leído (las dos consultas de pollGmail excluyen
+ * «-label:HE-procesado»), así que marcar leído no aportaba nada y escondía avisos.
+ *
+ * Tres comportamientos, en un solo sitio en vez de repartidos por cada rama:
+ *   destacar:true  → no leído + destacado + importante. Para lo que exige acción
+ *                    (lead nuevo, descarga de la guía): tiene que saltar a la vista.
+ *   por defecto    → se etiqueta y NO se toca el estado de lectura. Ni se marca leído
+ *                    ni se fuerza a no leído: el correo se queda como usted lo dejó.
+ *   KEEP_LEAD_MAIL_UNREAD=false → vuelve el comportamiento antiguo (marcar leído).
+ *
+ * @param {GmailThread} thread hilo a etiquetar.
+ * @param {GmailMessage} msg mensaje más reciente del hilo.
+ * @param {Object} [opts]
+ * @param {GmailLabel} [opts.label] etiqueta a aplicar (por defecto, HE-procesado).
+ * @param {boolean} [opts.destacar] true para dejarlo en negrita, destacado e importante.
+ */
+function cerrarHiloProcesado(thread, msg, opts) {
+  opts = opts || {};
+  const label = opts.label || ensureGmailLabel(CONFIG.LABEL_PROCESADO);
+  try {
+    thread.addLabel(label);
+  } catch (e) {
+    Logger.log('cerrarHiloProcesado: no se pudo etiquetar «' + msg.getSubject() + '»: ' + e.message);
+  }
+
+  if (CONFIG.KEEP_LEAD_MAIL_UNREAD === false) {
+    msg.markRead();
+    return;
+  }
+  if (opts.destacar) {
+    msg.markUnread();
+    msg.star();
+    thread.markImportant();
+  }
+}
+
 function pollGmail() {
   PropertiesService.getScriptProperties().setProperty('HE_LAST_POLL_TS', String(Date.now())); // M08, heartbeat para healthCheck
   let threads = GmailApp.search(CONFIG.POLL_QUERY, 0, 50);
@@ -730,6 +773,11 @@ function pollGmail() {
       // principal (ver isGuiaDownload). Se registran en su propia hoja «Descargas»
       // para dejar de perderse, sin tocar isHorizonteWeb3Lead ni leadExists().
       if (isGuiaDownload(subject)) {
+        // Se destaca lo que pide una mirada: una descarga nueva, o un aviso del que no se
+        // pudo sacar el email (ahí se ha perdido un contacto y hay que verlo). Una descarga
+        // repetida no exige nada, y destacar lo que no requiere acción acaba enseñando a
+        // ignorar lo destacado, que es como se pierde el siguiente lead de verdad.
+        let destacarDescarga = true;
         const descarga = parseLeadFromEmail(body, subject);
         if (descarga && descarga.email) {
           if (!descargaExists(descarga.email)) {
@@ -748,31 +796,26 @@ function pollGmail() {
             }
             Logger.log('✓ descarga guía fiscal: ' + descarga.email);
           } else {
+            destacarDescarga = false;
             Logger.log('= descarga guía fiscal repetida: ' + descarga.email);
           }
         } else {
           Logger.log('pollGmail: descarga de guía sin email parseable: ' + subject);
         }
-        thread.addLabel(label);
-        if (CONFIG.KEEP_LEAD_MAIL_UNREAD) {
-          // Mismo trato que el aviso de un lead: la descarga se queda en negrita, destacada
-          // y en Recibidos hasta que alguien la abre. La etiqueta HE-procesado es lo que
-          // evita que se reprocese, no el estado de leído (ver el guard del principio del bucle).
-          msg.markUnread();
-          msg.star();
-          thread.markImportant();
-        } else {
-          msg.markRead();
-        }
+        // Mismo trato que el aviso de un lead: la descarga se queda en negrita y en
+        // Recibidos hasta que alguien la abre.
+        cerrarHiloProcesado(thread, msg, { label: label, destacar: destacarDescarga });
         return;
       }
 
       // Verificar que es un lead de Horizonte Emirates
       const isHE = isHorizonteWeb3Lead(subject, body);
       if (!isHE) {
-        // No es nuestro: marcar leído y saltar sin etiquetar
+        // No es del embudo: se etiqueta (para que no vuelva a entrar en el lote de cada
+        // pasada) y se deja tal cual estaba. Antes se marcaba leído, que es justo lo que
+        // no debe hacer un proceso automático con un correo que usted no ha abierto.
         Logger.log('pollGmail: descartado (sin keyword HE): ' + subject);
-        msg.markRead();
+        cerrarHiloProcesado(thread, msg, { label: label });
         return;
       }
 
@@ -780,15 +823,13 @@ function pollGmail() {
       if (!lead || !lead.email) {
         Logger.log('No se pudo parsear lead: ' + subject);
         Logger.log('pollGmail: body snippet=\n' + body.substring(0, 600));
-        thread.addLabel(label);
-        msg.markRead();
+        cerrarHiloProcesado(thread, msg, { label: label });
         return;
       }
 
       if (leadExists(lead.email)) {
         Logger.log('Lead duplicado, ignorando: ' + lead.email);
-        thread.addLabel(label);
-        msg.markRead();
+        cerrarHiloProcesado(thread, msg, { label: label });
         return;
       }
 
@@ -813,16 +854,9 @@ function pollGmail() {
         throw err;
       }
 
-      thread.addLabel(label);
-      if (CONFIG.KEEP_LEAD_MAIL_UNREAD) {
-        // El aviso se queda en negrita y destacado en Recibidos: el lead no se pasa por alto.
-        // El guard de etiqueta de arriba evita que se reprocese en las siguientes pasadas.
-        msg.markUnread();
-        msg.star();
-        thread.markImportant();
-      } else {
-        msg.markRead();
-      }
+      // El aviso se queda en negrita y destacado en Recibidos: el lead no se pasa por alto.
+      // El guard de etiqueta del principio del bucle evita que se reprocese.
+      cerrarHiloProcesado(thread, msg, { label: label, destacar: true });
       Logger.log(`✓ Lead: ${lead.nombre} [Tier ${lead.tier}|${lead.puntuacion}pts] → ${lead.email}`);
 
     } catch(e) {
@@ -898,8 +932,9 @@ function pollUnsubscribes() {
         Logger.log('Solicitud de baja sin lead en CRM: ' + senderEmail);
       }
 
-      thread.addLabel(label);
-      msg.markRead();
+      // Una solicitud de baja se registra en el CRM, pero el correo se queda como esté:
+      // es la respuesta de una persona y le toca a usted decidir si la contesta.
+      cerrarHiloProcesado(thread, msg, { label: label });
     } catch(e) {
       Logger.log('Error procesando baja: ' + e.toString());
     }
@@ -1109,8 +1144,7 @@ function recuperarLeadsPerdidos(days) {
 
     if (leadExists(lead.email)) {
       Logger.log('recuperarLeadsPerdidos: ya existe → ' + lead.email);
-      thread.addLabel(label);
-      msg.markRead();
+      cerrarHiloProcesado(thread, msg, { label: label });
       yaExistian++;
       return;
     }
@@ -1119,8 +1153,7 @@ function recuperarLeadsPerdidos(days) {
       const leadId = saveLead(lead);
       scheduleSequence(leadId, lead.tier, new Date());
       processQueue({ immediateWelcomeAfterPoll: true });
-      thread.addLabel(label);
-      msg.markRead();
+      cerrarHiloProcesado(thread, msg, { label: label, destacar: true });
       Logger.log('✓ recuperado: ' + lead.nombre + ' [Tier ' + lead.tier + '|' + lead.puntuacion + 'pts] → ' + lead.email);
       guardados++;
     } catch(e) {
@@ -1163,13 +1196,13 @@ function recuperarDescargasPerdidas(days) {
     }
 
     if (descargaExists(descarga.email)) {
-      thread.addLabel(label);
+      cerrarHiloProcesado(thread, msg, { label: label });
       yaExistian++;
       return;
     }
 
     saveDescarga(descarga);
-    thread.addLabel(label);
+    cerrarHiloProcesado(thread, msg, { label: label, destacar: true });
     guardadas++;
     Logger.log('✓ descarga recuperada: ' + descarga.email);
   });
