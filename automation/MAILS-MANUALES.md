@@ -296,9 +296,12 @@ todavía no ha dicho ni su nombre.
 **Bienvenida** de la hoja Descargas, que es lo que impide repetirlo.
 
 **Si alguna descarga se quedó sin él** (las anteriores a esta automatización, o un fallo
-puntual): ejecutar `enviarBienvenidasDescargasPendientes()` en Apps Script. Escribe solo
-a las que siguen sin acuse y, por defecto, solo a las de los últimos 30 días. `healthCheck()`
-avisa por su cuenta si una descarga lleva más de 2 h sin acuse.
+puntual): ejecutar `enviarBienvenidasDescargasPendientes()` en Apps Script. Escribe a las
+que siguen sin sello en la columna **Bienvenida** y, por defecto, solo a las de los últimos
+30 días. Como la hoja no distingue una descarga desatendida de una que usted resolvió a
+mano, lo segundo hay que decírselo: `marcarDescargasSinAcuse()` sella las filas ya cerradas
+**sin enviar nada**, y a partir de ahí la recuperación las salta. `healthCheck()` avisa por
+su cuenta si una descarga posterior al despliegue lleva más de 2 h sin acuse.
 
 **Para verlo antes de que lo reciba nadie:** `previewWelcomeDescarga()` (lo escribe en el
 registro) o `testWelcomeDescargaToSelf()` (lo envía al buzón del asesor tal como llega).
