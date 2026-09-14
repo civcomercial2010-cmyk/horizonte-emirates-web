@@ -1398,11 +1398,29 @@ function promoverDescargaALead(d) {
   const data = sh.getDataRange().getValues();
   for (let i = 1; i < data.length; i++) {
     if (String(data[i][2] || '').trim().toLowerCase() !== email.toLowerCase()) continue;
+
+    // Fila que ya existe. Puede ser una ficha normal o una añadida a mano, a la que
+    // suelen faltarle el ID y las columnas de control. Se rellena SOLO lo que esté
+    // vacío: nunca se pisa nada escrito, que puede ser una corrección deliberada.
+    const fila = i + 1;
+    const completar = [];
     let id = String(data[i][0] || '').trim();
     if (!id) {
       id = 'L' + new Date().getTime().toString().slice(-8);
-      sh.getRange(i + 1, 1).setValue(id);
-      Logger.log('promoverDescargaALead: la fila de ' + email + ' no tenía ID. Asignado ' + id + '.');
+      sh.getRange(fila, 1).setValue(id);
+      completar.push('ID ' + id);
+    }
+    if (!String(data[i][11] || '').trim()) { sh.getRange(fila, 12).setValue('C'); completar.push('tier C'); }
+    if (!String(data[i][13] || '').trim()) { sh.getRange(fila, 14).setValue('Descarga guía fiscal'); completar.push('origen'); }
+    if (!String(data[i][14] || '').trim()) { sh.getRange(fila, 15).setValue(new Date()); completar.push('fecha'); }
+    if (!String(data[i][15] || '').trim()) { sh.getRange(fila, 16).setValue('activo'); completar.push('estado activo'); }
+    [[26, d.cons_privacidad], [27, d.cons_marketing], [28, d.cons_version],
+     [29, d.cons_fecha], [30, d.cons_texto]].forEach(par => {
+      if (par[1] && !String(data[i][par[0] - 1] || '').trim()) sh.getRange(fila, par[0]).setValue(par[1]);
+    });
+
+    if (completar.length) {
+      Logger.log('promoverDescargaALead: ficha de ' + email + ' completada (' + completar.join(', ') + ').');
     }
     return id;
   }
