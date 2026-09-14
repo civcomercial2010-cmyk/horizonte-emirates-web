@@ -34,6 +34,7 @@ leads, cada uno se trabaja a mano para maximizar la conversión a videollamada.
 | Interruptor maestro | `CONFIG.AUTO_SEND_LEADS` en `horizonte-emails.gs` | `false` |
 | Acuse de recibo inmediato (W0) | `CONFIG.AUTO_SEND_WELCOME` | `true`, excepción al interruptor |
 | Acuse de la descarga de la guía (W0D) | `CONFIG.AUTO_SEND_WELCOME_DESCARGA` | `true`, excepción al interruptor |
+| Remarketing a quien no contestó | `CONFIG.AUTO_SEND_REMARKETING` | `true`, llave propia: solo envía a quien usted marque |
 | Aviso de lead nuevo al asesor | `notifyAgentNewLead()` | activo, llega como no leído y destacado |
 | Aviso de Web3Forms (leads **y** descargas de la guía) | `CONFIG.KEEP_LEAD_MAIL_UNREAD` | se queda no leído, destacado e importante |
 | Regla de lectura de todo el script | `cerrarHiloProcesado()` | **nada se marca como leído**: ver abajo |
@@ -118,10 +119,23 @@ La marca manda en los dos sentidos:
 
 Dos vías, según lo que ese lead consintió en su día (columna 27, «Consent marketing»):
 
+El orden del embudo, que es lo que esto respeta:
+
+```
+formulario → W0 automático en segundos
+          → TODO lo demás pausado (se trabaja el lead a mano: M1-M11)
+          → si no contesta, usted marca la casilla
+          → correos periódicos hasta que conteste o usted lo desmarque
+```
+
 | Vía | A quién | Qué recibe |
 |---|---|---|
-| `R1`-`R4` | Consent marketing **SI** | 4 toques (día 0, +7, +21, +45): reenganche, criterio de zonas, la visita a Emiratos y cierre |
-| `RE1`-`RE2` | Sin ese consentimiento | 2 toques (día 0, +10) que **solo retoman su propia solicitud**, sin proyectos ni contenido comercial (interés legítimo, art. 6.1.f RGPD, igual que D1-D3) |
+| `R1`-`R8` y luego `R9` | Consent marketing **SI** | 8 toques en unos 7 meses (0, 7, 21, 45, 75, 110, 150 y 200 días) y, a partir de ahí, **`R9` cada 90 días indefinidamente** mientras siga marcado. `R8` pregunta expresamente si quiere seguir recibiéndolos |
+| `RE1`-`RE2` | Sin ese consentimiento | 2 toques (día 0, +10) que **solo retoman su propia solicitud**, sin proyectos ni contenido comercial (interés legítimo, art. 6.1.f RGPD, igual que D1-D3). **No se alarga ni se renueva**: para escribir más a esa persona lo que hace falta es su consentimiento, no más correos |
+
+La renovación la hace sola `renovarRemarketingAgotados()`, que `processQueue()` llama en
+cada pasada: cuando a un lead marcado se le acaban los toques, le siembra el siguiente.
+No hay que acordarse de volver a ejecutar nada.
 
 Se saltan solos: los leads en estado `baja` o `cerrado`, y los que ya tienen remarketing
 en la cola (no se duplica).
@@ -133,11 +147,39 @@ en la cola (no se duplica).
    con quién y por qué vía, sin tocar la cola.
 3. Revisarlo y ejecutar `programarRemarketingDeVerdad()`.
 
-Requiere `CONFIG.AUTO_SEND_NURTURE = true` (ya lo está) para que `processQueue()` los envíe.
-Si estuviera en `false`, la programación se queda en la cola sin salir, y la función lo avisa.
+Requiere `CONFIG.AUTO_SEND_REMARKETING = true`, que es una llave distinta de la del
+nurturing por tier. Esa separación es lo que permite apagar `AUTO_SEND_NURTURE` (para que
+tras el W0 no salga nada solo) sin apagar el remarketing.
+
+**Para volver al orden previsto del embudo**, si el nurturing por tier quedó encendido:
+poner `CONFIG.AUTO_SEND_NURTURE = false` y ejecutar una vez `pausarNurtureAutomatico()`,
+que devuelve a `pausado-manual` los toques por tier pendientes sin tocar el remarketing.
 
 La columna se crea sola la primera vez, con casillas, y se localiza por su cabecera: si
 la mueve de sitio o añade columnas antes, sigue funcionando.
+
+### Bajas: cómo se detectan y qué se para
+
+`pollUnsubscribes()` corre cada 10 minutos sobre las respuestas que llegan a
+`hola@horizonteemirates.com`. Si el texto pide la baja, escribe `baja` en el estado del
+lead y, desde ese momento, `processQueue()` cancela todo lo que le quedara en cola
+(secuencia por tier y remarketing incluidos).
+
+Tres cosas que conviene saber:
+
+- **Se compara por palabra completa**, no por subcadena. Antes bastaba con que el correo
+  contuviera «baja» en cualquier posición: quien escribiera «mi mujer **traba**j**a** en
+  Dubai» o «**stop**over en Dubai» se daba de baja solo, se le cancelaba la cola y nadie
+  se enteraba. Lo hace `pideBaja()`.
+- **También se miran las respuestas ya leídas** de los últimos 7 días
+  (`UNSUBSCRIBE_QUERY_FALLBACK`). La consulta principal exige `is:unread`, así que una
+  baja que usted abriera antes de la pasada del trigger no se procesaba nunca.
+- **Se marca también en la hoja Descargas**, para quien solo descargó la guía y no está
+  en Leads: sin eso seguiría recibiendo el nurturing D1-D3.
+
+Lo que no hay, y conviene tenerlo presente: **cabecera `List-Unsubscribe`**. `GmailApp`
+no permite cabeceras propias, así que la baja va por respuesta («responda BAJA»), que es
+lo que dicen el pie de todos los correos y los propios textos de `R8` y `R9`.
 
 ### Reactivar la automatización
 
