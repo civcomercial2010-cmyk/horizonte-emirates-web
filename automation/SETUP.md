@@ -34,6 +34,8 @@ leads, cada uno se trabaja a mano para maximizar la conversión a videollamada.
 | Interruptor maestro | `CONFIG.AUTO_SEND_LEADS` en `horizonte-emails.gs` | `false` |
 | Acuse de recibo inmediato (W0) | `CONFIG.AUTO_SEND_WELCOME` | `true`, excepción al interruptor |
 | Acuse de la descarga de la guía (W0D) | `CONFIG.AUTO_SEND_WELCOME_DESCARGA` | `true`, excepción al interruptor |
+| Remarketing a quien no contestó | `CONFIG.AUTO_SEND_REMARKETING` | `true`, llave propia: solo envía a quien usted marque |
+| Mismo trato para todos los marcados | `CONFIG.REMARKETING_MISMO_TRATO` | `true`: la secuencia larga va a todos, hayan marcado marketing o no |
 | Aviso de lead nuevo al asesor | `notifyAgentNewLead()` | activo, llega como no leído y destacado |
 | Aviso de Web3Forms (leads **y** descargas de la guía) | `CONFIG.KEEP_LEAD_MAIL_UNREAD` | se queda no leído, destacado e importante |
 | Regla de lectura de todo el script | `cerrarHiloProcesado()` | **nada se marca como leído**: ver abajo |
@@ -42,6 +44,7 @@ leads, cada uno se trabaja a mano para maximizar la conversión a videollamada.
 | Herramienta de montaje | `tools/generador-mails.html` | se abre en el navegador |
 | La misma desde el móvil, con los leads del CRM | `automation/horizonte-webapp.gs` + archivo HTML `generador` | web app aparte, solo lectura salvo la nota de seguimiento |
 | Cola de la hoja Cola | estado `pausado-manual` | sembrada como agenda, nunca se envía |
+| Remarketing a quien no contestó | columna **Remarketing** de la hoja Leads | lo marca usted a mano; ver abajo |
 
 **Qué sigue funcionando solo:** registro del lead en el CRM, scoring, briefing al asesor,
 detección de bajas, aviso de reuniones de Calendly, healthCheck, **el acuse de recibo W0**
@@ -103,6 +106,111 @@ cerrar y que acaba enseñando a ignorar el healthcheck entero. Su primera ejecuc
 `HE_W0D_DESDE` en las propiedades del script y solo vigila las descargas posteriores. No hay que
 preparar nada a mano. Si además se quiere dejar constancia en las filas viejas (y que la
 recuperación no les escriba nunca), ejecutar una vez `marcarDescargasSinAcuse()`.
+
+### Remarketing a leads que no contestaron (R1-R4 · RE1-RE2)
+
+**Quién lo decide: usted.** En la hoja **Leads** hay una columna **Remarketing** con una
+casilla por lead. El código no elige a nadie: sin marca, no hay correos.
+
+La marca manda en los dos sentidos:
+
+- **Al marcarla** y ejecutar `programarRemarketingDeVerdad()`, se siembra la secuencia.
+- **Al desmarcarla**, la secuencia se para en la siguiente pasada de `processQueue()`,
+  aunque queden correos en cola. Es lo que hay que hacer cuando un lead conteste.
+
+Dos vías, según lo que ese lead consintió en su día (columna 27, «Consent marketing»):
+
+El orden del embudo, que es lo que esto respeta:
+
+```
+formulario → W0 automático en segundos
+          → TODO lo demás pausado (se trabaja el lead a mano: M1-M11)
+          → si no contesta, usted marca la casilla
+          → correos periódicos hasta que conteste o usted lo desmarque
+```
+
+**Con `REMARKETING_MISMO_TRATO = true` (lo que hay hoy), todos los marcados reciben lo
+mismo**, hayan marcado la casilla de marketing o no:
+
+| Secuencia | Qué recibe |
+|---|---|
+| `R1`-`R8` y luego `R9` | 8 toques en unos 7 meses (0, 7, 21, 45, 75, 110, 150 y 200 días) y, a partir de ahí, **`R9` cada 90 días indefinidamente** mientras siga marcado. `R8` pregunta expresamente si quiere seguir recibiéndolos |
+
+Es una decisión de negocio tomada a sabiendas (14-sep-2026): a un lead sin
+«Consent marketing: SI» le llega contenido comercial, y quien no lo quiera responde BAJA
+y sale al instante. La exposición es de Propulse, no un descuido del código.
+
+Poniendo `REMARKETING_MISMO_TRATO = false` vuelven las dos vías: `R1`-`R8` para quien
+consintió y `RE1`-`RE2` (2 toques, sin contenido comercial, sin renovación) para quien no.
+Las plantillas `RE1`-`RE2` se conservan precisamente para poder volver atrás con una línea.
+
+La renovación la hace sola `renovarRemarketingAgotados()`, que `processQueue()` llama en
+cada pasada: cuando a un lead marcado se le acaban los toques, le siembra el siguiente.
+No hay que acordarse de volver a ejecutar nada.
+
+Se saltan solos: los leads en estado `baja` o `cerrado`, y los que ya tienen remarketing
+en la cola (no se duplica).
+
+**Cómo se ejecuta**, en el editor de Apps Script:
+
+1. Marcar en la hoja a quien corresponda.
+2. Ejecutar `programarRemarketing()` → **solo simula**: escribe en el registro qué haría,
+   con quién y por qué vía, sin tocar la cola.
+3. Revisarlo y ejecutar `programarRemarketingDeVerdad()`.
+
+Requiere `CONFIG.AUTO_SEND_REMARKETING = true`, que es una llave distinta de la del
+nurturing por tier. Esa separación es lo que permite apagar `AUTO_SEND_NURTURE` (para que
+tras el W0 no salga nada solo) sin apagar el remarketing.
+
+**Para volver al orden previsto del embudo**, si el nurturing por tier quedó encendido:
+poner `CONFIG.AUTO_SEND_NURTURE = false` y ejecutar una vez `pausarNurtureAutomatico()`,
+que devuelve a `pausado-manual` los toques por tier pendientes sin tocar el remarketing.
+
+La columna se crea sola la primera vez, con casillas, y se localiza por su cabecera: si
+la mueve de sitio o añade columnas antes, sigue funcionando.
+
+### Las descargas de la guía también entran en el CRM
+
+Quien descarga la guía deja solo su email, y antes se quedaba únicamente en la hoja
+**Descargas**: no aparecía en la lista de leads y no había forma de marcarlo para
+remarketing, aunque hubiera entrado por un clic de pago.
+
+Ahora `pollGmail()` la incorpora también a **Leads** (`promoverDescargaALead()`), con lo
+que se sabe: email, consentimientos y UTMs. Sin nombre ni teléfono, porque no los ha dado
+— y los correos R están escritos para funcionar sin nombre («Hola,» en vez de «Hola
+Inversor», que delata la plantilla).
+
+Si esa misma persona rellena después el formulario largo, **su ficha se completa en vez de
+descartarse** (`completarLeadDesdeFormulario()`). Antes `leadExists()` la veía repetida y
+tiraba el lead bueno, que es justo el más cualificado: el que primero se informa y luego
+se decide.
+
+Para las descargas anteriores a esta versión: ejecutar una vez `promoverDescargasALeads()`.
+Es idempotente, y de paso asigna ID a las filas que se añadieron a mano y se quedaron sin
+él (sin ID no se puede programar nada).
+
+### Bajas: cómo se detectan y qué se para
+
+`pollUnsubscribes()` corre cada 10 minutos sobre las respuestas que llegan a
+`hola@horizonteemirates.com`. Si el texto pide la baja, escribe `baja` en el estado del
+lead y, desde ese momento, `processQueue()` cancela todo lo que le quedara en cola
+(secuencia por tier y remarketing incluidos).
+
+Tres cosas que conviene saber:
+
+- **Se compara por palabra completa**, no por subcadena. Antes bastaba con que el correo
+  contuviera «baja» en cualquier posición: quien escribiera «mi mujer **traba**j**a** en
+  Dubai» o «**stop**over en Dubai» se daba de baja solo, se le cancelaba la cola y nadie
+  se enteraba. Lo hace `pideBaja()`.
+- **También se miran las respuestas ya leídas** de los últimos 7 días
+  (`UNSUBSCRIBE_QUERY_FALLBACK`). La consulta principal exige `is:unread`, así que una
+  baja que usted abriera antes de la pasada del trigger no se procesaba nunca.
+- **Se marca también en la hoja Descargas**, para quien solo descargó la guía y no está
+  en Leads: sin eso seguiría recibiendo el nurturing D1-D3.
+
+Lo que no hay, y conviene tenerlo presente: **cabecera `List-Unsubscribe`**. `GmailApp`
+no permite cabeceras propias, así que la baja va por respuesta («responda BAJA»), que es
+lo que dicen el pie de todos los correos y los propios textos de `R8` y `R9`.
 
 ### Reactivar la automatización
 

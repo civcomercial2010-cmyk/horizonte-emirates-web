@@ -43,6 +43,10 @@ const CONFIG = {
   POLL_QUERY_FALLBACK: 'from:web3forms.com newer_than:3d -label:HE-procesado',
   // Respuestas de leads que pueden contener solicitud de baja
   UNSUBSCRIBE_QUERY: 'to:hola@horizonteemirates.com is:unread -from:web3forms.com',
+  // Reintento: respuestas recientes sin etiqueta de baja procesada, LEÍDAS incluidas.
+  // Sin esto, una baja que usted abriera antes de la pasada del trigger no se procesaba
+  // nunca (la consulta principal exige is:unread) y esa persona seguía en la secuencia.
+  UNSUBSCRIBE_QUERY_FALLBACK: 'to:hola@horizonteemirates.com newer_than:7d -from:web3forms.com -label:HE-bajas-procesado',
   UNSUBSCRIBE_KEYWORDS: [
     'baja', 'darme de baja', 'darse de baja', 'no me escribas', 'no me escriban',
     'no más correos', 'no mas correos', 'cancelar suscripción', 'cancelar suscripcion',
@@ -136,6 +140,35 @@ const CONFIG = {
   BUSINESS_HOUR_END: 19,
   /** Si true, sábado y domingo no hay envíos de secuencia. */
   BUSINESS_WEEKDAYS_ONLY: true,
+  /**
+   * REMARKETING A LEADS QUE NO CONTESTARON (secuencias R1-R4 / RE1-RE2).
+   * A quién se le manda NO lo decide el código: lo marca usted a mano en la hoja Leads,
+   * en la columna «Remarketing» (casilla). La marca manda en los dos sentidos: se
+   * programa al marcarla y la secuencia SE PARA si la desmarca, aunque queden correos
+   * en cola. Ver programarRemarketing().
+   */
+  REMARKETING_COL: 'Remarketing',
+  /**
+   * Interruptor del remarketing, independiente de los otros dos a propósito.
+   * El orden del embudo es: W0 automático → TODO pausado para trabajar el lead a mano →
+   * si no contesta, usted lo marca y empiezan los correos periódicos. Para que eso
+   * funcione, apagar el nurturing por tier (AUTO_SEND_NURTURE) no puede apagar también
+   * el remarketing, y por eso tiene su propia llave.
+   * false → la cola de remarketing se queda quieta, sin enviar nada.
+   */
+  AUTO_SEND_REMARKETING: true,
+  /**
+   * MISMO TRATO PARA TODOS LOS MARCADOS (decisión del negocio, 14-sep-2026).
+   * true  = quien usted marque recibe la secuencia completa R1-R8 + R9, haya marcado
+   *         o no la casilla de marketing en el formulario. Quien no lo quiera, responde
+   *         BAJA y sale al instante (pollUnsubscribes lo procesa cada 10 minutos).
+   * false = dos vías según el consentimiento: R1-R8 a quien lo dio y RE1-RE2, sin
+   *         contenido comercial, a quien no.
+   * Con true, a un lead sin «Consent marketing: SI» le llega contenido comercial: es
+   * una decisión de negocio consciente, no un descuido, y la exposición es de Propulse.
+   * Las plantillas RE1-RE2 se conservan para poder volver atrás cambiando esta línea.
+   */
+  REMARKETING_MISMO_TRATO: true,
   /** M08: pon true cuando haya campañas/tráfico activo: habilita la alerta de "sin leads en N horas". */
   EXPECT_TRAFFIC: false,
   /** M08: horas sin nuevos leads que disparan alerta (solo si EXPECT_TRAFFIC=true). */
@@ -791,6 +824,12 @@ function pollGmail() {
             } catch (wErr) {
               Logger.log('pollGmail: fallo al enviar el acuse W0D a ' + descarga.email + ': ' + wErr.toString());
             }
+            // La descarga también se incorpora al CRM: si no, esa persona no aparece en
+            // la lista de leads y no hay forma de marcarla para remarketing, aunque haya
+            // entrado por un clic de pago. Un fallo aquí no debe tumbar la pasada.
+            try { promoverDescargaALead(descarga); } catch (pErr) {
+              Logger.log('pollGmail: no se pudo incorporar al CRM ' + descarga.email + ': ' + pErr.toString());
+            }
             try { notifyAgentNewDownload(descarga, bienvenidaEnviada); } catch (nErr) {
               Logger.log('pollGmail: fallo al avisar de la descarga de ' + descarga.email + ': ' + nErr.toString());
             }
@@ -827,15 +866,22 @@ function pollGmail() {
         return;
       }
 
+      let leadId;
+      let fichaCompletada = false;
       if (leadExists(lead.email)) {
-        Logger.log('Lead duplicado, ignorando: ' + lead.email);
-        cerrarHiloProcesado(thread, msg, { label: label });
-        return;
+        // Puede ser un duplicado de verdad o la ficha que se creó al descargar la guía,
+        // que solo tiene el email. En el segundo caso se completa en vez de descartarse.
+        leadId = completarLeadDesdeFormulario(lead);
+        if (!leadId) {
+          Logger.log('Lead duplicado, ignorando: ' + lead.email);
+          cerrarHiloProcesado(thread, msg, { label: label });
+          return;
+        }
+        fichaCompletada = true;
       }
 
-      let leadId;
       try {
-        leadId = saveLead(lead);
+        if (!fichaCompletada) leadId = saveLead(lead);
         scheduleSequence(leadId, lead.tier, new Date());
         if (CONFIG.AUTO_SEND_LEADS === false) {
           // El acuse de recibo va primero: es lo único que el lead espera de inmediato.
@@ -904,8 +950,33 @@ function diagnoseFormPipeline() {
 // ══════════════════════════════════════════════════════════════
 // 2. DETECTAR BAJAS POR RESPUESTA: trigger cada 10 min
 // ══════════════════════════════════════════════════════════════
+/**
+ * ¿Pide la baja este texto? Compara por PALABRA COMPLETA, no por subcadena.
+ * Antes bastaba con que el cuerpo contuviera «baja» en cualquier posición, y eso
+ * daba de baja a quien escribiera «mi mujer trabaja en Dubai» o «stopover en Dubai»:
+ * el lead se marcaba como baja, se le cancelaba la cola y nadie se enteraba.
+ * Se normaliza sin acentos y se exige que la palabra no esté pegada a otras letras.
+ */
+function pideBaja(texto) {
+  const t = String(texto || '').toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  return CONFIG.UNSUBSCRIBE_KEYWORDS.some(kw => {
+    const k = String(kw).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+    if (!k) return false;
+    const escapada = k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return new RegExp('(^|[^a-z0-9])' + escapada + '([^a-z0-9]|$)').test(t);
+  });
+}
+
 function pollUnsubscribes() {
-  const threads = GmailApp.search(CONFIG.UNSUBSCRIBE_QUERY, 0, 30);
+  let threads = GmailApp.search(CONFIG.UNSUBSCRIBE_QUERY, 0, 30);
+  if (CONFIG.UNSUBSCRIBE_QUERY_FALLBACK) {
+    const vistos = {};
+    threads.forEach(t => { vistos[t.getId()] = true; });
+    GmailApp.search(CONFIG.UNSUBSCRIBE_QUERY_FALLBACK, 0, 30).forEach(t => {
+      if (!vistos[t.getId()]) { vistos[t.getId()] = true; threads.push(t); }
+    });
+  }
   if (!threads.length) return;
 
   const label = ensureGmailLabel(CONFIG.LABEL_BAJAS);
@@ -919,17 +990,20 @@ function pollUnsubscribes() {
       const senderEmail = emailMatch ? emailMatch[1].toLowerCase() : '';
       if (!senderEmail) return;
 
-      const subject = String(msg.getSubject() || '').toLowerCase();
-      const body = String(msg.getPlainBody() || '').toLowerCase();
-      const isUnsubscribe = CONFIG.UNSUBSCRIBE_KEYWORDS.some(kw => subject.includes(kw) || body.includes(kw));
+      if (thread.getLabels().some(l => l.getName() === CONFIG.LABEL_BAJAS)) return;
 
+      const isUnsubscribe = pideBaja(msg.getSubject()) || pideBaja(msg.getPlainBody());
       if (!isUnsubscribe) return;
 
       const updated = markUnsubscribed(senderEmail);
-      if (updated) {
-        Logger.log('✓ Baja automática por respuesta: ' + senderEmail);
+      // Quien pide la baja puede no estar en Leads: si solo descargó la guía, su rastro
+      // está en Descargas, y sin tocarlo ahí seguiría recibiendo el nurturing D1-D3.
+      const enDescargas = markUnsubscribedDescarga(senderEmail);
+      if (updated || enDescargas) {
+        Logger.log('✓ Baja automática por respuesta: ' + senderEmail +
+          (updated ? ' [Leads]' : '') + (enDescargas ? ' [Descargas]' : ''));
       } else {
-        Logger.log('Solicitud de baja sin lead en CRM: ' + senderEmail);
+        Logger.log('Solicitud de baja de alguien que no está ni en Leads ni en Descargas: ' + senderEmail);
       }
 
       // Una solicitud de baja se registra en el CRM, pero el correo se queda como esté:
@@ -1303,6 +1377,132 @@ function descargaExists(email) {
   return false;
 }
 
+/**
+ * Sube una descarga de la guía a la hoja Leads, para que exista en el CRM y se pueda
+ * marcar para remarketing como cualquier otro contacto. Antes vivía solo en «Descargas»
+ * y quedaba fuera de todo: ni aparecía en la lista de leads ni había forma de incluirla
+ * en una secuencia, aunque hubiera entrado por un clic de pago.
+ *
+ * Solo rellena lo que se sabe (email, consentimientos, UTMs): un contacto de la guía no
+ * ha dado nombre ni teléfono, y los correos están escritos para funcionar sin ellos.
+ * Si ese email ya está en Leads no hace nada, salvo asignarle un ID si le faltaba
+ * (las filas añadidas a mano suelen quedarse sin él, y sin ID no se puede programar nada).
+ *
+ * @return {string} ID del lead, nuevo o existente, o '' si no se pudo.
+ */
+function promoverDescargaALead(d) {
+  const email = String((d && d.email) || '').trim();
+  if (!email) return '';
+
+  const sh = getSheet('Leads');
+  const data = sh.getDataRange().getValues();
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][2] || '').trim().toLowerCase() !== email.toLowerCase()) continue;
+
+    // Fila que ya existe. Puede ser una ficha normal o una añadida a mano, a la que
+    // suelen faltarle el ID y las columnas de control. Se rellena SOLO lo que esté
+    // vacío: nunca se pisa nada escrito, que puede ser una corrección deliberada.
+    const fila = i + 1;
+    const completar = [];
+    let id = String(data[i][0] || '').trim();
+    if (!id) {
+      id = 'L' + new Date().getTime().toString().slice(-8);
+      sh.getRange(fila, 1).setValue(id);
+      completar.push('ID ' + id);
+    }
+    if (!String(data[i][11] || '').trim()) { sh.getRange(fila, 12).setValue('C'); completar.push('tier C'); }
+    if (!String(data[i][13] || '').trim()) { sh.getRange(fila, 14).setValue('Descarga guía fiscal'); completar.push('origen'); }
+    if (!String(data[i][14] || '').trim()) { sh.getRange(fila, 15).setValue(new Date()); completar.push('fecha'); }
+    if (!String(data[i][15] || '').trim()) { sh.getRange(fila, 16).setValue('activo'); completar.push('estado activo'); }
+    [[26, d.cons_privacidad], [27, d.cons_marketing], [28, d.cons_version],
+     [29, d.cons_fecha], [30, d.cons_texto]].forEach(par => {
+      if (par[1] && !String(data[i][par[0] - 1] || '').trim()) sh.getRange(fila, par[0]).setValue(par[1]);
+    });
+
+    if (completar.length) {
+      Logger.log('promoverDescargaALead: ficha de ' + email + ' completada (' + completar.join(', ') + ').');
+    }
+    return id;
+  }
+
+  const id = saveLead({
+    nombre: '',
+    email: email,
+    tier: 'C',
+    canal: 'email',
+    origen: 'Descarga guía fiscal',
+    utm_source: d.utm_source, utm_medium: d.utm_medium, utm_campaign: d.utm_campaign,
+    utm_content: d.utm_content, utm_term: d.utm_term,
+    gclid: d.gclid, gbraid: d.gbraid, wbraid: d.wbraid,
+    cons_privacidad: d.cons_privacidad, cons_marketing: d.cons_marketing,
+    cons_version: d.cons_version, cons_fecha: d.cons_fecha, cons_texto: d.cons_texto,
+  });
+  Logger.log('✓ descarga incorporada al CRM: ' + email + ' → ' + id);
+  return id;
+}
+
+/**
+ * Sube al CRM las descargas que se quedaron fuera (las anteriores a esta versión).
+ * Ejecutar a mano una vez. Es idempotente: las que ya estén en Leads no se duplican.
+ */
+function promoverDescargasALeads() {
+  const data = getOrCreateDescargasSheet().getDataRange().getValues();
+  let nuevas = 0, yaEstaban = 0;
+  for (let i = 1; i < data.length; i++) {
+    const email = String(data[i][0] || '').trim();
+    if (!email) continue;
+    const existia = leadExists(email);
+    promoverDescargaALead({ email: email, cons_marketing: data[i][8], cons_privacidad: 'SI',
+                            utm_source: data[i][5], utm_medium: data[i][6], utm_campaign: data[i][7] });
+    if (existia) yaEstaban++; else nuevas++;
+  }
+  Logger.log('promoverDescargasALeads → incorporadas=' + nuevas + ' · ya estaban=' + yaEstaban);
+}
+
+/**
+ * Completa con los datos del formulario largo una ficha que entró por la descarga de la
+ * guía (solo email). Sin esto, pollGmail veía el email repetido y descartaba el lead
+ * bueno: se perdía justo al más cualificado, el que primero se informa y luego se decide.
+ * No toca fichas que ya tengan teléfono: eso es un envío duplicado de verdad.
+ * @return {string} ID del lead actualizado, o '' si no procedía.
+ */
+function completarLeadDesdeFormulario(lead) {
+  const email = String((lead && lead.email) || '').trim().toLowerCase();
+  if (!email) return '';
+  const sh = getSheet('Leads');
+  const data = sh.getDataRange().getValues();
+
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][2] || '').trim().toLowerCase() !== email) continue;
+
+    const tieneTelefono = String(data[i][3] || '').trim() !== '';
+    const origen = String(data[i][13] || '');
+    if (tieneTelefono || !/descarga/i.test(origen)) return '';   // duplicado real
+
+    const id = String(data[i][0] || '').trim() || ('L' + new Date().getTime().toString().slice(-8));
+    const fila = i + 1;
+    sh.getRange(fila, 1).setValue(id);
+    sh.getRange(fila, 2).setValue(lead.nombre || '');
+    sh.getRange(fila, 4).setNumberFormat('@');
+    sh.getRange(fila, 4).setValue(normalizeTelefono(lead.telefono) || '');
+    [[5, lead.pais], [6, lead.capital], [7, lead.objetivo], [8, lead.experiencia],
+     [9, lead.plazo], [10, lead.viaje], [11, lead.puntuacion], [12, lead.tier],
+     [13, lead.canal]].forEach(par => { if (par[1]) sh.getRange(fila, par[0]).setValue(par[1]); });
+    sh.getRange(fila, 14).setValue('Formulario web (antes descargó la guía)');
+    const notaPrevia = String(data[i][16] || '').trim();
+    sh.getRange(fila, 17).setValue((notaPrevia ? notaPrevia + '\n' : '') +
+      'Ficha completada con el formulario largo el ' + new Date().toLocaleString('es-ES') + '.');
+    // La prueba del consentimiento se actualiza: el formulario largo trae la versión buena.
+    [[26, lead.cons_privacidad], [27, lead.cons_marketing], [28, lead.cons_version],
+     [29, lead.cons_fecha], [30, lead.cons_texto]].forEach(par => {
+      if (par[1]) sh.getRange(fila, par[0]).setValue(par[1]);
+    });
+    Logger.log('✓ ficha de descarga completada con el formulario largo: ' + email + ' → ' + id);
+    return id;
+  }
+  return '';
+}
+
 function saveDescarga(d) {
   getOrCreateDescargasSheet().appendRow([
     d.email,
@@ -1382,6 +1582,95 @@ function saveLead(data) {
   return id;
 }
 
+/**
+ * Secuencias de remarketing para leads que en su día no contestaron. Dos vías, y la
+ * diferencia no es de tono sino de base legal:
+ *
+ *   consentido   → el lead marcó «Consent marketing: SI». Se le puede mandar contenido
+ *                  comercial periódico: mercado, proyectos, la visita a Emiratos.
+ *   sinConsentir → no lo marcó. Solo caben dos toques que retoman LA SOLICITUD QUE ÉL
+ *                  HIZO y que se quedó sin respuesta (interés legítimo, art. 6.1.f
+ *                  RGPD, el mismo encaje que ya se documenta para D1-D3): sin ofertas
+ *                  de proyectos, sin contenido comercial, y con final explícito.
+ *
+ * Los retardos van en horas, como SEQUENCES.
+ */
+const SEQUENCES_REMARKETING = {
+  consentido: [
+    { code: 'R1', delay: 0    },   // al marcarlo
+    { code: 'R2', delay: 168  },   // 7 días
+    { code: 'R3', delay: 504  },   // 21 días
+    { code: 'R4', delay: 1080 },   // 45 días
+    { code: 'R5', delay: 1800 },   // 75 días
+    { code: 'R6', delay: 2640 },   // 110 días
+    { code: 'R7', delay: 3600 },   // 150 días
+    { code: 'R8', delay: 4800 },   // 200 días · pregunta si seguimos
+  ],
+  // Sin consentimiento de marketing NO se alarga. Estos dos no son publicidad: son la
+  // continuación de la solicitud que esa persona hizo, y eso se agota en dos toques.
+  // Para escribirle más, lo que hace falta es su consentimiento, no más correos.
+  sinConsentir: [
+    { code: 'RE1', delay: 0   },
+    { code: 'RE2', delay: 240 },   // 10 días
+  ],
+};
+
+/** Toque recurrente indefinido, una vez agotada la escalera. 90 días entre correos. */
+const REMARKETING_RECURRENTE = { code: 'R9', delayDias: 90 };
+
+/** true si el código pertenece a una secuencia de remarketing (R1-R4 o RE1-RE2). */
+function esCodigoRemarketing(code) {
+  return /^RE?\d+$/.test(String(code || '').trim());
+}
+
+/** Índice (1-based) de una columna por su cabecera, o 0 si no está. */
+function indiceColumnaPorCabecera(cabeceras, nombre) {
+  const objetivo = String(nombre || '').trim().toLowerCase();
+  for (let i = 0; i < cabeceras.length; i++) {
+    if (String(cabeceras[i] || '').trim().toLowerCase() === objetivo) return i + 1;
+  }
+  return 0;
+}
+
+/**
+ * ¿Está marcada la casilla de remarketing? Acepta la casilla de verificación (true) y
+ * también texto escrito a mano («SI», «Sí», «X»), porque la hoja se toca desde el móvil
+ * y no siempre es cómodo pulsar la casilla exacta.
+ */
+function marcaRemarketingActiva(valor) {
+  if (valor === true) return true;
+  const v = String(valor || '').trim().toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  return v === 'si' || v === 'x' || v === 'true';
+}
+
+/**
+ * Columna «Remarketing» de la hoja Leads, creándola con casillas si no existe.
+ * Se busca por cabecera y no por posición fija a propósito: la hoja lleva columnas
+ * añadidas a mano después del esquema original, y una posición fija acabaría
+ * escribiendo encima de una de ellas.
+ */
+function ensureRemarketingColumn(sheet) {
+  const sh = sheet || getSheet('Leads');
+  const lastCol = Math.max(1, sh.getLastColumn());
+  const cabeceras = sh.getRange(1, 1, 1, lastCol).getValues()[0];
+  const existente = indiceColumnaPorCabecera(cabeceras, CONFIG.REMARKETING_COL);
+  if (existente) return existente;
+
+  const col = lastCol + 1;
+  sh.getRange(1, col).setValue(CONFIG.REMARKETING_COL)
+    .setFontWeight('bold').setBackground('#0D1B2A').setFontColor('#ffffff')
+    .setNote('Marque aquí a los leads que no contestaron y quiere reenganchar.\n' +
+             'Al marcar: se programa la secuencia con programarRemarketing().\n' +
+             'Al desmarcar: la secuencia se para, aunque queden correos en cola.');
+  sh.setColumnWidth(col, 110);
+
+  const filas = sh.getLastRow() - 1;
+  if (filas > 0) sh.getRange(2, col, filas, 1).insertCheckboxes();
+  Logger.log('ensureRemarketingColumn: columna «' + CONFIG.REMARKETING_COL + '» creada en la posición ' + col);
+  return col;
+}
+
 function scheduleSequence(leadId, tier, createdAt) {
   const sheet    = getSheet('Cola');
   const sequence = SEQUENCES[tier] || SEQUENCES['C'];
@@ -1400,6 +1689,181 @@ function scheduleSequence(leadId, tier, createdAt) {
  * Los ítems «pausado-manual» con fecha futura vuelven a «pendiente»; los ya vencidos
  * se cancelan (enviarlos ahora sería una ráfaga de correos viejos al lead).
  */
+/**
+ * Programa la secuencia de remarketing de los leads que USTED haya marcado en la
+ * columna «Remarketing» de la hoja Leads. No decide nada por su cuenta: sin marca,
+ * no hay correos.
+ *
+ * Qué hace con cada lead marcado:
+ *   · estado «baja» o «cerrado» → lo salta (una baja no se reengancha nunca).
+ *   · «Consent marketing: SI»   → secuencia completa R1-R4 (mercado, proyectos, visita).
+ *   · sin ese consentimiento    → solo RE1-RE2, que retoman su propia solicitud sin
+ *                                 contenido comercial. Ver SEQUENCES_REMARKETING.
+ *   · ya tenía correos de remarketing en la cola → lo salta, no duplica.
+ *
+ * Por defecto SIMULA: escribe en el registro qué haría y no toca la cola. Para
+ * programarlo de verdad, ejecutar programarRemarketingDeVerdad().
+ *
+ * @param {boolean} [simular=true] false para escribir realmente en la hoja Cola.
+ */
+function programarRemarketing(simular) {
+  const enSerio = simular === false;
+  const lSh = getSheet('Leads');
+  const qSh = getSheet('Cola');
+  const colMarca = ensureRemarketingColumn(lSh);
+  const lData = lSh.getDataRange().getValues();
+  const qData = qSh.getDataRange().getValues();
+
+  // Leads que ya tienen remarketing en cola: no se les vuelve a sembrar.
+  const yaEnCola = {};
+  for (let i = 1; i < qData.length; i++) {
+    if (esCodigoRemarketing(qData[i][1])) yaEnCola[qData[i][0]] = true;
+  }
+
+  const ahora = new Date();
+  const plan = [];
+  let saltadosSinMarca = 0, saltadosBaja = 0, saltadosYaProgramados = 0;
+
+  for (let i = 1; i < lData.length; i++) {
+    const fila = lData[i];
+    const leadId = String(fila[0] || '').trim();
+    const email  = String(fila[2] || '').trim();
+    if (!leadId || !email) continue;
+
+    if (!marcaRemarketingActiva(fila[colMarca - 1])) { saltadosSinMarca++; continue; }
+
+    const estado = String(fila[15] || '').trim().toLowerCase();
+    if (estado === 'baja' || estado === 'cerrado') {
+      saltadosBaja++;
+      Logger.log('· ' + leadId + ' (' + email + '): marcado, pero está en «' + estado + '». No se reengancha.');
+      continue;
+    }
+    if (yaEnCola[leadId]) {
+      saltadosYaProgramados++;
+      Logger.log('· ' + leadId + ' (' + email + '): ya tiene remarketing en la cola. Sin cambios.');
+      continue;
+    }
+
+    // Columna 27 = «Consent marketing». Se accede por posición y no por cabecera
+    // porque en la hoja viva esas cabeceras están en blanco (ver migrarColumnasConsentimiento).
+    const consentido = String(fila[26] || '').trim().toUpperCase() === 'SI';
+    const via = (CONFIG.REMARKETING_MISMO_TRATO === true || consentido) ? 'consentido' : 'sinConsentir';
+    const secuencia = SEQUENCES_REMARKETING[via];
+
+    secuencia.forEach(item => {
+      const cuando = new Date(ahora.getTime() + item.delay * 3600 * 1000);
+      plan.push({ leadId: leadId, email: email, code: item.code, cuando: cuando, via: via });
+    });
+  }
+
+  Logger.log('=== programarRemarketing ' + (enSerio ? '(REAL)' : '(SIMULACIÓN, no se escribe nada)') + ' ===');
+  plan.forEach(p => {
+    Logger.log('  ' + p.code + '  ' + Utilities.formatDate(p.cuando, CONFIG.BUSINESS_TIMEZONE || Session.getScriptTimeZone(), 'dd/MM/yyyy HH:mm') +
+      '  ' + p.email + '  [' + p.via + ']');
+    if (enSerio) qSh.appendRow([p.leadId, p.code, p.cuando, 'pendiente', '', '']);
+  });
+
+  const leadsPlanificados = {};
+  plan.forEach(p => { leadsPlanificados[p.leadId] = true; });
+  Logger.log('RESUMEN → leads a reenganchar=' + Object.keys(leadsPlanificados).length +
+    ' · correos programados=' + plan.length +
+    ' | sin marca=' + saltadosSinMarca +
+    ' · baja/cerrado=' + saltadosBaja +
+    ' · ya programados=' + saltadosYaProgramados);
+
+  if (!enSerio) {
+    Logger.log('Esto era una simulación. Para programarlo de verdad: programarRemarketingDeVerdad()');
+  } else if (CONFIG.AUTO_SEND_NURTURE !== true) {
+    Logger.log('AVISO: CONFIG.AUTO_SEND_NURTURE está en false, así que processQueue no enviará ' +
+      'estos correos. Ponlo en true para que salgan.');
+  }
+}
+
+/**
+ * Mantiene vivo el remarketing de quien sigue marcado: cuando a un lead se le acaban los
+ * toques programados, le siembra el siguiente recurrente (R9, cada 90 días). Así la
+ * cadencia no depende de acordarse de volver a ejecutar nada; depende solo de la casilla.
+ * La llama processQueue() en cada pasada.
+ *
+ * No renueva nunca la vía sin consentimiento (RE1-RE2): esos dos toques se agotan y ahí
+ * termina. Tampoco renueva a quien esté en baja o cerrado.
+ * @return {number} correos sembrados en esta pasada.
+ */
+function renovarRemarketingAgotados() {
+  const lSh = getSheet('Leads');
+  const qSh = getSheet('Cola');
+  const lData = lSh.getDataRange().getValues();
+  const colMarca = indiceColumnaPorCabecera(lData[0] || [], CONFIG.REMARKETING_COL);
+  if (!colMarca) return 0;   // aún no se ha creado la columna: no hay nada que renovar
+
+  const qData = qSh.getDataRange().getValues();
+  const estadoCola = {};   // leadId → {pendientes, enviados, ultimoEnvio}
+  for (let i = 1; i < qData.length; i++) {
+    const code = qData[i][1];
+    if (!esCodigoRemarketing(code)) continue;
+    const id = qData[i][0];
+    const e = estadoCola[id] || (estadoCola[id] = { pendientes: 0, enviados: 0, ultimo: 0 });
+    const estado = String(qData[i][3] || '');
+    if (estado === 'pendiente') e.pendientes++;
+    if (estado === 'enviado') {
+      e.enviados++;
+      const f = new Date(qData[i][4] || qData[i][2]);
+      if (!isNaN(f)) e.ultimo = Math.max(e.ultimo, f.getTime());
+    }
+  }
+
+  const ahora = Date.now();
+  let sembrados = 0;
+  for (let i = 1; i < lData.length; i++) {
+    const fila = lData[i];
+    const leadId = String(fila[0] || '').trim();
+    if (!leadId) continue;
+    if (!marcaRemarketingActiva(fila[colMarca - 1])) continue;
+
+    const estado = String(fila[15] || '').trim().toLowerCase();
+    if (estado === 'baja' || estado === 'cerrado') continue;
+    // Con REMARKETING_MISMO_TRATO todos siguen la vía larga, así que todos se renuevan.
+    if (CONFIG.REMARKETING_MISMO_TRATO !== true &&
+        String(fila[26] || '').trim().toUpperCase() !== 'SI') continue;  // vía RE: no se renueva
+
+    const e = estadoCola[leadId];
+    if (!e || e.enviados === 0 || e.pendientes > 0) continue;
+
+    // Desde el último envío, nunca hacia atrás: si la escalera terminó hace meses,
+    // el siguiente toque sale ya, no con fecha vencida.
+    const cuando = new Date(Math.max(ahora, e.ultimo + REMARKETING_RECURRENTE.delayDias * 24 * 3600 * 1000));
+    qSh.appendRow([leadId, REMARKETING_RECURRENTE.code, cuando, 'pendiente', '', '']);
+    sembrados++;
+    Logger.log('renovarRemarketingAgotados: ' + leadId + ' → ' + REMARKETING_RECURRENTE.code +
+      ' el ' + Utilities.formatDate(cuando, CONFIG.BUSINESS_TIMEZONE || Session.getScriptTimeZone(), 'dd/MM/yyyy'));
+  }
+  return sembrados;
+}
+
+/**
+ * Inverso de activarNurtureAutomatico(): devuelve a «pausado-manual» los toques por tier
+ * que estén pendientes, sin tocar el remarketing. Es lo que hay que ejecutar al volver al
+ * orden previsto del embudo (W0 automático → todo pausado → trabajo manual → marca).
+ */
+function pausarNurtureAutomatico() {
+  const qSh = getSheet('Cola');
+  const qData = qSh.getDataRange().getValues();
+  let pausados = 0;
+  for (let i = 1; i < qData.length; i++) {
+    if (String(qData[i][3] || '') !== 'pendiente') continue;
+    if (esCodigoRemarketing(qData[i][1])) continue;   // el remarketing no se toca
+    qSh.getRange(i + 1, 4).setValue('pausado-manual');
+    pausados++;
+  }
+  Logger.log('pausarNurtureAutomatico: toques por tier devueltos a pausado-manual = ' + pausados +
+    '. El remarketing (R/RE) sigue igual.');
+}
+
+/** Ejecuta programarRemarketing() escribiendo de verdad en la cola (sin parámetros, para el desplegable). */
+function programarRemarketingDeVerdad() {
+  programarRemarketing(false);
+}
+
 function reanudarEnvioAutomatico() {
   if (CONFIG.AUTO_SEND_LEADS !== true) {
     Logger.log('reanudarEnvioAutomatico: CONFIG.AUTO_SEND_LEADS sigue en false. Cámbialo a true y vuelve a ejecutar.');
@@ -1678,9 +2142,17 @@ function processQueue(opts) {
   // Dos interruptores independientes: AUTO_SEND_LEADS (kit completo, A1 incluido) y
   // AUTO_SEND_NURTURE (solo A2+/B2+/C2+, ver activarNurtureAutomatico). Si los dos
   // están apagados, no sale nada por aquí y todo se escribe a mano.
-  if (CONFIG.AUTO_SEND_LEADS !== true && CONFIG.AUTO_SEND_NURTURE !== true) {
-    Logger.log('processQueue: envío automático desactivado (AUTO_SEND_LEADS y AUTO_SEND_NURTURE en false). Los correos se envían a mano.');
+  if (CONFIG.AUTO_SEND_LEADS !== true && CONFIG.AUTO_SEND_NURTURE !== true &&
+      CONFIG.AUTO_SEND_REMARKETING !== true) {
+    Logger.log('processQueue: envío automático desactivado (AUTO_SEND_LEADS, AUTO_SEND_NURTURE y AUTO_SEND_REMARKETING en false). Los correos se envían a mano.');
     return;
+  }
+
+  // Mientras un lead siga marcado, el remarketing no se acaba: cuando se le agotan los
+  // toques programados se le siembra el siguiente. Es lo que hace que «tenernos
+  // presentes» no dependa de acordarse de volver a ejecutar nada.
+  try { renovarRemarketingAgotados(); } catch (e) {
+    Logger.log('processQueue: no se pudo renovar el remarketing: ' + e.message);
   }
   const qSheet = getSheet('Cola');
   const lSheet = getSheet('Leads');
@@ -1698,6 +2170,9 @@ function processQueue(opts) {
   const lData = lSheet.getDataRange().getValues();
 
   const leadsMap = {};
+  // La columna «Remarketing» la rellena el asesor a mano y puede estar en cualquier
+  // posición (la hoja lleva columnas añadidas después del esquema original).
+  const colMarca = indiceColumnaPorCabecera(lData[0] || [], CONFIG.REMARKETING_COL);
   for (let i = 1; i < lData.length; i++) {
     const r = lData[i];
     leadsMap[r[0]] = {
@@ -1705,6 +2180,7 @@ function processQueue(opts) {
       pais: r[4], capital: r[5], objetivo: r[6], experiencia: r[7],
       plazo: r[8], viaje: r[9], puntuacion: r[10], tier: r[11],
       canal: r[12], estado: r[15],
+      remarketing: colMarca ? r[colMarca - 1] : '',
     };
   }
 
@@ -1719,6 +2195,23 @@ function processQueue(opts) {
       qSheet.getRange(i+1,4).setValue('cancelado'); continue;
     }
 
+    const esRemk = esCodigoRemarketing(emailCode);
+
+    // La marca de la hoja manda en los dos sentidos: si el asesor la quita (porque el
+    // lead contestó, o porque ya no procede), la secuencia se para aquí mismo, aunque
+    // queden correos en cola. Es lo que hace que la casilla sea un control de verdad
+    // y no solo un disparador.
+    if (esRemk && !marcaRemarketingActiva(lead.remarketing)) {
+      qSheet.getRange(i + 1, 4).setValue('cancelado (sin marca de remarketing)');
+      Logger.log('· ' + emailCode + ' cancelado para ' + lead.email + ': la casilla de remarketing ya no está marcada.');
+      continue;
+    }
+    // Cada capa tiene su llave. Con el remarketing encendido y el resto apagado, por
+    // aquí solo pasan R/RE: los toques por tier se quedan esperando, que es justo el
+    // comportamiento que se busca (primero se trabaja el lead a mano).
+    if (esRemk && CONFIG.AUTO_SEND_REMARKETING !== true) continue;
+    if (!esRemk && CONFIG.AUTO_SEND_LEADS !== true && CONFIG.AUTO_SEND_NURTURE !== true) continue;
+
     const isWelcome = isWelcomeSequenceEmail(emailCode);
     if (CONFIG.BUSINESS_HOURS_ONLY !== false && !inWin && !(opts.immediateWelcomeAfterPoll && isWelcome)) {
       continue;
@@ -1730,7 +2223,11 @@ function processQueue(opts) {
           Boolean(opts.immediateWelcomeAfterPoll) && isWelcome;
         // nurture:true solo importa cuando AUTO_SEND_LEADS está en false (caso de hoy):
         // es lo que permite que la capa de nurturing envíe sin reactivar el kit completo.
-        sendEmail(emailCode, lead, { bypassBusinessHours: bypassHours, nurture: true });
+        sendEmail(emailCode, lead, {
+          bypassBusinessHours: bypassHours,
+          nurture: !esRemk,
+          remarketing: esRemk,
+        });
       } else {
         Logger.log('[TEST] ' + emailCode + ' → ' + lead.email);
       }
@@ -1770,13 +2267,16 @@ function buildEmailPlainBody(tplText) {
  *   permitido por CONFIG.AUTO_SEND_WELCOME_DESCARGA.
  * @param {boolean} [opts.nurture]: true: envío de la capa de nurturing (A2+/B2+/C2+),
  *   permitido por CONFIG.AUTO_SEND_NURTURE aunque AUTO_SEND_LEADS siga en false.
+ * @param {boolean} [opts.remarketing]: true: toque R/RE de un lead marcado a mano,
+ *   permitido por CONFIG.AUTO_SEND_REMARKETING.
  */
 function sendEmail(code, lead, opts) {
   opts = opts || {};
   const allowed = opts.manual ||
     (opts.welcome && CONFIG.AUTO_SEND_WELCOME !== false) ||
     (opts.welcomeDescarga && CONFIG.AUTO_SEND_WELCOME_DESCARGA !== false) ||
-    (opts.nurture && CONFIG.AUTO_SEND_NURTURE === true);
+    (opts.nurture && CONFIG.AUTO_SEND_NURTURE === true) ||
+    (opts.remarketing && CONFIG.AUTO_SEND_REMARKETING === true);
   if (CONFIG.AUTO_SEND_LEADS === false && !allowed) {
     throw new Error('Envío automático desactivado (CONFIG.AUTO_SEND_LEADS=false). Usa las plantillas de automation/MAILS-MANUALES.md.');
   }
@@ -2055,6 +2555,171 @@ ${guiaCardDescarga}
 ${calBtn}
 <p style="margin:28px 0 0;padding-top:20px;border-top:1px solid #E0DBD1;font-size:14px;color:#646464;line-height:1.6">Un saludo,<br><strong style="color:#1A1A1A">${firma}</strong><br>Horizonte Emirates<br><span style="font-size:13px">Recibe este correo porque pidió la guía en nuestra web y aceptó que se la enviásemos por email.</span></p>`,
       text: `Hola,\n\nAcaba de descargar nuestra guía fiscal en horizonteemirates.com. Se la dejamos aquí también, para que la tenga a mano cuando la necesite y no dependa de la pestaña que se le abrió.\n\nDescargar el PDF:\n${pdfUrl}\n\nO leerla en el navegador:\n${guiaUrl}\n\nEs lo que más dudas resuelve al principio: qué se declara en España cuando se compra en Dubai (IRPF, modelo 720, plusvalías), cómo funciona el convenio de doble imposición y qué errores se pagan caros cuando se descubren tarde.\n\nEste correo es automático, para que la guía no se le pierda. No le vamos a llenar el buzón. Ahora bien, si al leerla le surge una duda concreta sobre su caso, puede responder directamente a este correo: lo leo yo y le contesto sin compromiso.\n\nY si prefiere resolverlo hablando, Marc, nuestro socio en Dubai, atiende llamadas de treinta minutos sin ningún compromiso:\n${calL}\n\nUn saludo,\n${firma}\nHorizonte Emirates\nRecibe este correo porque pidió la guía en nuestra web y aceptó que se la enviásemos por email.`,
+    };
+  }
+
+  // ── R1-R4 · REMARKETING A QUIEN NO CONTESTÓ (con consentimiento de marketing) ──
+  // Se programan solo si el asesor marca la casilla «Remarketing» en la hoja Leads,
+  // y se paran solos si la desmarca. Reglas del texto:
+  //   1. Se admite el tiempo transcurrido sin excusas largas ni disculpas repetidas.
+  //   2. Cada correo aporta algo por sí mismo: quien no conteste ninguno habrá leído
+  //      igualmente cuatro cosas útiles. Insistir sin aportar es lo que quema una lista.
+  //   3. Ninguna cifra nueva de rentabilidad: los números concretos son de la llamada,
+  //      donde se pueden explicar con su contexto.
+  //   4. El último dice explícitamente que es el último. Cerrar bien deja la puerta
+  //      abierta de verdad; desaparecer sin decirlo, no.
+  if (esCodigoRemarketing(code)) {
+    // Un contacto que entró por la descarga de la guía solo dejó su email: estos correos
+    // tienen que funcionar igual sin nombre, y «Hola Inversor» delata la plantilla.
+    const tieneNombre = String(lead.nombre || '').trim() !== '';
+    const pila = tieneNombre ? firstName(lead.nombre) : '';
+    const saludo = tieneNombre ? `Hola ${pila},` : 'Hola,';
+    const sufNombre = tieneNombre ? `, ${pila}` : '';
+    const firmaR = CONFIG.ASESOR_FIRMA || CONFIG.ASESOR_NOMBRE;
+    const cierreR = `<p style="margin:28px 0 0;padding-top:20px;border-top:1px solid #E0DBD1;font-size:14px;color:#646464;line-height:1.6">Un saludo,<br><strong style="color:#1A1A1A">${firmaR}</strong><br>Horizonte Emirates<br><span style="font-size:13px">Puede responder a este correo: lo leo yo.</span></p>`;
+    const cierreRTxt = `\n\nUn saludo,\n${firmaR}\nHorizonte Emirates\nPuede responder a este correo: lo leo yo.`;
+    // El perfil solo se menciona si consta: recordarle datos que nunca dio delata la plantilla.
+    const perfil = lead.capital
+      ? (lead.objetivo ? `${cap} con enfoque en ${obj}` : `${cap}`)
+      : (lead.objetivo ? `${obj}` : '');
+
+    if (code === 'R1') return {
+      subject: `${tieneNombre ? pila + ', r' : 'R'}etomamos su consulta sobre Dubai`,
+      html: `<p>${saludo}</p>
+<p>Hace un tiempo nos pidió información para invertir en Dubai${perfil ? ` (${perfil})` : ''} y la conversación se quedó a medias. La culpa de eso es nuestra, no suya.</p>
+<p>Le escribo por si sigue en el radar. No hace falta que decida nada: si me responde con dos líneas sobre en qué punto está, le digo con franqueza si hoy le compensa o no, y si no le compensa, se lo digo igual.</p>
+<p>Mientras tanto, la guía fiscal sigue disponible:</p>
+${guiaCard}
+<p>Y si prefiere hablarlo directamente, Marc, nuestro socio en Dubai, atiende llamadas de treinta minutos:</p>
+${calBtn}${cierreR}`,
+      text: `${saludo}\n\nHace un tiempo nos pidió información para invertir en Dubai${perfil ? ` (${perfil})` : ''} y la conversación se quedó a medias. La culpa de eso es nuestra, no suya.\n\nLe escribo por si sigue en el radar. No hace falta que decida nada: si me responde con dos líneas sobre en qué punto está, le digo con franqueza si hoy le compensa o no, y si no le compensa, se lo digo igual.\n\nMientras tanto, la guía fiscal sigue disponible:\n${guiaUrl}\n\nY si prefiere hablarlo directamente, Marc, nuestro socio en Dubai, atiende llamadas de treinta minutos:\n${calL}${cierreRTxt}`,
+    };
+
+    if (code === 'R2') return {
+      subject: `Lo que separa una zona buena de una zona cara en Dubai`,
+      html: `<p>${saludo}</p>
+<p>Una cosa que no se ve desde fuera: en Dubai la pregunta no es «qué zona es mejor», sino qué busca usted de la inversión. Son decisiones distintas.</p>
+<p>Si lo que quiere es <strong>renta por alquiler</strong>, manda la demanda estable y la gestión: zonas consolidadas, con inquilino y comunidad ya formada.</p>
+<p>Si lo que quiere es <strong>revalorización</strong>, manda lo contrario: entrar donde todavía se está construyendo el entorno, asumiendo el plazo y el riesgo que eso trae.</p>
+<p>Mezclar los dos objetivos en un mismo inmueble es el error más común, y es el que hace que alguien acabe con un activo que no le sirve para lo que quería.</p>
+<p>Los números concretos de cada opción se los damos en la llamada, donde se pueden explicar con su contexto en vez de en una tabla suelta:</p>
+${calBtn}${cierreR}`,
+      text: `${saludo}\n\nUna cosa que no se ve desde fuera: en Dubai la pregunta no es «qué zona es mejor», sino qué busca usted de la inversión. Son decisiones distintas.\n\nSi quiere renta por alquiler, manda la demanda estable y la gestión: zonas consolidadas, con inquilino y comunidad ya formada.\n\nSi quiere revalorización, manda lo contrario: entrar donde todavía se está construyendo el entorno, asumiendo el plazo y el riesgo que eso trae.\n\nMezclar los dos objetivos en un mismo inmueble es el error más común, y el que hace que alguien acabe con un activo que no le sirve para lo que quería.\n\nLos números concretos se los damos en la llamada, donde se pueden explicar con su contexto en vez de en una tabla suelta:\n${calL}${cierreRTxt}`,
+    };
+
+    if (code === 'R3') return {
+      subject: `Ver los proyectos en persona${sufNombre}`,
+      html: `<p>${saludo}</p>
+<p>Hay una parte de esto que por correo no se resuelve, y es ver dónde está el inmueble y quién lo construye.</p>
+<p>Si en algún momento quiere ir, le montamos nosotros la agenda completa en Emiratos: visitas a las promotoras, los proyectos que encajen con lo que busca y una reunión en nuestras oficinas de Dubai. Usted pone el viaje; la agenda la preparamos nosotros, en español.</p>
+<p>No hay que decidir nada allí. De hecho, lo normal es volver con criterio y decidir semanas después, ya con calma.</p>
+<p>Si quiere que le contemos cómo se organiza, media hora basta:</p>
+${calBtn}${cierreR}`,
+      text: `${saludo}\n\nHay una parte de esto que por correo no se resuelve, y es ver dónde está el inmueble y quién lo construye.\n\nSi en algún momento quiere ir, le montamos nosotros la agenda completa en Emiratos: visitas a las promotoras, los proyectos que encajen con lo que busca y una reunión en nuestras oficinas de Dubai. Usted pone el viaje; la agenda la preparamos nosotros, en español.\n\nNo hay que decidir nada allí. Lo normal es volver con criterio y decidir semanas después, ya con calma.\n\nSi quiere que le contemos cómo se organiza, media hora basta:\n${calL}${cierreRTxt}`,
+    };
+
+    if (code === 'R4') return {
+      subject: `Sobre plano o entregado: no es lo mismo${sufNombre}`,
+      html: `<p>${saludo}</p>
+<p>Es la decisión que más condiciona todo lo demás, y la que menos se explica.</p>
+<p><strong>Sobre plano</strong>: se paga a plazos durante la construcción, así que el desembolso inicial es menor y el capital entra repartido. A cambio hay que esperar a la entrega para tener rentas, y se asume el riesgo de plazo.</p>
+<p><strong>Entregado</strong>: se paga de una vez, pero puede alquilarse desde el primer mes. Menos sorpresas y menos recorrido.</p>
+<p>No hay una respuesta buena en abstracto: depende de si le sobra el dinero ahora o lo necesita rindiendo ya. Si me dice en cuál de los dos casos está, le digo qué tiene sentido mirar.</p>
+${calBtn}${cierreR}`,
+      text: `${saludo}\n\nEs la decisión que más condiciona todo lo demás, y la que menos se explica.\n\nSobre plano: se paga a plazos durante la construcción, así que el desembolso inicial es menor y el capital entra repartido. A cambio hay que esperar a la entrega para tener rentas, y se asume el riesgo de plazo.\n\nEntregado: se paga de una vez, pero puede alquilarse desde el primer mes. Menos sorpresas y menos recorrido.\n\nNo hay una respuesta buena en abstracto: depende de si le sobra el dinero ahora o lo necesita rindiendo ya. Si me dice en cuál de los dos casos está, le digo qué tiene sentido mirar.\n\n${calL}${cierreRTxt}`,
+    };
+
+    if (code === 'R5') return {
+      subject: `Lo que Hacienda espera de usted si compra en Dubai`,
+      html: `<p>${saludo}</p>
+<p>Comprar fuera no le saca de la declaración en España. Siendo residente fiscal aquí, tributa por su renta mundial, y eso incluye lo que genere un inmueble en Emiratos.</p>
+<p>En la práctica son tres frentes: el IRPF por los rendimientos, el modelo 720 si el valor supera el umbral, y las plusvalías el día que venda. El convenio de doble imposición evita pagar dos veces, pero rara vez lo compensa todo.</p>
+<p>Está desarrollado, con los plazos y los umbrales, en nuestra guía:</p>
+${guiaCard}
+<p>Y si quiere verlo aplicado a su caso concreto, que es donde cambian las cosas, media hora basta:</p>
+${calBtn}${cierreR}`,
+      text: `${saludo}\n\nComprar fuera no le saca de la declaración en España. Siendo residente fiscal aquí, tributa por su renta mundial, y eso incluye lo que genere un inmueble en Emiratos.\n\nEn la práctica son tres frentes: el IRPF por los rendimientos, el modelo 720 si el valor supera el umbral, y las plusvalías el día que venda. El convenio de doble imposición evita pagar dos veces, pero rara vez lo compensa todo.\n\nEstá desarrollado, con los plazos y los umbrales, en nuestra guía:\n${guiaUrl}\n\nY si quiere verlo aplicado a su caso concreto, que es donde cambian las cosas, media hora basta:\n${calL}${cierreRTxt}`,
+    };
+
+    if (code === 'R6') return {
+      subject: `El gasto que casi nadie mira antes de comprar`,
+      html: `<p>${saludo}</p>
+<p>Cuando alguien compara dos inmuebles suele mirar precio y rentabilidad estimada. El que decide de verdad si la operación sale bien es otro: <strong>los gastos recurrentes</strong>.</p>
+<p>En Emiratos, la comunidad se paga por metro construido y varía mucho entre un edificio con piscina, gimnasio y conserjería y otro sin ellos. Súmele la gestión del alquiler y los periodos sin inquilino, y la rentabilidad neta puede quedar bastante lejos de la bruta que aparece en los anuncios.</p>
+<p>No es un motivo para no comprar: es un motivo para comparar con el número correcto. Cuando le pasemos opciones, se las pasaremos con ese cálculo hecho.</p>
+${calBtn}${cierreR}`,
+      text: `${saludo}\n\nCuando alguien compara dos inmuebles suele mirar precio y rentabilidad estimada. El que decide de verdad si la operación sale bien es otro: los gastos recurrentes.\n\nEn Emiratos, la comunidad se paga por metro construido y varía mucho entre un edificio con piscina, gimnasio y conserjería y otro sin ellos. Súmele la gestión del alquiler y los periodos sin inquilino, y la rentabilidad neta puede quedar bastante lejos de la bruta que aparece en los anuncios.\n\nNo es un motivo para no comprar: es un motivo para comparar con el número correcto. Cuando le pasemos opciones, se las pasaremos con ese cálculo hecho.\n\n${calL}${cierreRTxt}`,
+    };
+
+    if (code === 'R7') return {
+      subject: `¿Y quién gestiona el alquiler estando usted aquí?`,
+      html: `<p>${saludo}</p>
+<p>Es la pregunta que más veces nos hacen cuando la inversión ya se ve viable, y es razonable: el inmueble está a seis mil kilómetros.</p>
+<p>Se gestiona con una empresa local que se encarga de buscar inquilino, cobrar, y responder a las incidencias del día a día. Usted no trata con nadie sobre el terreno. Esa gestión tiene un coste, y es parte del cálculo del correo anterior.</p>
+<p>Si quiere que le contemos cómo funciona en la práctica, y qué se firma exactamente, se lo explicamos sin compromiso:</p>
+${calBtn}${cierreR}`,
+      text: `${saludo}\n\nEs la pregunta que más veces nos hacen cuando la inversión ya se ve viable, y es razonable: el inmueble está a seis mil kilómetros.\n\nSe gestiona con una empresa local que se encarga de buscar inquilino, cobrar, y responder a las incidencias del día a día. Usted no trata con nadie sobre el terreno. Esa gestión tiene un coste, y es parte del cálculo del correo anterior.\n\nSi quiere que le contemos cómo funciona en la práctica, y qué se firma exactamente, se lo explicamos sin compromiso:\n${calL}${cierreRTxt}`,
+    };
+
+    if (code === 'R8') return {
+      subject: tieneNombre ? `${pila}, ¿le sigo escribiendo?` : '¿Le sigo escribiendo?',
+      html: `<p>${saludo}</p>
+<p>Llevo unos meses mandándole cosas sobre invertir en Emiratos y no he sabido de usted. No pasa nada: no todo el mundo tiene que contestar, y estos correos están pensados para leerse sin responder.</p>
+<p>Se lo pregunto igualmente, porque prefiero escribir a quien le sirve:</p>
+<p><strong>Si no me dice nada</strong>, le seguiré escribiendo de vez en cuando, más o menos una vez cada tres meses, cuando haya algo que merezca la pena contar.</p>
+<p><strong>Si prefiere que pare</strong>, respóndame con la palabra BAJA y dejo de escribirle hoy mismo. Sin preguntas.</p>
+<p>Y si lo que pasa es que ahora sí es buen momento, con dos líneas retomamos donde lo dejamos.</p>${cierreR}`,
+      text: `${saludo}\n\nLlevo unos meses mandándole cosas sobre invertir en Emiratos y no he sabido de usted. No pasa nada: no todo el mundo tiene que contestar, y estos correos están pensados para leerse sin responder.\n\nSe lo pregunto igualmente, porque prefiero escribir a quien le sirve:\n\nSi no me dice nada, le seguiré escribiendo de vez en cuando, más o menos una vez cada tres meses, cuando haya algo que merezca la pena contar.\n\nSi prefiere que pare, respóndame con la palabra BAJA y dejo de escribirle hoy mismo. Sin preguntas.\n\nY si lo que pasa es que ahora sí es buen momento, con dos líneas retomamos donde lo dejamos.${cierreRTxt}`,
+    };
+
+    // R9: el toque recurrente, cada 90 días mientras la casilla siga marcada. Cambia de
+    // enfoque según el trimestre para no ser cuatro veces el mismo correo al año; no
+    // inventa novedades de mercado, que es lo que convierte un recordatorio en ruido.
+    if (code === 'R9') {
+      const aperturas = [
+        { gancho: 'Emiratos sigue entregando proyecto tras proyecto, y el mapa de lo que interesa cambia más rápido de lo que parece.',
+          cuerpo: 'Si en algún momento quiere una foto actual de dónde tiene sentido entrar hoy y dónde ya no, se la damos sin compromiso.' },
+        { gancho: 'Cada cierto tiempo le escribo por si su situación ha cambiado, que suele ser lo que mueve estas decisiones, no el mercado.',
+          cuerpo: 'Si ahora le encaja mirarlo con calma, dígamelo y lo retomamos desde donde lo dejamos.' },
+        { gancho: 'Sigo aquí, por si alguna vez le viene bien retomar lo de Emiratos.',
+          cuerpo: 'No hace falta que decida nada: con saber en qué punto está me basta para decirle si merece la pena mirarlo ahora o esperar.' },
+        { gancho: 'Le escribo poco y a propósito: prefiero que cuando llegue un correo mío tenga algo dentro.',
+          cuerpo: 'Si quiere que revisemos su caso con los datos de hoy, media hora basta para salir de dudas.' },
+      ];
+      const a = aperturas[new Date().getMonth() % aperturas.length];
+      return {
+        subject: tieneNombre ? `${pila}, ¿sigue en el radar lo de Emiratos?` : '¿Sigue en el radar lo de Emiratos?',
+        html: `<p>${saludo}</p>
+<p>${a.gancho}</p>
+<p>${a.cuerpo}</p>
+${calBtn}
+<p style="font-size:14px;color:#646464">Si prefiere que deje de escribirle, respóndame con la palabra BAJA y listo.</p>${cierreR}`,
+        text: `${saludo}\n\n${a.gancho}\n\n${a.cuerpo}\n\n${calL}\n\nSi prefiere que deje de escribirle, respóndame con la palabra BAJA y listo.${cierreRTxt}`,
+      };
+    }
+
+    // ── RE1-RE2 · Sin consentimiento de marketing ───────────────────────────
+    // Estos dos NO son publicidad y no deben parecerlo: se limitan a retomar la
+    // solicitud que esa persona hizo y que quedó sin respuesta, que es lo que
+    // sostiene el interés legítimo. Nada de proyectos, zonas ni oportunidades.
+    if (code === 'RE1') return {
+      subject: `Su solicitud quedó sin respuesta${sufNombre}`,
+      html: `<p>${saludo}</p>
+<p>Hace un tiempo pidió información en nuestra web para invertir en Emiratos${perfil ? ` (${perfil})` : ''} y no llegamos a darle una respuesta completa. Es un fallo nuestro y quería reconocerlo.</p>
+<p>Si todavía le interesa, retomamos su solicitud donde se quedó: dígame en qué punto está y le preparamos el análisis que pidió.</p>
+<p>Si prefiere hablarlo, aquí puede coger media hora con Marc, nuestro socio en Dubai:</p>
+${calBtn}
+<p>Y si ya no le interesa, no tiene que hacer nada: no le vamos a escribir por ningún otro motivo que no sea este.</p>${cierreR}`,
+      text: `${saludo}\n\nHace un tiempo pidió información en nuestra web para invertir en Emiratos${perfil ? ` (${perfil})` : ''} y no llegamos a darle una respuesta completa. Es un fallo nuestro y quería reconocerlo.\n\nSi todavía le interesa, retomamos su solicitud donde se quedó: dígame en qué punto está y le preparamos el análisis que pidió.\n\nSi prefiere hablarlo, aquí puede coger media hora con Marc, nuestro socio en Dubai:\n${calL}\n\nY si ya no le interesa, no tiene que hacer nada: no le vamos a escribir por ningún otro motivo que no sea este.${cierreRTxt}`,
+    };
+
+    return {
+      subject: `Cierro su solicitud${sufNombre}`,
+      html: `<p>${saludo}</p>
+<p>Le escribí hace unos días para retomar la solicitud que dejó en nuestra web y no he sabido nada, así que la cierro por mi parte. <strong>Es el último correo que le mando.</strong></p>
+<p>Sus datos siguen en nuestro sistema por si algún día vuelve a plantearlo; si prefiere que los borremos, respóndame con la palabra BAJA y se eliminan.</p>
+<p>Y si lo retoma en el futuro, escríbanos sin más: no hace falta volver a rellenar nada.</p>${cierreR}`,
+      text: `${saludo}\n\nLe escribí hace unos días para retomar la solicitud que dejó en nuestra web y no he sabido nada, así que la cierro por mi parte. Es el último correo que le mando.\n\nSus datos siguen en nuestro sistema por si algún día vuelve a plantearlo; si prefiere que los borremos, respóndame con la palabra BAJA y se eliminan.\n\nY si lo retoma en el futuro, escríbanos sin más: no hace falta volver a rellenar nada.${cierreRTxt}`,
     };
   }
 
@@ -2376,6 +3041,28 @@ function markUnsubscribed(email) {
   return updateLeadEstadoInSheet(email, 'baja', 'Baja registrada: ');
 }
 // Uso manual: markUnsubscribed('email@ejemplo.com')
+
+/**
+ * Marca la baja en la hoja Descargas (quien solo descargó la guía no está en Leads).
+ * Escribe «baja» en «Estado nurturing», que es lo que mira el kit manual D1-D3.
+ */
+function markUnsubscribedDescarga(email) {
+  const needle = String(email || '').trim().toLowerCase();
+  if (!needle) return false;
+  try {
+    const sh = getOrCreateDescargasSheet();
+    const data = sh.getDataRange().getValues();
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][0] || '').trim().toLowerCase() === needle) {
+        sh.getRange(i + 1, 4).setValue('baja');
+        return true;
+      }
+    }
+  } catch (e) {
+    Logger.log('markUnsubscribedDescarga: no se pudo marcar ' + email + ': ' + e.message);
+  }
+  return false;
+}
 
 function markClosed(email) {
   return updateLeadEstadoInSheet(email, 'cerrado', 'Lead cerrado/ganado: ');

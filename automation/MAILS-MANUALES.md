@@ -110,6 +110,8 @@ puntúa el tier y avisa al asesor. Lo que ya no hace es escribir al lead. Eso se
 | M10 | Cuarto toque sin respuesta | Cerrar con elegancia y dejar la puerta abierta |
 | **M11** | **Segundo o tercer toque, o cuando pide más documentación** | **La visita a Emiratos: es la palanca más fuerte** |
 | **W0D** | **Automático, en segundos tras descargar la guía fiscal** | **Entregar la guía por email y abrir la puerta a responder. No se escribe a mano** |
+| **R1-R8 · R9** | **Automáticos, cuando usted marca «Remarketing» en la hoja Leads** | **Reenganchar a quien no contestó y seguir presente. No se escriben a mano** |
+| **RE1-RE2** | **Igual, pero para leads sin consentimiento de marketing** | **Retomar su solicitud, sin contenido comercial** |
 | **D1** | **24 a 48 h después de descargar la guía fiscal (hoja Descargas, no CRM de Leads)** | **Aportar valor real, sin pedir nada todavía** |
 | **D2** | **4 a 5 días después de D1, sin respuesta** | **Segundo valor: el error que más caro sale (Golden Visa vs. residencia fiscal)** |
 | **D3** | **5 a 6 días después de D2, sin respuesta** | **Invitar al análisis completo o a la llamada, y cerrar** |
@@ -313,6 +315,42 @@ a quien pidió expresamente la guía (art. 6.1.f RGPD), no por el consentimiento
 marketing del formulario largo (que este contacto nunca ha marcado, porque no lo ha
 visto). Por eso van sin contenido comercial de proyectos concretos y se paran en tres
 toques, no se pasan a la cadencia M8-E/M9 de reactivación trimestral.
+
+---
+
+## 3 quinquies. R1-R4 y RE1-RE2 · Remarketing a quien no contestó (no se escriben a mano)
+
+**Quién los recibe:** solo los leads que usted marque en la columna **Remarketing** de la
+hoja Leads. El código no elige a nadie. Al desmarcar, la secuencia se para sola: es lo
+que hay que hacer en cuanto alguien conteste.
+
+**Hoy todos reciben lo mismo.** Con `CONFIG.REMARKETING_MISMO_TRATO = true`, quien usted
+marque recibe la secuencia larga completa, haya marcado la casilla de marketing o no.
+Es una decisión de negocio tomada a sabiendas: quien no la quiera responde BAJA y sale al
+instante. La vía corta de abajo queda documentada porque el código la conserva y se
+recupera cambiando ese interruptor a `false`.
+
+- **R1-R8** (con consentimiento), a los 0, 7, 21, 45, 75, 110, 150 y 200 días: reenganche
+  sin pedir nada, cómo se decide entre zonas según el objetivo, la visita a Emiratos, sobre
+  plano frente a entregado, qué espera Hacienda, los gastos recurrentes que nadie mira, y
+  quién gestiona el alquiler. **R8 pregunta si quiere seguir recibiéndolos.**
+- **R9**, cada 90 días a partir de ahí, mientras la casilla siga marcada: un recordatorio
+  corto que cambia de enfoque cada trimestre. No inventa novedades de mercado, que es
+  exactamente lo que convierte un recordatorio en ruido.
+- **RE1-RE2** (sin consentimiento), a los 0 y 10 días: reconocen que su solicitud quedó
+  sin respuesta, ofrecen retomarla y **nada más**. Sin proyectos, sin zonas, sin
+  oportunidades. El segundo dice expresamente que es el último, y esta vía **no se alarga
+  ni se renueva**: escribir más a quien no consintió no se arregla con más correos, se
+  arregla pidiéndole el consentimiento.
+
+**El final se dice, no se deja caer.** `RE2` cierra de verdad («es el último correo que le
+mando»), y `R8` pregunta abiertamente si seguir escribiendo y explica que, si no contesta,
+recibirá uno cada tres meses. Eso no es cortesía: quien avisa de la cadencia puede
+sostenerla un año sin resultar insistente, y quien no avisa acaba en spam.
+
+**Cómo se lanza:** marcar en la hoja → ejecutar `programarRemarketing()` (simula y lo
+escribe en el registro) → revisar → `programarRemarketingDeVerdad()`. Detalle completo en
+`automation/SETUP.md`.
 
 ---
 
