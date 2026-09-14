@@ -110,6 +110,8 @@ puntúa el tier y avisa al asesor. Lo que ya no hace es escribir al lead. Eso se
 | M10 | Cuarto toque sin respuesta | Cerrar con elegancia y dejar la puerta abierta |
 | **M11** | **Segundo o tercer toque, o cuando pide más documentación** | **La visita a Emiratos: es la palanca más fuerte** |
 | **W0D** | **Automático, en segundos tras descargar la guía fiscal** | **Entregar la guía por email y abrir la puerta a responder. No se escribe a mano** |
+| **R1-R4** | **Automáticos, cuando usted marca «Remarketing» en la hoja Leads** | **Reenganchar a quien no contestó. No se escriben a mano** |
+| **RE1-RE2** | **Igual, pero para leads sin consentimiento de marketing** | **Retomar su solicitud, sin contenido comercial** |
 | **D1** | **24 a 48 h después de descargar la guía fiscal (hoja Descargas, no CRM de Leads)** | **Aportar valor real, sin pedir nada todavía** |
 | **D2** | **4 a 5 días después de D1, sin respuesta** | **Segundo valor: el error que más caro sale (Golden Visa vs. residencia fiscal)** |
 | **D3** | **5 a 6 días después de D2, sin respuesta** | **Invitar al análisis completo o a la llamada, y cerrar** |
@@ -313,6 +315,33 @@ a quien pidió expresamente la guía (art. 6.1.f RGPD), no por el consentimiento
 marketing del formulario largo (que este contacto nunca ha marcado, porque no lo ha
 visto). Por eso van sin contenido comercial de proyectos concretos y se paran en tres
 toques, no se pasan a la cadencia M8-E/M9 de reactivación trimestral.
+
+---
+
+## 3 quinquies. R1-R4 y RE1-RE2 · Remarketing a quien no contestó (no se escriben a mano)
+
+**Quién los recibe:** solo los leads que usted marque en la columna **Remarketing** de la
+hoja Leads. El código no elige a nadie. Al desmarcar, la secuencia se para sola: es lo
+que hay que hacer en cuanto alguien conteste.
+
+**Por qué dos vías y no una.** Un lead que marcó «Consent marketing: SI» puede recibir
+contenido comercial periódico; uno que no lo marcó, no. Pero todos pidieron un análisis
+que en su día no se completó, y retomar esa petición concreta sí se sostiene (interés
+legítimo, el mismo encaje de D1-D3). De ahí la diferencia:
+
+- **R1-R4** (con consentimiento), a los 0, 7, 21 y 45 días: reenganche sin pedir nada,
+  cómo se decide entre zonas según el objetivo, la visita a Emiratos, y cierre.
+- **RE1-RE2** (sin consentimiento), a los 0 y 10 días: reconocen que su solicitud quedó
+  sin respuesta, ofrecen retomarla y **nada más**. Sin proyectos, sin zonas, sin
+  oportunidades. El segundo dice expresamente que es el último.
+
+**Los dos últimos de cada vía se despiden de verdad** («este es el último correo que le
+mando por este asunto»). Eso no es cortesía: quien cierra bien puede volver a escribir
+dentro de un año sin que resulte insistencia, y quien desaparece sin decirlo, no.
+
+**Cómo se lanza:** marcar en la hoja → ejecutar `programarRemarketing()` (simula y lo
+escribe en el registro) → revisar → `programarRemarketingDeVerdad()`. Detalle completo en
+`automation/SETUP.md`.
 
 ---
 

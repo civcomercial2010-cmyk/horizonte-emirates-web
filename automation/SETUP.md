@@ -42,6 +42,7 @@ leads, cada uno se trabaja a mano para maximizar la conversión a videollamada.
 | Herramienta de montaje | `tools/generador-mails.html` | se abre en el navegador |
 | La misma desde el móvil, con los leads del CRM | `automation/horizonte-webapp.gs` + archivo HTML `generador` | web app aparte, solo lectura salvo la nota de seguimiento |
 | Cola de la hoja Cola | estado `pausado-manual` | sembrada como agenda, nunca se envía |
+| Remarketing a quien no contestó | columna **Remarketing** de la hoja Leads | lo marca usted a mano; ver abajo |
 
 **Qué sigue funcionando solo:** registro del lead en el CRM, scoring, briefing al asesor,
 detección de bajas, aviso de reuniones de Calendly, healthCheck, **el acuse de recibo W0**
@@ -103,6 +104,40 @@ cerrar y que acaba enseñando a ignorar el healthcheck entero. Su primera ejecuc
 `HE_W0D_DESDE` en las propiedades del script y solo vigila las descargas posteriores. No hay que
 preparar nada a mano. Si además se quiere dejar constancia en las filas viejas (y que la
 recuperación no les escriba nunca), ejecutar una vez `marcarDescargasSinAcuse()`.
+
+### Remarketing a leads que no contestaron (R1-R4 · RE1-RE2)
+
+**Quién lo decide: usted.** En la hoja **Leads** hay una columna **Remarketing** con una
+casilla por lead. El código no elige a nadie: sin marca, no hay correos.
+
+La marca manda en los dos sentidos:
+
+- **Al marcarla** y ejecutar `programarRemarketingDeVerdad()`, se siembra la secuencia.
+- **Al desmarcarla**, la secuencia se para en la siguiente pasada de `processQueue()`,
+  aunque queden correos en cola. Es lo que hay que hacer cuando un lead conteste.
+
+Dos vías, según lo que ese lead consintió en su día (columna 27, «Consent marketing»):
+
+| Vía | A quién | Qué recibe |
+|---|---|---|
+| `R1`-`R4` | Consent marketing **SI** | 4 toques (día 0, +7, +21, +45): reenganche, criterio de zonas, la visita a Emiratos y cierre |
+| `RE1`-`RE2` | Sin ese consentimiento | 2 toques (día 0, +10) que **solo retoman su propia solicitud**, sin proyectos ni contenido comercial (interés legítimo, art. 6.1.f RGPD, igual que D1-D3) |
+
+Se saltan solos: los leads en estado `baja` o `cerrado`, y los que ya tienen remarketing
+en la cola (no se duplica).
+
+**Cómo se ejecuta**, en el editor de Apps Script:
+
+1. Marcar en la hoja a quien corresponda.
+2. Ejecutar `programarRemarketing()` → **solo simula**: escribe en el registro qué haría,
+   con quién y por qué vía, sin tocar la cola.
+3. Revisarlo y ejecutar `programarRemarketingDeVerdad()`.
+
+Requiere `CONFIG.AUTO_SEND_NURTURE = true` (ya lo está) para que `processQueue()` los envíe.
+Si estuviera en `false`, la programación se queda en la cola sin salir, y la función lo avisa.
+
+La columna se crea sola la primera vez, con casillas, y se localiza por su cabecera: si
+la mueve de sitio o añade columnas antes, sigue funcionando.
 
 ### Reactivar la automatización
 

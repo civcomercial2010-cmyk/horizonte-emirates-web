@@ -136,6 +136,14 @@ const CONFIG = {
   BUSINESS_HOUR_END: 19,
   /** Si true, sábado y domingo no hay envíos de secuencia. */
   BUSINESS_WEEKDAYS_ONLY: true,
+  /**
+   * REMARKETING A LEADS QUE NO CONTESTARON (secuencias R1-R4 / RE1-RE2).
+   * A quién se le manda NO lo decide el código: lo marca usted a mano en la hoja Leads,
+   * en la columna «Remarketing» (casilla). La marca manda en los dos sentidos: se
+   * programa al marcarla y la secuencia SE PARA si la desmarca, aunque queden correos
+   * en cola. Ver programarRemarketing().
+   */
+  REMARKETING_COL: 'Remarketing',
   /** M08: pon true cuando haya campañas/tráfico activo: habilita la alerta de "sin leads en N horas". */
   EXPECT_TRAFFIC: false,
   /** M08: horas sin nuevos leads que disparan alerta (solo si EXPECT_TRAFFIC=true). */
@@ -1382,6 +1390,85 @@ function saveLead(data) {
   return id;
 }
 
+/**
+ * Secuencias de remarketing para leads que en su día no contestaron. Dos vías, y la
+ * diferencia no es de tono sino de base legal:
+ *
+ *   consentido   → el lead marcó «Consent marketing: SI». Se le puede mandar contenido
+ *                  comercial periódico: mercado, proyectos, la visita a Emiratos.
+ *   sinConsentir → no lo marcó. Solo caben dos toques que retoman LA SOLICITUD QUE ÉL
+ *                  HIZO y que se quedó sin respuesta (interés legítimo, art. 6.1.f
+ *                  RGPD, el mismo encaje que ya se documenta para D1-D3): sin ofertas
+ *                  de proyectos, sin contenido comercial, y con final explícito.
+ *
+ * Los retardos van en horas, como SEQUENCES.
+ */
+const SEQUENCES_REMARKETING = {
+  consentido: [
+    { code: 'R1', delay: 0    },   // al marcarlo
+    { code: 'R2', delay: 168  },   // 7 días
+    { code: 'R3', delay: 504  },   // 21 días
+    { code: 'R4', delay: 1080 },   // 45 días
+  ],
+  sinConsentir: [
+    { code: 'RE1', delay: 0   },
+    { code: 'RE2', delay: 240 },   // 10 días
+  ],
+};
+
+/** true si el código pertenece a una secuencia de remarketing (R1-R4 o RE1-RE2). */
+function esCodigoRemarketing(code) {
+  return /^RE?\d+$/.test(String(code || '').trim());
+}
+
+/** Índice (1-based) de una columna por su cabecera, o 0 si no está. */
+function indiceColumnaPorCabecera(cabeceras, nombre) {
+  const objetivo = String(nombre || '').trim().toLowerCase();
+  for (let i = 0; i < cabeceras.length; i++) {
+    if (String(cabeceras[i] || '').trim().toLowerCase() === objetivo) return i + 1;
+  }
+  return 0;
+}
+
+/**
+ * ¿Está marcada la casilla de remarketing? Acepta la casilla de verificación (true) y
+ * también texto escrito a mano («SI», «Sí», «X»), porque la hoja se toca desde el móvil
+ * y no siempre es cómodo pulsar la casilla exacta.
+ */
+function marcaRemarketingActiva(valor) {
+  if (valor === true) return true;
+  const v = String(valor || '').trim().toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  return v === 'si' || v === 'x' || v === 'true';
+}
+
+/**
+ * Columna «Remarketing» de la hoja Leads, creándola con casillas si no existe.
+ * Se busca por cabecera y no por posición fija a propósito: la hoja lleva columnas
+ * añadidas a mano después del esquema original, y una posición fija acabaría
+ * escribiendo encima de una de ellas.
+ */
+function ensureRemarketingColumn(sheet) {
+  const sh = sheet || getSheet('Leads');
+  const lastCol = Math.max(1, sh.getLastColumn());
+  const cabeceras = sh.getRange(1, 1, 1, lastCol).getValues()[0];
+  const existente = indiceColumnaPorCabecera(cabeceras, CONFIG.REMARKETING_COL);
+  if (existente) return existente;
+
+  const col = lastCol + 1;
+  sh.getRange(1, col).setValue(CONFIG.REMARKETING_COL)
+    .setFontWeight('bold').setBackground('#0D1B2A').setFontColor('#ffffff')
+    .setNote('Marque aquí a los leads que no contestaron y quiere reenganchar.\n' +
+             'Al marcar: se programa la secuencia con programarRemarketing().\n' +
+             'Al desmarcar: la secuencia se para, aunque queden correos en cola.');
+  sh.setColumnWidth(col, 110);
+
+  const filas = sh.getLastRow() - 1;
+  if (filas > 0) sh.getRange(2, col, filas, 1).insertCheckboxes();
+  Logger.log('ensureRemarketingColumn: columna «' + CONFIG.REMARKETING_COL + '» creada en la posición ' + col);
+  return col;
+}
+
 function scheduleSequence(leadId, tier, createdAt) {
   const sheet    = getSheet('Cola');
   const sequence = SEQUENCES[tier] || SEQUENCES['C'];
@@ -1400,6 +1487,101 @@ function scheduleSequence(leadId, tier, createdAt) {
  * Los ítems «pausado-manual» con fecha futura vuelven a «pendiente»; los ya vencidos
  * se cancelan (enviarlos ahora sería una ráfaga de correos viejos al lead).
  */
+/**
+ * Programa la secuencia de remarketing de los leads que USTED haya marcado en la
+ * columna «Remarketing» de la hoja Leads. No decide nada por su cuenta: sin marca,
+ * no hay correos.
+ *
+ * Qué hace con cada lead marcado:
+ *   · estado «baja» o «cerrado» → lo salta (una baja no se reengancha nunca).
+ *   · «Consent marketing: SI»   → secuencia completa R1-R4 (mercado, proyectos, visita).
+ *   · sin ese consentimiento    → solo RE1-RE2, que retoman su propia solicitud sin
+ *                                 contenido comercial. Ver SEQUENCES_REMARKETING.
+ *   · ya tenía correos de remarketing en la cola → lo salta, no duplica.
+ *
+ * Por defecto SIMULA: escribe en el registro qué haría y no toca la cola. Para
+ * programarlo de verdad, ejecutar programarRemarketingDeVerdad().
+ *
+ * @param {boolean} [simular=true] false para escribir realmente en la hoja Cola.
+ */
+function programarRemarketing(simular) {
+  const enSerio = simular === false;
+  const lSh = getSheet('Leads');
+  const qSh = getSheet('Cola');
+  const colMarca = ensureRemarketingColumn(lSh);
+  const lData = lSh.getDataRange().getValues();
+  const qData = qSh.getDataRange().getValues();
+
+  // Leads que ya tienen remarketing en cola: no se les vuelve a sembrar.
+  const yaEnCola = {};
+  for (let i = 1; i < qData.length; i++) {
+    if (esCodigoRemarketing(qData[i][1])) yaEnCola[qData[i][0]] = true;
+  }
+
+  const ahora = new Date();
+  const plan = [];
+  let saltadosSinMarca = 0, saltadosBaja = 0, saltadosYaProgramados = 0;
+
+  for (let i = 1; i < lData.length; i++) {
+    const fila = lData[i];
+    const leadId = String(fila[0] || '').trim();
+    const email  = String(fila[2] || '').trim();
+    if (!leadId || !email) continue;
+
+    if (!marcaRemarketingActiva(fila[colMarca - 1])) { saltadosSinMarca++; continue; }
+
+    const estado = String(fila[15] || '').trim().toLowerCase();
+    if (estado === 'baja' || estado === 'cerrado') {
+      saltadosBaja++;
+      Logger.log('· ' + leadId + ' (' + email + '): marcado, pero está en «' + estado + '». No se reengancha.');
+      continue;
+    }
+    if (yaEnCola[leadId]) {
+      saltadosYaProgramados++;
+      Logger.log('· ' + leadId + ' (' + email + '): ya tiene remarketing en la cola. Sin cambios.');
+      continue;
+    }
+
+    // Columna 27 = «Consent marketing». Se accede por posición y no por cabecera
+    // porque en la hoja viva esas cabeceras están en blanco (ver migrarColumnasConsentimiento).
+    const consentido = String(fila[26] || '').trim().toUpperCase() === 'SI';
+    const via = consentido ? 'consentido' : 'sinConsentir';
+    const secuencia = SEQUENCES_REMARKETING[via];
+
+    secuencia.forEach(item => {
+      const cuando = new Date(ahora.getTime() + item.delay * 3600 * 1000);
+      plan.push({ leadId: leadId, email: email, code: item.code, cuando: cuando, via: via });
+    });
+  }
+
+  Logger.log('=== programarRemarketing ' + (enSerio ? '(REAL)' : '(SIMULACIÓN, no se escribe nada)') + ' ===');
+  plan.forEach(p => {
+    Logger.log('  ' + p.code + '  ' + Utilities.formatDate(p.cuando, CONFIG.BUSINESS_TIMEZONE || Session.getScriptTimeZone(), 'dd/MM/yyyy HH:mm') +
+      '  ' + p.email + '  [' + p.via + ']');
+    if (enSerio) qSh.appendRow([p.leadId, p.code, p.cuando, 'pendiente', '', '']);
+  });
+
+  const leadsPlanificados = {};
+  plan.forEach(p => { leadsPlanificados[p.leadId] = true; });
+  Logger.log('RESUMEN → leads a reenganchar=' + Object.keys(leadsPlanificados).length +
+    ' · correos programados=' + plan.length +
+    ' | sin marca=' + saltadosSinMarca +
+    ' · baja/cerrado=' + saltadosBaja +
+    ' · ya programados=' + saltadosYaProgramados);
+
+  if (!enSerio) {
+    Logger.log('Esto era una simulación. Para programarlo de verdad: programarRemarketingDeVerdad()');
+  } else if (CONFIG.AUTO_SEND_NURTURE !== true) {
+    Logger.log('AVISO: CONFIG.AUTO_SEND_NURTURE está en false, así que processQueue no enviará ' +
+      'estos correos. Ponlo en true para que salgan.');
+  }
+}
+
+/** Ejecuta programarRemarketing() escribiendo de verdad en la cola (sin parámetros, para el desplegable). */
+function programarRemarketingDeVerdad() {
+  programarRemarketing(false);
+}
+
 function reanudarEnvioAutomatico() {
   if (CONFIG.AUTO_SEND_LEADS !== true) {
     Logger.log('reanudarEnvioAutomatico: CONFIG.AUTO_SEND_LEADS sigue en false. Cámbialo a true y vuelve a ejecutar.');
@@ -1698,6 +1880,9 @@ function processQueue(opts) {
   const lData = lSheet.getDataRange().getValues();
 
   const leadsMap = {};
+  // La columna «Remarketing» la rellena el asesor a mano y puede estar en cualquier
+  // posición (la hoja lleva columnas añadidas después del esquema original).
+  const colMarca = indiceColumnaPorCabecera(lData[0] || [], CONFIG.REMARKETING_COL);
   for (let i = 1; i < lData.length; i++) {
     const r = lData[i];
     leadsMap[r[0]] = {
@@ -1705,6 +1890,7 @@ function processQueue(opts) {
       pais: r[4], capital: r[5], objetivo: r[6], experiencia: r[7],
       plazo: r[8], viaje: r[9], puntuacion: r[10], tier: r[11],
       canal: r[12], estado: r[15],
+      remarketing: colMarca ? r[colMarca - 1] : '',
     };
   }
 
@@ -1717,6 +1903,16 @@ function processQueue(opts) {
     if (!lead) { qSheet.getRange(i+1,4).setValue('error: lead no encontrado'); continue; }
     if (lead.estado === 'baja' || lead.estado === 'cerrado') {
       qSheet.getRange(i+1,4).setValue('cancelado'); continue;
+    }
+
+    // La marca de la hoja manda en los dos sentidos: si el asesor la quita (porque el
+    // lead contestó, o porque ya no procede), la secuencia se para aquí mismo, aunque
+    // queden correos en cola. Es lo que hace que la casilla sea un control de verdad
+    // y no solo un disparador.
+    if (esCodigoRemarketing(emailCode) && !marcaRemarketingActiva(lead.remarketing)) {
+      qSheet.getRange(i + 1, 4).setValue('cancelado (sin marca de remarketing)');
+      Logger.log('· ' + emailCode + ' cancelado para ' + lead.email + ': la casilla de remarketing ya no está marcada.');
+      continue;
     }
 
     const isWelcome = isWelcomeSequenceEmail(emailCode);
@@ -2055,6 +2251,97 @@ ${guiaCardDescarga}
 ${calBtn}
 <p style="margin:28px 0 0;padding-top:20px;border-top:1px solid #E0DBD1;font-size:14px;color:#646464;line-height:1.6">Un saludo,<br><strong style="color:#1A1A1A">${firma}</strong><br>Horizonte Emirates<br><span style="font-size:13px">Recibe este correo porque pidió la guía en nuestra web y aceptó que se la enviásemos por email.</span></p>`,
       text: `Hola,\n\nAcaba de descargar nuestra guía fiscal en horizonteemirates.com. Se la dejamos aquí también, para que la tenga a mano cuando la necesite y no dependa de la pestaña que se le abrió.\n\nDescargar el PDF:\n${pdfUrl}\n\nO leerla en el navegador:\n${guiaUrl}\n\nEs lo que más dudas resuelve al principio: qué se declara en España cuando se compra en Dubai (IRPF, modelo 720, plusvalías), cómo funciona el convenio de doble imposición y qué errores se pagan caros cuando se descubren tarde.\n\nEste correo es automático, para que la guía no se le pierda. No le vamos a llenar el buzón. Ahora bien, si al leerla le surge una duda concreta sobre su caso, puede responder directamente a este correo: lo leo yo y le contesto sin compromiso.\n\nY si prefiere resolverlo hablando, Marc, nuestro socio en Dubai, atiende llamadas de treinta minutos sin ningún compromiso:\n${calL}\n\nUn saludo,\n${firma}\nHorizonte Emirates\nRecibe este correo porque pidió la guía en nuestra web y aceptó que se la enviásemos por email.`,
+    };
+  }
+
+  // ── R1-R4 · REMARKETING A QUIEN NO CONTESTÓ (con consentimiento de marketing) ──
+  // Se programan solo si el asesor marca la casilla «Remarketing» en la hoja Leads,
+  // y se paran solos si la desmarca. Reglas del texto:
+  //   1. Se admite el tiempo transcurrido sin excusas largas ni disculpas repetidas.
+  //   2. Cada correo aporta algo por sí mismo: quien no conteste ninguno habrá leído
+  //      igualmente cuatro cosas útiles. Insistir sin aportar es lo que quema una lista.
+  //   3. Ninguna cifra nueva de rentabilidad: los números concretos son de la llamada,
+  //      donde se pueden explicar con su contexto.
+  //   4. El último dice explícitamente que es el último. Cerrar bien deja la puerta
+  //      abierta de verdad; desaparecer sin decirlo, no.
+  if (code === 'R1' || code === 'R2' || code === 'R3' || code === 'R4' ||
+      code === 'RE1' || code === 'RE2') {
+    const pila = firstName(lead.nombre);
+    const firmaR = CONFIG.ASESOR_FIRMA || CONFIG.ASESOR_NOMBRE;
+    const cierreR = `<p style="margin:28px 0 0;padding-top:20px;border-top:1px solid #E0DBD1;font-size:14px;color:#646464;line-height:1.6">Un saludo,<br><strong style="color:#1A1A1A">${firmaR}</strong><br>Horizonte Emirates<br><span style="font-size:13px">Puede responder a este correo: lo leo yo.</span></p>`;
+    const cierreRTxt = `\n\nUn saludo,\n${firmaR}\nHorizonte Emirates\nPuede responder a este correo: lo leo yo.`;
+    // El perfil solo se menciona si consta: recordarle datos que nunca dio delata la plantilla.
+    const perfil = lead.capital
+      ? (lead.objetivo ? `${cap} con enfoque en ${obj}` : `${cap}`)
+      : (lead.objetivo ? `${obj}` : '');
+
+    if (code === 'R1') return {
+      subject: `${pila}, retomamos su consulta sobre Dubai`,
+      html: `<p>Hola ${pila},</p>
+<p>Hace un tiempo nos pidió información para invertir en Dubai${perfil ? ` (${perfil})` : ''} y la conversación se quedó a medias. La culpa de eso es nuestra, no suya.</p>
+<p>Le escribo por si sigue en el radar. No hace falta que decida nada: si me responde con dos líneas sobre en qué punto está, le digo con franqueza si hoy le compensa o no, y si no le compensa, se lo digo igual.</p>
+<p>Mientras tanto, la guía fiscal sigue disponible:</p>
+${guiaCard}
+<p>Y si prefiere hablarlo directamente, Marc, nuestro socio en Dubai, atiende llamadas de treinta minutos:</p>
+${calBtn}${cierreR}`,
+      text: `Hola ${pila},\n\nHace un tiempo nos pidió información para invertir en Dubai${perfil ? ` (${perfil})` : ''} y la conversación se quedó a medias. La culpa de eso es nuestra, no suya.\n\nLe escribo por si sigue en el radar. No hace falta que decida nada: si me responde con dos líneas sobre en qué punto está, le digo con franqueza si hoy le compensa o no, y si no le compensa, se lo digo igual.\n\nMientras tanto, la guía fiscal sigue disponible:\n${guiaUrl}\n\nY si prefiere hablarlo directamente, Marc, nuestro socio en Dubai, atiende llamadas de treinta minutos:\n${calL}${cierreRTxt}`,
+    };
+
+    if (code === 'R2') return {
+      subject: `Lo que separa una zona buena de una zona cara en Dubai`,
+      html: `<p>Hola ${pila},</p>
+<p>Una cosa que no se ve desde fuera: en Dubai la pregunta no es «qué zona es mejor», sino qué busca usted de la inversión. Son decisiones distintas.</p>
+<p>Si lo que quiere es <strong>renta por alquiler</strong>, manda la demanda estable y la gestión: zonas consolidadas, con inquilino y comunidad ya formada.</p>
+<p>Si lo que quiere es <strong>revalorización</strong>, manda lo contrario: entrar donde todavía se está construyendo el entorno, asumiendo el plazo y el riesgo que eso trae.</p>
+<p>Mezclar los dos objetivos en un mismo inmueble es el error más común, y es el que hace que alguien acabe con un activo que no le sirve para lo que quería.</p>
+<p>Los números concretos de cada opción se los damos en la llamada, donde se pueden explicar con su contexto en vez de en una tabla suelta:</p>
+${calBtn}${cierreR}`,
+      text: `Hola ${pila},\n\nUna cosa que no se ve desde fuera: en Dubai la pregunta no es «qué zona es mejor», sino qué busca usted de la inversión. Son decisiones distintas.\n\nSi quiere renta por alquiler, manda la demanda estable y la gestión: zonas consolidadas, con inquilino y comunidad ya formada.\n\nSi quiere revalorización, manda lo contrario: entrar donde todavía se está construyendo el entorno, asumiendo el plazo y el riesgo que eso trae.\n\nMezclar los dos objetivos en un mismo inmueble es el error más común, y el que hace que alguien acabe con un activo que no le sirve para lo que quería.\n\nLos números concretos se los damos en la llamada, donde se pueden explicar con su contexto en vez de en una tabla suelta:\n${calL}${cierreRTxt}`,
+    };
+
+    if (code === 'R3') return {
+      subject: `Ver los proyectos en persona, ${pila}`,
+      html: `<p>Hola ${pila},</p>
+<p>Hay una parte de esto que por correo no se resuelve, y es ver dónde está el inmueble y quién lo construye.</p>
+<p>Si en algún momento quiere ir, le montamos nosotros la agenda completa en Emiratos: visitas a las promotoras, los proyectos que encajen con lo que busca y una reunión en nuestras oficinas de Dubai. Usted pone el viaje; la agenda la preparamos nosotros, en español.</p>
+<p>No hay que decidir nada allí. De hecho, lo normal es volver con criterio y decidir semanas después, ya con calma.</p>
+<p>Si quiere que le contemos cómo se organiza, media hora basta:</p>
+${calBtn}${cierreR}`,
+      text: `Hola ${pila},\n\nHay una parte de esto que por correo no se resuelve, y es ver dónde está el inmueble y quién lo construye.\n\nSi en algún momento quiere ir, le montamos nosotros la agenda completa en Emiratos: visitas a las promotoras, los proyectos que encajen con lo que busca y una reunión en nuestras oficinas de Dubai. Usted pone el viaje; la agenda la preparamos nosotros, en español.\n\nNo hay que decidir nada allí. Lo normal es volver con criterio y decidir semanas después, ya con calma.\n\nSi quiere que le contemos cómo se organiza, media hora basta:\n${calL}${cierreRTxt}`,
+    };
+
+    if (code === 'R4') return {
+      subject: `¿Lo dejamos aquí, ${pila}?`,
+      html: `<p>Hola ${pila},</p>
+<p>Le he escrito unas cuantas veces desde que nos pidió información y no he sabido nada. Lo entiendo perfectamente: los planes cambian, y esto no es una compra que se haga con prisa.</p>
+<p><strong>Este es el último correo que le mando por este asunto.</strong> No hace falta que me conteste para decirme que no.</p>
+<p>Si dentro de seis meses o de dos años vuelve a plantearse Emiratos, escríbame y seguimos donde lo dejamos: sus datos siguen aquí y no hay que empezar de cero.</p>
+<p>Y si es ahora cuando le viene bien, con responder a este correo vale.</p>${cierreR}`,
+      text: `Hola ${pila},\n\nLe he escrito unas cuantas veces desde que nos pidió información y no he sabido nada. Lo entiendo perfectamente: los planes cambian, y esto no es una compra que se haga con prisa.\n\nEste es el último correo que le mando por este asunto. No hace falta que me conteste para decirme que no.\n\nSi dentro de seis meses o de dos años vuelve a plantearse Emiratos, escríbame y seguimos donde lo dejamos: sus datos siguen aquí y no hay que empezar de cero.\n\nY si es ahora cuando le viene bien, con responder a este correo vale.${cierreRTxt}`,
+    };
+
+    // ── RE1-RE2 · Sin consentimiento de marketing ───────────────────────────
+    // Estos dos NO son publicidad y no deben parecerlo: se limitan a retomar la
+    // solicitud que esa persona hizo y que quedó sin respuesta, que es lo que
+    // sostiene el interés legítimo. Nada de proyectos, zonas ni oportunidades.
+    if (code === 'RE1') return {
+      subject: `Su solicitud quedó sin respuesta, ${pila}`,
+      html: `<p>Hola ${pila},</p>
+<p>Hace un tiempo pidió información en nuestra web para invertir en Emiratos${perfil ? ` (${perfil})` : ''} y no llegamos a darle una respuesta completa. Es un fallo nuestro y quería reconocerlo.</p>
+<p>Si todavía le interesa, retomamos su solicitud donde se quedó: dígame en qué punto está y le preparamos el análisis que pidió.</p>
+<p>Si prefiere hablarlo, aquí puede coger media hora con Marc, nuestro socio en Dubai:</p>
+${calBtn}
+<p>Y si ya no le interesa, no tiene que hacer nada: no le vamos a escribir por ningún otro motivo que no sea este.</p>${cierreR}`,
+      text: `Hola ${pila},\n\nHace un tiempo pidió información en nuestra web para invertir en Emiratos${perfil ? ` (${perfil})` : ''} y no llegamos a darle una respuesta completa. Es un fallo nuestro y quería reconocerlo.\n\nSi todavía le interesa, retomamos su solicitud donde se quedó: dígame en qué punto está y le preparamos el análisis que pidió.\n\nSi prefiere hablarlo, aquí puede coger media hora con Marc, nuestro socio en Dubai:\n${calL}\n\nY si ya no le interesa, no tiene que hacer nada: no le vamos a escribir por ningún otro motivo que no sea este.${cierreRTxt}`,
+    };
+
+    return {
+      subject: `Cierro su solicitud, ${pila}`,
+      html: `<p>Hola ${pila},</p>
+<p>Le escribí hace unos días para retomar la solicitud que dejó en nuestra web y no he sabido nada, así que la cierro por mi parte. <strong>Es el último correo que le mando.</strong></p>
+<p>Sus datos siguen en nuestro sistema por si algún día vuelve a plantearlo; si prefiere que los borremos, respóndame con la palabra BAJA y se eliminan.</p>
+<p>Y si lo retoma en el futuro, escríbanos sin más: no hace falta volver a rellenar nada.</p>${cierreR}`,
+      text: `Hola ${pila},\n\nLe escribí hace unos días para retomar la solicitud que dejó en nuestra web y no he sabido nada, así que la cierro por mi parte. Es el último correo que le mando.\n\nSus datos siguen en nuestro sistema por si algún día vuelve a plantearlo; si prefiere que los borremos, respóndame con la palabra BAJA y se eliminan.\n\nY si lo retoma en el futuro, escríbanos sin más: no hace falta volver a rellenar nada.${cierreRTxt}`,
     };
   }
 
