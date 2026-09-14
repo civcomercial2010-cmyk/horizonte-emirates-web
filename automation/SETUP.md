@@ -35,6 +35,7 @@ leads, cada uno se trabaja a mano para maximizar la conversión a videollamada.
 | Acuse de recibo inmediato (W0) | `CONFIG.AUTO_SEND_WELCOME` | `true`, excepción al interruptor |
 | Acuse de la descarga de la guía (W0D) | `CONFIG.AUTO_SEND_WELCOME_DESCARGA` | `true`, excepción al interruptor |
 | Remarketing a quien no contestó | `CONFIG.AUTO_SEND_REMARKETING` | `true`, llave propia: solo envía a quien usted marque |
+| Mismo trato para todos los marcados | `CONFIG.REMARKETING_MISMO_TRATO` | `true`: la secuencia larga va a todos, hayan marcado marketing o no |
 | Aviso de lead nuevo al asesor | `notifyAgentNewLead()` | activo, llega como no leído y destacado |
 | Aviso de Web3Forms (leads **y** descargas de la guía) | `CONFIG.KEEP_LEAD_MAIL_UNREAD` | se queda no leído, destacado e importante |
 | Regla de lectura de todo el script | `cerrarHiloProcesado()` | **nada se marca como leído**: ver abajo |
@@ -128,10 +129,20 @@ formulario → W0 automático en segundos
           → correos periódicos hasta que conteste o usted lo desmarque
 ```
 
-| Vía | A quién | Qué recibe |
-|---|---|---|
-| `R1`-`R8` y luego `R9` | Consent marketing **SI** | 8 toques en unos 7 meses (0, 7, 21, 45, 75, 110, 150 y 200 días) y, a partir de ahí, **`R9` cada 90 días indefinidamente** mientras siga marcado. `R8` pregunta expresamente si quiere seguir recibiéndolos |
-| `RE1`-`RE2` | Sin ese consentimiento | 2 toques (día 0, +10) que **solo retoman su propia solicitud**, sin proyectos ni contenido comercial (interés legítimo, art. 6.1.f RGPD, igual que D1-D3). **No se alarga ni se renueva**: para escribir más a esa persona lo que hace falta es su consentimiento, no más correos |
+**Con `REMARKETING_MISMO_TRATO = true` (lo que hay hoy), todos los marcados reciben lo
+mismo**, hayan marcado la casilla de marketing o no:
+
+| Secuencia | Qué recibe |
+|---|---|
+| `R1`-`R8` y luego `R9` | 8 toques en unos 7 meses (0, 7, 21, 45, 75, 110, 150 y 200 días) y, a partir de ahí, **`R9` cada 90 días indefinidamente** mientras siga marcado. `R8` pregunta expresamente si quiere seguir recibiéndolos |
+
+Es una decisión de negocio tomada a sabiendas (14-sep-2026): a un lead sin
+«Consent marketing: SI» le llega contenido comercial, y quien no lo quiera responde BAJA
+y sale al instante. La exposición es de Propulse, no un descuido del código.
+
+Poniendo `REMARKETING_MISMO_TRATO = false` vuelven las dos vías: `R1`-`R8` para quien
+consintió y `RE1`-`RE2` (2 toques, sin contenido comercial, sin renovación) para quien no.
+Las plantillas `RE1`-`RE2` se conservan precisamente para poder volver atrás con una línea.
 
 La renovación la hace sola `renovarRemarketingAgotados()`, que `processQueue()` llama en
 cada pasada: cuando a un lead marcado se le acaban los toques, le siembra el siguiente.
@@ -157,6 +168,26 @@ que devuelve a `pausado-manual` los toques por tier pendientes sin tocar el rema
 
 La columna se crea sola la primera vez, con casillas, y se localiza por su cabecera: si
 la mueve de sitio o añade columnas antes, sigue funcionando.
+
+### Las descargas de la guía también entran en el CRM
+
+Quien descarga la guía deja solo su email, y antes se quedaba únicamente en la hoja
+**Descargas**: no aparecía en la lista de leads y no había forma de marcarlo para
+remarketing, aunque hubiera entrado por un clic de pago.
+
+Ahora `pollGmail()` la incorpora también a **Leads** (`promoverDescargaALead()`), con lo
+que se sabe: email, consentimientos y UTMs. Sin nombre ni teléfono, porque no los ha dado
+— y los correos R están escritos para funcionar sin nombre («Hola,» en vez de «Hola
+Inversor», que delata la plantilla).
+
+Si esa misma persona rellena después el formulario largo, **su ficha se completa en vez de
+descartarse** (`completarLeadDesdeFormulario()`). Antes `leadExists()` la veía repetida y
+tiraba el lead bueno, que es justo el más cualificado: el que primero se informa y luego
+se decide.
+
+Para las descargas anteriores a esta versión: ejecutar una vez `promoverDescargasALeads()`.
+Es idempotente, y de paso asigna ID a las filas que se añadieron a mano y se quedaron sin
+él (sin ID no se puede programar nada).
 
 ### Bajas: cómo se detectan y qué se para
 

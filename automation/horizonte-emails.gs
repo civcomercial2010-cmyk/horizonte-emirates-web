@@ -157,6 +157,18 @@ const CONFIG = {
    * false → la cola de remarketing se queda quieta, sin enviar nada.
    */
   AUTO_SEND_REMARKETING: true,
+  /**
+   * MISMO TRATO PARA TODOS LOS MARCADOS (decisión del negocio, 14-sep-2026).
+   * true  = quien usted marque recibe la secuencia completa R1-R8 + R9, haya marcado
+   *         o no la casilla de marketing en el formulario. Quien no lo quiera, responde
+   *         BAJA y sale al instante (pollUnsubscribes lo procesa cada 10 minutos).
+   * false = dos vías según el consentimiento: R1-R8 a quien lo dio y RE1-RE2, sin
+   *         contenido comercial, a quien no.
+   * Con true, a un lead sin «Consent marketing: SI» le llega contenido comercial: es
+   * una decisión de negocio consciente, no un descuido, y la exposición es de Propulse.
+   * Las plantillas RE1-RE2 se conservan para poder volver atrás cambiando esta línea.
+   */
+  REMARKETING_MISMO_TRATO: true,
   /** M08: pon true cuando haya campañas/tráfico activo: habilita la alerta de "sin leads en N horas". */
   EXPECT_TRAFFIC: false,
   /** M08: horas sin nuevos leads que disparan alerta (solo si EXPECT_TRAFFIC=true). */
@@ -812,6 +824,12 @@ function pollGmail() {
             } catch (wErr) {
               Logger.log('pollGmail: fallo al enviar el acuse W0D a ' + descarga.email + ': ' + wErr.toString());
             }
+            // La descarga también se incorpora al CRM: si no, esa persona no aparece en
+            // la lista de leads y no hay forma de marcarla para remarketing, aunque haya
+            // entrado por un clic de pago. Un fallo aquí no debe tumbar la pasada.
+            try { promoverDescargaALead(descarga); } catch (pErr) {
+              Logger.log('pollGmail: no se pudo incorporar al CRM ' + descarga.email + ': ' + pErr.toString());
+            }
             try { notifyAgentNewDownload(descarga, bienvenidaEnviada); } catch (nErr) {
               Logger.log('pollGmail: fallo al avisar de la descarga de ' + descarga.email + ': ' + nErr.toString());
             }
@@ -848,15 +866,22 @@ function pollGmail() {
         return;
       }
 
+      let leadId;
+      let fichaCompletada = false;
       if (leadExists(lead.email)) {
-        Logger.log('Lead duplicado, ignorando: ' + lead.email);
-        cerrarHiloProcesado(thread, msg, { label: label });
-        return;
+        // Puede ser un duplicado de verdad o la ficha que se creó al descargar la guía,
+        // que solo tiene el email. En el segundo caso se completa en vez de descartarse.
+        leadId = completarLeadDesdeFormulario(lead);
+        if (!leadId) {
+          Logger.log('Lead duplicado, ignorando: ' + lead.email);
+          cerrarHiloProcesado(thread, msg, { label: label });
+          return;
+        }
+        fichaCompletada = true;
       }
 
-      let leadId;
       try {
-        leadId = saveLead(lead);
+        if (!fichaCompletada) leadId = saveLead(lead);
         scheduleSequence(leadId, lead.tier, new Date());
         if (CONFIG.AUTO_SEND_LEADS === false) {
           // El acuse de recibo va primero: es lo único que el lead espera de inmediato.
@@ -1352,6 +1377,114 @@ function descargaExists(email) {
   return false;
 }
 
+/**
+ * Sube una descarga de la guía a la hoja Leads, para que exista en el CRM y se pueda
+ * marcar para remarketing como cualquier otro contacto. Antes vivía solo en «Descargas»
+ * y quedaba fuera de todo: ni aparecía en la lista de leads ni había forma de incluirla
+ * en una secuencia, aunque hubiera entrado por un clic de pago.
+ *
+ * Solo rellena lo que se sabe (email, consentimientos, UTMs): un contacto de la guía no
+ * ha dado nombre ni teléfono, y los correos están escritos para funcionar sin ellos.
+ * Si ese email ya está en Leads no hace nada, salvo asignarle un ID si le faltaba
+ * (las filas añadidas a mano suelen quedarse sin él, y sin ID no se puede programar nada).
+ *
+ * @return {string} ID del lead, nuevo o existente, o '' si no se pudo.
+ */
+function promoverDescargaALead(d) {
+  const email = String((d && d.email) || '').trim();
+  if (!email) return '';
+
+  const sh = getSheet('Leads');
+  const data = sh.getDataRange().getValues();
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][2] || '').trim().toLowerCase() !== email.toLowerCase()) continue;
+    let id = String(data[i][0] || '').trim();
+    if (!id) {
+      id = 'L' + new Date().getTime().toString().slice(-8);
+      sh.getRange(i + 1, 1).setValue(id);
+      Logger.log('promoverDescargaALead: la fila de ' + email + ' no tenía ID. Asignado ' + id + '.');
+    }
+    return id;
+  }
+
+  const id = saveLead({
+    nombre: '',
+    email: email,
+    tier: 'C',
+    canal: 'email',
+    origen: 'Descarga guía fiscal',
+    utm_source: d.utm_source, utm_medium: d.utm_medium, utm_campaign: d.utm_campaign,
+    utm_content: d.utm_content, utm_term: d.utm_term,
+    gclid: d.gclid, gbraid: d.gbraid, wbraid: d.wbraid,
+    cons_privacidad: d.cons_privacidad, cons_marketing: d.cons_marketing,
+    cons_version: d.cons_version, cons_fecha: d.cons_fecha, cons_texto: d.cons_texto,
+  });
+  Logger.log('✓ descarga incorporada al CRM: ' + email + ' → ' + id);
+  return id;
+}
+
+/**
+ * Sube al CRM las descargas que se quedaron fuera (las anteriores a esta versión).
+ * Ejecutar a mano una vez. Es idempotente: las que ya estén en Leads no se duplican.
+ */
+function promoverDescargasALeads() {
+  const data = getOrCreateDescargasSheet().getDataRange().getValues();
+  let nuevas = 0, yaEstaban = 0;
+  for (let i = 1; i < data.length; i++) {
+    const email = String(data[i][0] || '').trim();
+    if (!email) continue;
+    const existia = leadExists(email);
+    promoverDescargaALead({ email: email, cons_marketing: data[i][8], cons_privacidad: 'SI',
+                            utm_source: data[i][5], utm_medium: data[i][6], utm_campaign: data[i][7] });
+    if (existia) yaEstaban++; else nuevas++;
+  }
+  Logger.log('promoverDescargasALeads → incorporadas=' + nuevas + ' · ya estaban=' + yaEstaban);
+}
+
+/**
+ * Completa con los datos del formulario largo una ficha que entró por la descarga de la
+ * guía (solo email). Sin esto, pollGmail veía el email repetido y descartaba el lead
+ * bueno: se perdía justo al más cualificado, el que primero se informa y luego se decide.
+ * No toca fichas que ya tengan teléfono: eso es un envío duplicado de verdad.
+ * @return {string} ID del lead actualizado, o '' si no procedía.
+ */
+function completarLeadDesdeFormulario(lead) {
+  const email = String((lead && lead.email) || '').trim().toLowerCase();
+  if (!email) return '';
+  const sh = getSheet('Leads');
+  const data = sh.getDataRange().getValues();
+
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][2] || '').trim().toLowerCase() !== email) continue;
+
+    const tieneTelefono = String(data[i][3] || '').trim() !== '';
+    const origen = String(data[i][13] || '');
+    if (tieneTelefono || !/descarga/i.test(origen)) return '';   // duplicado real
+
+    const id = String(data[i][0] || '').trim() || ('L' + new Date().getTime().toString().slice(-8));
+    const fila = i + 1;
+    sh.getRange(fila, 1).setValue(id);
+    sh.getRange(fila, 2).setValue(lead.nombre || '');
+    sh.getRange(fila, 4).setNumberFormat('@');
+    sh.getRange(fila, 4).setValue(normalizeTelefono(lead.telefono) || '');
+    [[5, lead.pais], [6, lead.capital], [7, lead.objetivo], [8, lead.experiencia],
+     [9, lead.plazo], [10, lead.viaje], [11, lead.puntuacion], [12, lead.tier],
+     [13, lead.canal]].forEach(par => { if (par[1]) sh.getRange(fila, par[0]).setValue(par[1]); });
+    sh.getRange(fila, 14).setValue('Formulario web (antes descargó la guía)');
+    const notaPrevia = String(data[i][16] || '').trim();
+    sh.getRange(fila, 17).setValue((notaPrevia ? notaPrevia + '\n' : '') +
+      'Ficha completada con el formulario largo el ' + new Date().toLocaleString('es-ES') + '.');
+    // La prueba del consentimiento se actualiza: el formulario largo trae la versión buena.
+    [[26, lead.cons_privacidad], [27, lead.cons_marketing], [28, lead.cons_version],
+     [29, lead.cons_fecha], [30, lead.cons_texto]].forEach(par => {
+      if (par[1]) sh.getRange(fila, par[0]).setValue(par[1]);
+    });
+    Logger.log('✓ ficha de descarga completada con el formulario largo: ' + email + ' → ' + id);
+    return id;
+  }
+  return '';
+}
+
 function saveDescarga(d) {
   getOrCreateDescargasSheet().appendRow([
     d.email,
@@ -1596,7 +1729,7 @@ function programarRemarketing(simular) {
     // Columna 27 = «Consent marketing». Se accede por posición y no por cabecera
     // porque en la hoja viva esas cabeceras están en blanco (ver migrarColumnasConsentimiento).
     const consentido = String(fila[26] || '').trim().toUpperCase() === 'SI';
-    const via = consentido ? 'consentido' : 'sinConsentir';
+    const via = (CONFIG.REMARKETING_MISMO_TRATO === true || consentido) ? 'consentido' : 'sinConsentir';
     const secuencia = SEQUENCES_REMARKETING[via];
 
     secuencia.forEach(item => {
@@ -1671,7 +1804,9 @@ function renovarRemarketingAgotados() {
 
     const estado = String(fila[15] || '').trim().toLowerCase();
     if (estado === 'baja' || estado === 'cerrado') continue;
-    if (String(fila[26] || '').trim().toUpperCase() !== 'SI') continue;  // vía RE: no se renueva
+    // Con REMARKETING_MISMO_TRATO todos siguen la vía larga, así que todos se renuevan.
+    if (CONFIG.REMARKETING_MISMO_TRATO !== true &&
+        String(fila[26] || '').trim().toUpperCase() !== 'SI') continue;  // vía RE: no se renueva
 
     const e = estadoCola[leadId];
     if (!e || e.enviados === 0 || e.pendientes > 0) continue;
@@ -2416,7 +2551,12 @@ ${calBtn}
   //   4. El último dice explícitamente que es el último. Cerrar bien deja la puerta
   //      abierta de verdad; desaparecer sin decirlo, no.
   if (esCodigoRemarketing(code)) {
-    const pila = firstName(lead.nombre);
+    // Un contacto que entró por la descarga de la guía solo dejó su email: estos correos
+    // tienen que funcionar igual sin nombre, y «Hola Inversor» delata la plantilla.
+    const tieneNombre = String(lead.nombre || '').trim() !== '';
+    const pila = tieneNombre ? firstName(lead.nombre) : '';
+    const saludo = tieneNombre ? `Hola ${pila},` : 'Hola,';
+    const sufNombre = tieneNombre ? `, ${pila}` : '';
     const firmaR = CONFIG.ASESOR_FIRMA || CONFIG.ASESOR_NOMBRE;
     const cierreR = `<p style="margin:28px 0 0;padding-top:20px;border-top:1px solid #E0DBD1;font-size:14px;color:#646464;line-height:1.6">Un saludo,<br><strong style="color:#1A1A1A">${firmaR}</strong><br>Horizonte Emirates<br><span style="font-size:13px">Puede responder a este correo: lo leo yo.</span></p>`;
     const cierreRTxt = `\n\nUn saludo,\n${firmaR}\nHorizonte Emirates\nPuede responder a este correo: lo leo yo.`;
@@ -2426,92 +2566,92 @@ ${calBtn}
       : (lead.objetivo ? `${obj}` : '');
 
     if (code === 'R1') return {
-      subject: `${pila}, retomamos su consulta sobre Dubai`,
-      html: `<p>Hola ${pila},</p>
+      subject: `${tieneNombre ? pila + ', r' : 'R'}etomamos su consulta sobre Dubai`,
+      html: `<p>${saludo}</p>
 <p>Hace un tiempo nos pidió información para invertir en Dubai${perfil ? ` (${perfil})` : ''} y la conversación se quedó a medias. La culpa de eso es nuestra, no suya.</p>
 <p>Le escribo por si sigue en el radar. No hace falta que decida nada: si me responde con dos líneas sobre en qué punto está, le digo con franqueza si hoy le compensa o no, y si no le compensa, se lo digo igual.</p>
 <p>Mientras tanto, la guía fiscal sigue disponible:</p>
 ${guiaCard}
 <p>Y si prefiere hablarlo directamente, Marc, nuestro socio en Dubai, atiende llamadas de treinta minutos:</p>
 ${calBtn}${cierreR}`,
-      text: `Hola ${pila},\n\nHace un tiempo nos pidió información para invertir en Dubai${perfil ? ` (${perfil})` : ''} y la conversación se quedó a medias. La culpa de eso es nuestra, no suya.\n\nLe escribo por si sigue en el radar. No hace falta que decida nada: si me responde con dos líneas sobre en qué punto está, le digo con franqueza si hoy le compensa o no, y si no le compensa, se lo digo igual.\n\nMientras tanto, la guía fiscal sigue disponible:\n${guiaUrl}\n\nY si prefiere hablarlo directamente, Marc, nuestro socio en Dubai, atiende llamadas de treinta minutos:\n${calL}${cierreRTxt}`,
+      text: `${saludo}\n\nHace un tiempo nos pidió información para invertir en Dubai${perfil ? ` (${perfil})` : ''} y la conversación se quedó a medias. La culpa de eso es nuestra, no suya.\n\nLe escribo por si sigue en el radar. No hace falta que decida nada: si me responde con dos líneas sobre en qué punto está, le digo con franqueza si hoy le compensa o no, y si no le compensa, se lo digo igual.\n\nMientras tanto, la guía fiscal sigue disponible:\n${guiaUrl}\n\nY si prefiere hablarlo directamente, Marc, nuestro socio en Dubai, atiende llamadas de treinta minutos:\n${calL}${cierreRTxt}`,
     };
 
     if (code === 'R2') return {
       subject: `Lo que separa una zona buena de una zona cara en Dubai`,
-      html: `<p>Hola ${pila},</p>
+      html: `<p>${saludo}</p>
 <p>Una cosa que no se ve desde fuera: en Dubai la pregunta no es «qué zona es mejor», sino qué busca usted de la inversión. Son decisiones distintas.</p>
 <p>Si lo que quiere es <strong>renta por alquiler</strong>, manda la demanda estable y la gestión: zonas consolidadas, con inquilino y comunidad ya formada.</p>
 <p>Si lo que quiere es <strong>revalorización</strong>, manda lo contrario: entrar donde todavía se está construyendo el entorno, asumiendo el plazo y el riesgo que eso trae.</p>
 <p>Mezclar los dos objetivos en un mismo inmueble es el error más común, y es el que hace que alguien acabe con un activo que no le sirve para lo que quería.</p>
 <p>Los números concretos de cada opción se los damos en la llamada, donde se pueden explicar con su contexto en vez de en una tabla suelta:</p>
 ${calBtn}${cierreR}`,
-      text: `Hola ${pila},\n\nUna cosa que no se ve desde fuera: en Dubai la pregunta no es «qué zona es mejor», sino qué busca usted de la inversión. Son decisiones distintas.\n\nSi quiere renta por alquiler, manda la demanda estable y la gestión: zonas consolidadas, con inquilino y comunidad ya formada.\n\nSi quiere revalorización, manda lo contrario: entrar donde todavía se está construyendo el entorno, asumiendo el plazo y el riesgo que eso trae.\n\nMezclar los dos objetivos en un mismo inmueble es el error más común, y el que hace que alguien acabe con un activo que no le sirve para lo que quería.\n\nLos números concretos se los damos en la llamada, donde se pueden explicar con su contexto en vez de en una tabla suelta:\n${calL}${cierreRTxt}`,
+      text: `${saludo}\n\nUna cosa que no se ve desde fuera: en Dubai la pregunta no es «qué zona es mejor», sino qué busca usted de la inversión. Son decisiones distintas.\n\nSi quiere renta por alquiler, manda la demanda estable y la gestión: zonas consolidadas, con inquilino y comunidad ya formada.\n\nSi quiere revalorización, manda lo contrario: entrar donde todavía se está construyendo el entorno, asumiendo el plazo y el riesgo que eso trae.\n\nMezclar los dos objetivos en un mismo inmueble es el error más común, y el que hace que alguien acabe con un activo que no le sirve para lo que quería.\n\nLos números concretos se los damos en la llamada, donde se pueden explicar con su contexto en vez de en una tabla suelta:\n${calL}${cierreRTxt}`,
     };
 
     if (code === 'R3') return {
-      subject: `Ver los proyectos en persona, ${pila}`,
-      html: `<p>Hola ${pila},</p>
+      subject: `Ver los proyectos en persona${sufNombre}`,
+      html: `<p>${saludo}</p>
 <p>Hay una parte de esto que por correo no se resuelve, y es ver dónde está el inmueble y quién lo construye.</p>
 <p>Si en algún momento quiere ir, le montamos nosotros la agenda completa en Emiratos: visitas a las promotoras, los proyectos que encajen con lo que busca y una reunión en nuestras oficinas de Dubai. Usted pone el viaje; la agenda la preparamos nosotros, en español.</p>
 <p>No hay que decidir nada allí. De hecho, lo normal es volver con criterio y decidir semanas después, ya con calma.</p>
 <p>Si quiere que le contemos cómo se organiza, media hora basta:</p>
 ${calBtn}${cierreR}`,
-      text: `Hola ${pila},\n\nHay una parte de esto que por correo no se resuelve, y es ver dónde está el inmueble y quién lo construye.\n\nSi en algún momento quiere ir, le montamos nosotros la agenda completa en Emiratos: visitas a las promotoras, los proyectos que encajen con lo que busca y una reunión en nuestras oficinas de Dubai. Usted pone el viaje; la agenda la preparamos nosotros, en español.\n\nNo hay que decidir nada allí. Lo normal es volver con criterio y decidir semanas después, ya con calma.\n\nSi quiere que le contemos cómo se organiza, media hora basta:\n${calL}${cierreRTxt}`,
+      text: `${saludo}\n\nHay una parte de esto que por correo no se resuelve, y es ver dónde está el inmueble y quién lo construye.\n\nSi en algún momento quiere ir, le montamos nosotros la agenda completa en Emiratos: visitas a las promotoras, los proyectos que encajen con lo que busca y una reunión en nuestras oficinas de Dubai. Usted pone el viaje; la agenda la preparamos nosotros, en español.\n\nNo hay que decidir nada allí. Lo normal es volver con criterio y decidir semanas después, ya con calma.\n\nSi quiere que le contemos cómo se organiza, media hora basta:\n${calL}${cierreRTxt}`,
     };
 
     if (code === 'R4') return {
-      subject: `Sobre plano o entregado: no es lo mismo, ${pila}`,
-      html: `<p>Hola ${pila},</p>
+      subject: `Sobre plano o entregado: no es lo mismo${sufNombre}`,
+      html: `<p>${saludo}</p>
 <p>Es la decisión que más condiciona todo lo demás, y la que menos se explica.</p>
 <p><strong>Sobre plano</strong>: se paga a plazos durante la construcción, así que el desembolso inicial es menor y el capital entra repartido. A cambio hay que esperar a la entrega para tener rentas, y se asume el riesgo de plazo.</p>
 <p><strong>Entregado</strong>: se paga de una vez, pero puede alquilarse desde el primer mes. Menos sorpresas y menos recorrido.</p>
 <p>No hay una respuesta buena en abstracto: depende de si le sobra el dinero ahora o lo necesita rindiendo ya. Si me dice en cuál de los dos casos está, le digo qué tiene sentido mirar.</p>
 ${calBtn}${cierreR}`,
-      text: `Hola ${pila},\n\nEs la decisión que más condiciona todo lo demás, y la que menos se explica.\n\nSobre plano: se paga a plazos durante la construcción, así que el desembolso inicial es menor y el capital entra repartido. A cambio hay que esperar a la entrega para tener rentas, y se asume el riesgo de plazo.\n\nEntregado: se paga de una vez, pero puede alquilarse desde el primer mes. Menos sorpresas y menos recorrido.\n\nNo hay una respuesta buena en abstracto: depende de si le sobra el dinero ahora o lo necesita rindiendo ya. Si me dice en cuál de los dos casos está, le digo qué tiene sentido mirar.\n\n${calL}${cierreRTxt}`,
+      text: `${saludo}\n\nEs la decisión que más condiciona todo lo demás, y la que menos se explica.\n\nSobre plano: se paga a plazos durante la construcción, así que el desembolso inicial es menor y el capital entra repartido. A cambio hay que esperar a la entrega para tener rentas, y se asume el riesgo de plazo.\n\nEntregado: se paga de una vez, pero puede alquilarse desde el primer mes. Menos sorpresas y menos recorrido.\n\nNo hay una respuesta buena en abstracto: depende de si le sobra el dinero ahora o lo necesita rindiendo ya. Si me dice en cuál de los dos casos está, le digo qué tiene sentido mirar.\n\n${calL}${cierreRTxt}`,
     };
 
     if (code === 'R5') return {
       subject: `Lo que Hacienda espera de usted si compra en Dubai`,
-      html: `<p>Hola ${pila},</p>
+      html: `<p>${saludo}</p>
 <p>Comprar fuera no le saca de la declaración en España. Siendo residente fiscal aquí, tributa por su renta mundial, y eso incluye lo que genere un inmueble en Emiratos.</p>
 <p>En la práctica son tres frentes: el IRPF por los rendimientos, el modelo 720 si el valor supera el umbral, y las plusvalías el día que venda. El convenio de doble imposición evita pagar dos veces, pero rara vez lo compensa todo.</p>
 <p>Está desarrollado, con los plazos y los umbrales, en nuestra guía:</p>
 ${guiaCard}
 <p>Y si quiere verlo aplicado a su caso concreto, que es donde cambian las cosas, media hora basta:</p>
 ${calBtn}${cierreR}`,
-      text: `Hola ${pila},\n\nComprar fuera no le saca de la declaración en España. Siendo residente fiscal aquí, tributa por su renta mundial, y eso incluye lo que genere un inmueble en Emiratos.\n\nEn la práctica son tres frentes: el IRPF por los rendimientos, el modelo 720 si el valor supera el umbral, y las plusvalías el día que venda. El convenio de doble imposición evita pagar dos veces, pero rara vez lo compensa todo.\n\nEstá desarrollado, con los plazos y los umbrales, en nuestra guía:\n${guiaUrl}\n\nY si quiere verlo aplicado a su caso concreto, que es donde cambian las cosas, media hora basta:\n${calL}${cierreRTxt}`,
+      text: `${saludo}\n\nComprar fuera no le saca de la declaración en España. Siendo residente fiscal aquí, tributa por su renta mundial, y eso incluye lo que genere un inmueble en Emiratos.\n\nEn la práctica son tres frentes: el IRPF por los rendimientos, el modelo 720 si el valor supera el umbral, y las plusvalías el día que venda. El convenio de doble imposición evita pagar dos veces, pero rara vez lo compensa todo.\n\nEstá desarrollado, con los plazos y los umbrales, en nuestra guía:\n${guiaUrl}\n\nY si quiere verlo aplicado a su caso concreto, que es donde cambian las cosas, media hora basta:\n${calL}${cierreRTxt}`,
     };
 
     if (code === 'R6') return {
       subject: `El gasto que casi nadie mira antes de comprar`,
-      html: `<p>Hola ${pila},</p>
+      html: `<p>${saludo}</p>
 <p>Cuando alguien compara dos inmuebles suele mirar precio y rentabilidad estimada. El que decide de verdad si la operación sale bien es otro: <strong>los gastos recurrentes</strong>.</p>
 <p>En Emiratos, la comunidad se paga por metro construido y varía mucho entre un edificio con piscina, gimnasio y conserjería y otro sin ellos. Súmele la gestión del alquiler y los periodos sin inquilino, y la rentabilidad neta puede quedar bastante lejos de la bruta que aparece en los anuncios.</p>
 <p>No es un motivo para no comprar: es un motivo para comparar con el número correcto. Cuando le pasemos opciones, se las pasaremos con ese cálculo hecho.</p>
 ${calBtn}${cierreR}`,
-      text: `Hola ${pila},\n\nCuando alguien compara dos inmuebles suele mirar precio y rentabilidad estimada. El que decide de verdad si la operación sale bien es otro: los gastos recurrentes.\n\nEn Emiratos, la comunidad se paga por metro construido y varía mucho entre un edificio con piscina, gimnasio y conserjería y otro sin ellos. Súmele la gestión del alquiler y los periodos sin inquilino, y la rentabilidad neta puede quedar bastante lejos de la bruta que aparece en los anuncios.\n\nNo es un motivo para no comprar: es un motivo para comparar con el número correcto. Cuando le pasemos opciones, se las pasaremos con ese cálculo hecho.\n\n${calL}${cierreRTxt}`,
+      text: `${saludo}\n\nCuando alguien compara dos inmuebles suele mirar precio y rentabilidad estimada. El que decide de verdad si la operación sale bien es otro: los gastos recurrentes.\n\nEn Emiratos, la comunidad se paga por metro construido y varía mucho entre un edificio con piscina, gimnasio y conserjería y otro sin ellos. Súmele la gestión del alquiler y los periodos sin inquilino, y la rentabilidad neta puede quedar bastante lejos de la bruta que aparece en los anuncios.\n\nNo es un motivo para no comprar: es un motivo para comparar con el número correcto. Cuando le pasemos opciones, se las pasaremos con ese cálculo hecho.\n\n${calL}${cierreRTxt}`,
     };
 
     if (code === 'R7') return {
       subject: `¿Y quién gestiona el alquiler estando usted aquí?`,
-      html: `<p>Hola ${pila},</p>
+      html: `<p>${saludo}</p>
 <p>Es la pregunta que más veces nos hacen cuando la inversión ya se ve viable, y es razonable: el inmueble está a seis mil kilómetros.</p>
 <p>Se gestiona con una empresa local que se encarga de buscar inquilino, cobrar, y responder a las incidencias del día a día. Usted no trata con nadie sobre el terreno. Esa gestión tiene un coste, y es parte del cálculo del correo anterior.</p>
 <p>Si quiere que le contemos cómo funciona en la práctica, y qué se firma exactamente, se lo explicamos sin compromiso:</p>
 ${calBtn}${cierreR}`,
-      text: `Hola ${pila},\n\nEs la pregunta que más veces nos hacen cuando la inversión ya se ve viable, y es razonable: el inmueble está a seis mil kilómetros.\n\nSe gestiona con una empresa local que se encarga de buscar inquilino, cobrar, y responder a las incidencias del día a día. Usted no trata con nadie sobre el terreno. Esa gestión tiene un coste, y es parte del cálculo del correo anterior.\n\nSi quiere que le contemos cómo funciona en la práctica, y qué se firma exactamente, se lo explicamos sin compromiso:\n${calL}${cierreRTxt}`,
+      text: `${saludo}\n\nEs la pregunta que más veces nos hacen cuando la inversión ya se ve viable, y es razonable: el inmueble está a seis mil kilómetros.\n\nSe gestiona con una empresa local que se encarga de buscar inquilino, cobrar, y responder a las incidencias del día a día. Usted no trata con nadie sobre el terreno. Esa gestión tiene un coste, y es parte del cálculo del correo anterior.\n\nSi quiere que le contemos cómo funciona en la práctica, y qué se firma exactamente, se lo explicamos sin compromiso:\n${calL}${cierreRTxt}`,
     };
 
     if (code === 'R8') return {
-      subject: `${pila}, ¿le sigo escribiendo?`,
-      html: `<p>Hola ${pila},</p>
+      subject: tieneNombre ? `${pila}, ¿le sigo escribiendo?` : '¿Le sigo escribiendo?',
+      html: `<p>${saludo}</p>
 <p>Llevo unos meses mandándole cosas sobre invertir en Emiratos y no he sabido de usted. No pasa nada: no todo el mundo tiene que contestar, y estos correos están pensados para leerse sin responder.</p>
 <p>Se lo pregunto igualmente, porque prefiero escribir a quien le sirve:</p>
 <p><strong>Si no me dice nada</strong>, le seguiré escribiendo de vez en cuando, más o menos una vez cada tres meses, cuando haya algo que merezca la pena contar.</p>
 <p><strong>Si prefiere que pare</strong>, respóndame con la palabra BAJA y dejo de escribirle hoy mismo. Sin preguntas.</p>
 <p>Y si lo que pasa es que ahora sí es buen momento, con dos líneas retomamos donde lo dejamos.</p>${cierreR}`,
-      text: `Hola ${pila},\n\nLlevo unos meses mandándole cosas sobre invertir en Emiratos y no he sabido de usted. No pasa nada: no todo el mundo tiene que contestar, y estos correos están pensados para leerse sin responder.\n\nSe lo pregunto igualmente, porque prefiero escribir a quien le sirve:\n\nSi no me dice nada, le seguiré escribiendo de vez en cuando, más o menos una vez cada tres meses, cuando haya algo que merezca la pena contar.\n\nSi prefiere que pare, respóndame con la palabra BAJA y dejo de escribirle hoy mismo. Sin preguntas.\n\nY si lo que pasa es que ahora sí es buen momento, con dos líneas retomamos donde lo dejamos.${cierreRTxt}`,
+      text: `${saludo}\n\nLlevo unos meses mandándole cosas sobre invertir en Emiratos y no he sabido de usted. No pasa nada: no todo el mundo tiene que contestar, y estos correos están pensados para leerse sin responder.\n\nSe lo pregunto igualmente, porque prefiero escribir a quien le sirve:\n\nSi no me dice nada, le seguiré escribiendo de vez en cuando, más o menos una vez cada tres meses, cuando haya algo que merezca la pena contar.\n\nSi prefiere que pare, respóndame con la palabra BAJA y dejo de escribirle hoy mismo. Sin preguntas.\n\nY si lo que pasa es que ahora sí es buen momento, con dos líneas retomamos donde lo dejamos.${cierreRTxt}`,
     };
 
     // R9: el toque recurrente, cada 90 días mientras la casilla siga marcada. Cambia de
@@ -2530,13 +2670,13 @@ ${calBtn}${cierreR}`,
       ];
       const a = aperturas[new Date().getMonth() % aperturas.length];
       return {
-        subject: `${pila}, ¿sigue en el radar lo de Emiratos?`,
-        html: `<p>Hola ${pila},</p>
+        subject: tieneNombre ? `${pila}, ¿sigue en el radar lo de Emiratos?` : '¿Sigue en el radar lo de Emiratos?',
+        html: `<p>${saludo}</p>
 <p>${a.gancho}</p>
 <p>${a.cuerpo}</p>
 ${calBtn}
 <p style="font-size:14px;color:#646464">Si prefiere que deje de escribirle, respóndame con la palabra BAJA y listo.</p>${cierreR}`,
-        text: `Hola ${pila},\n\n${a.gancho}\n\n${a.cuerpo}\n\n${calL}\n\nSi prefiere que deje de escribirle, respóndame con la palabra BAJA y listo.${cierreRTxt}`,
+        text: `${saludo}\n\n${a.gancho}\n\n${a.cuerpo}\n\n${calL}\n\nSi prefiere que deje de escribirle, respóndame con la palabra BAJA y listo.${cierreRTxt}`,
       };
     }
 
@@ -2545,23 +2685,23 @@ ${calBtn}
     // solicitud que esa persona hizo y que quedó sin respuesta, que es lo que
     // sostiene el interés legítimo. Nada de proyectos, zonas ni oportunidades.
     if (code === 'RE1') return {
-      subject: `Su solicitud quedó sin respuesta, ${pila}`,
-      html: `<p>Hola ${pila},</p>
+      subject: `Su solicitud quedó sin respuesta${sufNombre}`,
+      html: `<p>${saludo}</p>
 <p>Hace un tiempo pidió información en nuestra web para invertir en Emiratos${perfil ? ` (${perfil})` : ''} y no llegamos a darle una respuesta completa. Es un fallo nuestro y quería reconocerlo.</p>
 <p>Si todavía le interesa, retomamos su solicitud donde se quedó: dígame en qué punto está y le preparamos el análisis que pidió.</p>
 <p>Si prefiere hablarlo, aquí puede coger media hora con Marc, nuestro socio en Dubai:</p>
 ${calBtn}
 <p>Y si ya no le interesa, no tiene que hacer nada: no le vamos a escribir por ningún otro motivo que no sea este.</p>${cierreR}`,
-      text: `Hola ${pila},\n\nHace un tiempo pidió información en nuestra web para invertir en Emiratos${perfil ? ` (${perfil})` : ''} y no llegamos a darle una respuesta completa. Es un fallo nuestro y quería reconocerlo.\n\nSi todavía le interesa, retomamos su solicitud donde se quedó: dígame en qué punto está y le preparamos el análisis que pidió.\n\nSi prefiere hablarlo, aquí puede coger media hora con Marc, nuestro socio en Dubai:\n${calL}\n\nY si ya no le interesa, no tiene que hacer nada: no le vamos a escribir por ningún otro motivo que no sea este.${cierreRTxt}`,
+      text: `${saludo}\n\nHace un tiempo pidió información en nuestra web para invertir en Emiratos${perfil ? ` (${perfil})` : ''} y no llegamos a darle una respuesta completa. Es un fallo nuestro y quería reconocerlo.\n\nSi todavía le interesa, retomamos su solicitud donde se quedó: dígame en qué punto está y le preparamos el análisis que pidió.\n\nSi prefiere hablarlo, aquí puede coger media hora con Marc, nuestro socio en Dubai:\n${calL}\n\nY si ya no le interesa, no tiene que hacer nada: no le vamos a escribir por ningún otro motivo que no sea este.${cierreRTxt}`,
     };
 
     return {
-      subject: `Cierro su solicitud, ${pila}`,
-      html: `<p>Hola ${pila},</p>
+      subject: `Cierro su solicitud${sufNombre}`,
+      html: `<p>${saludo}</p>
 <p>Le escribí hace unos días para retomar la solicitud que dejó en nuestra web y no he sabido nada, así que la cierro por mi parte. <strong>Es el último correo que le mando.</strong></p>
 <p>Sus datos siguen en nuestro sistema por si algún día vuelve a plantearlo; si prefiere que los borremos, respóndame con la palabra BAJA y se eliminan.</p>
 <p>Y si lo retoma en el futuro, escríbanos sin más: no hace falta volver a rellenar nada.</p>${cierreR}`,
-      text: `Hola ${pila},\n\nLe escribí hace unos días para retomar la solicitud que dejó en nuestra web y no he sabido nada, así que la cierro por mi parte. Es el último correo que le mando.\n\nSus datos siguen en nuestro sistema por si algún día vuelve a plantearlo; si prefiere que los borremos, respóndame con la palabra BAJA y se eliminan.\n\nY si lo retoma en el futuro, escríbanos sin más: no hace falta volver a rellenar nada.${cierreRTxt}`,
+      text: `${saludo}\n\nLe escribí hace unos días para retomar la solicitud que dejó en nuestra web y no he sabido nada, así que la cierro por mi parte. Es el último correo que le mando.\n\nSus datos siguen en nuestro sistema por si algún día vuelve a plantearlo; si prefiere que los borremos, respóndame con la palabra BAJA y se eliminan.\n\nY si lo retoma en el futuro, escríbanos sin más: no hace falta volver a rellenar nada.${cierreRTxt}`,
     };
   }
 

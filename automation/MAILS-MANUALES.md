@@ -324,10 +324,11 @@ toques, no se pasan a la cadencia M8-E/M9 de reactivación trimestral.
 hoja Leads. El código no elige a nadie. Al desmarcar, la secuencia se para sola: es lo
 que hay que hacer en cuanto alguien conteste.
 
-**Por qué dos vías y no una.** Un lead que marcó «Consent marketing: SI» puede recibir
-contenido comercial periódico; uno que no lo marcó, no. Pero todos pidieron un análisis
-que en su día no se completó, y retomar esa petición concreta sí se sostiene (interés
-legítimo, el mismo encaje de D1-D3). De ahí la diferencia:
+**Hoy todos reciben lo mismo.** Con `CONFIG.REMARKETING_MISMO_TRATO = true`, quien usted
+marque recibe la secuencia larga completa, haya marcado la casilla de marketing o no.
+Es una decisión de negocio tomada a sabiendas: quien no la quiera responde BAJA y sale al
+instante. La vía corta de abajo queda documentada porque el código la conserva y se
+recupera cambiando ese interruptor a `false`.
 
 - **R1-R8** (con consentimiento), a los 0, 7, 21, 45, 75, 110, 150 y 200 días: reenganche
   sin pedir nada, cómo se decide entre zonas según el objetivo, la visita a Emiratos, sobre
