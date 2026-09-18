@@ -811,39 +811,8 @@ function cerrarHiloProcesado(thread, msg, opts) {
   }
 }
 
-/**
- * Propiedad que marca que la reparación del incidente del 18-sep-2026 ya se lanzó.
- * Mientras exista esta constante, la primera pasada de pollGmail tras desplegar
- * ejecuta repararLeadsConEmailInterno() una sola vez y nunca más.
- *
- * TEMPORAL: en cuanto conste ejecutada, este bloque y su llamada en pollGmail se
- * retiran del código. La función reparadora sí se queda: es la herramienta para la
- * próxima vez que haga falta.
- */
-const REPARACION_EMAIL_INTERNO_PROP = 'HE_REPARACION_EMAIL_INTERNO';
-
-/**
- * Lanza la reparación pendiente una única vez, sin que nadie tenga que abrir el editor.
- * Se marca como hecha ANTES de ejecutarla, a propósito: si algo falla a mitad, la
- * siguiente pasada NO la reintenta sola. Reintentar a ciegas podría mandar dos veces
- * el mismo acuse de recibo a un lead, que es peor que quedarse corto y mirarlo a mano.
- */
-function ejecutarReparacionPendiente_() {
-  const props = PropertiesService.getScriptProperties();
-  if (props.getProperty(REPARACION_EMAIL_INTERNO_PROP)) return;
-  props.setProperty(REPARACION_EMAIL_INTERNO_PROP, new Date().toISOString());
-  Logger.log('ejecutarReparacionPendiente_: lanzando repararLeadsConEmailInterno(7) (una sola vez)');
-  try {
-    repararLeadsConEmailInterno(7);
-  } catch (e) {
-    Logger.log('ejecutarReparacionPendiente_: FALLÓ la reparación: ' + e.toString() +
-      '. No se reintenta sola; revisar y ejecutar repararLeadsConEmailInterno(7) a mano.');
-  }
-}
-
 function pollGmail() {
   PropertiesService.getScriptProperties().setProperty('HE_LAST_POLL_TS', String(Date.now())); // M08, heartbeat para healthCheck
-  ejecutarReparacionPendiente_();   // TEMPORAL · ver REPARACION_EMAIL_INTERNO_PROP
   let threads = GmailApp.search(CONFIG.POLL_QUERY, 0, 50);
   if (CONFIG.POLL_QUERY_FALLBACK) {
     // M09: unir SIEMPRE el fallback (Web3Forms recientes sin etiqueta de procesado,
