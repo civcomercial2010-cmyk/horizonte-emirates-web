@@ -651,6 +651,10 @@ const SEQUENCES = {
 function htmlToPlainForParse(html) {
   return String(html || '')
     .replace(/<br\s*\/?>/gi, '\n')
+    // Las celdas también cortan línea: el aviso de Web3Forms es una tabla
+    // «etiqueta | valor», y sin esto ambas quedaban pegadas en la misma línea
+    // y el parser de «clave: valor» no reconocía ni un solo campo.
+    .replace(/<\/(td|th)>/gi, '\n')
     .replace(/<\/(p|div|tr|li|h\d)>/gi, '\n')
     .replace(/<[^>]+>/g, ' ')
     .replace(/[ \t]+\n/g, '\n')
@@ -671,6 +675,50 @@ function getMessageBodyForLeadParse(msg) {
 function getLatestThreadMessage(thread) {
   const msgs = thread.getMessages();
   return msgs.length ? msgs[msgs.length - 1] : null;
+}
+
+/** Remitentes del proveedor del formulario (notify@web3forms.com y cualquier subdominio). */
+const WEB3FORMS_FROM_RE = /@(?:[a-z0-9.-]+\.)?web3forms\.com\b/i;
+
+/**
+ * Mensaje del hilo que contiene DE VERDAD el aviso del formulario: el más reciente
+ * enviado por Web3Forms, no el último del hilo.
+ *
+ * Por qué no vale el último (incidente del 18-sep-2026, lead YOANA SENA): el aviso se
+ * reenvió a mano al asesor 74 segundos después de entrar, y ese reenvío pasó a ser el
+ * último mensaje del hilo. En un reenvío Gmail aplana la tabla del aviso (la etiqueta
+ * y su valor quedan en líneas distintas, sin «:»), así que el parser no sacaba ni un
+ * campo y caía al rescate por expresión regular, que se quedaba con el primer email
+ * del cuerpo: el nuestro, el de la cabecera «To: hola@horizonteemirates.com». El lead
+ * se guardó con nuestro propio correo y el acuse de recibo se lo mandamos a nosotros.
+ *
+ * Con esto, reenviar o responder un aviso deja de afectar a lo que se registra.
+ */
+function getAvisoWeb3Forms(thread) {
+  const msgs = thread.getMessages();
+  for (let i = msgs.length - 1; i >= 0; i--) {
+    try {
+      if (WEB3FORMS_FROM_RE.test(String(msgs[i].getFrom() || ''))) return msgs[i];
+    } catch (e) { /* un mensaje ilegible no puede tumbar la pasada */ }
+  }
+  return msgs.length ? msgs[msgs.length - 1] : null;
+}
+
+/**
+ * true si la dirección es nuestra o del proveedor del formulario, nunca la de un lead.
+ * Solo se usa en el RESCATE por expresión regular de parseLeadFromEmail: si el aviso
+ * trae el campo «Email» explícito, se respeta tal cual (una prueba hecha con nuestra
+ * propia dirección debe seguir funcionando).
+ */
+function esEmailInterno(email) {
+  const e = String(email || '').toLowerCase().trim();
+  if (!e) return true;
+  if (WEB3FORMS_FROM_RE.test('@' + e.split('@')[1])) return true;
+  if (/^(?:no-?reply|noreply|notify|mailer-daemon|postmaster|bounce)[^@]*@/.test(e)) return true;
+  if (/@(?:[a-z0-9.-]+\.)?horizonteemirates\.com$/.test(e)) return true;
+  const propias = [CONFIG.REPLY_TO, CONFIG.AGENT_BRIEFING_EMAIL];
+  try { propias.push(Session.getActiveUser().getEmail()); } catch (err) { /* sin permiso: se ignora */ }
+  return propias.some(p => String(p || '').toLowerCase().trim() === e);
 }
 
 /** Orden descendente por fecha del último mensaje (Gmail no garantiza orden de hilos). */
@@ -790,7 +838,7 @@ function pollGmail() {
 
   threads.forEach(thread => {
     try {
-      const msg = getLatestThreadMessage(thread);
+      const msg = getAvisoWeb3Forms(thread);
       if (!msg) return;
 
       if (thread.getLabels().some(l => l.getName() === CONFIG.LABEL_PROCESADO)) {
@@ -862,7 +910,11 @@ function pollGmail() {
       if (!lead || !lead.email) {
         Logger.log('No se pudo parsear lead: ' + subject);
         Logger.log('pollGmail: body snippet=\n' + body.substring(0, 600));
-        cerrarHiloProcesado(thread, msg, { label: label });
+        // Aquí se ha perdido un lead de verdad: el aviso es del embudo y no se le ha
+        // podido sacar el email. Se deja en negrita y destacado para que salte a la vista
+        // (mismo criterio que una descarga sin email parseable), en vez de etiquetarlo
+        // en silencio y que nadie se entere hasta el informe del guardián.
+        cerrarHiloProcesado(thread, msg, { label: label, destacar: true });
         return;
       }
 
@@ -930,7 +982,7 @@ function diagnoseFormPipeline() {
   Logger.log('Muestra últimos hilos Web3Forms (query=' + q + '): ' + threads.length);
 
   threads.forEach((thread, idx) => {
-    const msg = getLatestThreadMessage(thread);
+    const msg = getAvisoWeb3Forms(thread);
     if (!msg) return;
     const subject = msg.getSubject();
     const body = getMessageBodyForLeadParse(msg);
@@ -1020,6 +1072,69 @@ function pollUnsubscribes() {
 // 2. PARSEAR EMAIL DE WEB3FORMS
 //    Compatible con formulario V1, V2 y V3
 // ══════════════════════════════════════════════════════════════
+/**
+ * Claves reconocidas del aviso del formulario → campo del lead, en un solo sitio.
+ * `multilinea: true` para los textos largos (la prueba del consentimiento), que en un
+ * aviso reenviado llegan partidos en varias líneas.
+ * Ver parseLeadFromEmail: esta tabla la usan sus dos pasadas.
+ */
+const LEAD_CAMPOS = {
+  nombre:       { set: (l, v) => { l.nombre = v; } },
+  apellidos:    { set: (l, v) => { l.apellidos = v; } },
+  email:        { set: (l, v) => { l.email = v.toLowerCase(); } },
+  mail:         { set: (l, v) => { l.email = v.toLowerCase(); } },
+  e_mail:       { set: (l, v) => { l.email = v.toLowerCase(); } },
+  correo:       { set: (l, v) => { l.email = v.toLowerCase(); } },
+  correo_electronico: { set: (l, v) => { l.email = v.toLowerCase(); } },
+  replyto:      { set: (l, v) => { l.email = v.toLowerCase(); } },
+  reply_to:     { set: (l, v) => { l.email = v.toLowerCase(); } },
+  telefono:     { set: (l, v) => { l.telefono = v; } },
+  pais:         { set: (l, v) => { l.pais = v; } },
+  capital:      { set: (l, v) => { l.capital = v; } },
+  objetivo:     { set: (l, v) => { l.objetivo = v; } },
+  experiencia:  { set: (l, v) => { l.experiencia = v; } },
+  plazo:        { set: (l, v) => { l.plazo = v; } },
+  // Compatibilidad V1 (viaje_dubai), V3 (visita_dubai) y ambos sin prefijo
+  viaje:        { set: (l, v) => { l.viaje = v; } },
+  viaje_dubai:  { set: (l, v) => { l.viaje = v; } },
+  visita_dubai: { set: (l, v) => { l.viaje = v; } },
+  canal:            { set: (l, v) => { l.canal = v; } },
+  canal_preferido:  { set: (l, v) => { l.canal = v; } },
+  tier:         { set: (l, v) => { l.tier = v; } },
+  puntuacion:   { set: (l, v) => { l.puntuacion = parseInt(v) || l.puntuacion; } },
+  origen:       { set: (l, v) => { l.origen = v; } },
+  utm_source:   { set: (l, v) => { l.utm_source = v; } },
+  utm_medium:   { set: (l, v) => { l.utm_medium = v; } },
+  utm_campaign: { set: (l, v) => { l.utm_campaign = v; } },
+  utm_content:  { set: (l, v) => { l.utm_content = v; } },
+  utm_term:     { set: (l, v) => { l.utm_term = v; } },
+  gclid:        { set: (l, v) => { l.gclid = v; } },
+  gbraid:       { set: (l, v) => { l.gbraid = v; } },
+  wbraid:       { set: (l, v) => { l.wbraid = v; } },
+  // Prueba del consentimiento (art. 7.1 RGPD). Los envía app.js en cada formulario.
+  consentimiento_privacidad: { set: (l, v) => { l.cons_privacidad = v; } },
+  consentimiento_marketing:  { set: (l, v) => { l.cons_marketing = v; } },
+  consentimiento_version:    { set: (l, v) => { l.cons_version = v; } },
+  consentimiento_fecha:      { set: (l, v) => { l.cons_fecha = v; } },
+  consentimiento_texto:      { set: (l, v) => { l.cons_texto = v; }, multilinea: true },
+  // No se guarda en la hoja, pero tiene que estar reconocida: si no, la pasada 2 la toma
+  // como continuación del texto de privacidad y los dos consentimientos quedan mezclados.
+  consentimiento_texto_marketing: { set: (l, v) => { l.cons_texto_marketing = v; }, multilinea: true },
+};
+
+/** Normaliza una etiqueta del aviso a la clave de LEAD_CAMPOS («👤 Nombre» → «nombre»). */
+function normalizaClaveLead(raw) {
+  return String(raw || '').trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    // Limpia iconos y signos para soportar etiquetas visuales (ej. "👤 Nombre").
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '')
+    // Soporta agrupación visual en etiquetas del form (ej. "Contacto · Nombre").
+    .replace(/^(contacto|inversion)_+/, '');
+}
+
 function parseLeadFromEmail(body, subject) {
   const lead = {};
 
@@ -1029,75 +1144,55 @@ function parseLeadFromEmail(body, subject) {
   lead.tier       = tierMatch  ? tierMatch[1]       : 'C';
   lead.puntuacion = scoreMatch ? parseInt(scoreMatch[1]) : 0;
 
-  // Parser de líneas "clave: valor" (formato Web3Forms)
-  body.split(/\r?\n/).forEach(line => {
+  const lineas = body.split(/\r?\n/);
+
+  // PASADA 1 · formato normal del aviso de Web3Forms: «clave: valor» en la misma línea.
+  lineas.forEach(line => {
     const m = line.match(/^([^:]{1,40}):\s*(.+)$/);
     if (!m) return;
-    const key = m[1].trim()
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      // Limpia iconos y signos para soportar etiquetas visuales (ej. "👤 Nombre").
-      .replace(/[^a-z0-9]+/g, '_')
-      .replace(/^_+|_+$/g, '')
-      // Soporta agrupación visual en etiquetas del form (ej. "Contacto · Nombre").
-      .replace(/^(contacto|inversion)_+/, '');
-    const val = m[2].trim();
-
-    switch (key) {
-      case 'nombre':                        lead.nombre      = val; break;
-      case 'apellidos':                     lead.apellidos   = val; break;
-      case 'email':
-      case 'mail':
-      case 'e-mail':
-      case 'e_mail':
-      case 'correo':
-      case 'correo_electronico':
-      case 'replyto':
-      case 'reply_to':                         lead.email       = val.toLowerCase(); break;
-      case 'telefono':                      lead.telefono    = val; break;
-      case 'pais':                          lead.pais        = val; break;
-      case 'capital':                       lead.capital     = val; break;
-      case 'objetivo':                      lead.objetivo    = val; break;
-      case 'experiencia':                   lead.experiencia = val; break;
-      case 'plazo':                         lead.plazo       = val; break;
-      // Compatibilidad V1 (viaje_dubai), V3 (visita_dubai) y ambos sin prefijo
-      case 'viaje':
-      case 'viaje_dubai':
-      case 'visita_dubai':                  lead.viaje       = val; break;
-      case 'canal':
-      case 'canal_preferido':               lead.canal       = val; break;
-      case 'tier':                          lead.tier        = val; break;
-      case 'puntuacion':
-                                          lead.puntuacion  = parseInt(val) || lead.puntuacion; break;
-      case 'origen':                        lead.origen      = val; break;
-      case 'utm_source':                    lead.utm_source  = val; break;
-      case 'utm_medium':                    lead.utm_medium  = val; break;
-      case 'utm_campaign':                  lead.utm_campaign= val; break;
-      case 'utm_content':                   lead.utm_content = val; break;
-      case 'utm_term':                      lead.utm_term    = val; break;
-      case 'gclid':                         lead.gclid       = val; break;
-      case 'gbraid':                        lead.gbraid      = val; break;
-      case 'wbraid':                        lead.wbraid      = val; break;
-      // Prueba del consentimiento (art. 7.1 RGPD). Los envía app.js en cada formulario.
-      case 'consentimiento_privacidad':     lead.cons_privacidad = val; break;
-      case 'consentimiento_marketing':      lead.cons_marketing  = val; break;
-      case 'consentimiento_version':        lead.cons_version    = val; break;
-      case 'consentimiento_fecha':          lead.cons_fecha      = val; break;
-      case 'consentimiento_texto':          lead.cons_texto      = val; break;
-    }
+    const campo = LEAD_CAMPOS[normalizaClaveLead(m[1])];
+    if (campo) campo.set(lead, m[2].trim());
   });
+
+  // PASADA 2 · etiqueta y valor en líneas distintas. Así llega un aviso REENVIADO:
+  // Gmail aplana la tabla HTML y desaparecen los «:», de modo que la pasada 1 no
+  // encuentra nada. Solo entra si no se ha sacado el email (el dato sin el cual el
+  // lead no sirve) y nunca pisa lo que ya se haya leído: es un rescate, no la vía normal.
+  if (!lead.email) {
+    for (let i = 0; i < lineas.length - 1; i++) {
+      const clave = normalizaClaveLead(lineas[i]);
+      const campo = LEAD_CAMPOS[clave];
+      if (!campo) continue;
+      // Etiqueta seguida de otra etiqueta = campo vacío en el formulario (p. ej.
+      // «Objetivo» sin responder). Se salta sin consumir la siguiente.
+      const partes = [];
+      let j = i + 1;
+      while (j < lineas.length) {
+        const val = lineas[j].trim();
+        if (!val || LEAD_CAMPOS[normalizaClaveLead(val)]) break;
+        partes.push(val);
+        j++;
+        if (!campo.multilinea) break;
+      }
+      if (!partes.length) continue;
+      campo.set(lead, partes.join(' '));
+      i = j - 1;
+    }
+  }
 
   if (lead.apellidos && lead.nombre) {
     lead.nombre = (lead.nombre + ' ' + lead.apellidos).trim();
   }
   delete lead.apellidos;
 
+  // ÚLTIMO RECURSO: ningún campo «Email» reconocible. Se busca cualquier dirección en el
+  // cuerpo, descartando SIEMPRE las internas (ver esEmailInterno). Antes no se filtraban
+  // y un aviso reenviado colaba «hola@horizonteemirates.com» como si fuera el lead:
+  // la ficha quedaba con nuestro correo y el acuse de recibo se lo mandábamos a nosotros
+  // mismos, mientras el lead real no recibía nada (incidente YOANA SENA, 18-sep-2026).
   if (!lead.email) {
     const hay = (body + '\n' + subject).match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi) || [];
-    const filtered = hay.map(e => e.toLowerCase()).filter(e =>
-      !e.includes('web3forms.com') && !e.startsWith('noreply@') && !e.startsWith('no-reply@')
-    );
+    const filtered = hay.map(e => e.toLowerCase()).filter(e => !esEmailInterno(e));
     if (filtered.length) lead.email = filtered[0];
   }
 
@@ -1120,7 +1215,7 @@ function debugPollLatestWeb3Lead() {
   }
   sortThreadsByLatestMessage(threads);
   const th = threads[0];
-  const msg = getLatestThreadMessage(th);
+  const msg = getAvisoWeb3Forms(th);
   if (!msg) return;
   const subject = msg.getSubject();
   const body = getMessageBodyForLeadParse(msg);
@@ -1201,7 +1296,7 @@ function recuperarLeadsPerdidos(days) {
   let guardados = 0, yaExistian = 0, saltados = 0;
 
   threads.forEach((thread, idx) => {
-    const msg = getLatestThreadMessage(thread);
+    const msg = getAvisoWeb3Forms(thread);
     if (!msg) return;
 
     const subject = msg.getSubject();
@@ -1240,6 +1335,147 @@ function recuperarLeadsPerdidos(days) {
 }
 
 /**
+ * REPARA las fichas que se guardaron con una dirección NUESTRA en vez de la del lead.
+ *
+ * Es el arreglo del incidente del 18-sep-2026 (lead YOANA SENA): el aviso del formulario
+ * se reenvió a mano antes de que corriera el trigger, pollGmail leyó el reenvío en vez del
+ * aviso original y, al no encontrar ningún campo, se quedó con el primer email del cuerpo
+ * («hola@horizonteemirates.com», de la cabecera del reenvío). Resultado: ficha con nuestro
+ * correo, sin nombre ni teléfono, y el acuse de recibo enviado a nosotros mismos.
+ *
+ * Qué hace con cada aviso de Web3Forms de los últimos N días:
+ *   · lo vuelve a parsear con el parser ya corregido (email bueno, nombre, teléfono);
+ *   · si ese email ya está en el CRM, no toca nada;
+ *   · si no está, busca una ficha creada en la misma franja horaria (±60 min) cuyo email
+ *     sea uno de los nuestros (esEmailInterno) y la reescribe entera, conservando su ID
+ *     para no romper la Cola;
+ *   · marca en la Cola el W0 que salió a la dirección equivocada y manda el acuse de
+ *     verdad al lead, que hasta ahora no había recibido nada;
+ *   · vuelve a avisar al asesor con la ficha ya correcta.
+ *
+ * Solo toca filas cuyo email es interno: una ficha legítima no puede verse afectada.
+ * Uso desde el editor de Apps Script: repararLeadsConEmailInterno(7)
+ *
+ * @param {number} [dias=7] días hacia atrás de avisos a revisar.
+ */
+function repararLeadsConEmailInterno(dias) {
+  const lookback = Math.max(1, parseInt(dias, 10) || 7);
+  const VENTANA_MS = 60 * 60 * 1000;   // margen entre el aviso y la fila que creó
+  const threads = GmailApp.search('from:web3forms.com newer_than:' + lookback + 'd', 0, 100);
+  if (!threads.length) {
+    Logger.log('repararLeadsConEmailInterno: sin avisos de Web3Forms en ' + lookback + ' días');
+    return;
+  }
+  sortThreadsByLatestMessage(threads);
+
+  const sh = getSheet('Leads');
+  const data = sh.getDataRange().getValues();
+  const filasUsadas = {};
+  let reparados = 0, correctos = 0, sinFicha = 0, saltados = 0;
+
+  threads.forEach(thread => {
+    const msg = getAvisoWeb3Forms(thread);
+    if (!msg) return;
+
+    const subject = msg.getSubject();
+    const body    = getMessageBodyForLeadParse(msg);
+    if (!isHorizonteWeb3Lead(subject, body) || isGuiaDownload(subject)) { saltados++; return; }
+
+    const lead = parseLeadFromEmail(body, subject);
+    if (!lead || !lead.email) {
+      Logger.log('repararLeadsConEmailInterno: sigue sin parsearse · ' + subject);
+      saltados++;
+      return;
+    }
+    if (esEmailInterno(lead.email)) {
+      Logger.log('repararLeadsConEmailInterno: el aviso solo trae direcciones internas · ' + subject);
+      saltados++;
+      return;
+    }
+    if (leadExists(lead.email)) { correctos++; return; }
+
+    // La ficha rota: creada casi a la vez que el aviso y con un email nuestro.
+    const tAviso = msg.getDate().getTime();
+    let fila = 0;
+    for (let i = 1; i < data.length; i++) {
+      if (filasUsadas[i]) continue;
+      const emailFila = String(data[i][2] || '').trim().toLowerCase();
+      if (!emailFila || !esEmailInterno(emailFila)) continue;
+      const creada = data[i][14];
+      if (!(creada instanceof Date)) continue;
+      if (Math.abs(creada.getTime() - tAviso) > VENTANA_MS) continue;
+      fila = i + 1;
+      filasUsadas[i] = true;
+      break;
+    }
+
+    if (!fila) {
+      // No hay ficha rota que corregir: ese lead sencillamente no llegó al CRM.
+      sinFicha++;
+      Logger.log('repararLeadsConEmailInterno: ' + lead.email + ' no está en el CRM y no hay ' +
+        'ficha con email interno de esa hora. Ejecute recuperarLeadsPerdidos(' + lookback + ').');
+      return;
+    }
+
+    const emailViejo = String(data[fila - 1][2] || '');
+    const id = String(data[fila - 1][0] || '').trim() || ('L' + new Date().getTime().toString().slice(-8));
+
+    sh.getRange(fila, 1).setValue(id);
+    sh.getRange(fila, 2).setValue(lead.nombre || '');
+    sh.getRange(fila, 3).setValue(lead.email);
+    sh.getRange(fila, 4).setNumberFormat('@');
+    sh.getRange(fila, 4).setValue(normalizeTelefono(lead.telefono) || '');
+    [[5, lead.pais], [6, lead.capital], [7, lead.objetivo], [8, lead.experiencia],
+     [9, lead.plazo], [10, lead.viaje], [11, lead.puntuacion], [12, lead.tier],
+     [13, lead.canal], [14, lead.origen],
+     [18, lead.utm_source], [19, lead.utm_medium], [20, lead.utm_campaign],
+     [21, lead.utm_content], [22, lead.utm_term], [23, lead.gclid],
+     [24, lead.gbraid], [25, lead.wbraid],
+     [26, lead.cons_privacidad], [27, lead.cons_marketing], [28, lead.cons_version],
+     [29, lead.cons_fecha], [30, lead.cons_texto]].forEach(par => {
+      if (par[1] !== undefined && par[1] !== '') sh.getRange(fila, par[0]).setValue(par[1]);
+    });
+    const notaPrevia = String(data[fila - 1][16] || '').trim();
+    sh.getRange(fila, 17).setValue((notaPrevia ? notaPrevia + '\n' : '') +
+      'Ficha corregida el ' + new Date().toLocaleString('es-ES') + ': se había guardado con ' +
+      emailViejo + ' (aviso reenviado antes de procesarlo). Datos releídos del aviso original.');
+
+    // El W0 que salió a la dirección equivocada queda marcado, y el bueno sale ahora.
+    try {
+      const qSh = getSheet('Cola');
+      const q = qSh.getDataRange().getValues();
+      for (let i = 1; i < q.length; i++) {
+        if (String(q[i][0]) === String(id) && String(q[i][1]) === 'W0' && String(q[i][3]) === 'enviado') {
+          qSh.getRange(i + 1, 4).setValue('enviado-a-email-erroneo');
+          qSh.getRange(i + 1, 6).setValue('Salió a ' + emailViejo + ' por el fallo del reenvío; reenviado al lead al reparar la ficha.');
+          break;
+        }
+      }
+    } catch (e) {
+      Logger.log('repararLeadsConEmailInterno: no se pudo anotar la Cola de ' + id + ': ' + e.message);
+    }
+
+    try {
+      sendWelcomeEmail(id, lead, { forzar: true });
+    } catch (wErr) {
+      Logger.log('repararLeadsConEmailInterno: fallo al enviar el W0 a ' + lead.email + ': ' + wErr.toString());
+    }
+    try {
+      notifyAgentNewLead(id, Object.assign({}, lead, { id: id }));
+    } catch (nErr) {
+      Logger.log('repararLeadsConEmailInterno: fallo al avisar al asesor de ' + id + ': ' + nErr.toString());
+    }
+
+    reparados++;
+    Logger.log('✓ ficha reparada ' + id + ': ' + emailViejo + ' → ' + lead.email + ' (' + lead.nombre + ')');
+  });
+
+  Logger.log('repararLeadsConEmailInterno RESUMEN → reparados=' + reparados +
+    ' | ya correctos=' + correctos + ' | sin ficha que reparar=' + sinFicha +
+    ' | saltados=' + saltados);
+}
+
+/**
  * A-209: backfill de descargas de la guía fiscal que pollGmail() venía descartando
  * como «saltados» antes de existir la rama isGuiaDownload. Ejecutar UNA vez a mano
  * desde el editor de Apps Script con un lookback que cubra el 12-ago-2026 (fecha del
@@ -1255,7 +1491,7 @@ function recuperarDescargasPerdidas(days) {
   let guardadas = 0, yaExistian = 0, saltados = 0;
 
   threads.forEach(thread => {
-    const msg = getLatestThreadMessage(thread);
+    const msg = getAvisoWeb3Forms(thread);
     if (!msg) return;
 
     const subject = msg.getSubject();
@@ -1967,7 +2203,16 @@ function isWithinBusinessSendWindow(date) {
  * sin esperar ventana laboral, y queda registrado en la hoja Cola para no repetirlo.
  * Un fallo aquí nunca debe impedir el registro del lead ni el aviso al asesor.
  */
-function sendWelcomeEmail(leadId, lead) {
+/**
+ * @param {string} leadId ID de la ficha en la hoja Leads.
+ * @param {Object} lead datos del lead (al menos {email}).
+ * @param {Object} [opts]
+ * @param {boolean} [opts.forzar] true para saltarse la idempotencia. Solo lo usa
+ *        repararLeadsConEmailInterno: allí el W0 que consta en la Cola se envió a una
+ *        dirección equivocada, así que el lead real sigue sin haber recibido nada.
+ */
+function sendWelcomeEmail(leadId, lead, opts) {
+  opts = opts || {};
   if (CONFIG.AUTO_SEND_WELCOME === false) {
     Logger.log('sendWelcomeEmail: desactivado (AUTO_SEND_WELCOME=false)');
     return false;
@@ -1975,16 +2220,18 @@ function sendWelcomeEmail(leadId, lead) {
   if (!lead || !lead.email) return false;
 
   // Idempotencia: si ya consta un W0 enviado para este lead, no se repite.
-  try {
-    const q = getSheet('Cola').getDataRange().getValues();
-    for (let i = 1; i < q.length; i++) {
-      if (String(q[i][0]) === String(leadId) && String(q[i][1]) === 'W0') {
-        Logger.log('sendWelcomeEmail: ya enviado antes para ' + leadId + ', omitido');
-        return false;
+  if (!opts.forzar) {
+    try {
+      const q = getSheet('Cola').getDataRange().getValues();
+      for (let i = 1; i < q.length; i++) {
+        if (String(q[i][0]) === String(leadId) && String(q[i][1]) === 'W0') {
+          Logger.log('sendWelcomeEmail: ya enviado antes para ' + leadId + ', omitido');
+          return false;
+        }
       }
+    } catch (e) {
+      Logger.log('sendWelcomeEmail: no se pudo comprobar la Cola (' + e.message + '), se continúa');
     }
-  } catch (e) {
-    Logger.log('sendWelcomeEmail: no se pudo comprobar la Cola (' + e.message + '), se continúa');
   }
 
   if (CONFIG.TEST_MODE) {
@@ -3168,7 +3415,7 @@ function healthCheck() {
     const threads = GmailApp.search('from:web3forms.com newer_than:2d -label:' + CONFIG.LABEL_PROCESADO, 0, 30);
     let stuck = 0;
     threads.forEach(t => {
-      const msg = getLatestThreadMessage(t);
+      const msg = getAvisoWeb3Forms(t);
       if (!msg) return;
       if (!isHorizonteWeb3Lead(msg.getSubject(), getMessageBodyForLeadParse(msg))) return;
       if (msg.getDate() < cutoff) stuck++;

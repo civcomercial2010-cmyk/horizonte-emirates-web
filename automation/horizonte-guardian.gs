@@ -121,7 +121,9 @@ function guardianAnalizar_(dias) {
   threads.forEach(thread => {
     let msg;
     try {
-      msg = getLatestThreadMessage(thread);
+      // El aviso de verdad, no el último mensaje del hilo: si alguien reenvía el aviso
+      // al asesor, ese reenvío no debe ser lo que se audite (ver getAvisoWeb3Forms).
+      msg = getAvisoWeb3Forms(thread);
     } catch (e) {
       msg = null;
     }

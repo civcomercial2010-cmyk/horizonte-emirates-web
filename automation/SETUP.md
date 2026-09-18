@@ -405,6 +405,47 @@ En Apps Script, editar `previewEmail('A1')` y luego usar `sendEmail('A1', leadDe
 | Mensual | Comprobar cuota de Gmail (Configuración → About) |
 | Al migrar a AC | Exportar Leads como CSV, importar como lista |
 
+### Reenviar un aviso de lead ya no rompe nada
+
+Hasta el 18-sep-2026, `pollGmail` leía **el último mensaje del hilo** del aviso. Si alguien
+reenviaba el aviso (a Marc, por ejemplo) antes de que corriera el trigger, ese reenvío pasaba
+a ser el último mensaje, y en un reenvío Gmail aplana la tabla del aviso: la etiqueta y su
+valor quedan en líneas distintas y desaparecen los «:». El parser no sacaba ni un campo y
+caía al rescate por expresión regular, que se quedaba con el primer email del cuerpo: el
+nuestro, el de la cabecera «To: hola@horizonteemirates.com».
+
+Consecuencia (lead YOANA SENA, 18-sep-2026): ficha en el CRM con nuestro propio correo, sin
+nombre ni teléfono, acuse de recibo enviado a nosotros mismos y el lead real sin recibir
+nada. El guardián tampoco lo veía: el email que sacaba estaba en el CRM, así que lo daba por
+correcto.
+
+Ya no puede repetirse, por tres vías independientes:
+
+- `getAvisoWeb3Forms()` coge el mensaje **de Web3Forms** del hilo, no el último. Reenviar o
+  responder un aviso deja de afectar a lo que se registra. Lo usan `pollGmail`, el guardián,
+  el `healthCheck` y las funciones de recuperación.
+- El parser tiene una segunda pasada que entiende «etiqueta y valor en líneas distintas», así
+  que un aviso reenviado también se interpreta bien.
+- El rescate por expresión regular descarta siempre las direcciones internas
+  (`esEmailInterno`: las nuestras, las de Web3Forms y las de tipo `noreply@`). Antes que
+  guardar un lead con nuestro correo, no se guarda: el aviso se queda destacado y sin leer
+  en Recibidos, que es lo que hace que alguien lo mire.
+
+### Reparar fichas guardadas con nuestro correo
+
+Si quedan fichas del fallo anterior, desde el editor de Apps Script:
+
+```javascript
+repararLeadsConEmailInterno(7)   // días de avisos a revisar
+```
+
+Relee los avisos originales, reescribe la ficha rota conservando su ID (para no romper la
+Cola), marca en la Cola el W0 que salió a la dirección equivocada, manda el acuse de verdad
+al lead y vuelve a avisar al asesor con la ficha correcta. **Solo toca filas cuyo email es
+uno de los nuestros**: una ficha legítima no puede verse afectada. Si un lead no está en el
+CRM y tampoco hay ficha rota que corregir, lo dice en el registro y ahí toca
+`recuperarLeadsPerdidos(7)`.
+
 ---
 
 ## Cuándo revisar este documento
@@ -433,9 +474,9 @@ Para retirarlo: `guardianBorrarTrigger()`. Solo borra su propio trigger, no toca
 | Categoría | Significado | Acción |
 |---|---|---|
 | Leads correctos | Aviso recibido y lead en el CRM | Ninguna |
-| Leads perdidos | Es lead, se interpreta, pero no está en el CRM | Ejecutar `recuperarLeadsPerdidos(5)` |
+| Leads perdidos | Es lead, se interpreta, pero no está en el CRM | Ejecutar `recuperarLeadsPerdidos(5)`. Si además hay una ficha de esa misma hora con un correo nuestro, es el fallo del reenvío: `repararLeadsConEmailInterno(5)` |
 | Sospechosos | El detector lo descarta pero parece un lead | Revisar `isHorizonteWeb3Lead`: `recuperarLeadsPerdidos` NO los recupera |
-| No interpretables | Pasa el detector pero no se le saca el email | Revisar el formato del aviso |
+| No interpretables | Pasa el detector pero no se le saca el email | Revisar el formato del aviso. El aviso queda destacado y sin leer en Recibidos |
 | Descartados | Correos de Web3Forms que no son leads | Ninguna |
 
 La categoría **Sospechosos** es la que cubre el agujero de la regresión de junio de 2026: usa una heurística propia (presencia de campos del formulario) en lugar del detector oficial, de modo que si el detector vuelve a romperse, el guardián sí lo ve.
